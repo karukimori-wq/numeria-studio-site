@@ -4,33 +4,35 @@ This repository preserves the ChatGPT Sites public build for:
 
 - https://numeria-studio.illusionddt.chatgpt.site
 
-## Target
+## Production target
 
 - Cloudflare Worker name: numeria-studio-site
-- Expected Workers URL: https://numeria-studio-site.karukimori.workers.dev
+- Workers URL: https://numeria-studio-site.karukimori.workers.dev
 
 ## Current status
 
-The repository is ready for Cloudflare deployment.
+Cloudflare migration is deployed and verified.
 
-Already completed:
+Completed:
 
 - Static backup committed
-- `npm test` static verification configured
-- `npm run build` copies files to `dist/`
+- `npm test` static verification configured and passing
+- `npm run build` copies files to `dist/` and passes
 - `wrangler.jsonc` configured for Workers Static Assets
 - GitHub Actions workflow configured
+- Cloudflare secrets configured in GitHub Actions
+- Cloudflare Workers deployment succeeded
+- Production page verification succeeded
 
-Current blocker:
+Latest successful path:
 
-- `CLOUDFLARE_API_TOKEN` is not set in GitHub Actions secrets.
-- `CLOUDFLARE_ACCOUNT_ID` is not set in GitHub Actions secrets.
-
-The latest workflow reached build successfully and failed only at the Cloudflare configuration check.
+- GitHub Actions workflow: Cloudflare Production
+- Deploy command: `npx wrangler deploy`
+- Verification target: `/` or `/index.html`
 
 ## Required GitHub Actions secrets
 
-Add these secrets to this repository before running the workflow:
+These secrets are required for future deploys:
 
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
@@ -55,7 +57,7 @@ Run the GitHub Actions workflow:
 
 - Cloudflare Production
 
-The workflow verifies the static backup, copies the public site files to `dist/`, deploys with Wrangler, and checks the production page.
+The workflow verifies the static backup, copies the public site files to `dist/`, deploys with Wrangler, and checks the production page with retry handling for Cloudflare propagation delay.
 
 ## Admin identity
 
