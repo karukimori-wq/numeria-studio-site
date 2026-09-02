@@ -30,6 +30,8 @@ Completed:
 - Static backup committed to GitHub
 - Editable Vite app scaffold committed
 - Clerk login/sign-up entry added
+- Clerk CLI added as a project dev dependency
+- Existing Clerk app recorded: `AITEC Apps` / `app_3ImOuQXNBc9Rpqs3XoJEtw2NogR` / Development
 - Admin candidate email configured as `illusionddt@gmail.com`
 - Feedback Hub question/improvement UI added with mock fallback
 - Static verification passes in GitHub Actions
@@ -67,13 +69,25 @@ Important notes:
 
 Set this in GitHub Actions Variables or Secrets:
 
+- `VITE_CLERK_APPLICATION_ID=app_3ImOuQXNBc9Rpqs3XoJEtw2NogR`
 - `VITE_CLERK_PUBLISHABLE_KEY`
+- `VITE_ADMIN_EMAILS=illusionddt@gmail.com`
 
 Optional:
 
 - `VITE_FEEDBACK_HUB_BASE_URL`
 
 Backend-only Clerk secrets such as `CLERK_SECRET_KEY` must not be committed to this repository.
+
+Clerk CLI note:
+
+- `npx clerk auth login`
+- `npx clerk init --app app_3ImOuQXNBc9Rpqs3XoJEtw2NogR`
+- `npx clerk doctor`
+
+Run these CLI commands on a local machine where the browser callback to `127.0.0.1` can reach the CLI.
+The remote Codex environment can install and start the CLI, but the login callback opens on the user's
+computer and does not complete the remote CLI session.
 
 Open locally:
 

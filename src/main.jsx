@@ -19,6 +19,7 @@ import {
 import "./styles.css";
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const clerkApplicationId = import.meta.env.VITE_CLERK_APPLICATION_ID || "app_3ImOuQXNBc9Rpqs3XoJEtw2NogR";
 const appVersion = import.meta.env.VITE_APP_VERSION || "0.2.0-clerk-migration";
 const feedbackApiBase = import.meta.env.VITE_FEEDBACK_HUB_BASE_URL || "";
 const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "illusionddt@gmail.com")
@@ -316,10 +317,29 @@ function ClerkSetupScreen() {
         <p className="eyebrow">Numeria Studio</p>
         <h1>Clerkの公開キーを設定してください</h1>
         <p>
-          `VITE_CLERK_PUBLISHABLE_KEY` が未設定です。Clerk DashboardでNumeria Studio用アプリを作成し、
-          Cloudflareの本番ビルド環境へ公開キーを登録するとログイン画面が有効になります。
+          `VITE_CLERK_PUBLISHABLE_KEY` が未設定です。作成済みの Clerk アプリ
+          「AITEC Apps」の Development 環境から公開キーを取得し、Cloudflare の本番ビルド環境へ
+          登録するとログイン画面が有効になります。
         </p>
-        <code>VITE_CLERK_PUBLISHABLE_KEY=pk_live_...</code>
+        <dl className="setup-list">
+          <div>
+            <dt>Clerk App ID</dt>
+            <dd>{clerkApplicationId}</dd>
+          </div>
+          <div>
+            <dt>GitHub / Cloudflare variable</dt>
+            <dd>VITE_CLERK_PUBLISHABLE_KEY</dd>
+          </div>
+          <div>
+            <dt>Admin email variable</dt>
+            <dd>VITE_ADMIN_EMAILS=illusionddt@gmail.com</dd>
+          </div>
+        </dl>
+        <code>VITE_CLERK_PUBLISHABLE_KEY=pk_test_...</code>
+        <p className="warning-note">
+          `CLERK_SECRET_KEY` はチャット・GitHub・フロントエンドへ入れないでください。Worker側でJWT検証を
+          追加する段階で、Cloudflare Workers Secretとして登録します。
+        </p>
       </div>
     </main>
   );

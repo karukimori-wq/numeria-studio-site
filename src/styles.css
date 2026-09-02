@@ -324,6 +324,39 @@ textarea {
   color: #fff;
 }
 
+.setup-list {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.setup-list div {
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fffaf2;
+}
+
+.setup-list dt {
+  margin-bottom: 4px;
+  color: #7d6e61;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.setup-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #17202a;
+  font-weight: 700;
+}
+
+.warning-note {
+  margin: 14px 0 0;
+  border-left: 4px solid #8f6731;
+  padding-left: 12px;
+}
+
 @media (max-width: 820px) {
   .app-shell {
     padding: 16px;

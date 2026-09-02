@@ -8,12 +8,14 @@ site unless the app still needs Supabase database or storage features.
 
 - Production site: `https://numeria-studio-site.karukimori.workers.dev`
 - Original Sites URL: `https://numeria-studio.illusionddt.chatgpt.site`
+- Authentication target: Clerk application `AITEC Apps` Development (`app_3ImOuQXNBc9Rpqs3XoJEtw2NogR`)
 - Current Supabase project used by the bundled app: `yooivsztrgswrxfspgdg`
 - Current Supabase project name: `numeria-studio`
 - Current observed status: `INACTIVE`
 
-If login or signup fails immediately, resume the Supabase project first. Auth and database calls
-cannot work while the project is inactive.
+Do not resume Supabase Auth to fix new Numeria Studio login. The rebuilt Vite shell now uses Clerk
+as the login provider. Supabase should only be revisited if Numeria Studio still needs database or
+storage data that has not moved to Cloudflare D1.
 
 ## Migration Scope
 
