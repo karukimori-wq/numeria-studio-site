@@ -12,7 +12,7 @@ Contents:
 
 - Mirrored public HTML from the ChatGPT Sites URL
 - CSS, JavaScript, favicon, and font assets referenced by the page
-- Converted local links for offline inspection
+- Converted local links for repository-root inspection
 
 Important notes:
 
@@ -22,6 +22,11 @@ Important notes:
 
 Open locally:
 
-1. Extract the zip.
-2. Open `numeria-studio.illusionddt.chatgpt.site/index.html` in a browser.
+1. Clone or download this repository.
+2. Open `index.html` in a browser.
 
+Repository layout:
+
+- `index.html`
+- `favicon.svg`
+- `assets/`
