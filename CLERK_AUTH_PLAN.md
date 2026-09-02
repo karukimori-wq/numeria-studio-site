@@ -116,9 +116,13 @@ The recommended path is option 2 if the original source cannot be recovered.
 - [x] Map signed-in Clerk user to MVP `workspaceId + userId` display.
 - [x] Add Feedback Hub question/improvement UI behind sign-in.
 - [x] Add setup screen when `VITE_CLERK_PUBLISHABLE_KEY` is not configured.
+- [x] Add Clerk publishable key to frontend build configuration.
 - [ ] Add Cloudflare production domain to Clerk.
 - [ ] Choose sign-in methods.
-- [ ] Add Clerk publishable key to frontend build configuration.
 - [ ] Add Clerk secret key only to protected backend/Worker secrets.
 - [ ] Make `illusionddt@gmail.com` admin through server-controlled metadata or database row for protected admin operations.
 - [ ] Verify sign-up, sign-in, logout, session restore, and admin access on Cloudflare.
+
+## Deployment Notes
+
+- 2026-09-02: `VITE_CLERK_PUBLISHABLE_KEY` was added to GitHub Actions configuration by the operator. This commit triggers a new Cloudflare production deployment using that frontend-safe key.
