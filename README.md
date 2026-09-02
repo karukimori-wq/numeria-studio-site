@@ -1,3 +1,27 @@
-# Numeria Studio Site Backup
+# Numeria Studio ChatGPT Sites Backup
 
-Temporary initial commit for importing the ChatGPT Sites public backup.
+Backup target:
+
+- https://numeria-studio.illusionddt.chatgpt.site
+
+Captured at:
+
+- 2026-09-02 UTC
+
+Contents:
+
+- Mirrored public HTML from the ChatGPT Sites URL
+- CSS, JavaScript, favicon, and font assets referenced by the page
+- Converted local links for offline inspection
+
+Important notes:
+
+- This is a static public-site backup, not the original editable ChatGPT Sites project source.
+- Runtime APIs, hidden project metadata, deployment permissions, and ChatGPT Sites admin state are not included.
+- The Cloudflare Worker URL is a separate deployment and is not the source of this backup.
+
+Open locally:
+
+1. Extract the zip.
+2. Open `numeria-studio.illusionddt.chatgpt.site/index.html` in a browser.
+
