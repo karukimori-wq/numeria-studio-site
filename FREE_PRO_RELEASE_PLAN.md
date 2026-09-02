@@ -106,3 +106,7 @@ The current Worker implementation enforces limits at the Cloudflare Worker layer
 For long-term durable billing periods, the usage store should be moved to D1 or another protected billing store before paid traffic scales.
 
 The design already uses `workspaceId + userId + billingMonth`, so the reset can later follow a Stripe billing period without changing the UI contract.
+
+## Deployment Notes
+
+- 2026-09-02: Triggered Cloudflare Production after Free / Pro release controls were merged to main.
