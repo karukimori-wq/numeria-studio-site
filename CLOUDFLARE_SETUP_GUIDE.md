@@ -4,9 +4,11 @@ This repository is the backup and Cloudflare migration target for the important 
 
 - Source site: https://numeria-studio.illusionddt.chatgpt.site
 - GitHub repository: https://github.com/karukimori-wq/numeria-studio-site
-- Cloudflare Worker target: https://numeria-studio-site.karukimori.workers.dev
+- Cloudflare Worker production: https://numeria-studio-site.karukimori.workers.dev
 
 ## Current migration status
+
+Cloudflare migration is deployed and verified.
 
 Done:
 
@@ -15,14 +17,12 @@ Done:
 - GitHub Actions workflow is committed.
 - Static verification passes.
 - Static build passes.
-
-Blocked:
-
-- Cloudflare deploy requires GitHub Actions secrets.
+- Cloudflare deploy passes.
+- Production verification passes.
 
 ## Required GitHub Secrets
 
-Add these repository secrets in GitHub:
+These repository secrets are required for future deploys:
 
 | Secret name | Purpose |
 | --- | --- |
@@ -55,15 +55,14 @@ Recommended minimum scope:
 
 If Cloudflare asks for a specific account resource, select the target account only.
 
-## How to add GitHub Secrets
+## How to add or replace GitHub Secrets
 
 1. Open: https://github.com/karukimori-wq/numeria-studio-site/settings/secrets/actions
-2. Click **New repository secret**.
-3. Add `CLOUDFLARE_API_TOKEN`.
-4. Click **New repository secret** again.
-5. Add `CLOUDFLARE_ACCOUNT_ID`.
+2. Click **New repository secret** or update the existing secret.
+3. Add or replace `CLOUDFLARE_API_TOKEN`.
+4. Add or replace `CLOUDFLARE_ACCOUNT_ID`.
 
-## How to deploy after secrets are added
+## How to redeploy
 
 1. Open: https://github.com/karukimori-wq/numeria-studio-site/actions/workflows/cloudflare-production.yml
 2. Click **Run workflow**.
@@ -71,7 +70,7 @@ If Cloudflare asks for a specific account resource, select the target account on
 4. Click the green **Run workflow** button.
 5. Wait for the run to become green.
 
-Expected production URL:
+Production URL:
 
 - https://numeria-studio-site.karukimori.workers.dev
 
@@ -81,7 +80,7 @@ The requested admin email is:
 
 - `illusionddt@gmail.com`
 
-For security, admin identity should not be treated as repository source code when real login is implemented.
+For security, admin identity should not be treated as public repository source code when real login is implemented.
 
 Use environment configuration instead, for example:
 
