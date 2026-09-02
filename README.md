@@ -20,6 +20,7 @@ Contents:
 - Cloudflare Workers Static Assets deployment configuration
 - GitHub Actions workflow for Cloudflare deployment
 - Clerk authentication migration plan and implementation scaffold
+- Free / Pro plan, usage, and entitlement release scaffold
 
 ## Migration status
 
@@ -34,6 +35,10 @@ Completed:
 - Existing Clerk app recorded: `AITEC Apps` / `app_3ImOuQXNBc9Rpqs3XoJEtw2NogR` / Development
 - Admin candidate email configured as `illusionddt@gmail.com`
 - Feedback Hub question/improvement UI added with mock fallback
+- Free / Pro pricing comparison UI added
+- Free usage counters added: monthly appraisals and appraisal client snapshots
+- Worker API limit checks added for Free appraisals and appraisal clients
+- Business plan shown as preparing and not purchasable
 - Static verification passes in GitHub Actions
 - Static build passes in GitHub Actions
 - Wrangler config committed
@@ -62,6 +67,7 @@ Important notes:
 - The original ChatGPT Sites public build is retained under `legacy-static/`.
 - Runtime APIs, hidden project metadata, deployment permissions, and ChatGPT Sites admin state are not included.
 - Login/signup now uses the Clerk migration scaffold. It becomes active after `VITE_CLERK_PUBLISHABLE_KEY` is configured in GitHub Actions Variables or Secrets.
+- Existing signed-in users default to Free until a protected billing system upgrades them.
 - Supabase should be retired as the primary login provider after Clerk is implemented. Keep Supabase only for database/storage if still needed.
 - Do not commit Cloudflare tokens, account secrets, or admin-login secrets to the repository.
 
@@ -76,8 +82,37 @@ Set this in GitHub Actions Variables or Secrets:
 Optional:
 
 - `VITE_FEEDBACK_HUB_BASE_URL`
+- `VITE_PRICE_FREE_LABEL`
+- `VITE_PRICE_PRO_LABEL`
+- `VITE_PRICE_BUSINESS_LABEL`
 
 Backend-only Clerk secrets such as `CLERK_SECRET_KEY` must not be committed to this repository.
+
+## Free / Pro release
+
+Free:
+
+- Monthly appraisals: 20
+- Appraisal client snapshots: 3
+- Basic appraisal, basic report, appraisal history, and basic templates
+
+Pro:
+
+- Unlimited appraisals
+- Unlimited appraisal client snapshots
+- Detailed reports
+- PDF export
+- Branded reports
+- Report text adjustment
+- Search and client-specific appraisal history
+
+Business:
+
+- Preparing
+- Not purchasable in this release
+- Reserved for Growth Engine and cross-app integrations
+
+See [FREE_PRO_RELEASE_PLAN.md](FREE_PRO_RELEASE_PLAN.md) for the release contract and remaining durable billing notes.
 
 Clerk CLI note:
 

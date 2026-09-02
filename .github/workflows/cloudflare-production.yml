@@ -14,10 +14,13 @@ env:
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
   PRODUCTION_URL: https://numeria-studio-site.karukimori.workers.dev
   VITE_CLERK_APPLICATION_ID: app_3ImOuQXNBc9Rpqs3XoJEtw2NogR
-  VITE_APP_VERSION: 0.2.0-clerk-migration
+  VITE_APP_VERSION: 0.3.0-free-pro-release
   VITE_ADMIN_EMAILS: illusionddt@gmail.com
   VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY || secrets.VITE_CLERK_PUBLISHABLE_KEY }}
   VITE_FEEDBACK_HUB_BASE_URL: ${{ vars.VITE_FEEDBACK_HUB_BASE_URL || secrets.VITE_FEEDBACK_HUB_BASE_URL }}
+  VITE_PRICE_FREE_LABEL: ${{ vars.VITE_PRICE_FREE_LABEL || '無料' }}
+  VITE_PRICE_PRO_LABEL: ${{ vars.VITE_PRICE_PRO_LABEL || '価格未設定' }}
+  VITE_PRICE_BUSINESS_LABEL: ${{ vars.VITE_PRICE_BUSINESS_LABEL || '準備中' }}
 
 jobs:
   deploy:

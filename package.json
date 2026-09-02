@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "test": "node scripts/verify-static-site.mjs",
     "build": "vite build",

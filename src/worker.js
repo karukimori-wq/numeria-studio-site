@@ -1,0 +1,149 @@
+import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
+
+const runtimeStore = globalThis.__numeriaUsageStore || new Map();
+globalThis.__numeriaUsageStore = runtimeStore;
+
+function json(data, init = {}) {
+  return new Response(JSON.stringify(data), {
+    status: init.status || 200,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      ...init.headers,
+    },
+  });
+}
+
+function scopeKey(workspaceId, userId, month = getBillingMonth()) {
+  return `${workspaceId || "ws_personal"}:${userId || "anonymous"}:${month}`;
+}
+
+function getScope(request, body = {}) {
+  const url = new URL(request.url);
+  return {
+    workspaceId: body.workspaceId || request.headers.get("X-Workspace-Id") || url.searchParams.get("workspaceId") || "ws_personal",
+    userId: body.userId || request.headers.get("X-User-Id") || url.searchParams.get("userId") || "anonymous",
+  };
+}
+
+function getRecord(workspaceId, userId) {
+  const billingMonth = getBillingMonth();
+  const key = scopeKey(workspaceId, userId, billingMonth);
+  const current = runtimeStore.get(key) || {
+    planId: PLAN_IDS.FREE,
+    monthlyAppraisals: 0,
+    appraisalClients: 0,
+    billingMonth,
+  };
+  runtimeStore.set(key, current);
+  return current;
+}
+
+async function readJson(request) {
+  if (request.method === "GET" || request.method === "HEAD") return {};
+  try {
+    return await request.json();
+  } catch {
+    return {};
+  }
+}
+
+function usageResponse(record) {
+  return createUsageSnapshot(record);
+}
+
+async function handleApi(request) {
+  const url = new URL(request.url);
+  const body = await readJson(request);
+  const { workspaceId, userId } = getScope(request, body);
+  const record = getRecord(workspaceId, userId);
+
+  if (url.pathname === "/api/plans" && request.method === "GET") {
+    return json({ status: "success", plans: PLAN_CONFIG });
+  }
+
+  if (url.pathname === "/api/usage" && request.method === "GET") {
+    return json({ status: "success", workspaceId, userId, usage: usageResponse(record) });
+  }
+
+  if (url.pathname === "/api/billing/subscription" && request.method === "GET") {
+    return json({
+      status: "success",
+      workspaceId,
+      userId,
+      subscription: {
+        planId: record.planId,
+        billingStatus: record.planId === PLAN_IDS.FREE ? "free" : "active",
+        currentPeriod: record.billingMonth,
+        source: "numeria-worker-mvp",
+      },
+    });
+  }
+
+  if (url.pathname === "/api/billing/subscription" && request.method === "PATCH") {
+    const requestedPlanId = normalizePlanId(body.planId);
+    if (requestedPlanId === PLAN_IDS.BUSINESS) {
+      return json({
+        status: "error",
+        errorCode: "BUSINESS_PREPARING",
+        message: "Businessプランは準備中です。購入はまだできません。",
+      }, { status: 409 });
+    }
+    record.planId = requestedPlanId;
+    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    return json({
+      status: "success",
+      subscription: {
+        planId: record.planId,
+        billingStatus: record.planId === PLAN_IDS.FREE ? "free" : "active",
+        currentPeriod: record.billingMonth,
+      },
+      usage: usageResponse(record),
+    });
+  }
+
+  if (url.pathname === "/api/appraisal-clients" && request.method === "POST") {
+    const snapshot = usageResponse(record);
+    const decision = evaluateUsageLimit(snapshot, "create_appraisal_client");
+    if (!decision.allowed) {
+      return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
+    }
+    record.appraisalClients += 1;
+    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    return json({
+      status: "success",
+      appraisalClientRef: `acl_${Date.now()}`,
+      sourceOfTruth: "numeria-appraisal-client-snapshot",
+      usage: usageResponse(record),
+    }, { status: 201 });
+  }
+
+  if (url.pathname === "/api/sessions/start" && request.method === "POST") {
+    const snapshot = usageResponse(record);
+    const decision = evaluateUsageLimit(snapshot, "start_appraisal");
+    if (!decision.allowed) {
+      return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
+    }
+    record.monthlyAppraisals += 1;
+    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    return json({
+      status: "success",
+      sessionId: `ses_${Date.now()}`,
+      sessionStatus: "started",
+      eventName: "studio.session.started.v1",
+      usage: usageResponse(record),
+    }, { status: 201 });
+  }
+
+  return json({ status: "error", errorCode: "NOT_FOUND", message: "API endpoint not found." }, { status: 404 });
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.pathname.startsWith("/api/")) {
+      return handleApi(request);
+    }
+    return env.ASSETS.fetch(request);
+  },
+};
