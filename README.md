@@ -14,11 +14,12 @@ Captured at:
 
 Contents:
 
-- Mirrored public HTML from the ChatGPT Sites URL
+- Editable React/Vite application rebuilt from the ChatGPT Sites backup direction
 - CSS, JavaScript, favicon, and font assets referenced by the page
 - Converted local links for repository-root inspection
 - Cloudflare Workers Static Assets deployment configuration
 - GitHub Actions workflow for Cloudflare deployment
+- Clerk authentication migration plan and implementation scaffold
 
 ## Migration status
 
@@ -27,6 +28,10 @@ Cloudflare migration is deployed.
 Completed:
 
 - Static backup committed to GitHub
+- Editable Vite app scaffold committed
+- Clerk login/sign-up entry added
+- Admin candidate email configured as `illusionddt@gmail.com`
+- Feedback Hub question/improvement UI added with mock fallback
 - Static verification passes in GitHub Actions
 - Static build passes in GitHub Actions
 - Wrangler config committed
@@ -52,11 +57,23 @@ Setup and operations guide:
 
 Important notes:
 
-- This is a static public-site backup, not the original editable ChatGPT Sites project source.
+- The original ChatGPT Sites public build is retained under `legacy-static/`.
 - Runtime APIs, hidden project metadata, deployment permissions, and ChatGPT Sites admin state are not included.
-- Login/signup currently depends on the external Supabase project used by the bundled app. The intended next authentication provider is Clerk.
+- Login/signup now uses the Clerk migration scaffold. It becomes active after `VITE_CLERK_PUBLISHABLE_KEY` is configured in GitHub Actions Variables or Secrets.
 - Supabase should be retired as the primary login provider after Clerk is implemented. Keep Supabase only for database/storage if still needed.
 - Do not commit Cloudflare tokens, account secrets, or admin-login secrets to the repository.
+
+## Clerk setup
+
+Set this in GitHub Actions Variables or Secrets:
+
+- `VITE_CLERK_PUBLISHABLE_KEY`
+
+Optional:
+
+- `VITE_FEEDBACK_HUB_BASE_URL`
+
+Backend-only Clerk secrets such as `CLERK_SECRET_KEY` must not be committed to this repository.
 
 Open locally:
 
@@ -66,8 +83,10 @@ Open locally:
 Repository layout:
 
 - `index.html`
+- `src/`
 - `favicon.svg`
 - `assets/`
+- `legacy-static/`
 - `wrangler.jsonc`
 - `.github/workflows/cloudflare-production.yml`
 - `CLOUDFLARE_MIGRATION.md`
