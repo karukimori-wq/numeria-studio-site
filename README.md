@@ -47,13 +47,15 @@ Operational notes:
 Setup and operations guide:
 
 - [CLOUDFLARE_SETUP_GUIDE.md](CLOUDFLARE_SETUP_GUIDE.md)
+- [CLERK_AUTH_PLAN.md](CLERK_AUTH_PLAN.md)
 - [SUPABASE_MIGRATION_PLAN.md](SUPABASE_MIGRATION_PLAN.md)
 
 Important notes:
 
 - This is a static public-site backup, not the original editable ChatGPT Sites project source.
 - Runtime APIs, hidden project metadata, deployment permissions, and ChatGPT Sites admin state are not included.
-- Login/signup depends on the external Supabase project used by the bundled app. Cloudflare can serve the site while Supabase Auth is inactive or misconfigured, but authentication will fail until Supabase is resumed and redirect URLs are configured.
+- Login/signup currently depends on the external Supabase project used by the bundled app. The intended next authentication provider is Clerk.
+- Supabase should be retired as the primary login provider after Clerk is implemented. Keep Supabase only for database/storage if still needed.
 - Do not commit Cloudflare tokens, account secrets, or admin-login secrets to the repository.
 
 Open locally:
@@ -70,5 +72,6 @@ Repository layout:
 - `.github/workflows/cloudflare-production.yml`
 - `CLOUDFLARE_MIGRATION.md`
 - `CLOUDFLARE_SETUP_GUIDE.md`
+- `CLERK_AUTH_PLAN.md`
 - `SUPABASE_MIGRATION_PLAN.md`
 - `ADMIN_BACKUP.md`
