@@ -4,7 +4,9 @@ import { createUsageSnapshot, evaluateUsageLimit, PLAN_CONFIG } from "../src/pla
 
 const requiredFiles = [
   "index.html",
+  "original.html",
   "src/main.jsx",
+  "src/auth-gate.js",
   "src/styles.css",
   "src/plan-config.js",
   "src/worker.js",
@@ -26,7 +28,9 @@ for (const file of requiredFiles) {
 }
 
 const html = readFileSync("index.html", "utf8");
+const originalHtml = readFileSync("original.html", "utf8");
 const appSource = readFileSync("src/main.jsx", "utf8");
+const authGateSource = readFileSync("src/auth-gate.js", "utf8");
 const workerSource = readFileSync("src/worker.js", "utf8");
 const planSource = readFileSync("src/plan-config.js", "utf8");
 const wranglerConfig = readFileSync("wrangler.jsonc", "utf8");
@@ -35,8 +39,18 @@ const supabasePlan = readFileSync("SUPABASE_MIGRATION_PLAN.md", "utf8");
 const releasePlan = readFileSync("FREE_PRO_RELEASE_PLAN.md", "utf8");
 const envExample = readFileSync(".env.example", "utf8");
 assert.match(html, /Numeria Studio/);
-assert.match(html, /\/src\/main\.jsx/);
+assert.match(html, /\/src\/auth-gate\.js/);
+assert.match(html, /\/original\.html/);
+assert.match(html, /プラン・請求/);
+assert.match(originalHtml, /Numeria Studio｜数秘術鑑定書作成/);
+assert.match(originalHtml, /数秘術鑑定を10分で/);
 assert.doesNotMatch(html, /https:\/\/numeria-studio\.karukimori\.workers\.dev/);
+assert.match(authGateSource, /@clerk\/clerk-js/);
+assert.match(authGateSource, /\/api\/auth\/config/);
+assert.match(authGateSource, /openSignIn/);
+assert.match(authGateSource, /openSignUp/);
+assert.match(authGateSource, /\/api\/billing\/subscription/);
+assert.match(authGateSource, /\/api\/usage/);
 assert.match(appSource, /@clerk\/react/);
 assert.match(appSource, /VITE_CLERK_PUBLISHABLE_KEY/);
 assert.match(appSource, /VITE_CLERK_APPLICATION_ID/);
@@ -53,6 +67,8 @@ assert.match(appSource, /準備中/);
 assert.match(planSource, /FREE_MONTHLY_APPRAISAL_LIMIT/);
 assert.match(planSource, /FREE_APPRAISAL_CLIENT_LIMIT/);
 assert.match(workerSource, /BUSINESS_PREPARING/);
+assert.match(workerSource, /\/api\/auth\/config/);
+assert.match(workerSource, /CLERK_PUBLISHABLE_KEY/);
 assert.match(workerSource, /\/api\/sessions\/start/);
 assert.match(workerSource, /\/api\/appraisal-clients/);
 assert.match(workerSource, /\/api\/billing\/subscription/);

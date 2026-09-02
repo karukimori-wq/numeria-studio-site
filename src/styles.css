@@ -21,6 +21,269 @@ textarea {
   font: inherit;
 }
 
+.auth-shell {
+  min-height: 100vh;
+  background:
+    linear-gradient(90deg, #fbfaf7 0 46%, #211b35 46% 100%);
+  color: #171c26;
+}
+
+.auth-panel,
+.auth-loading-panel {
+  width: min(100%, 460px);
+  min-height: 100vh;
+  padding: clamp(32px, 7vw, 72px) clamp(22px, 6vw, 54px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-panel h1 {
+  margin: 0 0 18px;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.auth-panel p {
+  color: #6a6259;
+  line-height: 1.8;
+}
+
+.auth-kicker {
+  margin: 0 0 16px;
+  color: #9f7938;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+}
+
+.auth-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.primary-action,
+.secondary-action,
+.studio-auth-actions button,
+.plan-card button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.primary-action {
+  color: #e6c56e;
+  background: #251d38;
+}
+
+.secondary-action {
+  color: #251d38;
+  background: #efe5cf;
+}
+
+.auth-note {
+  min-height: 48px;
+  margin-top: 18px;
+  border-left: 4px solid #c69d4f;
+  padding: 12px 14px;
+  background: #f7f0df;
+  font-weight: 700;
+}
+
+.auth-loading-panel {
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-mark {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 50%;
+  color: #e6c56e;
+  background: #251d38;
+  font-weight: 900;
+}
+
+.studio-frame-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: #0f0b17;
+}
+
+.studio-auth-bar {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px clamp(14px, 3vw, 28px);
+  color: #fff;
+  background: rgba(17, 11, 28, 0.96);
+}
+
+.studio-auth-bar span {
+  display: block;
+  margin-top: 2px;
+  color: #c5b7d6;
+  font-size: 0.82rem;
+}
+
+.studio-auth-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.studio-auth-actions button {
+  min-height: 40px;
+  color: #251d38;
+  background: #e6c56e;
+}
+
+.studio-auth-actions button + button {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.studio-frame {
+  width: 100%;
+  height: 100%;
+  min-height: calc(100vh - 60px);
+  border: 0;
+  background: #fff;
+}
+
+.billing-dialog {
+  width: min(960px, calc(100vw - 28px));
+  border: 0;
+  border-radius: 14px;
+  padding: 0;
+  color: #171c26;
+  background: #fffaf2;
+}
+
+.billing-dialog::backdrop {
+  background: rgba(15, 11, 23, 0.72);
+}
+
+.billing-panel {
+  padding: clamp(20px, 4vw, 32px);
+}
+
+.billing-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.billing-header h2 {
+  margin: 0;
+}
+
+.icon-button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #e7dcc8;
+  border-radius: 10px;
+  color: #251d38;
+  background: #fff;
+  font-size: 1.4rem;
+}
+
+.usage-summary {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+  border: 1px solid #e7dcc8;
+  border-radius: 10px;
+  padding: 14px;
+  background: #fff;
+}
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.plan-card {
+  border: 1px solid #e7dcc8;
+  border-radius: 10px;
+  padding: 18px;
+  background: #fff;
+}
+
+.plan-card.is-current {
+  border-color: #c69d4f;
+  box-shadow: inset 0 0 0 1px #c69d4f;
+}
+
+.plan-card h3 {
+  margin: 0 0 8px;
+}
+
+.plan-card p {
+  color: #625a52;
+  line-height: 1.6;
+}
+
+.plan-card ul {
+  display: grid;
+  gap: 8px;
+  min-height: 120px;
+  padding-left: 18px;
+}
+
+.plan-card button {
+  width: 100%;
+  color: #fff;
+  background: #251d38;
+}
+
+.plan-card button:disabled {
+  cursor: default;
+  color: #82786e;
+  background: #eee5d7;
+}
+
+@media (max-width: 760px) {
+  .auth-shell {
+    background: #fbfaf7;
+  }
+
+  .auth-panel,
+  .auth-loading-panel {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .studio-auth-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .studio-auth-actions button {
+    flex: 1;
+  }
+
+  .plan-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .app-shell {
   min-height: 100vh;
   padding: 24px;

@@ -52,7 +52,7 @@ function usageResponse(record) {
   return createUsageSnapshot(record);
 }
 
-async function handleApi(request) {
+async function handleApi(request, env = {}) {
   const url = new URL(request.url);
   const body = await readJson(request);
   const { workspaceId, userId } = getScope(request, body);
@@ -60,6 +60,18 @@ async function handleApi(request) {
 
   if (url.pathname === "/api/plans" && request.method === "GET") {
     return json({ status: "success", plans: PLAN_CONFIG });
+  }
+
+  if (url.pathname === "/api/auth/config" && request.method === "GET") {
+    const publishableKey = env.CLERK_PUBLISHABLE_KEY || request.headers.get("X-Clerk-Publishable-Key") || globalThis.CLERK_PUBLISHABLE_KEY;
+    return json({
+      status: publishableKey ? "success" : "warning",
+      authProvider: "clerk",
+      publishableKey: publishableKey || null,
+      message: publishableKey
+        ? "Clerk publishable key is configured."
+        : "CLERK_PUBLISHABLE_KEY is not configured.",
+    });
   }
 
   if (url.pathname === "/api/usage" && request.method === "GET") {
@@ -142,7 +154,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/api/")) {
-      return handleApi(request);
+      return handleApi(request, env);
     }
     return env.ASSETS.fetch(request);
   },
