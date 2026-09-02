@@ -30,7 +30,7 @@ for (const file of requiredFiles) {
 
 const html = readFileSync("index.html", "utf8");
 const originalHtml = readFileSync("original.html", "utf8");
-const legacyHtml = readFileSync("legacy-static/index.html", "utf8");
+const legacyHtml = readFileSync("original.html", "utf8");
 const packageJson = readFileSync("package.json", "utf8");
 const authGateSource = readFileSync("src/auth-gate.js", "utf8");
 const workerSource = readFileSync("src/worker.js", "utf8");
