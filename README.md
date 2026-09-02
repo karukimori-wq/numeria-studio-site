@@ -64,7 +64,7 @@ Setup and operations guide:
 
 Important notes:
 
-- The original ChatGPT Sites public build is retained under `legacy-static/`.
+- The original ChatGPT Sites public build is retained in `original.html` and restored to `/original` during the production build.
 - Runtime APIs, hidden project metadata, deployment permissions, and ChatGPT Sites admin state are not included.
 - Login/signup now uses the Clerk migration scaffold. It becomes active after `VITE_CLERK_PUBLISHABLE_KEY` is configured in GitHub Actions Variables or Secrets.
 - Existing signed-in users default to Free until a protected billing system upgrades them.
