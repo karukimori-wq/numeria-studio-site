@@ -1,10 +1,10 @@
 # Numeria Studio ChatGPT Sites Backup
 
-Backup target:
+Backup source:
 
 - https://numeria-studio.illusionddt.chatgpt.site
 
-Cloudflare migration target:
+Cloudflare production:
 
 - https://numeria-studio-site.karukimori.workers.dev
 
@@ -22,20 +22,29 @@ Contents:
 
 ## Migration status
 
-Ready in this repository:
+Cloudflare migration is deployed.
 
-- Static backup
-- Static verification
-- Static build
-- Wrangler config
-- Cloudflare Production workflow
+Completed:
 
-Waiting for owner-side configuration:
+- Static backup committed to GitHub
+- Static verification passes in GitHub Actions
+- Static build passes in GitHub Actions
+- Wrangler config committed
+- Cloudflare Production workflow committed
+- Cloudflare Workers deployment succeeded
+- Production verification succeeded
 
-- GitHub Actions secret: `CLOUDFLARE_API_TOKEN`
-- GitHub Actions secret: `CLOUDFLARE_ACCOUNT_ID`
+Current Cloudflare URL:
 
-Setup guide:
+- https://numeria-studio-site.karukimori.workers.dev
+
+Operational notes:
+
+- The ChatGPT Sites URL remains the original source backup target.
+- The Cloudflare Workers URL is the migrated static production target.
+- Future Cloudflare redeploys run through the `Cloudflare Production` GitHub Actions workflow.
+
+Setup and operations guide:
 
 - [CLOUDFLARE_SETUP_GUIDE.md](CLOUDFLARE_SETUP_GUIDE.md)
 
@@ -43,7 +52,6 @@ Important notes:
 
 - This is a static public-site backup, not the original editable ChatGPT Sites project source.
 - Runtime APIs, hidden project metadata, deployment permissions, and ChatGPT Sites admin state are not included.
-- Actual Cloudflare deployment requires GitHub Actions secrets for Cloudflare.
 - Do not commit Cloudflare tokens, account secrets, or admin-login secrets to the repository.
 
 Open locally:
