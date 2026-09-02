@@ -29,7 +29,20 @@ jobs:
       - run: npm run build
 
       - name: Require Cloudflare configuration
-        run: test -n "$CLOUDFLARE_API_TOKEN" && test -n "$CLOUDFLARE_ACCOUNT_ID"
+        run: |
+          missing=0
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::Missing GitHub Actions secret: CLOUDFLARE_API_TOKEN"
+            missing=1
+          fi
+          if [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::Missing GitHub Actions secret: CLOUDFLARE_ACCOUNT_ID"
+            missing=1
+          fi
+          if [ "$missing" -ne 0 ]; then
+            echo "Add the missing secrets at: https://github.com/karukimori-wq/numeria-studio-site/settings/secrets/actions"
+            exit 1
+          fi
 
       - name: Deploy Worker static assets
         run: npx wrangler deploy
