@@ -70,7 +70,7 @@ function renderSignedOut(message) {
 
 function renderSignedIn() {
   const user = appState.clerk.user;
-  const email = user?.primaryEmailAddress?.emailAddress || "Clerk認証済み";
+  const email = user?.primaryEmailAddress?.emailAddress || "ログイン済み";
   els.email.textContent = email;
   setVisible("signed-in");
   loadUsage().catch(() => {});
@@ -138,7 +138,7 @@ async function init() {
   setVisible("loading");
   const publishableKey = await loadAuthConfig();
   if (!publishableKey) {
-    renderSignedOut("CloudflareのCLERK_PUBLISHABLE_KEY設定後にログインできます。");
+    renderSignedOut("ログイン設定が未完了です。公開キーの設定後にログインできます。");
     return;
   }
 

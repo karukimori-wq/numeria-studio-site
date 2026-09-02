@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "test": "node scripts/verify-static-site.mjs",
-    "build": "vite build",
+    "build": "vite build && node scripts/restore-original-site.mjs",
     "dev": "vite --host 0.0.0.0",
     "smoke": "npm test && npm run build"
   },

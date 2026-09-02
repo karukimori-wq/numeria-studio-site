@@ -11,6 +11,7 @@ const requiredFiles = [
   "src/plan-config.js",
   "src/worker.js",
   "vite.config.mjs",
+  "scripts/restore-original-site.mjs",
   "favicon.svg",
   "legacy-static/README.md",
   "assets/index-CEGe-9Xe.css",
@@ -29,6 +30,8 @@ for (const file of requiredFiles) {
 
 const html = readFileSync("index.html", "utf8");
 const originalHtml = readFileSync("original.html", "utf8");
+const legacyHtml = readFileSync("legacy-static/index.html", "utf8");
+const packageJson = readFileSync("package.json", "utf8");
 const appSource = readFileSync("src/main.jsx", "utf8");
 const authGateSource = readFileSync("src/auth-gate.js", "utf8");
 const workerSource = readFileSync("src/worker.js", "utf8");
@@ -42,8 +45,11 @@ assert.match(html, /Numeria Studio/);
 assert.match(html, /\/src\/auth-gate\.js/);
 assert.match(html, /\/original\.html/);
 assert.match(html, /プラン・請求/);
+assert.doesNotMatch(html, /Clerk/);
 assert.match(originalHtml, /Numeria Studio｜数秘術鑑定書作成/);
 assert.match(originalHtml, /数秘術鑑定を10分で/);
+assert.match(legacyHtml, /assets\/numeria-app-Cckhajir\.js/);
+assert.match(packageJson, /restore-original-site\.mjs/);
 assert.doesNotMatch(html, /https:\/\/numeria-studio\.karukimori\.workers\.dev/);
 assert.match(authGateSource, /@clerk\/clerk-js/);
 assert.match(authGateSource, /\/api\/auth\/config/);
