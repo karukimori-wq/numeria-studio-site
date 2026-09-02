@@ -49,12 +49,26 @@ jobs:
 
       - name: Verify production
         run: |
-          sleep 5
-          curl --fail --silent --show-error "$PRODUCTION_URL" | tee /tmp/index.html
-          node - <<'NODE'
+          for path in "" "/index.html"; do
+            url="$PRODUCTION_URL$path"
+            echo "Checking $url"
+            for attempt in $(seq 1 18); do
+              status=$(curl --silent --show-error --location --output /tmp/index.html --write-out "%{http_code}" "$url" || true)
+              echo "Attempt $attempt for $url returned HTTP $status"
+              if [ "$status" = "200" ] && node - <<'NODE'
           const fs = require("node:fs");
           const html = fs.readFileSync("/tmp/index.html", "utf8");
           if (!html.includes("Numeria Studio")) {
-            throw new Error("Production page did not include Numeria Studio marker");
+            process.exit(1);
           }
           NODE
+              then
+                echo "Production page verified at $url"
+                exit 0
+              fi
+              sleep 5
+            done
+          done
+
+          echo "::error::Production page did not include Numeria Studio marker at $PRODUCTION_URL or $PRODUCTION_URL/index.html"
+          exit 1
