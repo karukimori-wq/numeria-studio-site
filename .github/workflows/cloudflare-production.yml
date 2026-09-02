@@ -55,7 +55,7 @@ jobs:
           fi
 
       - name: Deploy Worker static assets
-        run: npx wrangler deploy
+        run: npx wrangler deploy --var VITE_CLERK_PUBLISHABLE_KEY:"$VITE_CLERK_PUBLISHABLE_KEY"
 
       - name: Verify production
         run: |

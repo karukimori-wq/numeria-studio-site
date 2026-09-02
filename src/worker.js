@@ -63,14 +63,18 @@ async function handleApi(request, env = {}) {
   }
 
   if (url.pathname === "/api/auth/config" && request.method === "GET") {
-    const publishableKey = env.CLERK_PUBLISHABLE_KEY || request.headers.get("X-Clerk-Publishable-Key") || globalThis.CLERK_PUBLISHABLE_KEY;
+    const publishableKey = env.CLERK_PUBLISHABLE_KEY
+      || env.VITE_CLERK_PUBLISHABLE_KEY
+      || request.headers.get("X-Clerk-Publishable-Key")
+      || globalThis.CLERK_PUBLISHABLE_KEY
+      || globalThis.VITE_CLERK_PUBLISHABLE_KEY;
     return json({
       status: publishableKey ? "success" : "warning",
       authProvider: "clerk",
       publishableKey: publishableKey || null,
       message: publishableKey
-        ? "Clerk publishable key is configured."
-        : "CLERK_PUBLISHABLE_KEY is not configured.",
+        ? "Login is configured."
+        : "ログイン設定がまだ本番環境に反映されていません。",
     });
   }
 
