@@ -157,6 +157,12 @@ function acceptsHtml(request) {
   return accept.includes("text/html") || accept.includes("*/*");
 }
 
+function isAppRouteFallback(request, url) {
+  if (request.method !== "GET" || !acceptsHtml(request)) return false;
+  if (url.pathname === "/" || url.pathname === "/original.html" || url.pathname === "/original") return false;
+  return !url.pathname.split("/").pop().includes(".");
+}
+
 async function clerkBrowserScriptResponse(request, env = {}) {
   const publishableKey = getClerkPublishableKey(request, env);
   const frontendOrigin = getClerkFrontendOrigin(publishableKey);
@@ -316,12 +322,17 @@ export default {
     if (url.pathname.startsWith("/api/")) {
       return handleApi(request, env);
     }
+    if (isAppRouteFallback(request, url)) {
+      const fallbackUrl = new URL("/original.html", request.url);
+      return env.ASSETS.fetch(new Request(fallbackUrl.toString(), request));
+    }
+
     const response = await env.ASSETS.fetch(request);
     if (response.status !== 404 || request.method !== "GET" || !acceptsHtml(request)) {
       return response;
     }
 
     const fallbackUrl = new URL("/original.html", request.url);
-    return env.ASSETS.fetch(new Request(fallbackUrl, request));
+    return env.ASSETS.fetch(new Request(fallbackUrl.toString(), request));
   },
 };
