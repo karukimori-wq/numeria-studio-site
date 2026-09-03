@@ -62,6 +62,7 @@ assert.match(originalHtml, /openSignIn/);
 assert.match(originalHtml, /openSignUp/);
 assert.match(originalHtml, /initialValues:email/);
 assert.match(originalHtml, /initialValues:identifier/);
+assert.match(originalHtml, /data-clerk-publishable-key/);
 assert.match(legacyHtml, /assets\/numeria-app-Cckhajir\.js/);
 assert.match(numeriaAppSource, /NumeriaInstallAuthBridge\?\.\(X\)/);
 assert.match(packageJson, /restore-original-site\.mjs/);
