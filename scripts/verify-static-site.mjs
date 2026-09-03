@@ -63,6 +63,8 @@ assert.match(originalHtml, /openSignUp/);
 assert.match(originalHtml, /initialValues:email/);
 assert.match(originalHtml, /initialValues:identifier/);
 assert.match(originalHtml, /data-clerk-publishable-key/);
+assert.match(originalHtml, /typeof window\.Clerk==="function"/);
+assert.doesNotMatch(originalHtml, /;window\.Clerk=new window\.Clerk\(config\.publishableKey\)\}await/);
 assert.match(legacyHtml, /assets\/numeria-app-Cckhajir\.js/);
 assert.match(numeriaAppSource, /NumeriaInstallAuthBridge\?\.\(X\)/);
 assert.match(packageJson, /restore-original-site\.mjs/);
