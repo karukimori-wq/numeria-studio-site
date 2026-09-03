@@ -130,6 +130,47 @@ function contractsStatusResponse() {
   };
 }
 
+function getClerkPublishableKey(request, env = {}) {
+  return env.CLERK_PUBLISHABLE_KEY
+    || env.VITE_CLERK_PUBLISHABLE_KEY
+    || request.headers.get("X-Clerk-Publishable-Key")
+    || globalThis.CLERK_PUBLISHABLE_KEY
+    || globalThis.VITE_CLERK_PUBLISHABLE_KEY
+    || "";
+}
+
+function getClerkFrontendOrigin(publishableKey) {
+  const encodedFrontendApi = publishableKey
+    .replace(/^pk_(test|live)_/, "")
+    .replace(/\$$/, "");
+  try {
+    const decoded = atob(encodedFrontendApi).replace(/\$$/, "");
+    const url = decoded.startsWith("http") ? new URL(decoded) : new URL(`https://${decoded}`);
+    return url.origin;
+  } catch {
+    return null;
+  }
+}
+
+async function clerkBrowserScriptResponse(request, env = {}) {
+  const publishableKey = getClerkPublishableKey(request, env);
+  const frontendOrigin = getClerkFrontendOrigin(publishableKey);
+  if (!frontendOrigin) {
+    return new Response("Login settings are not ready.", {
+      status: 503,
+      headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
+    });
+  }
+  const upstream = await fetch(`${frontendOrigin}/npm/@clerk/clerk-js@6/dist/clerk.browser.js`);
+  return new Response(upstream.body, {
+    status: upstream.status,
+    headers: {
+      "Content-Type": "application/javascript; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+    },
+  });
+}
+
 async function handleApi(request, env = {}) {
   const url = new URL(request.url);
   const body = await readJson(request);
@@ -141,11 +182,7 @@ async function handleApi(request, env = {}) {
   }
 
   if (url.pathname === "/api/auth/config" && request.method === "GET") {
-    const publishableKey = env.CLERK_PUBLISHABLE_KEY
-      || env.VITE_CLERK_PUBLISHABLE_KEY
-      || request.headers.get("X-Clerk-Publishable-Key")
-      || globalThis.CLERK_PUBLISHABLE_KEY
-      || globalThis.VITE_CLERK_PUBLISHABLE_KEY;
+    const publishableKey = getClerkPublishableKey(request, env);
     return json({
       status: publishableKey ? "success" : "warning",
       authProvider: "clerk",
@@ -243,6 +280,9 @@ export default {
     }
     if (url.pathname === "/contracts/status") {
       return json(contractsStatusResponse());
+    }
+    if (url.pathname === "/clerk.browser.js" && request.method === "GET") {
+      return clerkBrowserScriptResponse(request, env);
     }
     if (url.pathname.startsWith("/api/")) {
       return handleApi(request, env);
