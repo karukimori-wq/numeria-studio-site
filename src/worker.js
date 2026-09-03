@@ -281,7 +281,7 @@ export default {
     if (url.pathname === "/contracts/status") {
       return json(contractsStatusResponse());
     }
-    if (url.pathname === "/clerk.browser.js" && request.method === "GET") {
+    if (url.pathname === "/clerk.browser.js" && (request.method === "GET" || request.method === "HEAD")) {
       return clerkBrowserScriptResponse(request, env);
     }
     if (url.pathname.startsWith("/api/")) {
