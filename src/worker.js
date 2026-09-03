@@ -152,6 +152,11 @@ function getClerkFrontendOrigin(publishableKey) {
   }
 }
 
+function acceptsHtml(request) {
+  const accept = request.headers.get("Accept") || "";
+  return accept.includes("text/html") || accept.includes("*/*");
+}
+
 async function clerkBrowserScriptResponse(request, env = {}) {
   const publishableKey = getClerkPublishableKey(request, env);
   const frontendOrigin = getClerkFrontendOrigin(publishableKey);
@@ -311,6 +316,12 @@ export default {
     if (url.pathname.startsWith("/api/")) {
       return handleApi(request, env);
     }
-    return env.ASSETS.fetch(request);
+    const response = await env.ASSETS.fetch(request);
+    if (response.status !== 404 || request.method !== "GET" || !acceptsHtml(request)) {
+      return response;
+    }
+
+    const fallbackUrl = new URL("/original.html", request.url);
+    return env.ASSETS.fetch(new Request(fallbackUrl, request));
   },
 };
