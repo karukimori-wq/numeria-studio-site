@@ -171,6 +171,26 @@ async function clerkBrowserScriptResponse(request, env = {}) {
   });
 }
 
+async function clerkBrowserAssetResponse(request, env = {}) {
+  const url = new URL(request.url);
+  const publishableKey = getClerkPublishableKey(request, env);
+  const frontendOrigin = getClerkFrontendOrigin(publishableKey);
+  if (!frontendOrigin) {
+    return new Response("Login settings are not ready.", {
+      status: 503,
+      headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
+    });
+  }
+  const upstream = await fetch(`${frontendOrigin}/npm/@clerk/clerk-js@6/dist${url.pathname}`);
+  return new Response(upstream.body, {
+    status: upstream.status,
+    headers: {
+      "Content-Type": "application/javascript; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+    },
+  });
+}
+
 async function handleApi(request, env = {}) {
   const url = new URL(request.url);
   const body = await readJson(request);
@@ -283,6 +303,10 @@ export default {
     }
     if (url.pathname === "/clerk.browser.js" && (request.method === "GET" || request.method === "HEAD")) {
       return clerkBrowserScriptResponse(request, env);
+    }
+    if (/^\/[A-Za-z0-9_-]+_clerk\.browser_[A-Za-z0-9]+_[0-9.]+\.js$/.test(url.pathname)
+      && (request.method === "GET" || request.method === "HEAD")) {
+      return clerkBrowserAssetResponse(request, env);
     }
     if (url.pathname.startsWith("/api/")) {
       return handleApi(request, env);
