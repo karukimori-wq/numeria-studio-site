@@ -87,6 +87,10 @@ Business integrations should pass reference IDs only.
 - Plan IDs: `free`, `pro`, `business`
 - Existing users default to Free.
 - Entitlements are defined in `src/plan-config.js`.
+- Release monitoring endpoints:
+  - `GET /health`
+  - `GET /version`
+  - `GET /contracts/status`
 - Pricing labels are environment-driven:
   - `VITE_PRICE_FREE_LABEL`
   - `VITE_PRICE_PRO_LABEL`

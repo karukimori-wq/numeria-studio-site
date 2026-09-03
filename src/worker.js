@@ -1,5 +1,8 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 
+const APP_VERSION = "0.3.1-release-monitoring";
+const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
+
 const runtimeStore = globalThis.__numeriaUsageStore || new Map();
 globalThis.__numeriaUsageStore = runtimeStore;
 
@@ -50,6 +53,81 @@ async function readJson(request) {
 
 function usageResponse(record) {
   return createUsageSnapshot(record);
+}
+
+function healthResponse() {
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    service: "numeria-studio-site",
+    version: APP_VERSION,
+    productionUrl: "https://numeria-studio-site.karukimori.workers.dev",
+    checks: {
+      worker: "success",
+      staticAssets: "configured",
+      authProvider: "clerk",
+      planContract: PLAN_CONTRACT_VERSION,
+    },
+  };
+}
+
+function versionResponse() {
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    name: "numeria-studio-site",
+    version: APP_VERSION,
+    planContractVersion: PLAN_CONTRACT_VERSION,
+    deploymentTarget: "cloudflare-workers-static-assets",
+  };
+}
+
+function contractsStatusResponse() {
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    contractVersion: PLAN_CONTRACT_VERSION,
+    identityMode: "workspaceId+userId",
+    plans: {
+      free: {
+        available: true,
+        monthlyAppraisals: PLAN_CONFIG.free.entitlements.monthlyAppraisals,
+        appraisalClients: PLAN_CONFIG.free.entitlements.appraisalClients,
+      },
+      pro: {
+        available: true,
+        monthlyAppraisals: "unlimited",
+        appraisalClients: "unlimited",
+      },
+      business: {
+        available: false,
+        purchasable: false,
+        status: "preparing",
+      },
+    },
+    sourceOfTruth: {
+      numeriaOwns: [
+        "Session",
+        "Report",
+        "CalculationResult",
+        "NumeriaSnapshot",
+        "AppraisalClientSnapshot",
+      ],
+      externalReferencesOnly: [
+        "Customer",
+        "Reservation",
+        "Payment",
+        "Sales",
+        "Conversation",
+        "Message",
+        "AIActivity",
+        "AIUsage",
+      ],
+    },
+    events: {
+      sessionStarted: "studio.session.started.v1",
+    },
+  };
 }
 
 async function handleApi(request, env = {}) {
@@ -157,6 +235,15 @@ async function handleApi(request, env = {}) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/health") {
+      return json(healthResponse());
+    }
+    if (url.pathname === "/version") {
+      return json(versionResponse());
+    }
+    if (url.pathname === "/contracts/status") {
+      return json(contractsStatusResponse());
+    }
     if (url.pathname.startsWith("/api/")) {
       return handleApi(request, env);
     }

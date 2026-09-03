@@ -115,10 +115,10 @@ function LoadingPanel() {
       <div className="hero-panel">
         <div className="icon-pill">
           <Lock size={18} />
-          Clerk Auth
+          ログイン
         </div>
-        <h2>認証状態を確認しています</h2>
-        <p>Clerkのセッションを読み込んでいます。</p>
+        <h2>ログイン状態を確認しています</h2>
+        <p>セッションを読み込んでいます。</p>
       </div>
       <StatusPanel />
     </section>
@@ -131,7 +131,7 @@ function SignedOutHome() {
       <div className="hero-panel">
         <div className="icon-pill">
           <Lock size={18} />
-          Clerk Auth
+          ログイン
         </div>
         <h2>ログインすると利用量とプランを確認できます</h2>
         <p>
@@ -263,7 +263,7 @@ function SignedInWorkspace() {
               current={usage.appraisalClients}
               limit={usage.entitlements.appraisalClients}
             />
-            <StatCard label="Identity" value="workspaceId + userId" />
+            <StatCard label="利用者" value="ログイン中" />
           </div>
           {notice && <Notice {...notice} />}
           <div className="action-row">
@@ -310,7 +310,7 @@ function SignedInWorkspace() {
             </div>
           </dl>
           <p className="note">
-            MVP表示では `illusionddt@gmail.com` を管理者候補として扱います。保護された管理機能はWorker側でClerk JWTを検証する段階で確定します。
+            MVP表示では登録済みの管理者メールをもとに表示します。保護された管理機能はサーバー側で確定します。
           </p>
         </div>
       </section>
@@ -523,7 +523,7 @@ function StatusPanel() {
       <h2>リリース状態</h2>
       <ul>
         <li><CheckCircle2 size={18} />Cloudflare Static Assets対応</li>
-        <li><CheckCircle2 size={18} />Clerk認証入口を追加</li>
+        <li><CheckCircle2 size={18} />ログイン入口を追加</li>
         <li><CheckCircle2 size={18} />Free / Pro Entitlement追加</li>
         <li><CheckCircle2 size={18} />Feedback Hub送信口を準備</li>
       </ul>
@@ -567,30 +567,29 @@ function ClerkSetupScreen() {
     <main className="setup-screen">
       <div className="setup-card">
         <p className="eyebrow">Numeria Studio</p>
-        <h1>Clerkの公開キーを設定してください</h1>
+        <h1>ログイン設定を反映してください</h1>
         <p>
-          `VITE_CLERK_PUBLISHABLE_KEY` が未設定です。作成済みの Clerk アプリ
-          「AITEC Apps」の Development 環境から公開キーを取得し、Cloudflare の本番ビルド環境へ
-          登録するとログイン画面が有効になります。
+          ログインに必要な公開設定が未反映です。設定が本番ビルド環境へ
+          登録されるとログイン画面が有効になります。
         </p>
         <dl className="setup-list">
           <div>
-            <dt>Clerk App ID</dt>
+            <dt>アプリID</dt>
             <dd>{clerkApplicationId}</dd>
           </div>
           <div>
-            <dt>GitHub / Cloudflare variable</dt>
+            <dt>本番ビルド設定</dt>
             <dd>VITE_CLERK_PUBLISHABLE_KEY</dd>
           </div>
           <div>
-            <dt>Admin email variable</dt>
+            <dt>管理者メール設定</dt>
             <dd>VITE_ADMIN_EMAILS=illusionddt@gmail.com</dd>
           </div>
         </dl>
         <code>VITE_CLERK_PUBLISHABLE_KEY=pk_test_...</code>
         <p className="warning-note">
-          `CLERK_SECRET_KEY` はチャット・GitHub・フロントエンドへ入れないでください。Worker側でJWT検証を
-          追加する段階で、Cloudflare Workers Secretとして登録します。
+          秘密キーはチャット・GitHub・フロントエンドへ入れないでください。サーバー側の確認を
+          追加する段階で、保護された秘密値として登録します。
         </p>
       </div>
     </main>

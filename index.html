@@ -12,60 +12,12 @@
     <title>Numeria Studio｜数秘術鑑定書作成</title>
   </head>
   <body>
-    <div class="auth-shell" data-auth-state="loading">
-      <section class="auth-panel" id="signed-out-panel" hidden>
-        <p class="auth-kicker">NUMERIA STUDIO</p>
-        <h1>ログインして鑑定画面へ</h1>
-        <p>
-          ログイン後、元々のNumeria Studio画面をそのまま開きます。
-          プラン変更は画面右上のメニューから行えます。
-        </p>
-        <div class="auth-actions">
-          <button class="primary-action" id="sign-in-button" type="button">ログイン</button>
-          <button class="secondary-action" id="sign-up-button" type="button">新規登録</button>
-        </div>
-        <p class="auth-note">既存ユーザーはFreeプランから開始します。</p>
-      </section>
-
-      <section class="auth-loading-panel" id="loading-panel">
-        <span class="brand-mark">N</span>
-        <p>Numeria Studioを準備しています…</p>
-      </section>
-
-      <section class="studio-frame-shell" id="signed-in-panel" hidden>
-        <header class="studio-auth-bar">
-          <div>
-            <strong>Numeria Studio</strong>
-            <span id="signed-in-email">ログイン済み</span>
-          </div>
-          <nav class="studio-auth-actions" aria-label="アカウント操作">
-            <button id="open-plan-menu" type="button">プラン・請求</button>
-            <button id="sign-out-button" type="button">ログアウト</button>
-          </nav>
-        </header>
-        <iframe
-          class="studio-frame"
-          id="studio-frame"
-          title="Numeria Studio"
-          src="/original.html"
-        ></iframe>
-      </section>
+    <div class="auth-loading">
+      <span class="brand-mark">N</span>
+      <p>Numeria Studioを準備しています…</p>
     </div>
-
-    <dialog class="billing-dialog" id="billing-dialog">
-      <form method="dialog" class="billing-panel">
-        <div class="billing-header">
-          <div>
-            <p class="auth-kicker">PLAN</p>
-            <h2>プラン・請求</h2>
-          </div>
-          <button class="icon-button" value="close" aria-label="閉じる">×</button>
-        </div>
-        <div class="usage-summary" id="usage-summary">利用状況を読み込んでいます…</div>
-        <div class="plan-grid" id="plan-grid"></div>
-      </form>
-    </dialog>
-
-    <script type="module" src="/src/auth-gate.js"></script>
+    <script>
+      window.location.replace("/original.html");
+    </script>
   </body>
 </html>

@@ -24,18 +24,33 @@ textarea {
 .auth-shell {
   min-height: 100vh;
   background:
-    linear-gradient(90deg, #fbfaf7 0 46%, #211b35 46% 100%);
+    radial-gradient(circle at 80% 18%, rgba(230, 197, 110, 0.2), transparent 24rem),
+    linear-gradient(135deg, #fbfaf7 0%, #f5ead7 48%, #211b35 48%, #171021 100%);
   color: #171c26;
 }
 
 .auth-panel,
 .auth-loading-panel {
-  width: min(100%, 460px);
   min-height: 100vh;
-  padding: clamp(32px, 7vw, 72px) clamp(22px, 6vw, 54px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  padding: clamp(20px, 5vw, 56px);
+}
+
+.auth-card {
+  width: min(100%, 520px);
+  border: 1px solid rgba(198, 157, 79, 0.28);
+  border-radius: 8px;
+  padding: clamp(24px, 5vw, 44px);
+  background: rgba(255, 252, 246, 0.96);
+  box-shadow: 0 24px 60px rgba(37, 29, 56, 0.18);
+}
+
+.auth-card.compact {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
 }
 
 .auth-panel h1 {
@@ -60,6 +75,7 @@ textarea {
 
 .auth-actions {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   margin-top: 24px;
 }
@@ -75,6 +91,7 @@ textarea {
   cursor: pointer;
   font: inherit;
   font-weight: 800;
+  touch-action: manipulation;
 }
 
 .primary-action {
@@ -97,8 +114,7 @@ textarea {
 }
 
 .auth-loading-panel {
-  align-items: center;
-  gap: 16px;
+  color: #171c26;
 }
 
 .brand-mark {
@@ -261,13 +277,21 @@ textarea {
 
 @media (max-width: 760px) {
   .auth-shell {
-    background: #fbfaf7;
+    background: linear-gradient(180deg, #fbfaf7 0%, #f5ead7 100%);
   }
 
   .auth-panel,
   .auth-loading-panel {
-    width: 100%;
     min-height: 100vh;
+    place-items: stretch;
+  }
+
+  .auth-card {
+    align-self: center;
+  }
+
+  .auth-actions {
+    grid-template-columns: 1fr;
   }
 
   .studio-auth-bar {

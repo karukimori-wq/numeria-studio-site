@@ -4,6 +4,7 @@ const appState = {
   clerk: null,
   usage: null,
   publishableKeyReady: false,
+  authReady: false,
 };
 
 const els = {
@@ -138,7 +139,7 @@ async function init() {
   setVisible("loading");
   const publishableKey = await loadAuthConfig();
   if (!publishableKey) {
-    renderSignedOut("ログイン設定が未完了です。公開キーの設定後にログインできます。");
+    renderSignedOut("ログイン設定の反映待ちです。設定が反映されるとログインできます。");
     return;
   }
 
@@ -146,6 +147,7 @@ async function init() {
   const { Clerk } = await import(/* @vite-ignore */ "https://esm.sh/@clerk/clerk-js@6");
   appState.clerk = new Clerk(publishableKey);
   await appState.clerk.load();
+  appState.authReady = true;
 
   if (appState.clerk.user) {
     renderSignedIn();
@@ -155,12 +157,18 @@ async function init() {
 }
 
 els.signIn.addEventListener("click", () => {
-  if (!appState.publishableKeyReady) return;
+  if (!appState.authReady) {
+    renderSignedOut("ログイン準備中です。少し待ってからもう一度お試しください。");
+    return;
+  }
   appState.clerk.openSignIn({ afterSignInUrl: "/" });
 });
 
 els.signUp.addEventListener("click", () => {
-  if (!appState.publishableKeyReady) return;
+  if (!appState.authReady) {
+    renderSignedOut("新規登録の準備中です。少し待ってからもう一度お試しください。");
+    return;
+  }
   appState.clerk.openSignUp({ afterSignUpUrl: "/" });
 });
 
@@ -188,5 +196,6 @@ els.planGrid.addEventListener("click", async (event) => {
 });
 
 init().catch((error) => {
-  renderSignedOut(`ログイン準備に失敗しました: ${error.message}`);
+  console.error(error);
+  renderSignedOut("ログイン準備に失敗しました。時間をおいて再読み込みしてください。");
 });
