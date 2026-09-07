@@ -162,6 +162,21 @@ function SignedInWorkspace() {
   const [usage, setUsage] = useState(createUsageSnapshot());
   const [notice, setNotice] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentCase, setCurrentCase] = useState(createEmptyCase);
+
+  function createEmptyCase() {
+    return {
+      id: `case_${Date.now()}`,
+      clientName: "",
+      question: "",
+      notes: "",
+      resultSummary: "",
+    };
+  }
+
+  function updateCurrentCase(field, value) {
+    setCurrentCase((current) => ({ ...current, [field]: value }));
+  }
 
   async function refreshUsage() {
     setLoading(true);
@@ -185,14 +200,29 @@ function SignedInWorkspace() {
     refreshUsage();
   }, [scope]);
 
+  useEffect(() => {
+    if (!usage.activeDraft) return;
+    setCurrentCase((current) => ({
+      ...current,
+      ...usage.activeDraft,
+      id: usage.activeDraft.id || current.id,
+    }));
+  }, [usage.activeDraft]);
+
   async function startSession() {
     try {
-      const response = await apiRequest("/api/sessions/start", { method: "POST", scope });
+      const nextCase = createEmptyCase();
+      setCurrentCase(nextCase);
+      const response = await apiRequest("/api/sessions/start", {
+        method: "POST",
+        scope,
+        body: { sessionId: nextCase.id },
+      });
       setUsage(response.usage);
       setNotice({
         type: "success",
         title: "鑑定セッションを開始しました",
-        body: "この時点では月20件の鑑定数には加算されません。途中保存はFreeで1案件までです。",
+        body: "この時点では月20件の鑑定数にも未完了案件数にも加算されません。途中保存した時点で未完了1案件として扱います。",
       });
     } catch (error) {
       setNotice(limitNotice(error.data));
@@ -205,13 +235,13 @@ function SignedInWorkspace() {
       const response = await apiRequest("/api/appraisals/save-draft", {
         method: "POST",
         scope,
-        body: { appraisalId: `draft_${Date.now()}` },
+        body: currentCase,
       });
       setUsage(response.usage);
       setNotice({
         type: "success",
         title: "途中保存しました",
-        body: "Freeプランでは未完了案件を1件だけ保存できます。別案件を保存するには、現在の案件を完成させてください。",
+        body: `${response.activeDraft?.clientName || "この案件"}を未完了案件として保存しました。Freeでは別案件を保存する前に、この案件を完成させてください。`,
       });
     } catch (error) {
       setNotice(limitNotice(error.data));
@@ -224,13 +254,14 @@ function SignedInWorkspace() {
       const response = await apiRequest("/api/appraisals/complete", {
         method: "POST",
         scope,
-        body: { appraisalId: `completed_${Date.now()}` },
+        body: currentCase,
       });
       setUsage(response.usage);
+      setCurrentCase(createEmptyCase());
       setNotice({
         type: "success",
         title: "鑑定を完成として記録しました",
-        body: `今月の鑑定数は ${formatLimit(response.usage.monthlyAppraisals, response.usage.entitlements.monthlyAppraisals)} です。Freeでは直近3件の鑑定内容だけ表示できます。`,
+        body: `${response.appraisal?.clientName || "案件"}を完成しました。今月の鑑定数は ${formatLimit(response.usage.monthlyAppraisals, response.usage.entitlements.monthlyAppraisals)} です。Freeでは直近3件の鑑定内容だけ表示できます。`,
       });
     } catch (error) {
       setNotice(limitNotice(error.data));
@@ -260,6 +291,7 @@ function SignedInWorkspace() {
 
   const completeDecision = evaluateUsageLimit(usage, "complete_appraisal");
   const draftDecision = evaluateUsageLimit(usage, "save_in_progress_appraisal");
+  const canSaveDraft = draftDecision.allowed || usage.activeDraft?.id === currentCase.id;
 
   return (
     <>
@@ -294,11 +326,16 @@ function SignedInWorkspace() {
             />
           </div>
           {notice && <Notice {...notice} />}
+          <AppraisalCaseForm
+            currentCase={currentCase}
+            usage={usage}
+            onChange={updateCurrentCase}
+          />
           <div className="action-row">
             <button className="button secondary" onClick={startSession}>
-              セッションを始める
+              新しい案件を始める
             </button>
-            <button className="button secondary" onClick={saveDraft} disabled={!draftDecision.allowed}>
+            <button className="button secondary" onClick={saveDraft} disabled={!canSaveDraft}>
               途中保存
             </button>
             <button className="button primary" onClick={completeAppraisal} disabled={!completeDecision.allowed}>
@@ -344,10 +381,99 @@ function SignedInWorkspace() {
             MVP表示では登録済みの管理者メールをもとに表示します。保護された管理機能はサーバー側で確定します。
           </p>
         </div>
+
+        <AppraisalHistoryPanel usage={usage} />
       </section>
 
       <FeedbackWidget workspaceId={workspaceId} userId={userId} screenName="Free Pro Dashboard" />
     </>
+  );
+}
+
+function AppraisalCaseForm({ currentCase, usage, onChange }) {
+  return (
+    <div className="case-editor">
+      <div className="case-editor-heading">
+        <div>
+          <p className="eyebrow">Current Case</p>
+          <h3>鑑定案件</h3>
+        </div>
+        {usage.activeDraft && <span className="draft-pill">保存中: {usage.activeDraft.clientName || "未設定"}</span>}
+      </div>
+      <label>
+        依頼者名
+        <input
+          value={currentCase.clientName}
+          onChange={(event) => onChange("clientName", event.target.value)}
+          placeholder="例: Aさん"
+        />
+      </label>
+      <label>
+        相談内容
+        <textarea
+          value={currentCase.question}
+          onChange={(event) => onChange("question", event.target.value)}
+          placeholder="今回相談されたテーマを入力"
+          rows={3}
+        />
+      </label>
+      <label>
+        鑑定メモ
+        <textarea
+          value={currentCase.notes}
+          onChange={(event) => onChange("notes", event.target.value)}
+          placeholder="鑑定中のメモ"
+          rows={3}
+        />
+      </label>
+      <label>
+        鑑定結果
+        <textarea
+          value={currentCase.resultSummary}
+          onChange={(event) => onChange("resultSummary", event.target.value)}
+          placeholder="鑑定完成時に保存する要約"
+          rows={3}
+        />
+      </label>
+    </div>
+  );
+}
+
+function AppraisalHistoryPanel({ usage }) {
+  const visible = usage.visibleCompletedAppraisals || [];
+  const lockedCount = usage.lockedCompletedAppraisalIds?.length || 0;
+
+  return (
+    <div className="work-panel history-panel">
+      <div className="panel-heading">
+        <FileText size={20} />
+        <div>
+          <p className="eyebrow">History</p>
+          <h2>鑑定履歴</h2>
+        </div>
+      </div>
+      <p className="note">
+        Freeでは完成順の直近3件だけ鑑定内容を表示します。古い案件は依頼者プロフィールと過去依頼件数だけを扱う想定です。
+      </p>
+      {visible.length === 0 && <div className="empty-state">まだ完成した鑑定はありません。</div>}
+      <div className="history-list">
+        {visible.map((appraisal) => (
+          <article className="history-item" key={appraisal.id}>
+            <div>
+              <strong>{appraisal.clientName || "未設定"}</strong>
+              <span>{new Date(appraisal.completedAt).toLocaleString("ja-JP")}</span>
+            </div>
+            <p>{appraisal.question || "相談内容未入力"}</p>
+            <p>{appraisal.resultSummary || "鑑定結果未入力"}</p>
+          </article>
+        ))}
+      </div>
+      {lockedCount > 0 && (
+        <div className="locked-history">
+          {lockedCount}件の古い鑑定内容はFreeの表示範囲外です。
+        </div>
+      )}
+    </div>
   );
 }
 
