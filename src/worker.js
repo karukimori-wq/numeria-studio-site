@@ -2,6 +2,7 @@ import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, normalizePlan
 
 const APP_VERSION = "0.3.1-release-monitoring";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
+const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
 
 const runtimeStore = globalThis.__numeriaUsageStore || new Map();
 globalThis.__numeriaUsageStore = runtimeStore;
