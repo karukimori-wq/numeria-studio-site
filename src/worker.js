@@ -235,6 +235,10 @@ async function handleApi(request, env = {}) {
     });
   }
 
+  if (url.pathname === "/api/admin/status" && ["GET", "POST"].includes(request.method)) {
+    return adminStatusResponse(request, env, body);
+  }
+
   if (url.pathname === "/api/usage" && request.method === "GET") {
     return json({ status: "success", workspaceId, userId, usage: usageResponse(record), historyPolicy: { visibleCompletedAppraisals: PLAN_CONFIG.free.entitlements.viewableCompletedAppraisals, lockedDetailsAreRetained: true } });
   }
