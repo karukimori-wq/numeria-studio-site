@@ -135,8 +135,8 @@ function SignedOutHome() {
         </div>
         <h2>ログインすると利用量とプランを確認できます</h2>
         <p>
-          Freeでは月20件までの鑑定と3名までの鑑定対象者管理を無料で試せます。
-          Proでは件数を気にせず、PDF出力やブランド入りレポートも使える設計です。
+          Freeでは月20件まで鑑定でき、鑑定完成ボタンを押した時点で1件として数えます。
+          途中保存は1案件まで、鑑定対象者のプロフィール登録とPDF出力は無料で使えます。
         </p>
         <div className="hero-actions">
           <SignInButton mode="modal">
@@ -192,7 +192,7 @@ function SignedInWorkspace() {
       setNotice({
         type: "success",
         title: "鑑定セッションを開始しました",
-        body: `今月の鑑定数は ${formatLimit(response.usage.monthlyAppraisals, response.usage.entitlements.monthlyAppraisals)} です。`,
+        body: "この時点では月20件の鑑定数には加算されません。途中保存はFreeで1案件までです。",
       });
     } catch (error) {
       setNotice(limitNotice(error.data));
@@ -200,14 +200,37 @@ function SignedInWorkspace() {
     }
   }
 
-  async function addAppraisalClient() {
+  async function saveDraft() {
     try {
-      const response = await apiRequest("/api/appraisal-clients", { method: "POST", scope });
+      const response = await apiRequest("/api/appraisals/save-draft", {
+        method: "POST",
+        scope,
+        body: { appraisalId: `draft_${Date.now()}` },
+      });
       setUsage(response.usage);
       setNotice({
         type: "success",
-        title: "鑑定対象者を追加しました",
-        body: `鑑定対象者は ${formatLimit(response.usage.appraisalClients, response.usage.entitlements.appraisalClients)} です。`,
+        title: "途中保存しました",
+        body: "Freeプランでは未完了案件を1件だけ保存できます。別案件を保存するには、現在の案件を完成させてください。",
+      });
+    } catch (error) {
+      setNotice(limitNotice(error.data));
+      if (error.data?.usage) setUsage(error.data.usage);
+    }
+  }
+
+  async function completeAppraisal() {
+    try {
+      const response = await apiRequest("/api/appraisals/complete", {
+        method: "POST",
+        scope,
+        body: { appraisalId: `completed_${Date.now()}` },
+      });
+      setUsage(response.usage);
+      setNotice({
+        type: "success",
+        title: "鑑定を完成として記録しました",
+        body: `今月の鑑定数は ${formatLimit(response.usage.monthlyAppraisals, response.usage.entitlements.monthlyAppraisals)} です。Freeでは直近3件の鑑定内容だけ表示できます。`,
       });
     } catch (error) {
       setNotice(limitNotice(error.data));
@@ -227,16 +250,16 @@ function SignedInWorkspace() {
         type: "success",
         title: `${PLAN_CONFIG[planId].name}へ反映しました`,
         body: planId === PLAN_IDS.PRO
-          ? "鑑定件数と鑑定対象者管理が上限なしになりました。"
-          : "Freeプランへ戻しました。上限は即時に反映されます。",
+          ? "鑑定件数、途中保存、履歴表示が上限なしになりました。"
+          : "Freeプランへ戻しました。月20件、途中保存1案件、直近3件表示の上限が即時に反映されます。",
       });
     } catch (error) {
       setNotice(limitNotice(error.data));
     }
   }
 
-  const sessionDecision = evaluateUsageLimit(usage, "start_appraisal");
-  const clientDecision = evaluateUsageLimit(usage, "create_appraisal_client");
+  const completeDecision = evaluateUsageLimit(usage, "complete_appraisal");
+  const draftDecision = evaluateUsageLimit(usage, "save_in_progress_appraisal");
 
   return (
     <>
@@ -258,20 +281,28 @@ function SignedInWorkspace() {
               limit={usage.entitlements.monthlyAppraisals}
             />
             <UsageCard
-              icon={<Users size={18} />}
-              label="鑑定対象者"
-              current={usage.appraisalClients}
-              limit={usage.entitlements.appraisalClients}
+              icon={<ClipboardList size={18} />}
+              label="途中保存"
+              current={usage.inProgressAppraisals}
+              limit={usage.entitlements.inProgressAppraisals}
             />
-            <StatCard label="利用者" value="ログイン中" />
+            <UsageCard
+              icon={<Users size={18} />}
+              label="表示できる鑑定履歴"
+              current={usage.visibleCompletedAppraisalIds?.length || 0}
+              limit={usage.entitlements.viewableCompletedAppraisals}
+            />
           </div>
           {notice && <Notice {...notice} />}
           <div className="action-row">
-            <button className="button primary" onClick={startSession} disabled={!sessionDecision.allowed}>
+            <button className="button secondary" onClick={startSession}>
               セッションを始める
             </button>
-            <button className="button secondary" onClick={addAppraisalClient} disabled={!clientDecision.allowed}>
-              鑑定対象者を追加
+            <button className="button secondary" onClick={saveDraft} disabled={!draftDecision.allowed}>
+              途中保存
+            </button>
+            <button className="button primary" onClick={completeAppraisal} disabled={!completeDecision.allowed}>
+              鑑定完成
             </button>
             <button className="button ghost" onClick={refreshUsage} disabled={loading}>
               利用量を更新
@@ -301,8 +332,8 @@ function SignedInWorkspace() {
               <dd>{primaryEmail || "未取得"}</dd>
             </div>
             <div>
-              <dt>Role</dt>
-              <dd>{isAdmin ? "admin" : "member"}</dd>
+              <dt>権限</dt>
+              <dd>{isAdmin ? "管理者" : "メンバー"}</dd>
             </div>
             <div>
               <dt>User ID</dt>
@@ -362,12 +393,12 @@ function BillingPanel({ usage, onUpgrade, onDowngrade }) {
           <dd>{usage.billingMonth} / {usage.billingAnchor}</dd>
         </div>
         <div>
-          <dt>Status</dt>
-          <dd>{isPro ? "active" : "free"}</dd>
+          <dt>状態</dt>
+          <dd>{isPro ? "有効" : "Free利用中"}</dd>
         </div>
       </dl>
       <p className="note">
-        料金は設定値で管理します。Businessは今回購入不可で、将来のGrowth Engine連携用分岐だけ残しています。
+        Stripe実処理・返金・売上管理はGrowth Engine側を正にします。Numeria Studioでは必要な契約状態だけ表示します。
       </p>
       <div className="action-row">
         {!isPro && <button className="button primary" onClick={onUpgrade}>Proへアップグレード</button>}
@@ -524,7 +555,7 @@ function StatusPanel() {
       <ul>
         <li><CheckCircle2 size={18} />Cloudflare Static Assets対応</li>
         <li><CheckCircle2 size={18} />ログイン入口を追加</li>
-        <li><CheckCircle2 size={18} />Free / Pro Entitlement追加</li>
+        <li><CheckCircle2 size={18} />Free / Pro利用制限を反映</li>
         <li><CheckCircle2 size={18} />Feedback Hub送信口を準備</li>
       </ul>
     </aside>
