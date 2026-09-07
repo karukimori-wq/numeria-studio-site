@@ -145,10 +145,46 @@ export function getPlanPrice(plan, env = {}) {
   return env[plan.priceEnvKey] || plan.defaultPriceLabel;
 }
 
+function createClientHistorySummary(completedAppraisals, visibleCompletedAppraisalIds, lockedCompletedAppraisalIds) {
+  const clientMap = new Map();
+  const visibleSet = new Set(visibleCompletedAppraisalIds);
+  const lockedSet = new Set(lockedCompletedAppraisalIds);
+
+  completedAppraisals.forEach((appraisal) => {
+    const clientName = appraisal.clientName || "未設定";
+    const current = clientMap.get(clientName) || {
+      clientName,
+      totalAppraisals: 0,
+      visibleAppraisals: [],
+      lockedAppraisalIds: [],
+      lastCompletedAt: appraisal.completedAt,
+    };
+
+    current.totalAppraisals += 1;
+    current.lastCompletedAt = appraisal.completedAt || current.lastCompletedAt;
+
+    if (visibleSet.has(appraisal.id)) {
+      current.visibleAppraisals.push(appraisal);
+    }
+
+    if (lockedSet.has(appraisal.id)) {
+      current.lockedAppraisalIds.push(appraisal.id);
+    }
+
+    clientMap.set(clientName, current);
+  });
+
+  return Array.from(clientMap.values()).sort((left, right) => {
+    return new Date(right.lastCompletedAt || 0).getTime() - new Date(left.lastCompletedAt || 0).getTime();
+  });
+}
+
 export function createUsageSnapshot({ planId = PLAN_IDS.FREE, monthlyAppraisals = 0, appraisalClients = 0, inProgressAppraisals = 0, completedAppraisalIds = [], completedAppraisals = [], activeDraft = null, billingMonth = getBillingMonth() } = {}) {
   const normalizedPlanId = normalizePlanId(planId);
   const plan = PLAN_CONFIG[normalizedPlanId] || PLAN_CONFIG.free;
   const visibleCompletedAppraisalIds = isUnlimited(plan.entitlements.viewableCompletedAppraisals) ? completedAppraisalIds : completedAppraisalIds.slice(-plan.entitlements.viewableCompletedAppraisals);
+  const lockedCompletedAppraisalIds = isUnlimited(plan.entitlements.viewableCompletedAppraisals) ? [] : completedAppraisalIds.slice(0, Math.max(0, completedAppraisalIds.length - plan.entitlements.viewableCompletedAppraisals));
+  const visibleCompletedAppraisals = completedAppraisals.filter((appraisal) => visibleCompletedAppraisalIds.includes(appraisal.id));
   return {
     planId: normalizedPlanId,
     planName: plan.name,
@@ -161,8 +197,9 @@ export function createUsageSnapshot({ planId = PLAN_IDS.FREE, monthlyAppraisals 
     completedAppraisalIds,
     completedAppraisals,
     visibleCompletedAppraisalIds,
-    visibleCompletedAppraisals: completedAppraisals.filter((appraisal) => visibleCompletedAppraisalIds.includes(appraisal.id)),
-    lockedCompletedAppraisalIds: isUnlimited(plan.entitlements.viewableCompletedAppraisals) ? [] : completedAppraisalIds.slice(0, Math.max(0, completedAppraisalIds.length - plan.entitlements.viewableCompletedAppraisals)),
+    visibleCompletedAppraisals,
+    lockedCompletedAppraisalIds,
+    clientHistorySummaries: createClientHistorySummary(completedAppraisals, visibleCompletedAppraisalIds, lockedCompletedAppraisalIds),
     entitlements: plan.entitlements,
   };
 }
