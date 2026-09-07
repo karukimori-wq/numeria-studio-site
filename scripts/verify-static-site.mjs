@@ -81,8 +81,10 @@ assert.match(authGateSource, /openSignUp/);
 assert.match(authGateSource, /\/api\/billing\/subscription/);
 assert.match(authGateSource, /\/api\/usage/);
 assert.match(authGateSource, /VITE_CLERK_PUBLISHABLE_KEY/);
-assert.match(authGateSource, /今月の鑑定数/);
-assert.match(authGateSource, /鑑定対象者/);
+assert.match(authGateSource, /今月の鑑定完成数/);
+assert.match(authGateSource, /途中保存/);
+assert.match(authGateSource, /表示できる鑑定履歴/);
+assert.match(authGateSource, /鑑定対象者プロフィール: 上限なし/);
 assert.match(authGateSource, /business/);
 assert.match(authGateSource, /準備中/);
 assert.match(planSource, /FREE_MONTHLY_APPRAISAL_LIMIT/);
@@ -120,8 +122,13 @@ assert.match(supabasePlan, /new authentication direction is Clerk/);
 assert.match(supabasePlan, /AITEC Apps/);
 assert.match(envExample, /VITE_CLERK_APPLICATION_ID=app_3ImOuQXNBc9Rpqs3XoJEtw2NogR/);
 assert.match(envExample, /VITE_PRICE_PRO_LABEL/);
-assert.match(releasePlan, /Monthly appraisals: 20/);
-assert.match(releasePlan, /Appraisal client snapshots: 3/);
+assert.match(releasePlan, /Monthly completed appraisals: 20/);
+assert.match(releasePlan, /Count trigger: pressing the appraisal completed button/);
+assert.match(releasePlan, /In-progress draft appraisals: 1/);
+assert.match(releasePlan, /Appraisal client profiles: unlimited/);
+assert.match(releasePlan, /Visible completed appraisal details: latest 3 completed appraisals/);
+assert.doesNotMatch(releasePlan, /Appraisal client snapshots: 3/);
+assert.doesNotMatch(releasePlan, /Does not include:\n\n- PDF export/);
 assert.match(releasePlan, /Business remains unavailable/);
 assert.match(releasePlan, /workspaceId \+ userId \+ billingMonth/);
 
@@ -145,6 +152,15 @@ assert.equal(evaluateUsageLimit(freeAtDraftLimit, "save_in_progress_appraisal").
 const freeVisibleHistory = createUsageSnapshot({ planId: "free", completedAppraisalIds: ["a", "b", "c", "d", "e"] });
 assert.deepEqual(freeVisibleHistory.visibleCompletedAppraisalIds, ["c", "d", "e"]);
 assert.deepEqual(freeVisibleHistory.lockedCompletedAppraisalIds, ["a", "b"]);
+
+const dashboardSource = readFileSync("src/main.jsx", "utf8");
+assert.match(dashboardSource, /鑑定完成/);
+assert.match(dashboardSource, /途中保存/);
+assert.match(dashboardSource, /表示できる鑑定履歴/);
+assert.match(dashboardSource, /api\/appraisals\/complete/);
+assert.match(dashboardSource, /api\/appraisals\/save-draft/);
+assert.doesNotMatch(dashboardSource, /3名までの鑑定対象者管理/);
+assert.doesNotMatch(dashboardSource, /鑑定件数と鑑定対象者管理が上限なし/);
 
 const proUnlimited = createUsageSnapshot({ planId: "pro", monthlyAppraisals: 200, appraisalClients: 50 });
 assert.equal(evaluateUsageLimit(proUnlimited, "complete_appraisal").allowed, true);
