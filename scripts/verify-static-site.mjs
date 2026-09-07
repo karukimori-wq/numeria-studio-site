@@ -86,7 +86,10 @@ assert.match(authGateSource, /鑑定対象者/);
 assert.match(authGateSource, /business/);
 assert.match(authGateSource, /準備中/);
 assert.match(planSource, /FREE_MONTHLY_APPRAISAL_LIMIT/);
-assert.match(planSource, /FREE_APPRAISAL_CLIENT_LIMIT/);
+assert.match(planSource, /FREE_IN_PROGRESS_APPRAISAL_LIMIT/);
+assert.match(planSource, /viewableCompletedAppraisals/);
+assert.match(planSource, /completionCountTrigger/);
+assert.doesNotMatch(planSource, /FREE_APPRAISAL_CLIENT_LIMIT/);
 assert.match(workerSource, /BUSINESS_PREPARING/);
 assert.match(workerSource, /\/api\/auth\/config/);
 assert.match(workerSource, /CLERK_PUBLISHABLE_KEY/);
@@ -95,6 +98,10 @@ assert.match(workerSource, /getClerkFrontendOrigin/);
 assert.match(workerSource, /clerkBrowserAssetResponse/);
 assert.match(workerSource, /_clerk\\\.browser_/);
 assert.match(workerSource, /\/api\/sessions\/start/);
+assert.match(workerSource, /\/api\/appraisals\/save-draft/);
+assert.match(workerSource, /\/api\/appraisals\/complete/);
+assert.match(workerSource, /completion-button-only/);
+assert.match(workerSource, /studio\.session\.completed\.v1/);
 assert.match(workerSource, /\/api\/appraisal-clients/);
 assert.match(workerSource, /\/api\/billing\/subscription/);
 assert.match(workerSource, /url\.pathname === "\/health"/);
@@ -119,21 +126,28 @@ assert.match(releasePlan, /Business remains unavailable/);
 assert.match(releasePlan, /workspaceId \+ userId \+ billingMonth/);
 
 assert.equal(PLAN_CONFIG.free.entitlements.monthlyAppraisals, 20);
-assert.equal(PLAN_CONFIG.free.entitlements.appraisalClients, 3);
+assert.equal(PLAN_CONFIG.free.entitlements.appraisalClients, "unlimited");
+assert.equal(PLAN_CONFIG.free.entitlements.inProgressAppraisals, 1);
+assert.equal(PLAN_CONFIG.free.entitlements.viewableCompletedAppraisals, 3);
+assert.equal(PLAN_CONFIG.free.entitlements.pdfExport, true);
 assert.equal(PLAN_CONFIG.pro.entitlements.monthlyAppraisals, "unlimited");
 assert.equal(PLAN_CONFIG.pro.entitlements.appraisalClients, "unlimited");
 assert.equal(PLAN_CONFIG.business.available, false);
 
 const freeAtSessionLimit = createUsageSnapshot({ planId: "free", monthlyAppraisals: 20, appraisalClients: 0 });
-assert.equal(evaluateUsageLimit(freeAtSessionLimit, "start_appraisal").allowed, false);
-assert.equal(evaluateUsageLimit(freeAtSessionLimit, "start_appraisal").reason, "FREE_MONTHLY_APPRAISAL_LIMIT");
+assert.equal(evaluateUsageLimit(freeAtSessionLimit, "complete_appraisal").allowed, false);
+assert.equal(evaluateUsageLimit(freeAtSessionLimit, "complete_appraisal").reason, "FREE_MONTHLY_APPRAISAL_LIMIT");
 
-const freeAtClientLimit = createUsageSnapshot({ planId: "free", monthlyAppraisals: 0, appraisalClients: 3 });
-assert.equal(evaluateUsageLimit(freeAtClientLimit, "create_appraisal_client").allowed, false);
-assert.equal(evaluateUsageLimit(freeAtClientLimit, "create_appraisal_client").reason, "FREE_APPRAISAL_CLIENT_LIMIT");
+const freeAtDraftLimit = createUsageSnapshot({ planId: "free", monthlyAppraisals: 0, inProgressAppraisals: 1 });
+assert.equal(evaluateUsageLimit(freeAtDraftLimit, "save_in_progress_appraisal").allowed, false);
+assert.equal(evaluateUsageLimit(freeAtDraftLimit, "save_in_progress_appraisal").reason, "FREE_IN_PROGRESS_APPRAISAL_LIMIT");
+
+const freeVisibleHistory = createUsageSnapshot({ planId: "free", completedAppraisalIds: ["a", "b", "c", "d", "e"] });
+assert.deepEqual(freeVisibleHistory.visibleCompletedAppraisalIds, ["c", "d", "e"]);
+assert.deepEqual(freeVisibleHistory.lockedCompletedAppraisalIds, ["a", "b"]);
 
 const proUnlimited = createUsageSnapshot({ planId: "pro", monthlyAppraisals: 200, appraisalClients: 50 });
-assert.equal(evaluateUsageLimit(proUnlimited, "start_appraisal").allowed, true);
-assert.equal(evaluateUsageLimit(proUnlimited, "create_appraisal_client").allowed, true);
+assert.equal(evaluateUsageLimit(proUnlimited, "complete_appraisal").allowed, true);
+assert.equal(evaluateUsageLimit(proUnlimited, "save_in_progress_appraisal").allowed, true);
 
 console.log("Static Numeria Studio site backup verified.");
