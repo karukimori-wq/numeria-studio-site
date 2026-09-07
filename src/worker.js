@@ -84,6 +84,57 @@ function versionResponse() {
   };
 }
 
+function adminStatusResponse(request, env = {}, body = {}) {
+  const adminEmail = getAdminEmail(request, body);
+  const isAdmin = Boolean(adminEmail && getAdminEmails(env).includes(adminEmail));
+
+  const base = {
+    status: isAdmin ? "success" : "error",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    adminContractVersion: ADMIN_CONTRACT_VERSION,
+    adminMode: isAdmin,
+    mode: "monitoring-only",
+    message: isAdmin
+      ? "管理者モードを利用できます。"
+      : "管理者として確認できませんでした。",
+  };
+
+  if (!isAdmin) {
+    return {
+      ...base,
+      errorCode: "ADMIN_ACCESS_REQUIRED",
+    };
+  }
+
+  return {
+    ...base,
+    adminEmail,
+    permissions: ["release_monitoring", "usage_inspection", "plan_contract_review"],
+    endpoints: {
+      contracts: "/contracts/status",
+      usage: "/api/usage",
+      subscription: "/api/billing/subscription",
+    },
+    planSummary: {
+      free: {
+        monthlyAppraisals: PLAN_CONFIG.free.entitlements.monthlyAppraisals,
+        inProgressAppraisals: PLAN_CONFIG.free.entitlements.inProgressAppraisals,
+        viewableCompletedAppraisals: PLAN_CONFIG.free.entitlements.viewableCompletedAppraisals,
+        mainDivinationLocked: PLAN_CONFIG.free.entitlements.mainDivinationLocked,
+      },
+      pro: {
+        monthlyAppraisals: "unlimited",
+        inProgressAppraisals: "unlimited",
+        viewableCompletedAppraisals: "unlimited",
+      },
+      business: {
+        status: "preparing",
+      },
+    },
+  };
+}
+
 function contractsStatusResponse() {
   return {
     status: "success",
@@ -148,6 +199,31 @@ function getClerkPublishableKey(request, env = {}) {
     || globalThis.CLERK_PUBLISHABLE_KEY
     || globalThis.VITE_CLERK_PUBLISHABLE_KEY
     || "";
+}
+
+function getAdminEmails(env = {}) {
+  const raw =
+    env.ADMIN_EMAILS ||
+    env.VITE_ADMIN_EMAILS ||
+    globalThis.ADMIN_EMAILS ||
+    globalThis.VITE_ADMIN_EMAILS ||
+    "illusionddt@gmail.com";
+
+  return String(raw)
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function getAdminEmail(request, body = {}) {
+  return String(
+    body.adminEmail ||
+      body.email ||
+      request.headers.get("X-Admin-Email") ||
+      ""
+  )
+    .trim()
+    .toLowerCase();
 }
 
 function getClerkFrontendOrigin(publishableKey) {
@@ -236,7 +312,8 @@ async function handleApi(request, env = {}) {
   }
 
   if (url.pathname === "/api/admin/status" && ["GET", "POST"].includes(request.method)) {
-    return adminStatusResponse(request, env, body);
+    const adminStatus = adminStatusResponse(request, env, body);
+    return json(adminStatus, { status: adminStatus.adminMode ? 200 : 403 });
   }
 
   if (url.pathname === "/api/usage" && request.method === "GET") {
