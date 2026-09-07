@@ -21,6 +21,10 @@ textarea {
   font: inherit;
 }
 
+input {
+  font: inherit;
+}
+
 .auth-shell {
   min-height: 100vh;
   background:
@@ -614,6 +618,102 @@ h2 {
 .button:disabled {
   cursor: not-allowed;
   opacity: 0.52;
+}
+
+.case-editor {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 18px;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fffdf8;
+}
+
+.case-editor-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.case-editor-heading h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.draft-pill {
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: #5d451f;
+  background: #f1e3c1;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.case-editor label {
+  display: grid;
+  gap: 6px;
+  color: #7d6e61;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.case-editor input,
+.case-editor textarea {
+  width: 100%;
+  border: 1px solid #d8cbb9;
+  border-radius: 8px;
+  padding: 11px 12px;
+  color: #17202a;
+  background: #fff;
+}
+
+.history-panel {
+  grid-column: 1 / -1;
+}
+
+.history-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.history-item {
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 14px;
+  background: #fffaf2;
+}
+
+.history-item div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.history-item span {
+  color: #7d6e61;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.history-item p {
+  margin: 6px 0 0;
+  color: #38414c;
+  line-height: 1.55;
+}
+
+.empty-state,
+.locked-history {
+  border: 1px dashed #d8cbb9;
+  border-radius: 8px;
+  padding: 14px;
+  color: #7d6e61;
+  background: #fffdf8;
+  font-weight: 700;
 }
 
 .stat-card strong,
