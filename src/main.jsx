@@ -440,8 +440,24 @@ function AppraisalCaseForm({ currentCase, usage, onChange }) {
 }
 
 function AppraisalHistoryPanel({ usage }) {
-  const visible = usage.visibleCompletedAppraisals || [];
+  const clients = usage.clientHistorySummaries || [];
   const lockedCount = usage.lockedCompletedAppraisalIds?.length || 0;
+  const [selectedClientName, setSelectedClientName] = useState("");
+  const [openAppraisalId, setOpenAppraisalId] = useState("");
+  const selectedClient = clients.find((client) => client.clientName === selectedClientName) || clients[0];
+
+  useEffect(() => {
+    if (!clients.length) {
+      setSelectedClientName("");
+      setOpenAppraisalId("");
+      return;
+    }
+
+    if (!clients.some((client) => client.clientName === selectedClientName)) {
+      setSelectedClientName(clients[0].clientName);
+      setOpenAppraisalId("");
+    }
+  }, [clients, selectedClientName]);
 
   return (
     <div className="work-panel history-panel">
@@ -453,21 +469,70 @@ function AppraisalHistoryPanel({ usage }) {
         </div>
       </div>
       <p className="note">
-        Freeでは完成順の直近3件だけ鑑定内容を表示します。古い案件は依頼者プロフィールと過去依頼件数だけを扱う想定です。
+        依頼者を選ぶと過去案件を確認できます。Freeでは完成順の直近3件だけ内容を展開でき、古い案件は件数のみ表示します。
       </p>
-      {visible.length === 0 && <div className="empty-state">まだ完成した鑑定はありません。</div>}
-      <div className="history-list">
-        {visible.map((appraisal) => (
-          <article className="history-item" key={appraisal.id}>
-            <div>
-              <strong>{appraisal.clientName || "未設定"}</strong>
-              <span>{new Date(appraisal.completedAt).toLocaleString("ja-JP")}</span>
+      {clients.length === 0 && <div className="empty-state">まだ完成した鑑定はありません。</div>}
+      {clients.length > 0 && (
+        <>
+          <div className="client-selector" aria-label="依頼者を選択">
+            {clients.map((client) => (
+              <button
+                className={client.clientName === selectedClient?.clientName ? "client-chip active" : "client-chip"}
+                key={client.clientName}
+                onClick={() => {
+                  setSelectedClientName(client.clientName);
+                  setOpenAppraisalId("");
+                }}
+              >
+                <span>{client.clientName}</span>
+                <strong>{client.totalAppraisals}件</strong>
+              </button>
+            ))}
+          </div>
+          {selectedClient && (
+            <div className="client-history">
+              <div className="client-history-heading">
+                <div>
+                  <strong>{selectedClient.clientName}</strong>
+                  <span>過去依頼 {selectedClient.totalAppraisals}件</span>
+                </div>
+                {selectedClient.lockedAppraisalIds.length > 0 && (
+                  <span className="lock-pill">
+                    <Lock size={14} />
+                    {selectedClient.lockedAppraisalIds.length}件ロック
+                  </span>
+                )}
+              </div>
+              <div className="history-list">
+                {selectedClient.visibleAppraisals.map((appraisal) => {
+                  const isOpen = openAppraisalId === appraisal.id;
+                  return (
+                    <article className="history-item" key={appraisal.id}>
+                      <button
+                        className="history-toggle"
+                        onClick={() => setOpenAppraisalId(isOpen ? "" : appraisal.id)}
+                      >
+                        <span>{new Date(appraisal.completedAt).toLocaleString("ja-JP")}</span>
+                        <strong>{isOpen ? "閉じる" : "内容を見る"}</strong>
+                      </button>
+                      {isOpen && (
+                        <div className="history-detail">
+                          <p><strong>相談内容</strong>{appraisal.question || "未入力"}</p>
+                          <p><strong>鑑定結果</strong>{appraisal.resultSummary || "未入力"}</p>
+                          {appraisal.notes && <p><strong>鑑定メモ</strong>{appraisal.notes}</p>}
+                        </div>
+                      )}
+                    </article>
+                  );
+                })}
+                {selectedClient.visibleAppraisals.length === 0 && (
+                  <div className="empty-state">この依頼者の表示可能な鑑定内容はありません。</div>
+                )}
+              </div>
             </div>
-            <p>{appraisal.question || "相談内容未入力"}</p>
-            <p>{appraisal.resultSummary || "鑑定結果未入力"}</p>
-          </article>
-        ))}
-      </div>
+          )}
+        </>
+      )}
       {lockedCount > 0 && (
         <div className="locked-history">
           {lockedCount}件の古い鑑定内容はFreeの表示範囲外です。
