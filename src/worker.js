@@ -101,7 +101,7 @@ function adminStatusResponse(request, env = {}, body = {}) {
     adminContractVersion: ADMIN_CONTRACT_VERSION,
     adminMode,
     mode: "monitoring-only",
-    message: isAdmin
+    message: adminMode
       ? "管理者モードを利用できます。"
       : "管理者として確認できませんでした。",
   };
