@@ -61,6 +61,7 @@ function healthResponse() {
     appId: "numeria-studio",
     service: "numeria-studio-site",
     version: APP_VERSION,
+    releaseScope: "free-pro",
     productionUrl: "https://numeria-studio-site.karukimori.workers.dev",
     checks: {
       worker: "success",
@@ -92,12 +93,21 @@ function contractsStatusResponse() {
       free: {
         available: true,
         monthlyAppraisals: PLAN_CONFIG.free.entitlements.monthlyAppraisals,
-        appraisalClients: PLAN_CONFIG.free.entitlements.appraisalClients,
+        completionCountTrigger: PLAN_CONFIG.free.entitlements.completionCountTrigger,
+        inProgressAppraisals: PLAN_CONFIG.free.entitlements.inProgressAppraisals,
+        viewableCompletedAppraisals: PLAN_CONFIG.free.entitlements.viewableCompletedAppraisals,
+        appraisalClients: "unlimited",
+        pdfExport: PLAN_CONFIG.free.entitlements.pdfExport,
+        mainDivinationLocked: PLAN_CONFIG.free.entitlements.mainDivinationLocked,
       },
       pro: {
         available: true,
         monthlyAppraisals: "unlimited",
+        inProgressAppraisals: "unlimited",
+        viewableCompletedAppraisals: "unlimited",
         appraisalClients: "unlimited",
+        pdfExport: true,
+        mainDivinationLocked: false,
       },
       business: {
         available: false,
@@ -225,7 +235,7 @@ async function handleApi(request, env = {}) {
   }
 
   if (url.pathname === "/api/usage" && request.method === "GET") {
-    return json({ status: "success", workspaceId, userId, usage: usageResponse(record) });
+    return json({ status: "success", workspaceId, userId, usage: usageResponse(record), historyPolicy: { visibleCompletedAppraisals: PLAN_CONFIG.free.entitlements.viewableCompletedAppraisals, lockedDetailsAreRetained: true } });
   }
 
   if (url.pathname === "/api/billing/subscription" && request.method === "GET") {
@@ -275,24 +285,60 @@ async function handleApi(request, env = {}) {
     return json({
       status: "success",
       appraisalClientRef: `acl_${Date.now()}`,
-      sourceOfTruth: "numeria-appraisal-client-snapshot",
+      sourceOfTruth: "numeria-appraisal-client-profile",
+      limitPolicy: "profile-count-unlimited",
       usage: usageResponse(record),
     }, { status: 201 });
   }
 
   if (url.pathname === "/api/sessions/start" && request.method === "POST") {
-    const snapshot = usageResponse(record);
-    const decision = evaluateUsageLimit(snapshot, "start_appraisal");
-    if (!decision.allowed) {
-      return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
-    }
-    record.monthlyAppraisals += 1;
+    const sessionId = body.sessionId || `ses_${Date.now()}`;
+    record.inProgressAppraisals = Number(record.inProgressAppraisals || 0) + 1;
     runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
     return json({
       status: "success",
-      sessionId: `ses_${Date.now()}`,
+      sessionId,
       sessionStatus: "started",
       eventName: "studio.session.started.v1",
+      countPolicy: "completion-button-only",
+      usage: usageResponse(record),
+    }, { status: 201 });
+  }
+
+  if (url.pathname === "/api/appraisals/save-draft" && request.method === "POST") {
+    const snapshot = usageResponse(record);
+    const decision = evaluateUsageLimit(snapshot, "save_in_progress_appraisal");
+    if (!decision.allowed) {
+      return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
+    }
+    record.inProgressAppraisals = Math.max(1, Number(record.inProgressAppraisals || 0));
+    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    return json({
+      status: "success",
+      draftId: body.draftId || `draft_${Date.now()}`,
+      limitPolicy: "free-one-in-progress-appraisal",
+      usage: usageResponse(record),
+    }, { status: 201 });
+  }
+
+  if (url.pathname === "/api/appraisals/complete" && request.method === "POST") {
+    const snapshot = usageResponse(record);
+    const decision = evaluateUsageLimit(snapshot, "complete_appraisal");
+    if (!decision.allowed) {
+      return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
+    }
+    const appraisalId = body.appraisalId || `app_${Date.now()}`;
+    record.monthlyAppraisals += 1;
+    record.inProgressAppraisals = Math.max(0, Number(record.inProgressAppraisals || 0) - 1);
+    record.completedAppraisalIds = [...(record.completedAppraisalIds || []), appraisalId];
+    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    return json({
+      status: "success",
+      appraisalId,
+      sessionStatus: "completed",
+      eventName: "studio.session.completed.v1",
+      countPolicy: "appraisal_completed_button",
+      historyPolicy: { visibleCompletedAppraisals: 3, lockedDetailsAreRetained: true },
       usage: usageResponse(record),
     }, { status: 201 });
   }
