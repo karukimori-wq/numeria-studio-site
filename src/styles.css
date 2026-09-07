@@ -679,6 +679,76 @@ h2 {
   margin-top: 14px;
 }
 
+.client-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.client-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  border: 1px solid #d8cbb9;
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: #38414c;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.client-chip.active {
+  border-color: #c4a15d;
+  color: #241a3d;
+  background: #fff8e8;
+}
+
+.client-chip strong {
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: #6b4c1f;
+  background: #f1e3c1;
+  font-size: 0.78rem;
+}
+
+.client-history {
+  display: grid;
+  gap: 10px;
+}
+
+.client-history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 14px;
+  background: #fffdf8;
+}
+
+.client-history-heading span {
+  display: block;
+  margin-top: 4px;
+  color: #7d6e61;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.lock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: #5d451f;
+  background: #f1e3c1;
+  white-space: nowrap;
+}
+
 .history-item {
   border: 1px solid #eadfce;
   border-radius: 8px;
@@ -686,7 +756,44 @@ h2 {
   background: #fffaf2;
 }
 
-.history-item div {
+.history-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.history-toggle strong {
+  color: #8f6731;
+  white-space: nowrap;
+}
+
+.history-detail {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  border-top: 1px solid #eadfce;
+  padding-top: 12px;
+}
+
+.history-detail p {
+  display: grid;
+  gap: 4px;
+}
+
+.history-detail strong {
+  color: #7d6e61;
+  font-size: 0.82rem;
+}
+
+.history-item div:not(.history-detail) {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -900,5 +1007,10 @@ textarea {
   .feedback-button,
   .feedback-chat {
     width: 100%;
+  }
+
+  .client-history-heading {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
