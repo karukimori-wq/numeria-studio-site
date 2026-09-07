@@ -76,6 +76,9 @@ assert.match(numeriaAppSource, /タロットを選んだFreeユーザーはタ�
 assert.match(numeriaAppSource, /無料版では初回に選んだメイン占術を固定します/);
 assert.doesNotMatch(numeriaAppSource, /タロットは管理者確認用/);
 assert.doesNotMatch(numeriaAppSource, /無料版で利用できる占術は1つです/);
+assert.match(numeriaAppSource, /\/api\/appraisals\/save-draft/);
+assert.match(numeriaAppSource, /Ci=async\(\)=>/);
+assert.match(numeriaAppSource, /Ii=async\(\)=>/);
 assert.match(packageJson, /restore-original-site\.mjs/);
 assert.doesNotMatch(html, /https:\/\/numeria-studio\.karukimori\.workers\.dev/);
 assert.match(authGateSource, /@clerk\/clerk-js/);
