@@ -84,23 +84,29 @@ function versionResponse() {
   };
 }
 
-function adminStatusResponse(request, env = {}, body = {}) {
+function requireAdmin(request, env = {}, body = {}) {
   const adminEmail = getAdminEmail(request, body);
-  const isAdmin = Boolean(adminEmail && getAdminEmails(env).includes(adminEmail));
+  const adminMode = Boolean(adminEmail && getAdminEmails(env).includes(adminEmail));
+
+  return { adminEmail, adminMode };
+}
+
+function adminStatusResponse(request, env = {}, body = {}) {
+  const { adminEmail, adminMode } = requireAdmin(request, env, body);
 
   const base = {
-    status: isAdmin ? "success" : "error",
+    status: adminMode ? "success" : "error",
     appId: "numeria-studio",
     appVersion: APP_VERSION,
     adminContractVersion: ADMIN_CONTRACT_VERSION,
-    adminMode: isAdmin,
+    adminMode,
     mode: "monitoring-only",
     message: isAdmin
       ? "管理者モードを利用できます。"
       : "管理者として確認できませんでした。",
   };
 
-  if (!isAdmin) {
+  if (!adminMode) {
     return {
       ...base,
       errorCode: "ADMIN_ACCESS_REQUIRED",
@@ -131,6 +137,58 @@ function adminStatusResponse(request, env = {}, body = {}) {
       business: {
         status: "preparing",
       },
+    },
+  };
+}
+
+function adminAccountResponse(request, env = {}, body = {}) {
+  const { adminEmail, adminMode } = requireAdmin(request, env, body);
+
+  if (!adminMode) {
+    return {
+      status: "error",
+      appId: "numeria-studio",
+      adminContractVersion: ADMIN_CONTRACT_VERSION,
+      adminMode: false,
+      errorCode: "ADMIN_ACCESS_REQUIRED",
+      message: "管理者として確認できませんでした。",
+    };
+  }
+
+  const url = new URL(request.url);
+  const targetWorkspaceId =
+    String(body.targetWorkspaceId || body.workspaceId || url.searchParams.get("workspaceId") || "")
+      .trim() || "ws_personal";
+  const targetUserId =
+    String(body.targetUserId || body.userId || url.searchParams.get("userId") || "")
+      .trim() || "browser-user";
+  const targetRecord = getRecord(targetWorkspaceId, targetUserId);
+  const planId = normalizePlanId(targetRecord.planId);
+  const plan = getPlanConfigForPlan(planId);
+
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    adminContractVersion: ADMIN_CONTRACT_VERSION,
+    adminMode: true,
+    adminEmail,
+    target: {
+      workspaceId: targetWorkspaceId,
+      userId: targetUserId,
+      billingMonth: targetRecord.billingMonth,
+    },
+    subscription: {
+      planId,
+      planName: plan.name,
+      billingStatus: planId === PLAN_IDS.FREE ? "free" : "active",
+      source: "numeria-worker-mvp",
+    },
+    usage: usageResponse(targetRecord),
+    limits: plan.entitlements,
+    historyPolicy: {
+      visibleCompletedAppraisals: plan.entitlements.viewableCompletedAppraisals,
+      lockedDetailsAreRetained: true,
     },
   };
 }
@@ -314,6 +372,11 @@ async function handleApi(request, env = {}) {
   if (url.pathname === "/api/admin/status" && ["GET", "POST"].includes(request.method)) {
     const adminStatus = adminStatusResponse(request, env, body);
     return json(adminStatus, { status: adminStatus.adminMode ? 200 : 403 });
+  }
+
+  if (url.pathname === "/api/admin/account" && ["GET", "POST"].includes(request.method)) {
+    const adminAccount = adminAccountResponse(request, env, body);
+    return json(adminAccount, { status: adminAccount.adminMode ? 200 : 403 });
   }
 
   if (url.pathname === "/api/usage" && request.method === "GET") {
