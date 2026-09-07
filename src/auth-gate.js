@@ -91,11 +91,15 @@ function renderBilling() {
   }
 
   const appraisalLimit = usage.entitlements.monthlyAppraisals;
-  const clientLimit = usage.entitlements.appraisalClients;
+  const draftLimit = usage.entitlements.inProgressAppraisals;
+  const historyLimit = usage.entitlements.viewableCompletedAppraisals;
+  const visibleHistory = usage.visibleCompletedAppraisalIds?.length || 0;
   els.usageSummary.innerHTML = `
     <strong>現在のプラン: ${usage.planName}</strong>
-    <span>今月の鑑定数: ${usage.monthlyAppraisals}${appraisalLimit === null ? " / 無制限" : ` / ${appraisalLimit}`}</span>
-    <span>鑑定対象者: ${usage.appraisalClients}${clientLimit === null ? " / 無制限" : ` / ${clientLimit}`}</span>
+    <span>今月の鑑定完成数: ${usage.monthlyAppraisals}${appraisalLimit === null ? " / 無制限" : ` / ${appraisalLimit}`}</span>
+    <span>途中保存: ${usage.inProgressAppraisals}${draftLimit === null ? " / 無制限" : ` / ${draftLimit}`}</span>
+    <span>表示できる鑑定履歴: ${visibleHistory}${historyLimit === null ? " / 無制限" : ` / ${historyLimit}`}</span>
+    <span>鑑定対象者プロフィール: 上限なし</span>
   `;
 
   els.planGrid.innerHTML = Object.values(PLAN_CONFIG).map((plan) => {
