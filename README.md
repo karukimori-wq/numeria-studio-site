@@ -36,8 +36,8 @@ Completed:
 - Admin candidate email configured as `illusionddt@gmail.com`
 - Feedback Hub question/improvement UI added with mock fallback
 - Free / Pro pricing comparison UI added
-- Free usage counters added: monthly appraisals and appraisal client snapshots
-- Worker API limit checks added for Free appraisals and appraisal clients
+- Free usage counters added: completed appraisals, in-progress draft, and latest visible history
+- Worker API limit checks added for completed appraisals and one unfinished draft
 - Business plan shown as preparing and not purchasable
 - Static verification passes in GitHub Actions
 - Static build passes in GitHub Actions
@@ -92,14 +92,17 @@ Backend-only Clerk secrets such as `CLERK_SECRET_KEY` must not be committed to t
 
 Free:
 
-- Monthly appraisals: 20
-- Appraisal client snapshots: 3
-- Basic appraisal, basic report, appraisal history, and basic templates
+- Monthly completed appraisals: 20, counted when the appraisal completion button is pressed
+- In-progress draft appraisals: 1 account-wide unfinished appraisal
+- Appraisal client profiles: unlimited
+- Visible completed appraisal details: latest 3 completed appraisals
+- PDF export, basic appraisal, basic report, and basic templates
 
 Pro:
 
-- Unlimited appraisals
-- Unlimited appraisal client snapshots
+- Unlimited completed appraisals
+- Unlimited in-progress draft appraisals
+- Unlimited appraisal client profiles and completed appraisal history
 - Detailed reports
 - PDF export
 - Branded reports
