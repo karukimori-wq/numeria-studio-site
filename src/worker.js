@@ -38,6 +38,10 @@ function getRecord(workspaceId, userId) {
     monthlyAppraisals: 0,
     appraisalClients: 0,
     billingMonth,
+    inProgressAppraisals: 0,
+    activeDraft: null,
+    completedAppraisalIds: [],
+    completedAppraisals: [],
   };
   runtimeStore.set(key, current);
   return current;
@@ -438,7 +442,6 @@ async function handleApi(request, env = {}) {
 
   if (url.pathname === "/api/sessions/start" && request.method === "POST") {
     const sessionId = body.sessionId || `ses_${Date.now()}`;
-    record.inProgressAppraisals = Number(record.inProgressAppraisals || 0) + 1;
     runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
     return json({
       status: "success",
@@ -446,21 +449,36 @@ async function handleApi(request, env = {}) {
       sessionStatus: "started",
       eventName: "studio.session.started.v1",
       countPolicy: "completion-button-only",
+      draftPolicy: "not-counted-until-draft-save",
       usage: usageResponse(record),
     }, { status: 201 });
   }
 
   if (url.pathname === "/api/appraisals/save-draft" && request.method === "POST") {
     const snapshot = usageResponse(record);
-    const decision = evaluateUsageLimit(snapshot, "save_in_progress_appraisal");
+    const appraisalId = body.appraisalId || body.id || body.draftId || `draft_${Date.now()}`;
+    const currentDraft = record.activeDraft;
+    const isSameDraft = currentDraft && currentDraft.id === appraisalId;
+    const decision = isSameDraft
+      ? { allowed: true }
+      : evaluateUsageLimit(snapshot, "save_in_progress_appraisal");
     if (!decision.allowed) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
-    record.inProgressAppraisals = Math.max(1, Number(record.inProgressAppraisals || 0));
+    record.activeDraft = {
+      id: appraisalId,
+      clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
+      question: String(body.question || currentDraft?.question || "").trim(),
+      notes: String(body.notes || currentDraft?.notes || "").trim(),
+      resultSummary: String(body.resultSummary || currentDraft?.resultSummary || "").trim(),
+      updatedAt: new Date().toISOString(),
+    };
+    record.inProgressAppraisals = record.activeDraft ? 1 : 0;
     runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
     return json({
       status: "success",
-      draftId: body.draftId || `draft_${Date.now()}`,
+      draftId: appraisalId,
+      activeDraft: record.activeDraft,
       limitPolicy: "free-one-in-progress-appraisal",
       usage: usageResponse(record),
     }, { status: 201 });
@@ -472,14 +490,29 @@ async function handleApi(request, env = {}) {
     if (!decision.allowed) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
-    const appraisalId = body.appraisalId || `app_${Date.now()}`;
+    const appraisalId = body.appraisalId || body.id || `app_${Date.now()}`;
+    const completedAt = new Date().toISOString();
+    const currentDraft = record.activeDraft;
+    const completedAppraisal = {
+      id: appraisalId,
+      clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
+      question: String(body.question || currentDraft?.question || "").trim(),
+      notes: String(body.notes || currentDraft?.notes || "").trim(),
+      resultSummary: String(body.resultSummary || currentDraft?.resultSummary || "").trim(),
+      completedAt,
+    };
     record.monthlyAppraisals += 1;
-    record.inProgressAppraisals = Math.max(0, Number(record.inProgressAppraisals || 0) - 1);
+    if (currentDraft?.id === appraisalId) {
+      record.activeDraft = null;
+    }
+    record.inProgressAppraisals = record.activeDraft ? 1 : 0;
     record.completedAppraisalIds = [...(record.completedAppraisalIds || []), appraisalId];
+    record.completedAppraisals = [...(record.completedAppraisals || []), completedAppraisal];
     runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
     return json({
       status: "success",
       appraisalId,
+      appraisal: completedAppraisal,
       sessionStatus: "completed",
       eventName: "studio.session.completed.v1",
       countPolicy: "appraisal_completed_button",
