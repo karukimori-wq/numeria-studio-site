@@ -9,24 +9,27 @@ Business is intentionally kept as a future branch and is not purchasable in this
 
 User-facing description:
 
-> 月20件までの鑑定と、3名までの鑑定対象者管理を無料で試せます。
+> 月20件まで鑑定でき、鑑定完成ボタンを押した時点で1件として数えます。途中保存は1案件まで、鑑定対象者プロフィール登録とPDF出力は無料で使えます。
 
 Includes:
 
-- Monthly appraisals: 20
-- Appraisal client snapshots: 3
+- Monthly completed appraisals: 20
+- Count trigger: pressing the appraisal completed button
+- In-progress draft appraisals: 1 account-wide unfinished appraisal
+- Appraisal client profiles: unlimited
+- Visible completed appraisal details: latest 3 completed appraisals
+- PDF export
 - Basic appraisal
 - Basic report
-- Appraisal history
 - Basic templates
 - AI assistance within the free quota
 
 Does not include:
 
-- PDF export
 - Branded reports
 - Detailed reports
-- Unlimited history
+- Unlimited in-progress appraisals
+- Unlimited completed appraisal history
 
 ### Pro
 
@@ -36,8 +39,10 @@ User-facing description:
 
 Includes:
 
-- Unlimited appraisals
-- Unlimited appraisal client snapshots
+- Unlimited completed appraisals
+- Unlimited in-progress appraisals
+- Unlimited completed appraisal history
+- Unlimited appraisal client profiles
 - Everything in Free
 - Detailed appraisal
 - Detailed report
@@ -96,8 +101,10 @@ Business integrations should pass reference IDs only.
   - `VITE_PRICE_PRO_LABEL`
   - `VITE_PRICE_BUSINESS_LABEL`
 - Worker API enforces Free limits:
-  - `POST /api/sessions/start`
-  - `POST /api/appraisal-clients`
+  - `POST /api/sessions/start` starts work without incrementing monthly completed count
+  - `POST /api/appraisals/save-draft` enforces the 1 unfinished appraisal limit
+  - `POST /api/appraisals/complete` increments monthly completed count and updates latest-history visibility
+  - `POST /api/appraisal-clients` keeps profile count unlimited
 - Usage and billing status APIs:
   - `GET /api/usage`
   - `GET /api/billing/subscription`
