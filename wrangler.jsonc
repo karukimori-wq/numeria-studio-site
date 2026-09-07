@@ -7,15 +7,5 @@
     "binding": "ASSETS",
     "directory": "./dist",
     "not_found_handling": "single-page-application"
-  },
-  "routes": [
-    {
-      "pattern": "numeria-studio.com/*",
-      "zone_name": "numeria-studio.com"
-    },
-    {
-      "pattern": "www.numeria-studio.com/*",
-      "zone_name": "numeria-studio.com"
-    }
-  ]
+  }
 }
