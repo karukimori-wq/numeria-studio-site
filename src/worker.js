@@ -577,6 +577,15 @@ async function handleApi(request, env = {}) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
     const appraisalId = body.appraisalId || body.id || `app_${Date.now()}`;
+    if (record.activeDraft && record.activeDraft.id !== appraisalId) {
+      return json({
+        status: "error",
+        errorCode: "ACTIVE_APPRAISAL_REQUIRED",
+        message: `未完了の案件「${record.activeDraft.clientName || "未設定"}」を先に完成してください。`,
+        upgradeBenefit: "同時進行できる未完了案件数を増やす場合はProをご利用ください。",
+        usage: snapshot,
+      }, { status: 409 });
+    }
     const completedAt = new Date().toISOString();
     const currentDraft = record.activeDraft;
     const completedAppraisal = {
