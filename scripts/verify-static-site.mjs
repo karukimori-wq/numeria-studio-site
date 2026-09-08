@@ -12,6 +12,7 @@ const requiredFiles = [
   "src/worker.js",
   "vite.config.mjs",
   "scripts/restore-original-site.mjs",
+  "scripts/patch-legacy-static-assets.mjs",
   "favicon.svg",
   "legacy-static/README.md",
   "assets/index-CEGe-9Xe.css",
@@ -80,6 +81,7 @@ assert.doesNotMatch(numeriaAppSource, /無料版で利用できる占術は1つ�
 assert.match(numeriaAppSource, /\/api\/appraisals\/save-draft/);
 assert.match(numeriaAppSource, /Ci=async\(\)=>/);
 assert.match(numeriaAppSource, /Ii=async\(\)=>/);
+assert.match(readFileSync("scripts/patch-legacy-static-assets.mjs", "utf8"), /Expected three legacy PDF navigation calls/);
 assert.match(packageJson, /restore-original-site\.mjs/);
 assert.doesNotMatch(html, /https:\/\/numeria-studio\.karukimori\.workers\.dev/);
 assert.match(authGateSource, /@clerk\/clerk-js/);
