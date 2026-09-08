@@ -110,8 +110,14 @@ assert.match(workerSource, /_clerk\\\.browser_/);
 assert.match(workerSource, /\/api\/sessions\/start/);
 assert.match(workerSource, /\/api\/appraisals\/save-draft/);
 assert.match(workerSource, /\/api\/appraisals\/complete/);
+assert.match(workerSource, /\/api\/reports\/export/);
 assert.match(workerSource, /completion-button-only/);
 assert.match(workerSource, /studio\.session\.completed\.v1/);
+assert.match(workerSource, /getPlanConfigForPlan/);
+assert.match(workerSource, /export_detailed_report/);
+assert.match(workerSource, /remove_report_branding/);
+assert.match(planSource, /PRO_DETAILED_REPORT_REQUIRED/);
+assert.match(planSource, /PRO_BRANDING_CONTROL_REQUIRED/);
 assert.match(workerSource, /\/api\/appraisal-clients/);
 assert.match(workerSource, /\/api\/billing\/subscription/);
 assert.match(workerSource, /url\.pathname === "\/health"/);
@@ -145,8 +151,12 @@ assert.equal(PLAN_CONFIG.free.entitlements.appraisalClients, "unlimited");
 assert.equal(PLAN_CONFIG.free.entitlements.inProgressAppraisals, 1);
 assert.equal(PLAN_CONFIG.free.entitlements.viewableCompletedAppraisals, 3);
 assert.equal(PLAN_CONFIG.free.entitlements.pdfExport, true);
+assert.equal(PLAN_CONFIG.free.entitlements.detailedReport, false);
+assert.equal(PLAN_CONFIG.free.entitlements.brandedReport, false);
 assert.equal(PLAN_CONFIG.pro.entitlements.monthlyAppraisals, "unlimited");
 assert.equal(PLAN_CONFIG.pro.entitlements.appraisalClients, "unlimited");
+assert.equal(PLAN_CONFIG.pro.entitlements.detailedReport, true);
+assert.equal(PLAN_CONFIG.pro.entitlements.brandedReport, true);
 assert.equal(PLAN_CONFIG.business.available, false);
 
 const freeAtSessionLimit = createUsageSnapshot({ planId: "free", monthlyAppraisals: 20, appraisalClients: 0 });
@@ -156,6 +166,11 @@ assert.equal(evaluateUsageLimit(freeAtSessionLimit, "complete_appraisal").reason
 const freeAtDraftLimit = createUsageSnapshot({ planId: "free", monthlyAppraisals: 0, inProgressAppraisals: 1 });
 assert.equal(evaluateUsageLimit(freeAtDraftLimit, "save_in_progress_appraisal").allowed, false);
 assert.equal(evaluateUsageLimit(freeAtDraftLimit, "save_in_progress_appraisal").reason, "FREE_IN_PROGRESS_APPRAISAL_LIMIT");
+assert.equal(evaluateUsageLimit(freeAtDraftLimit, "export_pdf_report").allowed, true);
+assert.equal(evaluateUsageLimit(freeAtDraftLimit, "export_detailed_report").allowed, false);
+assert.equal(evaluateUsageLimit(freeAtDraftLimit, "export_detailed_report").reason, "PRO_DETAILED_REPORT_REQUIRED");
+assert.equal(evaluateUsageLimit(freeAtDraftLimit, "remove_report_branding").allowed, false);
+assert.equal(evaluateUsageLimit(freeAtDraftLimit, "remove_report_branding").reason, "PRO_BRANDING_CONTROL_REQUIRED");
 
 const freeVisibleHistory = createUsageSnapshot({ planId: "free", completedAppraisalIds: ["a", "b", "c", "d", "e"] });
 assert.deepEqual(freeVisibleHistory.visibleCompletedAppraisalIds, ["c", "d", "e"]);
@@ -167,11 +182,16 @@ assert.match(dashboardSource, /途中保存/);
 assert.match(dashboardSource, /表示できる鑑定履歴/);
 assert.match(dashboardSource, /api\/appraisals\/complete/);
 assert.match(dashboardSource, /api\/appraisals\/save-draft/);
+assert.match(dashboardSource, /api\/reports\/export/);
+assert.match(dashboardSource, /鑑定書出力/);
+assert.match(dashboardSource, /Numeriaロゴを非表示/);
 assert.doesNotMatch(dashboardSource, /3名までの鑑定対象者管理/);
 assert.doesNotMatch(dashboardSource, /鑑定件数と鑑定対象者管理が上限なし/);
 
 const proUnlimited = createUsageSnapshot({ planId: "pro", monthlyAppraisals: 200, appraisalClients: 50 });
 assert.equal(evaluateUsageLimit(proUnlimited, "complete_appraisal").allowed, true);
 assert.equal(evaluateUsageLimit(proUnlimited, "save_in_progress_appraisal").allowed, true);
+assert.equal(evaluateUsageLimit(proUnlimited, "export_detailed_report").allowed, true);
+assert.equal(evaluateUsageLimit(proUnlimited, "remove_report_branding").allowed, true);
 
 console.log("Static Numeria Studio site backup verified.");
