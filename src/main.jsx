@@ -330,6 +330,63 @@ function SignedInWorkspace() {
     }
   }
 
+  function printJapaneseReport() {
+    const detailedDecision = evaluateUsageLimit(usage, "export_detailed_report");
+    const brandingDecision = evaluateUsageLimit(usage, "remove_report_branding");
+    if (reportOptions.reportType === "detailed" && !detailedDecision.allowed) {
+      setNotice(limitNotice(detailedDecision));
+      return;
+    }
+    if (reportOptions.removeBranding && !brandingDecision.allowed) {
+      setNotice(limitNotice(brandingDecision));
+      return;
+    }
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      setNotice({
+        type: "warning",
+        title: "印刷画面を開けませんでした",
+        body: "ブラウザのポップアップを許可してから、もう一度お試しください。",
+      });
+      return;
+    }
+
+    const title = reportOptions.reportType === "detailed" ? "鑑定書（詳細）" : "鑑定書（基本）";
+    const branding = reportOptions.removeBranding ? "" : "<div class=\"brand\">Numeria Studio</div>";
+    const field = (label, value, fallback = "未入力") => `
+      <section><h2>${escapePrintHtml(label)}</h2><p>${escapePrintHtml(value || fallback)}</p></section>`;
+    printWindow.document.write(`<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>${escapePrintHtml(title)}</title>
+      <style>
+        @page { size: A4; margin: 18mm; }
+        :root { color: #201a35; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; }
+        body { margin: 0; line-height: 1.8; }
+        header { background: #201a35; color: #fff; padding: 24px 28px; border-bottom: 4px solid #b99b53; }
+        h1 { margin: 0; font-size: 28px; font-weight: 600; }
+        .brand { margin: 28px 0 36px; color: #9b7f3d; letter-spacing: .18em; font-size: 12px; }
+        .meta { color: #6f6878; font-size: 12px; margin: 0 0 28px; }
+        main { border-top: 1px solid #d9d3df; }
+        section { padding: 22px 0; border-bottom: 1px solid #d9d3df; }
+        h2 { margin: 0 0 8px; color: #8d7337; font-size: 13px; letter-spacing: .08em; }
+        p { margin: 0; white-space: pre-wrap; font-size: 16px; }
+        footer { margin-top: 44px; color: #8a8490; font-size: 11px; }
+      </style></head><body>
+      <header><h1>${escapePrintHtml(title)}</h1></header>
+      <main>${branding}<p class="meta">出力日時: ${escapePrintHtml(new Date().toLocaleString("ja-JP"))}</p>
+        ${field("依頼者", currentCase.clientName)}
+        ${field("相談内容", currentCase.question)}
+        ${field("鑑定結果", currentCase.resultSummary)}
+        ${reportOptions.reportType === "detailed" ? field("鑑定メモ", currentCase.notes) : ""}
+      </main><footer>この鑑定書はNumeria Studioで作成されました。</footer>
+      <script>window.onload=()=>window.print();</script></body></html>`);
+    printWindow.document.close();
+    setNotice({
+      type: "success",
+      title: "日本語PDFの印刷画面を開きました",
+      body: "印刷画面で「PDFとして保存」を選択してください。",
+    });
+  }
+
   const completeDecision = evaluateUsageLimit(usage, "complete_appraisal");
   const draftDecision = evaluateUsageLimit(usage, "save_in_progress_appraisal");
   const canSaveDraft = draftDecision.allowed || usage.activeDraft?.id === currentCase.id;
@@ -401,6 +458,7 @@ function SignedInWorkspace() {
           usage={usage}
           onChange={setReportOptions}
           onExport={exportReport}
+          onPrint={printJapaneseReport}
         />
 
         <PlanComparison currentPlanId={usage.planId} onSelectPlan={changePlan} isAdmin={isAdmin} />
@@ -457,7 +515,7 @@ function AdminPreviewPanel() {
   );
 }
 
-function ReportExportPanel({ options, usage, onChange, onExport }) {
+function ReportExportPanel({ options, usage, onChange, onExport, onPrint }) {
   const detailedDecision = evaluateUsageLimit(usage, "export_detailed_report");
   const brandingDecision = evaluateUsageLimit(usage, "remove_report_branding");
   const canUseDetailed = detailedDecision.allowed;
@@ -515,9 +573,21 @@ function ReportExportPanel({ options, usage, onChange, onExport }) {
         <button className="button primary" onClick={onExport}>
           PDF出力
         </button>
+        <button className="button secondary" onClick={onPrint}>
+          日本語PDF（印刷保存）
+        </button>
       </div>
     </div>
   );
+}
+
+function escapePrintHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function AppraisalCaseForm({ currentCase, usage, onChange }) {
