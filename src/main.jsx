@@ -18,6 +18,7 @@ import {
   MessageSquare,
   Search,
   Send,
+  ShieldCheck,
   Sparkles,
   Users,
 } from "lucide-react";
@@ -381,6 +382,8 @@ function SignedInWorkspace() {
           onDowngrade={() => changePlan(PLAN_IDS.FREE)}
         />
 
+        {isAdmin && <AdminPreviewPanel />}
+
         <ReportExportPanel
           options={reportOptions}
           usage={usage}
@@ -388,40 +391,57 @@ function SignedInWorkspace() {
           onExport={exportReport}
         />
 
-        <PlanComparison currentPlanId={usage.planId} onSelectPlan={changePlan} />
-
-        <div className="work-panel">
-          <div className="panel-heading">
-            <ClipboardList size={20} />
-            <div>
-              <p className="eyebrow">Admin</p>
-              <h2>管理者状態</h2>
-            </div>
-          </div>
-          <dl className="identity-list">
-            <div>
-              <dt>Email</dt>
-              <dd>{primaryEmail || "未取得"}</dd>
-            </div>
-            <div>
-              <dt>権限</dt>
-              <dd>{isAdmin ? "管理者" : "メンバー"}</dd>
-            </div>
-            <div>
-              <dt>User ID</dt>
-              <dd>{userId}</dd>
-            </div>
-          </dl>
-          <p className="note">
-            MVP表示では登録済みの管理者メールをもとに表示します。保護された管理機能はサーバー側で確定します。
-          </p>
-        </div>
+        <PlanComparison currentPlanId={usage.planId} onSelectPlan={changePlan} isAdmin={isAdmin} />
 
         <AppraisalHistoryPanel usage={usage} />
       </section>
 
       <FeedbackWidget workspaceId={workspaceId} userId={userId} screenName="Free Pro Dashboard" />
     </>
+  );
+}
+
+function AdminPreviewPanel() {
+  const previewItems = [
+    {
+      title: "Business連携",
+      status: "開発中",
+      body: "Growth Engine連携、予約・売上・決済正本との接続を管理者だけ先行確認します。",
+    },
+    {
+      title: "実PDF生成",
+      status: "次に実装",
+      body: "鑑定書テンプレート、ロゴ非表示、ダウンロード導線を一般公開前に確認します。",
+    },
+    {
+      title: "AI利用記録",
+      status: "準備中",
+      body: "AI Platform CoreへUsageと生成イベントを送る動作を管理者だけ検証します。",
+    },
+  ];
+
+  return (
+    <div className="work-panel admin-preview-panel">
+      <div className="panel-heading">
+        <ShieldCheck size={20} />
+        <div>
+          <p className="eyebrow">Admin Preview</p>
+          <h2>管理者だけの先行メニュー</h2>
+        </div>
+      </div>
+      <p className="note">
+        通常ユーザーには表示しないBusiness予定機能と開発中機能です。プラン機能の延長として、公開前の動作確認に使います。
+      </p>
+      <div className="admin-preview-grid">
+        {previewItems.map((item) => (
+          <button className="admin-preview-card" type="button" key={item.title}>
+            <span>{item.status}</span>
+            <strong>{item.title}</strong>
+            <small>{item.body}</small>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -697,7 +717,7 @@ function BillingPanel({ usage, onUpgrade, onDowngrade }) {
   );
 }
 
-function PlanComparison({ currentPlanId, onSelectPlan }) {
+function PlanComparison({ currentPlanId, onSelectPlan, isAdmin = false }) {
   const plans = [PLAN_CONFIG.free, PLAN_CONFIG.pro, PLAN_CONFIG.business];
   return (
     <section className="pricing-panel">
@@ -721,10 +741,16 @@ function PlanComparison({ currentPlanId, onSelectPlan }) {
             {onSelectPlan && (
               <button
                 className={plan.id === PLAN_IDS.PRO ? "button primary" : "button secondary"}
-                disabled={!plan.available || plan.id === currentPlanId}
+                disabled={(!plan.available && !isAdmin) || plan.id === currentPlanId}
                 onClick={() => onSelectPlan(plan.id)}
               >
-                {plan.id === currentPlanId ? "現在利用中" : plan.available ? `${plan.name}を選ぶ` : "準備中"}
+                {plan.id === currentPlanId
+                  ? "現在利用中"
+                  : plan.available
+                    ? `${plan.name}を選ぶ`
+                    : isAdmin
+                      ? "管理者確認用"
+                      : "準備中"}
               </button>
             )}
           </article>
