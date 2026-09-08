@@ -120,6 +120,8 @@ assert.match(workerSource, /_clerk\\\.browser_/);
 assert.match(workerSource, /\/api\/sessions\/start/);
 assert.match(workerSource, /\/api\/appraisals\/save-draft/);
 assert.match(workerSource, /\/api\/appraisals\/complete/);
+assert.match(workerSource, /ACTIVE_APPRAISAL_REQUIRED/);
+assert.match(workerSource, /未完了の案件/);
 assert.match(workerSource, /\/api\/reports\/export/);
 assert.match(workerSource, /createReportPdfBase64/);
 assert.match(workerSource, /createReportSnapshot/);
