@@ -918,3 +918,129 @@ function FeedbackWidget({ workspaceId, userId, screenName }) {
       setStatus(response.ok ? "sent" : "needs_followup");
     } catch {
       localStorage.setItem("numeria.feedback.mock.last", JSON.stringify(payload));
+      setStatus("mocked");
+    }
+  }
+
+  return (
+    <div className={`feedback ${open ? "open" : ""}`}>
+      <button className="feedback-button" onClick={() => setOpen((value) => !value)}>
+        <LifeBuoy size={20} />
+        困ったことを送る
+      </button>
+      {open && (
+        <form className="feedback-chat" onSubmit={submitFeedback}>
+          <div className="chat-header">
+            <MessageSquare size={18} />
+            <div>
+              <strong>質問・改善</strong>
+              <span>{feedbackApiBase ? "Feedback Hub接続" : "未接続: モック保存"}</span>
+            </div>
+          </div>
+          <div className="chat-bubble">
+            困ったこと、質問、改善してほしい点を書いてください。現在画面のcontextも一緒に送ります。
+          </div>
+          <textarea
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
+            placeholder="例: Free上限に達した時の案内をもっと分かりやすくしたい"
+            rows={4}
+          />
+          <button className="button primary send" type="submit">
+            <Send size={16} />
+            送信
+          </button>
+          {status !== "idle" && (
+            <p className="feedback-status">
+              {status === "sending" && "送信しています..."}
+              {status === "sent" && "送信しました。ありがとうございます。"}
+              {status === "needs_followup" && "追加で確認したいことがあります。"}
+              {status === "mocked" && "Feedback Hub未接続のため、この端末にモック保存しました。"}
+            </p>
+          )}
+        </form>
+      )}
+    </div>
+  );
+}
+
+function StatusPanel() {
+  return (
+    <aside className="status-panel">
+      <h2>リリース状態</h2>
+      <ul>
+        <li><CheckCircle2 size={18} />Cloudflare Static Assets対応</li>
+        <li><CheckCircle2 size={18} />ログイン入口を追加</li>
+        <li><CheckCircle2 size={18} />Free / Pro利用制限を反映</li>
+        <li><CheckCircle2 size={18} />Feedback Hub送信口を準備</li>
+      </ul>
+    </aside>
+  );
+}
+
+function StatCard({ label, value }) {
+  return (
+    <div className="stat-card">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function Notice({ type, title, body }) {
+  return (
+    <div className={`notice ${type}`}>
+      <strong>{title}</strong>
+      <p>{body}</p>
+    </div>
+  );
+}
+
+function formatLimit(current, limit) {
+  if (isUnlimited(limit)) return `${current} / 上限なし`;
+  return `${current} / ${limit}`;
+}
+
+function limitNotice(data = {}) {
+  return {
+    type: data.status === "success" ? "success" : "warning",
+    title: data.message || "操作できませんでした",
+    body: data.upgradeBenefit || "プラン状態を確認してください。",
+  };
+}
+
+function ClerkSetupScreen() {
+  return (
+    <main className="setup-screen">
+      <div className="setup-card">
+        <p className="eyebrow">Numeria Studio</p>
+        <h1>ログイン設定を反映してください</h1>
+        <p>
+          ログインに必要な公開設定が未反映です。設定が本番ビルド環境へ
+          登録されるとログイン画面が有効になります。
+        </p>
+        <dl className="setup-list">
+          <div>
+            <dt>アプリID</dt>
+            <dd>{clerkApplicationId}</dd>
+          </div>
+          <div>
+            <dt>本番ビルド設定</dt>
+            <dd>VITE_CLERK_PUBLISHABLE_KEY</dd>
+          </div>
+          <div>
+            <dt>管理者メール設定</dt>
+            <dd>VITE_ADMIN_EMAILS=illusionddt@gmail.com</dd>
+          </div>
+        </dl>
+        <code>VITE_CLERK_PUBLISHABLE_KEY=pk_test_...</code>
+        <p className="warning-note">
+          秘密キーはチャット・GitHub・フロントエンドへ入れないでください。サーバー側の確認を
+          追加する段階で、保護された秘密値として登録します。
+        </p>
+      </div>
+    </main>
+  );
+}
+
+createRoot(document.getElementById("root")).render(<App />);
