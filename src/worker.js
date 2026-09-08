@@ -95,7 +95,7 @@ function createReportPdfBase64({ exportId, reportType, branding, body = {} }) {
   const title = reportType === "detailed" ? "Numeria Studio Detailed Report" : "Numeria Studio Basic Report";
   const lines = [
     title,
-    branding === "hidden" ? "Branding: Hidden" : "Branding: Numeria logo included",
+    branding === "hidden" ? "Branding: Hidden" : "Branding: Numeria Studio",
     `Export ID: ${exportId}`,
     `Client: ${asciiPdfText(body.clientName)}`,
     `Question: ${asciiPdfText(body.question, "No question provided")}`,
@@ -104,9 +104,24 @@ function createReportPdfBase64({ exportId, reportType, branding, body = {} }) {
       ? `Notes: ${asciiPdfText(body.notes, "No notes provided")}`
       : "Report Type: Basic",
   ];
-  const contentLines = lines
-    .map((line, index) => `BT /F1 ${index === 0 ? 20 : 11} Tf 54 ${746 - index * 34} Td (${escapePdfText(line)}) Tj ET`)
-    .join("\n");
+  const contentLines = [
+    "q 0.12 0.09 0.20 rg 0 742 612 50 re f Q",
+    "q 0.73 0.58 0.20 RG 54 728 504 1 re f Q",
+    "1 1 1 rg",
+    `BT /F1 20 Tf 54 760 Td (${escapePdfText(lines[0])}) Tj ET`,
+    "0.08 0.07 0.12 rg",
+    `BT /F1 11 Tf 54 714 Td (${escapePdfText(lines[1])}) Tj ET`,
+    `BT /F1 9 Tf 420 714 Td (${escapePdfText(lines[2])}) Tj ET`,
+    "q 0.73 0.58 0.20 RG 54 684 504 1 re f Q",
+    "BT /F1 14 Tf 54 660 Td (Report Details) Tj ET",
+    `BT /F1 12 Tf 54 620 Td (${escapePdfText(lines[3])}) Tj ET`,
+    `BT /F1 12 Tf 54 570 Td (${escapePdfText(lines[4])}) Tj ET`,
+    "q 0.85 0.83 0.88 RG 54 542 504 1 re f Q",
+    `BT /F1 12 Tf 54 505 Td (${escapePdfText(lines[5])}) Tj ET`,
+    `BT /F1 12 Tf 54 455 Td (${escapePdfText(lines[6])}) Tj ET`,
+    "q 0.85 0.83 0.88 RG 54 425 504 1 re f Q",
+    `BT /F1 9 Tf 54 52 Td (${escapePdfText(lines[7])}) Tj ET`,
+  ].join("\n");
   const stream = `${contentLines}\n`;
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
