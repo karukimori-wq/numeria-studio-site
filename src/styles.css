@@ -625,6 +625,53 @@ h2 {
   gap: 14px;
 }
 
+.admin-preview-panel {
+  display: grid;
+  gap: 14px;
+  border-color: rgba(143, 103, 49, 0.42);
+  background: #fffaf0;
+}
+
+.admin-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-preview-card {
+  display: grid;
+  gap: 7px;
+  min-height: 132px;
+  border: 1px solid #dec893;
+  border-radius: 8px;
+  padding: 14px;
+  color: #241a3d;
+  background: #fffdf8;
+  cursor: pointer;
+  text-align: left;
+}
+
+.admin-preview-card span {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: #5d451f;
+  background: #f1e3c1;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.admin-preview-card strong {
+  font-size: 1rem;
+}
+
+.admin-preview-card small {
+  color: #6a6259;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
 .segmented-control {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1094,6 +1141,7 @@ textarea {
   .landing-grid,
   .workspace-grid,
   .stat-grid,
+  .admin-preview-grid,
   .plan-grid {
     grid-template-columns: 1fr;
   }
