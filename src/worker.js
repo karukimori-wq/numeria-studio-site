@@ -60,6 +60,10 @@ function usageResponse(record) {
   return createUsageSnapshot(record);
 }
 
+function getPlanConfigForPlan(planId) {
+  return PLAN_CONFIG[normalizePlanId(planId)] || PLAN_CONFIG.free;
+}
+
 function healthResponse() {
   return {
     status: "success",
