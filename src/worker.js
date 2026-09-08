@@ -79,6 +79,18 @@ function escapePdfText(value) {
     .replace(/\)/g, "\\)");
 }
 
+function createReportSnapshot({ exportId, reportType, branding, body = {} }) {
+  return {
+    exportId,
+    reportType,
+    branding,
+    clientName: String(body.clientName || "未設定").trim(),
+    question: String(body.question || "").trim(),
+    resultSummary: String(body.resultSummary || "").trim(),
+    notes: reportType === "detailed" ? String(body.notes || "").trim() : "",
+  };
+}
+
 function createReportPdfBase64({ exportId, reportType, branding, body = {} }) {
   const title = reportType === "detailed" ? "Numeria Studio Detailed Report" : "Numeria Studio Basic Report";
   const lines = [
@@ -610,11 +622,17 @@ async function handleApi(request, env = {}) {
     const exportId = `rep_${Date.now()}`;
     const branding = removeBranding ? "hidden" : "numeria-logo-included";
     const fileName = `numeria-${reportType}-report-${exportId}.pdf`;
-    const pdfBase64 = createReportPdfBase64({
+    const reportSnapshot = createReportSnapshot({
       exportId,
       reportType,
       branding,
       body,
+    });
+    const pdfBase64 = createReportPdfBase64({
+      exportId,
+      reportType,
+      branding,
+      body: reportSnapshot,
     });
     return json({
       status: "success",
@@ -626,6 +644,7 @@ async function handleApi(request, env = {}) {
       mimeType: "application/pdf",
       downloadUrl: `data:application/pdf;base64,${pdfBase64}`,
       downloadPolicy: "inline-pdf-data-url-mvp",
+      reportSnapshot,
       message: "PDFを生成しました。ダウンロードできます。",
       usage: snapshot,
     }, { status: 201 });
