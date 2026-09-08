@@ -305,6 +305,10 @@ function SignedInWorkspace() {
           reportType: reportOptions.reportType,
           removeBranding: reportOptions.removeBranding,
           appraisalId: currentCase.id,
+          clientName: currentCase.clientName,
+          question: currentCase.question,
+          notes: currentCase.notes,
+          resultSummary: currentCase.resultSummary,
         },
       });
       if (response.downloadUrl) {
