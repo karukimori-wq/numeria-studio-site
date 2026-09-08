@@ -11,6 +11,21 @@ if (occurrenceCount !== 3) {
 }
 
 const patched = source.split(legacyPdfNavigation).join(safePdfNavigation);
-writeFileSync(legacyAssetPath, patched);
+const manticDraftPayload = "JSON.stringify({workspaceId:`ws_personal`,userId:window.Clerk&&window.Clerk.user&&window.Clerk.user.id||`browser-user`,appraisalId:r})";
+const manticDraftPayloadWithDetails = "JSON.stringify({workspaceId:`ws_personal`,userId:window.Clerk&&window.Clerk.user&&window.Clerk.user.id||`browser-user`,appraisalId:r,clientName:G.name,question:P,notes:n,resultSummary:wr?.reading||Pe.trim()||``})";
+const numerologyDraftPayload = "JSON.stringify({workspaceId:`ws_personal`,userId:window.Clerk&&window.Clerk.user&&window.Clerk.user.id||`browser-user`,appraisalId:e})";
+const numerologyDraftPayloadWithDetails = "JSON.stringify({workspaceId:`ws_personal`,userId:window.Clerk&&window.Clerk.user&&window.Clerk.user.id||`browser-user`,appraisalId:e,clientName:j,question:P,notes:lt||dt||``,resultSummary:r.message||r.summary||``})";
 
-console.log("Legacy PDF exports now open in a separate tab with navigation fallback.");
+if (patched.split(manticDraftPayload).length - 1 !== 1) {
+  throw new Error("Expected one mantic draft payload.");
+}
+if (patched.split(numerologyDraftPayload).length - 1 !== 1) {
+  throw new Error("Expected one numerology draft payload.");
+}
+
+const patchedWithDetails = patched
+  .replace(manticDraftPayload, manticDraftPayloadWithDetails)
+  .replace(numerologyDraftPayload, numerologyDraftPayloadWithDetails);
+writeFileSync(legacyAssetPath, patchedWithDetails);
+
+console.log("Legacy PDF exports and draft payloads patched for the production workspace.");
