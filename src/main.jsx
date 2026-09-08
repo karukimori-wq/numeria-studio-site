@@ -307,10 +307,18 @@ function SignedInWorkspace() {
           appraisalId: currentCase.id,
         },
       });
+      if (response.downloadUrl) {
+        const anchor = document.createElement("a");
+        anchor.href = response.downloadUrl;
+        anchor.download = response.fileName || "numeria-report.pdf";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+      }
       setNotice({
         type: "success",
-        title: "PDF出力を受け付けました",
-        body: `${response.fileName} を作成する準備ができました。${response.branding === "hidden" ? "ロゴは非表示です。" : "Numeriaロゴ付きで出力します。"}`,
+        title: "PDFを生成しました",
+        body: `${response.fileName} をダウンロードできます。${response.branding === "hidden" ? "ロゴは非表示です。" : "Numeriaロゴ付きで出力します。"}`,
       });
     } catch (error) {
       setNotice(limitNotice(error.data));
