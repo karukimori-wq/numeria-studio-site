@@ -521,6 +521,47 @@ async function handleApi(request, env = {}) {
     }, { status: 201 });
   }
 
+  if (url.pathname === "/api/reports/export" && request.method === "POST") {
+    const snapshot = usageResponse(record);
+    const format = String(body.format || "pdf").toLowerCase();
+    const reportType = String(body.reportType || "basic").toLowerCase();
+    const removeBranding = Boolean(body.removeBranding);
+    const checks = [
+      format === "pdf" ? evaluateUsageLimit(snapshot, "export_pdf_report") : {
+        allowed: false,
+        reason: "REPORT_FORMAT_NOT_SUPPORTED",
+        message: "現在出力できる形式はPDFのみです。",
+        upgradeBenefit: "Word出力や共有リンクは今後の拡張候補です。",
+      },
+      reportType === "detailed" ? evaluateUsageLimit(snapshot, "export_detailed_report") : { allowed: true },
+      removeBranding ? evaluateUsageLimit(snapshot, "remove_report_branding") : { allowed: true },
+    ];
+    const blocked = checks.find((check) => !check.allowed);
+
+    if (blocked) {
+      return json({
+        status: "error",
+        errorCode: blocked.reason,
+        message: blocked.message,
+        upgradeBenefit: blocked.upgradeBenefit,
+        usage: snapshot,
+      }, { status: 402 });
+    }
+
+    const exportId = `rep_${Date.now()}`;
+    return json({
+      status: "success",
+      exportId,
+      format,
+      reportType,
+      branding: removeBranding ? "hidden" : "numeria-logo-included",
+      fileName: `numeria-${reportType}-report-${exportId}.pdf`,
+      downloadPolicy: "mvp-export-contract",
+      message: "PDF出力を受け付けました。実PDF生成は次の実装ステップで接続します。",
+      usage: snapshot,
+    }, { status: 201 });
+  }
+
   return json({ status: "error", errorCode: "NOT_FOUND", message: "API endpoint not found." }, { status: 404 });
 }
 
