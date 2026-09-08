@@ -64,6 +64,61 @@ function getPlanConfigForPlan(planId) {
   return PLAN_CONFIG[normalizePlanId(planId)] || PLAN_CONFIG.free;
 }
 
+function asciiPdfText(value, fallback = "Not set") {
+  const text = String(value || fallback)
+    .replace(/[^\x20-\x7E]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return text || fallback;
+}
+
+function escapePdfText(value) {
+  return asciiPdfText(value)
+    .replace(/\\/g, "\\\\")
+    .replace(/\(/g, "\\(")
+    .replace(/\)/g, "\\)");
+}
+
+function createReportPdfBase64({ exportId, reportType, branding, body = {} }) {
+  const title = reportType === "detailed" ? "Numeria Studio Detailed Report" : "Numeria Studio Basic Report";
+  const lines = [
+    title,
+    branding === "hidden" ? "Branding: Hidden" : "Branding: Numeria logo included",
+    `Export ID: ${exportId}`,
+    `Client: ${asciiPdfText(body.clientName)}`,
+    `Question: ${asciiPdfText(body.question, "No question provided")}`,
+    `Result: ${asciiPdfText(body.resultSummary, "No result summary provided")}`,
+    reportType === "detailed"
+      ? `Notes: ${asciiPdfText(body.notes, "No notes provided")}`
+      : "Report Type: Basic",
+  ];
+  const contentLines = lines
+    .map((line, index) => `BT /F1 ${index === 0 ? 20 : 11} Tf 54 ${746 - index * 34} Td (${escapePdfText(line)}) Tj ET`)
+    .join("\n");
+  const stream = `${contentLines}\n`;
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    `<< /Length ${stream.length} >>\nstream\n${stream}endstream`,
+  ];
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((object, index) => {
+    offsets.push(pdf.length);
+    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+  const xrefOffset = pdf.length;
+  pdf += `xref\n0 ${objects.length + 1}\n`;
+  pdf += "0000000000 65535 f \n";
+  offsets.slice(1).forEach((offset) => {
+    pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+  });
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+  return btoa(pdf);
+}
+
 function healthResponse() {
   return {
     status: "success",
@@ -553,15 +608,25 @@ async function handleApi(request, env = {}) {
     }
 
     const exportId = `rep_${Date.now()}`;
+    const branding = removeBranding ? "hidden" : "numeria-logo-included";
+    const fileName = `numeria-${reportType}-report-${exportId}.pdf`;
+    const pdfBase64 = createReportPdfBase64({
+      exportId,
+      reportType,
+      branding,
+      body,
+    });
     return json({
       status: "success",
       exportId,
       format,
       reportType,
-      branding: removeBranding ? "hidden" : "numeria-logo-included",
-      fileName: `numeria-${reportType}-report-${exportId}.pdf`,
-      downloadPolicy: "mvp-export-contract",
-      message: "PDF出力を受け付けました。実PDF生成は次の実装ステップで接続します。",
+      branding,
+      fileName,
+      mimeType: "application/pdf",
+      downloadUrl: `data:application/pdf;base64,${pdfBase64}`,
+      downloadPolicy: "inline-pdf-data-url-mvp",
+      message: "PDFを生成しました。ダウンロードできます。",
       usage: snapshot,
     }, { status: 201 });
   }
