@@ -238,5 +238,32 @@ export function evaluateUsageLimit(snapshot, action) {
     }
   }
 
+  if (action === "export_detailed_report" && !entitlement.detailedReport) {
+    return {
+      allowed: false,
+      reason: "PRO_DETAILED_REPORT_REQUIRED",
+      message: "詳細レポートはProプランで利用できます。",
+      upgradeBenefit: "Proにすると詳細鑑定、詳細レポート、文章調整を使えます。",
+    };
+  }
+
+  if (action === "remove_report_branding" && !entitlement.brandedReport) {
+    return {
+      allowed: false,
+      reason: "PRO_BRANDING_CONTROL_REQUIRED",
+      message: "ロゴ非表示はProプランで利用できます。",
+      upgradeBenefit: "Proにするとブランド表示の調整ができます。",
+    };
+  }
+
+  if (action === "export_pdf_report" && !entitlement.pdfExport) {
+    return {
+      allowed: false,
+      reason: "PDF_EXPORT_UNAVAILABLE",
+      message: "PDF出力は現在のプランでは利用できません。",
+      upgradeBenefit: "利用可能なプランを確認してください。",
+    };
+  }
+
   return { allowed: true, reason: "OK", message: "利用できます。", upgradeBenefit: "" };
 }
