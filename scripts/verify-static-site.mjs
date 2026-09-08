@@ -123,6 +123,7 @@ assert.match(workerSource, /\/api\/appraisals\/complete/);
 assert.match(workerSource, /\/api\/reports\/export/);
 assert.match(workerSource, /createReportPdfBase64/);
 assert.match(workerSource, /createReportSnapshot/);
+assert.match(workerSource, /Report Details/);
 assert.match(workerSource, /application\/pdf/);
 assert.match(workerSource, /downloadUrl/);
 assert.match(workerSource, /reportSnapshot/);
