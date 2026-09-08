@@ -470,7 +470,8 @@ async function handleApi(request, env = {}) {
   }
 
   if (url.pathname === "/api/usage" && request.method === "GET") {
-    return json({ status: "success", workspaceId, userId, usage: usageResponse(record), historyPolicy: { visibleCompletedAppraisals: PLAN_CONFIG.free.entitlements.viewableCompletedAppraisals, lockedDetailsAreRetained: true } });
+    const usage = usageResponse(record);
+    return json({ status: "success", workspaceId, userId, usage, historyPolicy: { visibleCompletedAppraisals: usage.entitlements.viewableCompletedAppraisals, lockedDetailsAreRetained: true } });
   }
 
   if (url.pathname === "/api/billing/subscription" && request.method === "GET") {
@@ -611,7 +612,7 @@ async function handleApi(request, env = {}) {
       sessionStatus: "completed",
       eventName: "studio.session.completed.v1",
       countPolicy: "appraisal_completed_button",
-      historyPolicy: { visibleCompletedAppraisals: 3, lockedDetailsAreRetained: true },
+      historyPolicy: { visibleCompletedAppraisals: snapshot.entitlements.viewableCompletedAppraisals, lockedDetailsAreRetained: true },
       usage: usageResponse(record),
     }, { status: 201 });
   }
