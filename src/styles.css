@@ -620,6 +620,106 @@ h2 {
   opacity: 0.52;
 }
 
+.report-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.segmented-control {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  border-radius: 8px;
+  padding: 6px;
+  background: #f5efe4;
+}
+
+.segmented-control button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 42px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #5e6570;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.segmented-control button.active {
+  border-color: #c4a15d;
+  color: #241a3d;
+  background: #fffdf8;
+}
+
+.segmented-control button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 64px;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 12px;
+  color: #17202a;
+  background: #fffdf8;
+  cursor: pointer;
+  text-align: left;
+}
+
+.toggle-row span:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.toggle-row small {
+  color: #7d6e61;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.toggle-row:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.switch {
+  position: relative;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  background: #d8cbb9;
+}
+
+.switch::after {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(44, 34, 18, 0.18);
+  content: "";
+  transition: transform 160ms ease;
+}
+
+.switch.on {
+  background: #8f6731;
+}
+
+.switch.on::after {
+  transform: translateX(20px);
+}
+
 .case-editor {
   display: grid;
   gap: 12px;
