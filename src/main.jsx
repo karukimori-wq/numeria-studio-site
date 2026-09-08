@@ -842,7 +842,7 @@ function PlanComparison({ currentPlanId, onSelectPlan, isAdmin = false }) {
             {onSelectPlan && (
               <button
                 className={plan.id === PLAN_IDS.PRO ? "button primary" : "button secondary"}
-                disabled={(!plan.available && !isAdmin) || plan.id === currentPlanId}
+                disabled={!plan.available || plan.id === currentPlanId}
                 onClick={() => onSelectPlan(plan.id)}
               >
                 {plan.id === currentPlanId
@@ -850,7 +850,7 @@ function PlanComparison({ currentPlanId, onSelectPlan, isAdmin = false }) {
                   : plan.available
                     ? `${plan.name}を選ぶ`
                     : isAdmin
-                      ? "管理者確認用"
+                      ? "管理者プレビュー（準備中）"
                       : "準備中"}
               </button>
             )}
