@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   ClipboardList,
   Crown,
+  Download,
   FileText,
   LifeBuoy,
   Lock,
@@ -163,6 +164,10 @@ function SignedInWorkspace() {
   const [notice, setNotice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentCase, setCurrentCase] = useState(createEmptyCase);
+  const [reportOptions, setReportOptions] = useState({
+    reportType: "basic",
+    removeBranding: false,
+  });
 
   function createEmptyCase() {
     return {
@@ -289,6 +294,29 @@ function SignedInWorkspace() {
     }
   }
 
+  async function exportReport() {
+    try {
+      const response = await apiRequest("/api/reports/export", {
+        method: "POST",
+        scope,
+        body: {
+          format: "pdf",
+          reportType: reportOptions.reportType,
+          removeBranding: reportOptions.removeBranding,
+          appraisalId: currentCase.id,
+        },
+      });
+      setNotice({
+        type: "success",
+        title: "PDF出力を受け付けました",
+        body: `${response.fileName} を作成する準備ができました。${response.branding === "hidden" ? "ロゴは非表示です。" : "Numeriaロゴ付きで出力します。"}`,
+      });
+    } catch (error) {
+      setNotice(limitNotice(error.data));
+      if (error.data?.usage) setUsage(error.data.usage);
+    }
+  }
+
   const completeDecision = evaluateUsageLimit(usage, "complete_appraisal");
   const draftDecision = evaluateUsageLimit(usage, "save_in_progress_appraisal");
   const canSaveDraft = draftDecision.allowed || usage.activeDraft?.id === currentCase.id;
@@ -353,6 +381,13 @@ function SignedInWorkspace() {
           onDowngrade={() => changePlan(PLAN_IDS.FREE)}
         />
 
+        <ReportExportPanel
+          options={reportOptions}
+          usage={usage}
+          onChange={setReportOptions}
+          onExport={exportReport}
+        />
+
         <PlanComparison currentPlanId={usage.planId} onSelectPlan={changePlan} />
 
         <div className="work-panel">
@@ -387,6 +422,69 @@ function SignedInWorkspace() {
 
       <FeedbackWidget workspaceId={workspaceId} userId={userId} screenName="Free Pro Dashboard" />
     </>
+  );
+}
+
+function ReportExportPanel({ options, usage, onChange, onExport }) {
+  const detailedDecision = evaluateUsageLimit(usage, "export_detailed_report");
+  const brandingDecision = evaluateUsageLimit(usage, "remove_report_branding");
+  const canUseDetailed = detailedDecision.allowed;
+  const canRemoveBranding = brandingDecision.allowed;
+
+  function selectReportType(reportType) {
+    if (reportType === "detailed" && !canUseDetailed) return;
+    onChange((current) => ({ ...current, reportType }));
+  }
+
+  function toggleBranding() {
+    if (!canRemoveBranding) return;
+    onChange((current) => ({ ...current, removeBranding: !current.removeBranding }));
+  }
+
+  return (
+    <div className="work-panel report-panel">
+      <div className="panel-heading">
+        <Download size={20} />
+        <div>
+          <p className="eyebrow">Report</p>
+          <h2>鑑定書出力</h2>
+        </div>
+      </div>
+      <p className="note">
+        FreeはPDFの基本鑑定書を出力できます。詳細レポートとロゴ非表示はProで利用できます。
+      </p>
+      <div className="segmented-control" aria-label="レポート種別">
+        <button
+          className={options.reportType === "basic" ? "active" : ""}
+          onClick={() => selectReportType("basic")}
+        >
+          基本
+        </button>
+        <button
+          className={options.reportType === "detailed" ? "active" : ""}
+          disabled={!canUseDetailed}
+          onClick={() => selectReportType("detailed")}
+        >
+          詳細 {!canUseDetailed && <Lock size={14} />}
+        </button>
+      </div>
+      <button
+        className="toggle-row"
+        disabled={!canRemoveBranding}
+        onClick={toggleBranding}
+      >
+        <span>
+          <strong>Numeriaロゴを非表示</strong>
+          <small>{canRemoveBranding ? "Proで切り替え可能" : "Proで利用できます"}</small>
+        </span>
+        <span className={options.removeBranding ? "switch on" : "switch"} />
+      </button>
+      <div className="action-row">
+        <button className="button primary" onClick={onExport}>
+          PDF出力
+        </button>
+      </div>
+    </div>
   );
 }
 
