@@ -82,6 +82,8 @@ assert.match(numeriaAppSource, /\/api\/appraisals\/save-draft/);
 assert.match(numeriaAppSource, /Ci=async\(\)=>/);
 assert.match(numeriaAppSource, /Ii=async\(\)=>/);
 assert.match(readFileSync("scripts/patch-legacy-static-assets.mjs", "utf8"), /Expected three legacy PDF navigation calls/);
+assert.match(readFileSync("scripts/patch-legacy-static-assets.mjs", "utf8"), /manticDraftPayloadWithDetails/);
+assert.match(readFileSync("scripts/patch-legacy-static-assets.mjs", "utf8"), /numerologyDraftPayloadWithDetails/);
 assert.match(packageJson, /restore-original-site\.mjs/);
 assert.doesNotMatch(html, /https:\/\/numeria-studio\.karukimori\.workers\.dev/);
 assert.match(authGateSource, /@clerk\/clerk-js/);
