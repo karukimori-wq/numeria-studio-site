@@ -33,7 +33,13 @@ function getScope(request, body = {}) {
 function getRecord(workspaceId, userId) {
   const billingMonth = getBillingMonth();
   const key = scopeKey(workspaceId, userId, billingMonth);
-  const current = runtimeStore.get(key) || {
+  const current = runtimeStore.get(key) || createDefaultRecord(billingMonth);
+  runtimeStore.set(key, current);
+  return current;
+}
+
+function createDefaultRecord(billingMonth = getBillingMonth()) {
+  return {
     planId: PLAN_IDS.FREE,
     monthlyAppraisals: 0,
     appraisalClients: 0,
@@ -44,12 +50,129 @@ function getRecord(workspaceId, userId) {
     completedAppraisals: [],
     reportExports: [],
   };
-  runtimeStore.set(key, current);
-  return current;
 }
 
 function getD1Binding(env = {}) {
   return env.NUMERIA_DB || env.DB || env.D1 || null;
+}
+
+function safeJsonParse(value, fallback) {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
+function normalizeRecord(record = {}, billingMonth = getBillingMonth()) {
+  const defaults = createDefaultRecord(billingMonth);
+  return {
+    ...defaults,
+    ...record,
+    planId: normalizePlanId(record.planId || defaults.planId),
+    monthlyAppraisals: Number(record.monthlyAppraisals || 0),
+    appraisalClients: Number(record.appraisalClients || 0),
+    inProgressAppraisals: Number(record.inProgressAppraisals || 0),
+    activeDraft: record.activeDraft || null,
+    completedAppraisalIds: Array.isArray(record.completedAppraisalIds) ? record.completedAppraisalIds : [],
+    completedAppraisals: Array.isArray(record.completedAppraisals) ? record.completedAppraisals : [],
+    reportExports: Array.isArray(record.reportExports) ? record.reportExports : [],
+  };
+}
+
+function recordFromD1Row(row, billingMonth = getBillingMonth()) {
+  return normalizeRecord({
+    planId: row.plan_id,
+    monthlyAppraisals: row.monthly_appraisals,
+    appraisalClients: row.appraisal_clients,
+    billingMonth: row.billing_month || billingMonth,
+    inProgressAppraisals: row.in_progress_appraisals,
+    activeDraft: safeJsonParse(row.active_draft_json, null),
+    completedAppraisalIds: safeJsonParse(row.completed_appraisal_ids_json, []),
+    completedAppraisals: safeJsonParse(row.completed_appraisals_json, []),
+    reportExports: safeJsonParse(row.report_exports_json, []),
+  }, billingMonth);
+}
+
+async function loadUsageRecord(env = {}, workspaceId, userId) {
+  const billingMonth = getBillingMonth();
+  const key = scopeKey(workspaceId, userId, billingMonth);
+  const d1 = getD1Binding(env);
+  if (d1 && typeof d1.prepare === "function") {
+    const row = await d1.prepare(
+      `SELECT * FROM usage_records WHERE scope_key = ? LIMIT 1`
+    ).bind(key).first();
+    if (row) return recordFromD1Row(row, billingMonth);
+  }
+  return normalizeRecord(getRecord(workspaceId, userId), billingMonth);
+}
+
+async function saveUsageRecord(env = {}, workspaceId, userId, record) {
+  const normalized = normalizeRecord(record, record.billingMonth || getBillingMonth());
+  const key = scopeKey(workspaceId, userId, normalized.billingMonth);
+  const d1 = getD1Binding(env);
+  if (d1 && typeof d1.prepare === "function") {
+    await d1.prepare(`
+      INSERT INTO usage_records (
+        scope_key, workspace_id, user_id, billing_month, plan_id,
+        monthly_appraisals, appraisal_clients, in_progress_appraisals,
+        active_draft_json, completed_appraisal_ids_json, completed_appraisals_json,
+        report_exports_json, updated_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(scope_key) DO UPDATE SET
+        plan_id = excluded.plan_id,
+        monthly_appraisals = excluded.monthly_appraisals,
+        appraisal_clients = excluded.appraisal_clients,
+        in_progress_appraisals = excluded.in_progress_appraisals,
+        active_draft_json = excluded.active_draft_json,
+        completed_appraisal_ids_json = excluded.completed_appraisal_ids_json,
+        completed_appraisals_json = excluded.completed_appraisals_json,
+        report_exports_json = excluded.report_exports_json,
+        updated_at = excluded.updated_at
+    `).bind(
+      key,
+      workspaceId,
+      userId,
+      normalized.billingMonth,
+      normalized.planId,
+      normalized.monthlyAppraisals,
+      normalized.appraisalClients,
+      normalized.inProgressAppraisals,
+      normalized.activeDraft ? JSON.stringify(normalized.activeDraft) : null,
+      JSON.stringify(normalized.completedAppraisalIds),
+      JSON.stringify(normalized.completedAppraisals),
+      JSON.stringify(normalized.reportExports),
+      new Date().toISOString(),
+    ).run();
+  }
+  runtimeStore.set(key, normalized);
+  return normalized;
+}
+
+async function saveReportEvent(env = {}, workspaceId, userId, record, event) {
+  const d1 = getD1Binding(env);
+  if (!d1 || typeof d1.prepare !== "function") return;
+  const key = scopeKey(workspaceId, userId, record.billingMonth);
+  await d1.prepare(`
+    INSERT OR REPLACE INTO report_events (
+      event_id, scope_key, workspace_id, user_id, appraisal_id,
+      report_type, format, branding, event_name, generated_at
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    event.exportId,
+    key,
+    workspaceId,
+    userId,
+    event.appraisalId || null,
+    event.reportType,
+    event.format,
+    event.branding,
+    "studio.report.generated.v1",
+    event.generatedAt,
+  ).run();
 }
 
 function persistenceStatusResponse(env = {}) {
@@ -475,7 +598,7 @@ async function handleApi(request, env = {}) {
   const url = new URL(request.url);
   const body = await readJson(request);
   const { workspaceId, userId } = getScope(request, body);
-  const record = getRecord(workspaceId, userId);
+  const record = await loadUsageRecord(env, workspaceId, userId);
 
   if (url.pathname === "/api/plans" && request.method === "GET") {
     return json({ status: "success", plans: PLAN_CONFIG });
@@ -532,7 +655,7 @@ async function handleApi(request, env = {}) {
       }, { status: 409 });
     }
     record.planId = requestedPlanId;
-    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    await saveUsageRecord(env, workspaceId, userId, record);
     return json({
       status: "success",
       subscription: {
@@ -551,7 +674,7 @@ async function handleApi(request, env = {}) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
     record.appraisalClients += 1;
-    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    await saveUsageRecord(env, workspaceId, userId, record);
     return json({
       status: "success",
       appraisalClientRef: `acl_${Date.now()}`,
@@ -563,7 +686,7 @@ async function handleApi(request, env = {}) {
 
   if (url.pathname === "/api/sessions/start" && request.method === "POST") {
     const sessionId = body.sessionId || `ses_${Date.now()}`;
-    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    await saveUsageRecord(env, workspaceId, userId, record);
     return json({
       status: "success",
       sessionId,
@@ -595,7 +718,7 @@ async function handleApi(request, env = {}) {
       updatedAt: new Date().toISOString(),
     };
     record.inProgressAppraisals = record.activeDraft ? 1 : 0;
-    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    await saveUsageRecord(env, workspaceId, userId, record);
     return json({
       status: "success",
       draftId: appraisalId,
@@ -638,7 +761,7 @@ async function handleApi(request, env = {}) {
     record.inProgressAppraisals = record.activeDraft ? 1 : 0;
     record.completedAppraisalIds = [...(record.completedAppraisalIds || []), appraisalId];
     record.completedAppraisals = [...(record.completedAppraisals || []), completedAppraisal];
-    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    await saveUsageRecord(env, workspaceId, userId, record);
     return json({
       status: "success",
       appraisalId,
@@ -694,18 +817,20 @@ async function handleApi(request, env = {}) {
       branding,
       body: reportSnapshot,
     });
+    const reportEvent = {
+      exportId,
+      appraisalId: body.appraisalId || null,
+      reportType,
+      branding,
+      format,
+      generatedAt,
+    };
     record.reportExports = [
       ...(record.reportExports || []),
-      {
-        exportId,
-        appraisalId: body.appraisalId || null,
-        reportType,
-        branding,
-        format,
-        generatedAt,
-      },
+      reportEvent,
     ];
-    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
+    await saveUsageRecord(env, workspaceId, userId, record);
+    await saveReportEvent(env, workspaceId, userId, record, reportEvent);
     return json({
       status: "success",
       exportId,
