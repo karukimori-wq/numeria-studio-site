@@ -168,11 +168,21 @@ const report = await jsonFetch("/api/reports/export", {
 }, env);
 assert.equal(report.response.status, 201);
 assert.equal(report.body.eventName, "studio.report.generated.v1");
+assert.equal(report.body.usage.reportExports.length, 1);
 assert.equal(db.reportEvents.size, 1);
 
 const usage = await jsonFetch("/api/usage", { headers }, env);
 assert.equal(usage.body.usage.monthlyAppraisals, 1);
 assert.equal(usage.body.usage.completedAppraisals.length, 1);
+assert.equal(usage.body.usage.reportExports.length, 1);
+
+const appraisalStatus = await jsonFetch("/api/appraisals/status", { headers }, env);
+assert.equal(appraisalStatus.response.status, 200);
+assert.equal(appraisalStatus.body.activeDraft, null);
+assert.equal(appraisalStatus.body.completedAppraisals.length, 1);
+assert.equal(appraisalStatus.body.visibleCompletedAppraisals.length, 1);
+assert.equal(appraisalStatus.body.lockedCompletedAppraisalIds.length, 0);
+assert.equal(appraisalStatus.body.reportExports.length, 1);
 
 const adminAccount = await jsonFetch("/api/admin/account", {
   method: "POST",
@@ -186,6 +196,7 @@ const adminAccount = await jsonFetch("/api/admin/account", {
 assert.equal(adminAccount.response.status, 200);
 assert.equal(adminAccount.body.usage.monthlyAppraisals, 1);
 assert.equal(adminAccount.body.usage.completedAppraisals.length, 1);
+assert.equal(adminAccount.body.usage.reportExports.length, 1);
 
 const uninitializedDb = new MockD1();
 uninitializedDb.tables.delete("report_events");
