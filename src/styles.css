@@ -477,7 +477,7 @@ h2 {
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -525,6 +525,33 @@ h2 {
 
 .plan-badge strong {
   color: #17202a;
+}
+
+.storage-badge,
+.case-rule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fffaf2;
+}
+
+.storage-badge {
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.storage-badge span,
+.storage-badge strong {
+  font-weight: 800;
+}
+
+.storage-badge.durable {
+  color: #215b36;
+  border-color: #b9dac5;
+  background: #f1fbf4;
 }
 
 .pricing-panel {
@@ -796,6 +823,18 @@ h2 {
   background: #f1e3c1;
   font-size: 0.82rem;
   font-weight: 800;
+}
+
+.case-rule {
+  align-items: flex-start;
+  color: #5e6570;
+  line-height: 1.6;
+}
+
+.case-rule.warning {
+  color: #7a5523;
+  border-color: #e2c488;
+  background: #fff7e1;
 }
 
 .case-editor label {
