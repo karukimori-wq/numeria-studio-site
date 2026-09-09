@@ -7,5 +7,12 @@
     "binding": "ASSETS",
     "directory": "./dist",
     "not_found_handling": "single-page-application"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "NUMERIA_DB",
+      "database_name": "numeria-studio-db",
+      "database_id": "f334c0f6-28d8-45dc-b7a5-799286a3420e"
+    }
+  ]
 }
