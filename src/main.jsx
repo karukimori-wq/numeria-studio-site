@@ -516,7 +516,7 @@ function SignedInWorkspace() {
         <AppraisalHistoryPanel usage={usage} />
       </section>
 
-      <FeedbackWidget workspaceId={workspaceId} userId={userId} screenName="Free Pro Dashboard" />
+      <FeedbackWidget workspaceId={workspaceId} userId={userId} planId={usage.planId} screenName="Free Pro Dashboard" />
     </>
   );
 }
@@ -948,27 +948,47 @@ function FeatureList({ plan }) {
   );
 }
 
-function FeedbackWidget({ workspaceId, userId, screenName }) {
+function inferFeedbackCategory(message) {
+  const text = message.toLowerCase();
+  if (/ログイン|登録|clerk|認証|password|パスワード/.test(text)) return "auth_issue";
+  if (/上限|free|無料|pro|プラン|アップグレード/.test(text)) return "plan_or_limit_question";
+  if (/pdf|鑑定書|ダウンロード|印刷/.test(text)) return "report_export_issue";
+  if (/保存|消え|履歴|d1|データ/.test(text)) return "data_persistence_issue";
+  if (/不具合|エラー|動か|できない|失敗/.test(text)) return "bug_report";
+  return "improvement_request";
+}
+
+function createCorrelationId() {
+  return `num_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function FeedbackWidget({ workspaceId, userId, planId, screenName }) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("idle");
+  const [correlationId, setCorrelationId] = useState(createCorrelationId);
 
   const route = window.location.pathname;
   const payload = useMemo(
     () => ({
+      sourceApp: "numeria-studio",
+      appVersion,
+      planId,
       appId: "numeria-studio",
       appName: "Numeria Studio",
       workspaceId,
       userId,
+      currentScreen: screenName,
       route,
       screenName,
-      appVersion,
+      category: inferFeedbackCategory(message),
       device: getDeviceLabel(),
       browser: navigator.userAgent,
       occurredAt: new Date().toISOString(),
+      correlationId,
       initialMessage: message,
     }),
-    [message, route, screenName, userId, workspaceId],
+    [correlationId, message, planId, route, screenName, userId, workspaceId],
   );
 
   async function submitFeedback(event) {
@@ -979,6 +999,7 @@ function FeedbackWidget({ workspaceId, userId, screenName }) {
     if (!feedbackApiBase) {
       localStorage.setItem("numeria.feedback.mock.last", JSON.stringify(payload));
       setStatus("mocked");
+      setCorrelationId(createCorrelationId());
       return;
     }
 
@@ -989,9 +1010,11 @@ function FeedbackWidget({ workspaceId, userId, screenName }) {
         body: JSON.stringify(payload),
       });
       setStatus(response.ok ? "sent" : "needs_followup");
+      if (response.ok) setCorrelationId(createCorrelationId());
     } catch {
       localStorage.setItem("numeria.feedback.mock.last", JSON.stringify(payload));
       setStatus("mocked");
+      setCorrelationId(createCorrelationId());
     }
   }
 
