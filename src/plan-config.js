@@ -179,7 +179,7 @@ function createClientHistorySummary(completedAppraisals, visibleCompletedApprais
   });
 }
 
-export function createUsageSnapshot({ planId = PLAN_IDS.FREE, monthlyAppraisals = 0, appraisalClients = 0, inProgressAppraisals = 0, completedAppraisalIds = [], completedAppraisals = [], activeDraft = null, billingMonth = getBillingMonth() } = {}) {
+export function createUsageSnapshot({ planId = PLAN_IDS.FREE, monthlyAppraisals = 0, appraisalClients = 0, inProgressAppraisals = 0, completedAppraisalIds = [], completedAppraisals = [], activeDraft = null, reportExports = [], billingMonth = getBillingMonth() } = {}) {
   const normalizedPlanId = normalizePlanId(planId);
   const plan = PLAN_CONFIG[normalizedPlanId] || PLAN_CONFIG.free;
   const visibleCompletedAppraisalIds = isUnlimited(plan.entitlements.viewableCompletedAppraisals) ? completedAppraisalIds : completedAppraisalIds.slice(-plan.entitlements.viewableCompletedAppraisals);
@@ -200,6 +200,7 @@ export function createUsageSnapshot({ planId = PLAN_IDS.FREE, monthlyAppraisals 
     visibleCompletedAppraisals,
     lockedCompletedAppraisalIds,
     clientHistorySummaries: createClientHistorySummary(completedAppraisals, visibleCompletedAppraisalIds, lockedCompletedAppraisalIds),
+    reportExports,
     entitlements: plan.entitlements,
   };
 }
