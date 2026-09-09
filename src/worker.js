@@ -685,6 +685,26 @@ async function handleApi(request, env = {}) {
     return json({ status: "success", workspaceId, userId, usage, historyPolicy: { visibleCompletedAppraisals: usage.entitlements.viewableCompletedAppraisals, lockedDetailsAreRetained: true } });
   }
 
+  if (url.pathname === "/api/appraisals/status" && request.method === "GET") {
+    const usage = usageResponse(record);
+    return json({
+      status: "success",
+      workspaceId,
+      userId,
+      activeDraft: usage.activeDraft,
+      inProgressAppraisals: usage.inProgressAppraisals,
+      completedAppraisals: usage.completedAppraisals,
+      visibleCompletedAppraisals: usage.visibleCompletedAppraisals,
+      lockedCompletedAppraisalIds: usage.lockedCompletedAppraisalIds,
+      clientHistorySummaries: usage.clientHistorySummaries,
+      reportExports: usage.reportExports,
+      historyPolicy: {
+        visibleCompletedAppraisals: usage.entitlements.viewableCompletedAppraisals,
+        lockedDetailsAreRetained: true,
+      },
+    });
+  }
+
   if (url.pathname === "/api/billing/subscription" && request.method === "GET") {
     return json({
       status: "success",
@@ -816,6 +836,7 @@ async function handleApi(request, env = {}) {
     record.completedAppraisalIds = [...(record.completedAppraisalIds || []), appraisalId];
     record.completedAppraisals = [...(record.completedAppraisals || []), completedAppraisal];
     await saveUsageRecord(env, workspaceId, userId, record);
+    const updatedUsage = usageResponse(record);
     return json({
       status: "success",
       appraisalId,
@@ -823,8 +844,13 @@ async function handleApi(request, env = {}) {
       sessionStatus: "completed",
       eventName: "studio.session.completed.v1",
       countPolicy: "appraisal_completed_button",
-      historyPolicy: { visibleCompletedAppraisals: snapshot.entitlements.viewableCompletedAppraisals, lockedDetailsAreRetained: true },
-      usage: usageResponse(record),
+      historyPolicy: {
+        visibleCompletedAppraisals: updatedUsage.entitlements.viewableCompletedAppraisals,
+        visibleCompletedAppraisalIds: updatedUsage.visibleCompletedAppraisalIds,
+        lockedCompletedAppraisalIds: updatedUsage.lockedCompletedAppraisalIds,
+        lockedDetailsAreRetained: true,
+      },
+      usage: updatedUsage,
     }, { status: 201 });
   }
 
@@ -885,6 +911,7 @@ async function handleApi(request, env = {}) {
     ];
     await saveUsageRecord(env, workspaceId, userId, record);
     await saveReportEvent(env, workspaceId, userId, record, reportEvent);
+    const updatedUsage = usageResponse(record);
     return json({
       status: "success",
       exportId,
@@ -899,7 +926,7 @@ async function handleApi(request, env = {}) {
       downloadPolicy: "inline-pdf-data-url-mvp",
       reportSnapshot,
       message: "PDFを生成しました。ダウンロードできます。",
-      usage: snapshot,
+      usage: updatedUsage,
     }, { status: 201 });
   }
 
