@@ -5,6 +5,7 @@ class MockD1 {
   constructor() {
     this.usageRecords = new Map();
     this.reportEvents = new Map();
+    this.tables = new Set(["usage_records", "report_events"]);
   }
 
   prepare(sql) {
@@ -29,6 +30,18 @@ class MockD1Statement {
       return this.db.usageRecords.get(this.args[0]) || null;
     }
     return null;
+  }
+
+  async all() {
+    if (this.sql.includes("sqlite_master")) {
+      return {
+        results: this.args
+          .filter((name) => this.db.tables.has(name))
+          .map((name) => ({ name })),
+      };
+    }
+
+    return { results: [] };
   }
 
   async run() {
@@ -160,5 +173,25 @@ assert.equal(db.reportEvents.size, 1);
 const usage = await jsonFetch("/api/usage", { headers }, env);
 assert.equal(usage.body.usage.monthlyAppraisals, 1);
 assert.equal(usage.body.usage.completedAppraisals.length, 1);
+
+const adminAccount = await jsonFetch("/api/admin/account", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({
+    adminEmail: "illusionddt@gmail.com",
+    targetWorkspaceId: "d1_ws",
+    targetUserId: "d1_user",
+  }),
+}, env);
+assert.equal(adminAccount.response.status, 200);
+assert.equal(adminAccount.body.usage.monthlyAppraisals, 1);
+assert.equal(adminAccount.body.usage.completedAppraisals.length, 1);
+
+const uninitializedDb = new MockD1();
+uninitializedDb.tables.delete("report_events");
+const uninitialized = await jsonFetch("/persistence/status", {}, { NUMERIA_DB: uninitializedDb });
+assert.equal(uninitialized.body.storageDriver, "d1-uninitialized");
+assert.equal(uninitialized.body.durable, false);
+assert.deepEqual(uninitialized.body.missingTables, ["report_events"]);
 
 console.log("D1 persistence compatibility verified.");
