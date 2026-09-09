@@ -175,19 +175,72 @@ async function saveReportEvent(env = {}, workspaceId, userId, record, event) {
   ).run();
 }
 
-function persistenceStatusResponse(env = {}) {
+async function persistenceStatusResponse(env = {}) {
   const d1 = getD1Binding(env);
   const d1Ready = Boolean(d1 && typeof d1.prepare === "function");
+  const requiredTables = ["usage_records", "report_events"];
+
+  if (d1Ready) {
+    try {
+      const result = await d1.prepare(
+        `SELECT name FROM sqlite_master WHERE type = 'table' AND name IN (?, ?)`
+      ).bind(...requiredTables).all();
+      const rows = result?.results || [];
+      const existingTables = new Set(rows.map((row) => row.name));
+      const missingTables = requiredTables.filter((table) => !existingTables.has(table));
+      const tablesReady = missingTables.length === 0;
+
+      return {
+        status: tablesReady ? "success" : "warning",
+        appId: "numeria-studio",
+        storageDriver: tablesReady ? "durable-d1" : "d1-uninitialized",
+        durable: tablesReady,
+        ready: tablesReady,
+        warning: tablesReady
+          ? null
+          : `D1 binding is configured, but required tables are missing: ${missingTables.join(", ")}`,
+        requiredBinding: "NUMERIA_DB",
+        requiredTables,
+        missingTables,
+        fallbackDriver: "runtime-memory",
+        retainedDataClasses: [
+          "usage",
+          "activeDraft",
+          "completedAppraisals",
+          "reportExports",
+        ],
+      };
+    } catch (error) {
+      return {
+        status: "warning",
+        appId: "numeria-studio",
+        storageDriver: "d1-unavailable",
+        durable: false,
+        ready: false,
+        warning: `D1 binding is configured, but readiness could not be checked: ${error?.message || "unknown error"}`,
+        requiredBinding: "NUMERIA_DB",
+        requiredTables,
+        fallbackDriver: "runtime-memory",
+        retainedDataClasses: [
+          "usage",
+          "activeDraft",
+          "completedAppraisals",
+          "reportExports",
+        ],
+      };
+    }
+  }
+
   return {
     status: "success",
     appId: "numeria-studio",
-    storageDriver: d1Ready ? "durable-d1" : "runtime-memory",
-    durable: d1Ready,
+    storageDriver: "runtime-memory",
+    durable: false,
     ready: true,
-    warning: d1Ready
-      ? null
-      : "D1 binding is not configured. Usage, drafts, completed appraisals, and report events are stored in runtime memory for this MVP.",
+    warning: "D1 binding is not configured. Usage, drafts, completed appraisals, and report events are stored in runtime memory for this MVP.",
     requiredBinding: "NUMERIA_DB",
+    requiredTables,
+    missingTables: [],
     fallbackDriver: "runtime-memory",
     retainedDataClasses: [
       "usage",
@@ -382,7 +435,7 @@ function adminStatusResponse(request, env = {}, body = {}) {
   };
 }
 
-function adminAccountResponse(request, env = {}, body = {}) {
+async function adminAccountResponse(request, env = {}, body = {}) {
   const { adminEmail, adminMode } = requireAdmin(request, env, body);
 
   if (!adminMode) {
@@ -403,7 +456,7 @@ function adminAccountResponse(request, env = {}, body = {}) {
   const targetUserId =
     String(body.targetUserId || body.userId || url.searchParams.get("userId") || "")
       .trim() || "browser-user";
-  const targetRecord = getRecord(targetWorkspaceId, targetUserId);
+  const targetRecord = await loadUsageRecord(env, targetWorkspaceId, targetUserId);
   const planId = normalizePlanId(targetRecord.planId);
   const plan = getPlanConfigForPlan(planId);
 
@@ -434,7 +487,8 @@ function adminAccountResponse(request, env = {}, body = {}) {
   };
 }
 
-function contractsStatusResponse(env = {}) {
+async function contractsStatusResponse(env = {}) {
+  const persistence = await persistenceStatusResponse(env);
   return {
     status: "success",
     appId: "numeria-studio",
@@ -492,7 +546,7 @@ function contractsStatusResponse(env = {}) {
     },
     persistence: {
       statusEndpoint: "/persistence/status",
-      ...persistenceStatusResponse(env),
+      ...persistence,
     },
   };
 }
@@ -622,7 +676,7 @@ async function handleApi(request, env = {}) {
   }
 
   if (url.pathname === "/api/admin/account" && ["GET", "POST"].includes(request.method)) {
-    const adminAccount = adminAccountResponse(request, env, body);
+    const adminAccount = await adminAccountResponse(request, env, body);
     return json(adminAccount, { status: adminAccount.adminMode ? 200 : 403 });
   }
 
@@ -862,10 +916,10 @@ export default {
       return json(versionResponse());
     }
     if (url.pathname === "/contracts/status") {
-      return json(contractsStatusResponse(env));
+      return json(await contractsStatusResponse(env));
     }
     if (url.pathname === "/persistence/status") {
-      return json(persistenceStatusResponse(env));
+      return json(await persistenceStatusResponse(env));
     }
     if (url.pathname === "/clerk.browser.js" && (request.method === "GET" || request.method === "HEAD")) {
       return clerkBrowserScriptResponse(request, env);
