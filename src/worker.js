@@ -42,6 +42,7 @@ function getRecord(workspaceId, userId) {
     activeDraft: null,
     completedAppraisalIds: [],
     completedAppraisals: [],
+    reportExports: [],
   };
   runtimeStore.set(key, current);
   return current;
@@ -645,6 +646,7 @@ async function handleApi(request, env = {}) {
     }
 
     const exportId = `rep_${Date.now()}`;
+    const generatedAt = new Date().toISOString();
     const branding = removeBranding ? "hidden" : "numeria-logo-included";
     const fileName = `numeria-${reportType}-report-${exportId}.pdf`;
     const reportSnapshot = createReportSnapshot({
@@ -659,9 +661,23 @@ async function handleApi(request, env = {}) {
       branding,
       body: reportSnapshot,
     });
+    record.reportExports = [
+      ...(record.reportExports || []),
+      {
+        exportId,
+        appraisalId: body.appraisalId || null,
+        reportType,
+        branding,
+        format,
+        generatedAt,
+      },
+    ];
+    runtimeStore.set(scopeKey(workspaceId, userId, record.billingMonth), record);
     return json({
       status: "success",
       exportId,
+      eventName: "studio.report.generated.v1",
+      generatedAt,
       format,
       reportType,
       branding,
