@@ -441,6 +441,12 @@ function SignedInWorkspace() {
               current={usage.visibleCompletedAppraisalIds?.length || 0}
               limit={usage.entitlements.viewableCompletedAppraisals}
             />
+            <UsageCard
+              icon={<Download size={18} />}
+              label="PDF出力履歴"
+              current={usage.reportExports?.length || 0}
+              limit="unlimited"
+            />
           </div>
           {notice && <Notice {...notice} />}
           <AppraisalCaseForm
