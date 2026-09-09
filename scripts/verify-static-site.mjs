@@ -13,6 +13,7 @@ const requiredFiles = [
   "vite.config.mjs",
   "scripts/restore-original-site.mjs",
   "scripts/patch-legacy-static-assets.mjs",
+  "migrations/0001_numeria_usage_store.sql",
   "favicon.svg",
   "legacy-static/README.md",
   "assets/index-CEGe-9Xe.css",
@@ -42,6 +43,7 @@ const wranglerConfig = readFileSync("wrangler.jsonc", "utf8");
 const clerkPlan = readFileSync("CLERK_AUTH_PLAN.md", "utf8");
 const supabasePlan = readFileSync("SUPABASE_MIGRATION_PLAN.md", "utf8");
 const releasePlan = readFileSync("FREE_PRO_RELEASE_PLAN.md", "utf8");
+const d1Migration = readFileSync("migrations/0001_numeria_usage_store.sql", "utf8");
 const envExample = readFileSync(".env.example", "utf8");
 assert.match(html, /Numeria Studio/);
 assert.match(html, /window\.location\.replace\("\/original\.html"\)/);
@@ -191,6 +193,15 @@ assert.match(releasePlan, /Visible completed appraisal details: latest 3 complet
 assert.doesNotMatch(releasePlan, /Appraisal client snapshots: 3/);
 assert.doesNotMatch(releasePlan, /Does not include:\n\n- PDF export/);
 assert.match(releasePlan, /Business remains unavailable/);
+assert.match(releasePlan, /migrations\/0001_numeria_usage_store\.sql/);
+assert.match(releasePlan, /GET \/persistence\/status/);
+assert.match(d1Migration, /CREATE TABLE IF NOT EXISTS usage_records/);
+assert.match(d1Migration, /CREATE TABLE IF NOT EXISTS report_events/);
+assert.match(d1Migration, /workspace_id TEXT NOT NULL/);
+assert.match(d1Migration, /user_id TEXT NOT NULL/);
+assert.match(d1Migration, /billing_month TEXT NOT NULL/);
+assert.match(d1Migration, /studio\.report\.generated\.v1/);
+assert.match(d1Migration, /idx_usage_records_identity_month/);
 assert.match(releasePlan, /workspaceId \+ userId \+ billingMonth/);
 
 assert.equal(PLAN_CONFIG.free.entitlements.monthlyAppraisals, 20);
