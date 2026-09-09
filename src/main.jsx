@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   ClipboardList,
   Crown,
+  Database,
   Download,
   FileText,
   LifeBuoy,
@@ -165,6 +166,7 @@ function SignedInWorkspace() {
   const [notice, setNotice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [serverAdminMode, setServerAdminMode] = useState(false);
+  const [persistenceStatus, setPersistenceStatus] = useState(null);
   const [currentCase, setCurrentCase] = useState(createEmptyCase);
   const [reportOptions, setReportOptions] = useState({
     reportType: "basic",
@@ -223,6 +225,27 @@ function SignedInWorkspace() {
       active = false;
     };
   }, [primaryEmail, scope]);
+
+  useEffect(() => {
+    let active = true;
+    apiRequest("/persistence/status")
+      .then((response) => {
+        if (active) setPersistenceStatus(response);
+      })
+      .catch(() => {
+        if (active) {
+          setPersistenceStatus({
+            status: "warning",
+            storageDriver: "unknown",
+            durable: false,
+            warning: "保存状態を確認できませんでした。",
+          });
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!usage.activeDraft) return;
@@ -476,6 +499,8 @@ function SignedInWorkspace() {
           onDowngrade={() => changePlan(PLAN_IDS.FREE)}
         />
 
+        <PersistencePanel status={persistenceStatus} />
+
         {showAdminFeatures && <AdminPreviewPanel />}
 
         <ReportExportPanel
@@ -493,6 +518,35 @@ function SignedInWorkspace() {
 
       <FeedbackWidget workspaceId={workspaceId} userId={userId} screenName="Free Pro Dashboard" />
     </>
+  );
+}
+
+function PersistencePanel({ status }) {
+  const isDurable = Boolean(status?.durable);
+  const label = status
+    ? isDurable
+      ? "D1保存中"
+      : "一時保存"
+    : "確認中";
+
+  return (
+    <div className="work-panel persistence-panel">
+      <div className="panel-heading">
+        <Database size={20} />
+        <div>
+          <p className="eyebrow">Storage</p>
+          <h2>保存状態</h2>
+        </div>
+      </div>
+      <div className={isDurable ? "storage-badge durable" : "storage-badge"}>
+        <span>{label}</span>
+        <strong>{status?.storageDriver || "checking"}</strong>
+      </div>
+      <p className="note">
+        途中保存、完成済み鑑定、PDF出力履歴を保存対象にしています。
+        {status?.warning ? ` ${status.warning}` : " 再読み込みしても同じアカウントで確認できます。"}
+      </p>
+    </div>
   );
 }
 
@@ -616,6 +670,9 @@ function escapePrintHtml(value) {
 }
 
 function AppraisalCaseForm({ currentCase, usage, onChange }) {
+  const hasSavedDraft = Boolean(usage.activeDraft);
+  const isEditingSavedDraft = hasSavedDraft && usage.activeDraft.id === currentCase.id;
+
   return (
     <div className="case-editor">
       <div className="case-editor-heading">
@@ -624,6 +681,16 @@ function AppraisalCaseForm({ currentCase, usage, onChange }) {
           <h3>鑑定案件</h3>
         </div>
         {usage.activeDraft && <span className="draft-pill">保存中: {usage.activeDraft.clientName || "未設定"}</span>}
+      </div>
+      <div className={hasSavedDraft && !isEditingSavedDraft ? "case-rule warning" : "case-rule"}>
+        <ClipboardList size={16} />
+        <span>
+          {hasSavedDraft
+            ? isEditingSavedDraft
+              ? "この保存中案件を編集しています。完成すると今月の鑑定数に1件加算されます。"
+              : "Freeでは保存中の別案件があります。新しい案件を保存する前に、保存中案件を完成してください。"
+            : "途中保存は未完了案件として扱います。鑑定完成ボタンを押すまでは月の鑑定数に加算されません。"}
+        </span>
       </div>
       <label>
         依頼者名
