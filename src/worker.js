@@ -48,6 +48,33 @@ function getRecord(workspaceId, userId) {
   return current;
 }
 
+function getD1Binding(env = {}) {
+  return env.NUMERIA_DB || env.DB || env.D1 || null;
+}
+
+function persistenceStatusResponse(env = {}) {
+  const d1 = getD1Binding(env);
+  const d1Ready = Boolean(d1 && typeof d1.prepare === "function");
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    storageDriver: d1Ready ? "durable-d1" : "runtime-memory",
+    durable: d1Ready,
+    ready: true,
+    warning: d1Ready
+      ? null
+      : "D1 binding is not configured. Usage, drafts, completed appraisals, and report events are stored in runtime memory for this MVP.",
+    requiredBinding: "NUMERIA_DB",
+    fallbackDriver: "runtime-memory",
+    retainedDataClasses: [
+      "usage",
+      "activeDraft",
+      "completedAppraisals",
+      "reportExports",
+    ],
+  };
+}
+
 async function readJson(request) {
   if (request.method === "GET" || request.method === "HEAD") return {};
   try {
@@ -284,7 +311,7 @@ function adminAccountResponse(request, env = {}, body = {}) {
   };
 }
 
-function contractsStatusResponse() {
+function contractsStatusResponse(env = {}) {
   return {
     status: "success",
     appId: "numeria-studio",
@@ -337,6 +364,12 @@ function contractsStatusResponse() {
     },
     events: {
       sessionStarted: "studio.session.started.v1",
+      sessionCompleted: "studio.session.completed.v1",
+      reportGenerated: "studio.report.generated.v1",
+    },
+    persistence: {
+      statusEndpoint: "/persistence/status",
+      ...persistenceStatusResponse(env),
     },
   };
 }
@@ -704,7 +737,10 @@ export default {
       return json(versionResponse());
     }
     if (url.pathname === "/contracts/status") {
-      return json(contractsStatusResponse());
+      return json(contractsStatusResponse(env));
+    }
+    if (url.pathname === "/persistence/status") {
+      return json(persistenceStatusResponse(env));
     }
     if (url.pathname === "/clerk.browser.js" && (request.method === "GET" || request.method === "HEAD")) {
       return clerkBrowserScriptResponse(request, env);
