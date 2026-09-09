@@ -118,6 +118,10 @@ For long-term durable billing periods, the usage store should be moved to D1 or 
 
 The design already uses `workspaceId + userId + billingMonth`, so the reset can later follow a Stripe billing period without changing the UI contract.
 
+The D1 schema foundation is prepared in `migrations/0001_numeria_usage_store.sql`.
+Bind it as `NUMERIA_DB` before switching production persistence from `runtime-memory` to `durable-d1`.
+The live readiness check is exposed at `GET /persistence/status`.
+
 ## Deployment Notes
 
 - 2026-09-02: Triggered Cloudflare Production after Free / Pro release controls were merged to main.
