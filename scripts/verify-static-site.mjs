@@ -13,6 +13,7 @@ const requiredFiles = [
   "vite.config.mjs",
   "scripts/restore-original-site.mjs",
   "scripts/patch-legacy-static-assets.mjs",
+  "scripts/verify-d1-persistence.mjs",
   "migrations/0001_numeria_usage_store.sql",
   "favicon.svg",
   "legacy-static/README.md",
@@ -86,7 +87,11 @@ assert.match(numeriaAppSource, /Ii=async\(\)=>/);
 assert.match(readFileSync("scripts/patch-legacy-static-assets.mjs", "utf8"), /Expected three legacy PDF navigation calls/);
 assert.match(readFileSync("scripts/patch-legacy-static-assets.mjs", "utf8"), /manticDraftPayloadWithDetails/);
 assert.match(readFileSync("scripts/patch-legacy-static-assets.mjs", "utf8"), /numerologyDraftPayloadWithDetails/);
+assert.match(readFileSync("scripts/verify-d1-persistence.mjs", "utf8"), /D1 persistence compatibility verified/);
+assert.match(readFileSync("scripts/verify-d1-persistence.mjs", "utf8"), /MockD1/);
+assert.match(readFileSync("scripts/verify-d1-persistence.mjs", "utf8"), /storageDriver, "durable-d1"/);
 assert.match(packageJson, /restore-original-site\.mjs/);
+assert.match(packageJson, /verify-d1-persistence\.mjs/);
 assert.doesNotMatch(html, /https:\/\/numeria-studio\.karukimori\.workers\.dev/);
 assert.match(authGateSource, /@clerk\/clerk-js/);
 assert.match(authGateSource, /\/api\/auth\/config/);
