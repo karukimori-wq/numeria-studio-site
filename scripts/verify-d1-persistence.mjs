@@ -205,4 +205,65 @@ assert.equal(uninitialized.body.storageDriver, "d1-uninitialized");
 assert.equal(uninitialized.body.durable, false);
 assert.deepEqual(uninitialized.body.missingTables, ["report_events"]);
 
+const policyDb = new MockD1();
+const policyEnv = { NUMERIA_DB: policyDb };
+const policyHeaders = {
+  "content-type": "application/json",
+  "x-workspace-id": "policy_ws",
+  "x-user-id": "policy_user",
+};
+
+for (const clientName of ["Aさん", "Bさん", "Cさん", "Dさん"]) {
+  const appraisalId = `policy_${clientName}`;
+  const draftResponse = await jsonFetch("/api/appraisals/save-draft", {
+    method: "POST",
+    headers: policyHeaders,
+    body: JSON.stringify({
+      appraisalId,
+      clientName,
+      question: `${clientName}の相談`,
+      resultSummary: `${clientName}の結果`,
+    }),
+  }, policyEnv);
+  assert.equal(draftResponse.response.status, 201);
+
+  const completeResponse = await jsonFetch("/api/appraisals/complete", {
+    method: "POST",
+    headers: policyHeaders,
+    body: JSON.stringify({ appraisalId }),
+  }, policyEnv);
+  assert.equal(completeResponse.response.status, 201);
+}
+
+const policyStatus = await jsonFetch("/api/appraisals/status", { headers: policyHeaders }, policyEnv);
+assert.equal(policyStatus.body.completedAppraisals.length, 4);
+assert.equal(policyStatus.body.visibleCompletedAppraisals.length, 3);
+assert.deepEqual(
+  policyStatus.body.visibleCompletedAppraisals.map((appraisal) => appraisal.clientName),
+  ["Bさん", "Cさん", "Dさん"],
+);
+assert.deepEqual(policyStatus.body.lockedCompletedAppraisalIds, ["policy_Aさん"]);
+
+const firstDraft = await jsonFetch("/api/appraisals/save-draft", {
+  method: "POST",
+  headers: policyHeaders,
+  body: JSON.stringify({
+    appraisalId: "policy_draft_one",
+    clientName: "Eさん",
+  }),
+}, policyEnv);
+assert.equal(firstDraft.response.status, 201);
+
+const blockedDraft = await worker.fetch(new Request("https://local.test/api/appraisals/save-draft", {
+  method: "POST",
+  headers: policyHeaders,
+  body: JSON.stringify({
+    appraisalId: "policy_draft_two",
+    clientName: "Fさん",
+  }),
+}), policyEnv);
+const blockedDraftBody = await blockedDraft.json();
+assert.equal(blockedDraft.status, 402);
+assert.equal(blockedDraftBody.errorCode, "FREE_IN_PROGRESS_APPRAISAL_LIMIT");
+
 console.log("D1 persistence compatibility verified.");
