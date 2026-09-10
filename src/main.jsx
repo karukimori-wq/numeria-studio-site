@@ -612,6 +612,11 @@ function AdminPreviewPanel({ releaseStatus }) {
     ["後回し", releaseStatus?.deferredFeatures?.length ?? "-"],
     ["D1", releaseStatus?.checks?.persistence?.storageDriver || "確認中"],
   ];
+  const releaseGroups = [
+    ["追加できた機能", releaseStatus?.completedFeatures || []],
+    ["未追加の機能", releaseStatus?.pendingFeatures || []],
+    ["後回しの機能", releaseStatus?.deferredFeatures || []],
+  ];
 
   return (
     <div className="work-panel admin-preview-panel">
@@ -631,6 +636,22 @@ function AdminPreviewPanel({ releaseStatus }) {
             <span>{label}</span>
             <strong>{value}</strong>
           </div>
+        ))}
+      </div>
+      <div className="release-detail-grid">
+        {releaseGroups.map(([title, items]) => (
+          <section className="release-detail-card" key={title}>
+            <h3>{title}</h3>
+            {items.length > 0 ? (
+              <ul>
+                {items.slice(0, 5).map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>読み込み中です。</p>
+            )}
+          </section>
         ))}
       </div>
       <div className="admin-preview-grid">
