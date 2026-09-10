@@ -567,6 +567,11 @@ function AdminPreviewPanel() {
       status: "準備中",
       body: "AI Platform CoreへUsageと生成イベントを送る動作を管理者だけ検証します。",
     },
+    {
+      title: "リリース状態",
+      status: "確認用",
+      body: "/release/status で追加済み、未追加、後回しの機能を確認します。",
+    },
   ];
 
   return (
