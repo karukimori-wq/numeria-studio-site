@@ -378,6 +378,46 @@ function versionResponse() {
   };
 }
 
+async function releaseStatusResponse(env = {}) {
+  const persistence = await persistenceStatusResponse(env);
+  return {
+    status: persistence.status === "success" ? "success" : "warning",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    releaseScope: "free-pro",
+    targetUrl: "https://numeria-studio.com/original.html",
+    completedFeatures: [
+      "Clerk login shell",
+      "Free monthly appraisal limit",
+      "Free one in-progress appraisal",
+      "Free latest three completed appraisal detail visibility",
+      "Pro unlimited appraisal and history contract",
+      "Basic PDF export",
+      "Pro detailed report and branding controls",
+      "D1 persistence for usage, drafts, completed appraisals, and report exports",
+      "Feedback Hub embed payload",
+      "Admin preview menus for unreleased features",
+    ],
+    pendingFeatures: [
+      "Stripe real subscription sync",
+      "Growth Engine Business handoff",
+      "AI Platform Core usage event forwarding",
+      "Production-grade PDF template rendering",
+      "Server-side Clerk session verification",
+    ],
+    deferredFeatures: [
+      "Business plan purchase",
+      "Reservation, payment, refund, and sales management inside Numeria Studio",
+      "Communication Planner message storage",
+    ],
+    checks: {
+      persistence,
+      businessPurchasable: false,
+      sourceOfTruth: "Numeria owns sessions, calculations, report snapshots, and appraisal client snapshots only.",
+    },
+  };
+}
+
 function requireAdmin(request, env = {}, body = {}) {
   const adminEmail = getAdminEmail(request, body);
   const adminMode = Boolean(adminEmail && getAdminEmails(env).includes(adminEmail));
@@ -941,6 +981,9 @@ export default {
     }
     if (url.pathname === "/version") {
       return json(versionResponse());
+    }
+    if (url.pathname === "/release/status") {
+      return json(await releaseStatusResponse(env));
     }
     if (url.pathname === "/contracts/status") {
       return json(await contractsStatusResponse(env));
