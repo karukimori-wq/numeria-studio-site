@@ -167,6 +167,7 @@ function SignedInWorkspace() {
   const [loading, setLoading] = useState(true);
   const [serverAdminMode, setServerAdminMode] = useState(false);
   const [persistenceStatus, setPersistenceStatus] = useState(null);
+  const [releaseStatus, setReleaseStatus] = useState(null);
   const [currentCase, setCurrentCase] = useState(createEmptyCase);
   const [reportOptions, setReportOptions] = useState({
     reportType: "basic",
@@ -246,6 +247,38 @@ function SignedInWorkspace() {
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!isAdmin || !serverAdminMode) {
+      setReleaseStatus(null);
+      return;
+    }
+
+    let active = true;
+    apiRequest("/release/status")
+      .then((response) => {
+        if (active) setReleaseStatus(response);
+      })
+      .catch(() => {
+        if (active) {
+          setReleaseStatus({
+            status: "warning",
+            completedFeatures: [],
+            pendingFeatures: [],
+            deferredFeatures: [],
+            checks: {
+              persistence: {
+                storageDriver: "unknown",
+                durable: false,
+              },
+            },
+          });
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, [isAdmin, serverAdminMode]);
 
   useEffect(() => {
     if (!usage.activeDraft) return;
@@ -501,7 +534,7 @@ function SignedInWorkspace() {
 
         <PersistencePanel status={persistenceStatus} />
 
-        {showAdminFeatures && <AdminPreviewPanel />}
+        {showAdminFeatures && <AdminPreviewPanel releaseStatus={releaseStatus} />}
 
         <ReportExportPanel
           options={reportOptions}
@@ -550,7 +583,7 @@ function PersistencePanel({ status }) {
   );
 }
 
-function AdminPreviewPanel() {
+function AdminPreviewPanel({ releaseStatus }) {
   const previewItems = [
     {
       title: "Business連携",
@@ -573,6 +606,12 @@ function AdminPreviewPanel() {
       body: "/release/status で追加済み、未追加、後回しの機能を確認します。",
     },
   ];
+  const releaseSummary = [
+    ["追加済み", releaseStatus?.completedFeatures?.length ?? "-"],
+    ["未追加", releaseStatus?.pendingFeatures?.length ?? "-"],
+    ["後回し", releaseStatus?.deferredFeatures?.length ?? "-"],
+    ["D1", releaseStatus?.checks?.persistence?.storageDriver || "確認中"],
+  ];
 
   return (
     <div className="work-panel admin-preview-panel">
@@ -586,6 +625,14 @@ function AdminPreviewPanel() {
       <p className="note">
         通常ユーザーには表示しないBusiness予定機能と開発中機能です。プラン機能の延長として、公開前の動作確認に使います。
       </p>
+      <div className="release-summary" aria-label="リリース状態の集計">
+        {releaseSummary.map(([label, value]) => (
+          <div className="release-summary-card" key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </div>
       <div className="admin-preview-grid">
         {previewItems.map((item) => (
           <button className="admin-preview-card" type="button" key={item.title}>
