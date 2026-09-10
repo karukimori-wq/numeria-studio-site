@@ -133,6 +133,13 @@ const persistence = await jsonFetch("/persistence/status", {}, env);
 assert.equal(persistence.body.storageDriver, "durable-d1");
 assert.equal(persistence.body.durable, true);
 
+const releaseStatus = await jsonFetch("/release/status", {}, env);
+assert.equal(releaseStatus.response.status, 200);
+assert.equal(releaseStatus.body.releaseScope, "free-pro");
+assert.ok(releaseStatus.body.completedFeatures.includes("D1 persistence for usage, drafts, completed appraisals, and report exports"));
+assert.ok(releaseStatus.body.pendingFeatures.includes("Stripe real subscription sync"));
+assert.ok(releaseStatus.body.deferredFeatures.includes("Business plan purchase"));
+
 const draft = await jsonFetch("/api/appraisals/save-draft", {
   method: "POST",
   headers,
