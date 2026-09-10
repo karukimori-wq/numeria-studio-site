@@ -3,6 +3,7 @@ import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, normalizePlan
 const APP_VERSION = "0.3.1-release-monitoring";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
 const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
+const AUTH_CONTRACT_VERSION = "clerk-server-auth-readiness.v1";
 
 const runtimeStore = globalThis.__numeriaUsageStore || new Map();
 globalThis.__numeriaUsageStore = runtimeStore;
@@ -397,6 +398,7 @@ async function releaseStatusResponse(env = {}) {
       "D1 persistence for usage, drafts, completed appraisals, and report exports",
       "Feedback Hub embed payload",
       "Admin preview menus for unreleased features",
+      "Server-side auth readiness contract",
     ],
     pendingFeatures: [
       "Stripe real subscription sync",
@@ -529,6 +531,7 @@ async function adminAccountResponse(request, env = {}, body = {}) {
 
 async function contractsStatusResponse(env = {}) {
   const persistence = await persistenceStatusResponse(env);
+  const auth = authStatusResponse(new Request("https://local.test/contracts/status"), env);
   return {
     status: "success",
     appId: "numeria-studio",
@@ -584,6 +587,10 @@ async function contractsStatusResponse(env = {}) {
       sessionCompleted: "studio.session.completed.v1",
       reportGenerated: "studio.report.generated.v1",
     },
+    auth: {
+      statusEndpoint: "/auth/status",
+      ...auth,
+    },
     persistence: {
       statusEndpoint: "/persistence/status",
       ...persistence,
@@ -598,6 +605,52 @@ function getClerkPublishableKey(request, env = {}) {
     || globalThis.CLERK_PUBLISHABLE_KEY
     || globalThis.VITE_CLERK_PUBLISHABLE_KEY
     || "";
+}
+
+function getClerkSecretKey(env = {}) {
+  return env.CLERK_SECRET_KEY
+    || env.CLERK_API_KEY
+    || globalThis.CLERK_SECRET_KEY
+    || globalThis.CLERK_API_KEY
+    || "";
+}
+
+function getAuthEnforcementMode(env = {}) {
+  const raw = env.AUTH_ENFORCEMENT_MODE
+    || env.NUMERIA_AUTH_ENFORCEMENT_MODE
+    || globalThis.AUTH_ENFORCEMENT_MODE
+    || "observe";
+  return String(raw).toLowerCase() === "enforce" ? "enforce" : "observe";
+}
+
+function getBearerToken(request) {
+  const authorization = request.headers.get("Authorization") || "";
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+  return match ? match[1].trim() : "";
+}
+
+function authStatusResponse(request, env = {}) {
+  const publishableKey = getClerkPublishableKey(request, env);
+  const secretKey = getClerkSecretKey(env);
+  const enforcementMode = getAuthEnforcementMode(env);
+  const serverVerificationReady = Boolean(secretKey);
+
+  return {
+    status: serverVerificationReady || enforcementMode === "observe" ? "success" : "warning",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    authProvider: "clerk",
+    authContractVersion: AUTH_CONTRACT_VERSION,
+    clientAuthReady: Boolean(publishableKey),
+    serverVerificationReady,
+    enforcementMode,
+    incomingRequestHasBearerToken: Boolean(getBearerToken(request)),
+    identityMode: "workspaceId+userId",
+    secretValuesReturned: false,
+    message: serverVerificationReady
+      ? "サーバー側認証検証を有効化できます。"
+      : "MVPではobserveモードです。CLERK_SECRET_KEYを設定するとサーバー側検証を有効化できます。",
+  };
 }
 
 function getAdminEmails(env = {}) {
@@ -984,6 +1037,9 @@ export default {
     }
     if (url.pathname === "/release/status") {
       return json(await releaseStatusResponse(env));
+    }
+    if (url.pathname === "/auth/status") {
+      return json(authStatusResponse(request, env));
     }
     if (url.pathname === "/contracts/status") {
       return json(await contractsStatusResponse(env));
