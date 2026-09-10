@@ -665,6 +665,32 @@ h2 {
   gap: 10px;
 }
 
+.release-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.release-summary-card {
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fffdf8;
+}
+
+.release-summary-card span {
+  display: block;
+  margin-bottom: 6px;
+  color: #7d6e61;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.release-summary-card strong {
+  color: #241a3d;
+  font-size: 1.05rem;
+}
+
 .admin-preview-card {
   display: grid;
   gap: 7px;
@@ -1180,6 +1206,7 @@ textarea {
   .landing-grid,
   .workspace-grid,
   .stat-grid,
+  .release-summary,
   .admin-preview-grid,
   .plan-grid {
     grid-template-columns: 1fr;
