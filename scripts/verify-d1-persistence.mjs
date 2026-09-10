@@ -137,8 +137,29 @@ const releaseStatus = await jsonFetch("/release/status", {}, env);
 assert.equal(releaseStatus.response.status, 200);
 assert.equal(releaseStatus.body.releaseScope, "free-pro");
 assert.ok(releaseStatus.body.completedFeatures.includes("D1 persistence for usage, drafts, completed appraisals, and report exports"));
+assert.ok(releaseStatus.body.completedFeatures.includes("Server-side auth readiness contract"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Stripe real subscription sync"));
 assert.ok(releaseStatus.body.deferredFeatures.includes("Business plan purchase"));
+
+const authStatus = await jsonFetch("/auth/status", {
+  headers: {
+    authorization: "Bearer test-session-token",
+    "x-clerk-publishable-key": "pk_test_ZHVtbXkuY2xlcmsuYWNjb3VudHMuZGV2JA",
+  },
+}, { ...env, CLERK_SECRET_KEY: "sk_test_not_returned" });
+assert.equal(authStatus.response.status, 200);
+assert.equal(authStatus.body.authProvider, "clerk");
+assert.equal(authStatus.body.authContractVersion, "clerk-server-auth-readiness.v1");
+assert.equal(authStatus.body.clientAuthReady, true);
+assert.equal(authStatus.body.serverVerificationReady, true);
+assert.equal(authStatus.body.incomingRequestHasBearerToken, true);
+assert.equal(authStatus.body.secretValuesReturned, false);
+assert.doesNotMatch(JSON.stringify(authStatus.body), /sk_test_not_returned/);
+
+const contractStatus = await jsonFetch("/contracts/status", {}, { ...env, CLERK_SECRET_KEY: "sk_test_not_returned" });
+assert.equal(contractStatus.body.auth.statusEndpoint, "/auth/status");
+assert.equal(contractStatus.body.auth.serverVerificationReady, true);
+assert.equal(contractStatus.body.auth.secretValuesReturned, false);
 
 const draft = await jsonFetch("/api/appraisals/save-draft", {
   method: "POST",
