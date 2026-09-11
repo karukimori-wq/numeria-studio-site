@@ -191,14 +191,13 @@ const releaseStatus = await jsonFetch("/release/status", {}, env);
 assert.equal(releaseStatus.response.status, 200);
 assert.equal(releaseStatus.body.releaseScope, "free-pro");
 assert.ok(releaseStatus.body.completedFeatures.includes("D1 persistence for usage, drafts, appraisal client profiles, completed appraisals, and report exports"));
-assert.ok(releaseStatus.body.completedFeatures.includes("Selectable appraisal client profile chips"));
+assert.ok(releaseStatus.body.completedFeatures.includes("Selectable and editable appraisal client profile chips"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Numerology calculation preview while writing appraisals"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side auth readiness contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side Clerk JWT verification in observe/enforce modes"));
 assert.ok(releaseStatus.body.completedFeatures.includes("AI Platform Core usage event contract"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Stripe real subscription sync"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("AI Platform Core production endpoint forwarding"));
-assert.ok(releaseStatus.body.pendingFeatures.includes("Editable saved appraisal client profiles"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Clerk enforce-mode production rollout after token header confirmation"));
 assert.ok(releaseStatus.body.deferredFeatures.includes("Business plan purchase"));
 
@@ -377,8 +376,42 @@ for (const clientIndex of [1, 2, 3]) {
   assert.equal(clientResponse.response.status, 201);
   assert.equal(clientResponse.body.limitPolicy, "free-three-appraisal-client-profiles");
   assert.equal(clientResponse.body.appraisalClient.clientName, `client_${clientIndex}`);
+  assert.equal(clientResponse.body.appraisalClient.birthDate, `1990-01-0${clientIndex}`);
   assert.equal(clientResponse.body.usage.appraisalClientProfiles.length, clientIndex);
 }
+
+const profileUsage = await jsonFetch("/api/usage", { headers }, env);
+assert.deepEqual(
+  profileUsage.body.usage.appraisalClientProfiles.map((profile) => profile.clientName),
+  ["client_1", "client_2", "client_3"],
+);
+
+const editableProfile = profileUsage.body.usage.appraisalClientProfiles[1];
+const updatedClient = await jsonFetch(`/api/appraisal-clients/${editableProfile.id}`, {
+  method: "PATCH",
+  headers,
+  body: JSON.stringify({ clientName: "client_2_updated", birthDate: "1991-02-03" }),
+}, env);
+assert.equal(updatedClient.response.status, 200);
+assert.equal(updatedClient.body.appraisalClient.clientName, "client_2_updated");
+assert.equal(updatedClient.body.appraisalClient.birthDate, "1991-02-03");
+assert.equal(updatedClient.body.usage.appraisalClientProfiles[1].clientName, "client_2_updated");
+
+const deletedClient = await jsonFetch(`/api/appraisal-clients/${editableProfile.id}`, {
+  method: "DELETE",
+  headers,
+}, env);
+assert.equal(deletedClient.response.status, 200);
+assert.equal(deletedClient.body.usage.appraisalClients, 2);
+assert.equal(deletedClient.body.usage.appraisalClientProfiles.length, 2);
+
+const replacementClient = await jsonFetch("/api/appraisal-clients", {
+  method: "POST",
+  headers,
+  body: JSON.stringify({ clientName: "client_replacement", birthDate: "1992-03-04" }),
+}, env);
+assert.equal(replacementClient.response.status, 201);
+assert.equal(replacementClient.body.usage.appraisalClientProfiles.length, 3);
 
 const blockedClient = await jsonFetch("/api/appraisal-clients", {
   method: "POST",
@@ -387,11 +420,6 @@ const blockedClient = await jsonFetch("/api/appraisal-clients", {
 }, env);
 assert.equal(blockedClient.response.status, 402);
 assert.equal(blockedClient.body.errorCode, "FREE_APPRAISAL_CLIENT_LIMIT");
-const profileUsage = await jsonFetch("/api/usage", { headers }, env);
-assert.deepEqual(
-  profileUsage.body.usage.appraisalClientProfiles.map((profile) => profile.clientName),
-  ["client_1", "client_2", "client_3"],
-);
 
 const adminAccount = await jsonFetch("/api/admin/account", {
   method: "POST",
@@ -406,6 +434,7 @@ assert.equal(adminAccount.response.status, 200);
 assert.equal(adminAccount.body.usage.monthlyAppraisals, 1);
 assert.equal(adminAccount.body.usage.completedAppraisals.length, 1);
 assert.equal(adminAccount.body.usage.reportExports.length, 1);
+assert.equal(adminAccount.body.usage.appraisalClientProfiles.length, 3);
 
 const uninitializedDb = new MockD1();
 uninitializedDb.tables.delete("report_events");
