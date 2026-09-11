@@ -1112,6 +1112,23 @@ h2 {
   margin-top: 14px;
 }
 
+.history-search {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  color: #4b5563;
+  font-weight: 800;
+}
+
+.history-search input {
+  width: 100%;
+  border: 1px solid #e2d7c6;
+  border-radius: 8px;
+  padding: 12px;
+  color: #17202a;
+  background: #fff;
+}
+
 .client-selector {
   display: flex;
   flex-wrap: wrap;
