@@ -183,10 +183,10 @@ export function createUsageSnapshot({ planId = PLAN_IDS.FREE, monthlyAppraisals 
   const normalizedPlanId = normalizePlanId(planId);
   const plan = PLAN_CONFIG[normalizedPlanId] || PLAN_CONFIG.free;
   const normalizedAppraisalClientProfiles = Array.isArray(appraisalClientProfiles) ? appraisalClientProfiles : [];
-  const normalizedAppraisalClients = Math.max(Number(appraisalClients || 0), normalizedAppraisalClientProfiles.length);
   const visibleCompletedAppraisalIds = isUnlimited(plan.entitlements.viewableCompletedAppraisals) ? completedAppraisalIds : completedAppraisalIds.slice(-plan.entitlements.viewableCompletedAppraisals);
   const lockedCompletedAppraisalIds = isUnlimited(plan.entitlements.viewableCompletedAppraisals) ? [] : completedAppraisalIds.slice(0, Math.max(0, completedAppraisalIds.length - plan.entitlements.viewableCompletedAppraisals));
   const visibleCompletedAppraisals = completedAppraisals.filter((appraisal) => visibleCompletedAppraisalIds.includes(appraisal.id));
+  const normalizedAppraisalClients = Math.max(Number(appraisalClients || 0), normalizedAppraisalClientProfiles.length);
   return {
     planId: normalizedPlanId,
     planName: plan.name,
