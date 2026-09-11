@@ -315,6 +315,7 @@ async function persistenceStatusResponse(env = {}) {
         retainedDataClasses: [
           "usage",
           "activeDraft",
+          "appraisalClientProfiles",
           "completedAppraisals",
           "reportExports",
         ],
@@ -333,6 +334,7 @@ async function persistenceStatusResponse(env = {}) {
         retainedDataClasses: [
           "usage",
           "activeDraft",
+          "appraisalClientProfiles",
           "completedAppraisals",
           "reportExports",
         ],
@@ -354,6 +356,7 @@ async function persistenceStatusResponse(env = {}) {
     retainedDataClasses: [
       "usage",
       "activeDraft",
+      "appraisalClientProfiles",
       "completedAppraisals",
       "reportExports",
     ],
@@ -508,7 +511,9 @@ async function releaseStatusResponse(env = {}) {
       "Pro unlimited appraisal and history contract",
       "Basic PDF export",
       "Pro detailed report and branding controls",
-      "D1 persistence for usage, drafts, completed appraisals, and report exports",
+      "D1 persistence for usage, drafts, appraisal client profiles, completed appraisals, and report exports",
+      "Selectable appraisal client profile chips",
+      "Numerology calculation preview while writing appraisals",
       "Feedback Hub embed payload",
       "Admin preview menus for unreleased features",
       "Server-side auth readiness contract",
@@ -520,6 +525,7 @@ async function releaseStatusResponse(env = {}) {
       "Growth Engine Business handoff",
       "AI Platform Core production endpoint forwarding",
       "Production-grade PDF template rendering",
+      "Editable saved appraisal client profiles",
       "Clerk enforce-mode production rollout after token header confirmation",
     ],
     deferredFeatures: [
