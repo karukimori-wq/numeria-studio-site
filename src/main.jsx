@@ -427,11 +427,51 @@ function SignedInWorkspace() {
       clientName: profile.clientName || current.clientName,
       birthDate: profile.birthDate || current.birthDate,
     }));
+    setClientProfileName(profile.clientName || "");
     setNotice({
       type: "success",
-      title: "依頼者プロフィールを案件に反映しました",
-      body: `${profile.clientName || "依頼者"}の情報を現在の鑑定案件に入れました。`,
+      title: "依頼者を鑑定フォームへ反映しました",
+      body: profile.birthDate ? "名前と生年月日を反映しました。" : "名前を反映しました。生年月日は未登録です。",
     });
+  }
+
+  async function updateAppraisalClientProfile(profile) {
+    try {
+      const response = await authedApiRequest(`/api/appraisal-clients/${encodeURIComponent(profile.id)}`, {
+        method: "PATCH",
+        body: {
+          clientName: clientProfileName.trim() || currentCase.clientName.trim() || profile.clientName,
+          birthDate: currentCase.birthDate || profile.birthDate || "",
+        },
+      });
+      setUsage(response.usage);
+      setClientProfileName("");
+      setNotice({
+        type: "success",
+        title: "依頼者プロフィールを更新しました",
+        body: `${response.appraisalClient.clientName} を保存しました。`,
+      });
+    } catch (error) {
+      setNotice(limitNotice(error.data));
+      if (error.data?.usage) setUsage(error.data.usage);
+    }
+  }
+
+  async function deleteAppraisalClientProfile(profile) {
+    try {
+      const response = await authedApiRequest(`/api/appraisal-clients/${encodeURIComponent(profile.id)}`, {
+        method: "DELETE",
+      });
+      setUsage(response.usage);
+      setNotice({
+        type: "success",
+        title: "依頼者プロフィールを削除しました",
+        body: `登録数は ${formatLimit(response.usage.appraisalClients, response.usage.entitlements.appraisalClients)} です。`,
+      });
+    } catch (error) {
+      setNotice(limitNotice(error.data));
+      if (error.data?.usage) setUsage(error.data.usage);
+    }
   }
 
   async function exportReport() {
@@ -611,6 +651,8 @@ function SignedInWorkspace() {
           onChange={setClientProfileName}
           onCreate={createAppraisalClientProfile}
           onSelect={selectAppraisalClientProfile}
+          onUpdate={updateAppraisalClientProfile}
+          onDelete={deleteAppraisalClientProfile}
         />
 
         {showAdminFeatures && <AdminPreviewPanel releaseStatus={releaseStatus} />}
@@ -662,13 +704,13 @@ function PersistencePanel({ status }) {
   );
 }
 
-function AppraisalClientPanel({ usage, value, onChange, onCreate, onSelect }) {
+function AppraisalClientPanel({ usage, value, onChange, onCreate, onSelect, onUpdate, onDelete }) {
   const decision = evaluateUsageLimit(usage, "create_appraisal_client");
   const isUnlimitedProfiles = isUnlimited(usage.entitlements.appraisalClients);
-  const profiles = usage.appraisalClientProfiles || [];
   const remaining = isUnlimitedProfiles
     ? "上限なし"
     : Math.max(0, usage.entitlements.appraisalClients - usage.appraisalClients);
+  const profiles = usage.appraisalClientProfiles || [];
 
   return (
     <div className="work-panel client-profile-panel">
@@ -687,15 +729,16 @@ function AppraisalClientPanel({ usage, value, onChange, onCreate, onSelect }) {
       {profiles.length > 0 && (
         <div className="client-profile-list" aria-label="登録済み依頼者プロフィール">
           {profiles.map((profile) => (
-            <button
-              className="client-profile-chip"
-              type="button"
-              key={profile.id}
-              onClick={() => onSelect(profile)}
-            >
-              <strong>{profile.clientName}</strong>
-              <span>{profile.birthDate || "生年月日なし"}</span>
-            </button>
+            <article className="client-profile-chip" key={profile.id}>
+              <button className="client-profile-main" type="button" onClick={() => onSelect(profile)}>
+                <strong>{profile.clientName}</strong>
+                <span>{profile.birthDate || "生年月日なし"}</span>
+              </button>
+              <div className="client-profile-actions">
+                <button type="button" onClick={() => onUpdate(profile)}>更新</button>
+                <button type="button" onClick={() => onDelete(profile)}>削除</button>
+              </div>
+            </article>
           ))}
         </div>
       )}
@@ -707,6 +750,7 @@ function AppraisalClientPanel({ usage, value, onChange, onCreate, onSelect }) {
           placeholder="例: Aさん"
         />
       </label>
+      <p className="note">更新する場合は、鑑定フォームの生年月日とこの入力欄の名前を使います。</p>
       <button className="button primary" onClick={onCreate} disabled={!decision.allowed}>
         依頼者を追加
       </button>
@@ -730,12 +774,12 @@ function AdminPreviewPanel({ releaseStatus }) {
     {
       title: "依頼者プロフィール",
       status: "追加済み",
-      body: "登録済みの依頼者を選ぶと、名前と生年月日を鑑定フォームへ戻せます。",
+      body: "登録済みの依頼者を選び、名前と生年月日を鑑定フォームへ戻せます。",
     },
     {
       title: "プロフィール編集",
-      status: "次に実装",
-      body: "保存済み依頼者の名前・生年月日を管理者だけ先行編集できるようにします。",
+      status: "追加済み",
+      body: "保存済み依頼者の名前・生年月日を管理者が先行して更新・削除できます。",
     },
     {
       title: "AI利用記録",
