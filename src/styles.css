@@ -559,35 +559,6 @@ h2 {
   gap: 14px;
 }
 
-.client-profile-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.client-profile-chip {
-  display: grid;
-  gap: 3px;
-  min-width: 142px;
-  border: 1px solid #d8cbb9;
-  border-radius: 8px;
-  padding: 10px 12px;
-  color: #2c263f;
-  background: #fff;
-  text-align: left;
-  cursor: pointer;
-}
-
-.client-profile-chip strong {
-  font-size: 0.92rem;
-}
-
-.client-profile-chip span {
-  color: #7d6e61;
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
 .client-limit-card {
   display: grid;
   gap: 4px;
@@ -611,6 +582,65 @@ h2 {
 .client-limit-card.warning {
   border-color: #e7c3a3;
   background: #fff4ea;
+}
+
+.client-profile-list {
+  display: grid;
+  gap: 8px;
+}
+
+.client-profile-chip {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.client-profile-main {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+}
+
+.client-profile-main strong {
+  color: #17202a;
+  font-size: 0.98rem;
+}
+
+.client-profile-main span {
+  color: #746b62;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.client-profile-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.client-profile-actions button {
+  border: 1px solid #e2d7c6;
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: #4b3524;
+  font-weight: 800;
+  background: #fffaf2;
+  cursor: pointer;
+}
+
+.client-profile-actions button:last-child {
+  color: #9f2d20;
+  border-color: #efc5bc;
+  background: #fff7f5;
 }
 
 .client-profile-form {
