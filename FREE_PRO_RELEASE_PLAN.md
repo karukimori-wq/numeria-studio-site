@@ -9,14 +9,14 @@ Business is intentionally kept as a future branch and is not purchasable in this
 
 User-facing description:
 
-> 月20件まで鑑定でき、鑑定完成ボタンを押した時点で1件として数えます。途中保存は1案件まで、鑑定対象者プロフィール登録とPDF出力は無料で使えます。
+> 月20件まで鑑定でき、鑑定完成ボタンを押した時点で1件として数えます。依頼者プロフィールは3名まで、途中保存は1案件まで、PDF出力は無料で使えます。
 
 Includes:
 
 - Monthly completed appraisals: 20
 - Count trigger: pressing the appraisal completed button
 - In-progress draft appraisals: 1 account-wide unfinished appraisal
-- Appraisal client profiles: unlimited
+- Appraisal client profiles: 3
 - Visible completed appraisal details: latest 3 completed appraisals
 - PDF export
 - Basic appraisal
@@ -29,6 +29,7 @@ Does not include:
 - Branded reports
 - Detailed reports
 - Unlimited in-progress appraisals
+- Unlimited appraisal client profiles
 - Unlimited completed appraisal history
 
 ### Pro
