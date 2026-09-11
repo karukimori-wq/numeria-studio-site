@@ -1,12 +1,15 @@
-import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
+import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 
 const APP_VERSION = "0.3.1-release-monitoring";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
 const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
 const AUTH_CONTRACT_VERSION = "clerk-server-auth-readiness.v1";
+const AI_USAGE_CONTRACT_VERSION = "ai-platform-core-usage-events.v1";
 
 const runtimeStore = globalThis.__numeriaUsageStore || new Map();
 globalThis.__numeriaUsageStore = runtimeStore;
+const runtimeAiUsageEvents = globalThis.__numeriaAiUsageEvents || [];
+globalThis.__numeriaAiUsageEvents = runtimeAiUsageEvents;
 
 function json(data, init = {}) {
   return new Response(JSON.stringify(data), {
@@ -23,11 +26,11 @@ function scopeKey(workspaceId, userId, month = getBillingMonth()) {
   return `${workspaceId || "ws_personal"}:${userId || "anonymous"}:${month}`;
 }
 
-function getScope(request, body = {}) {
+function getScope(request, body = {}, auth = {}) {
   const url = new URL(request.url);
   return {
     workspaceId: body.workspaceId || request.headers.get("X-Workspace-Id") || url.searchParams.get("workspaceId") || "ws_personal",
-    userId: body.userId || request.headers.get("X-User-Id") || url.searchParams.get("userId") || "anonymous",
+    userId: auth.userId || body.userId || request.headers.get("X-User-Id") || url.searchParams.get("userId") || "anonymous",
   };
 }
 
@@ -44,6 +47,7 @@ function createDefaultRecord(billingMonth = getBillingMonth()) {
     planId: PLAN_IDS.FREE,
     monthlyAppraisals: 0,
     appraisalClients: 0,
+    appraisalClientProfiles: [],
     billingMonth,
     inProgressAppraisals: 0,
     activeDraft: null,
@@ -74,6 +78,7 @@ function normalizeRecord(record = {}, billingMonth = getBillingMonth()) {
     planId: normalizePlanId(record.planId || defaults.planId),
     monthlyAppraisals: Number(record.monthlyAppraisals || 0),
     appraisalClients: Number(record.appraisalClients || 0),
+    appraisalClientProfiles: Array.isArray(record.appraisalClientProfiles) ? record.appraisalClientProfiles : [],
     inProgressAppraisals: Number(record.inProgressAppraisals || 0),
     activeDraft: record.activeDraft || null,
     completedAppraisalIds: Array.isArray(record.completedAppraisalIds) ? record.completedAppraisalIds : [],
@@ -87,6 +92,7 @@ function recordFromD1Row(row, billingMonth = getBillingMonth()) {
     planId: row.plan_id,
     monthlyAppraisals: row.monthly_appraisals,
     appraisalClients: row.appraisal_clients,
+    appraisalClientProfiles: safeJsonParse(row.appraisal_client_profiles_json, []),
     billingMonth: row.billing_month || billingMonth,
     inProgressAppraisals: row.in_progress_appraisals,
     activeDraft: safeJsonParse(row.active_draft_json, null),
@@ -118,15 +124,16 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record) {
       INSERT INTO usage_records (
         scope_key, workspace_id, user_id, billing_month, plan_id,
         monthly_appraisals, appraisal_clients, in_progress_appraisals,
-        active_draft_json, completed_appraisal_ids_json, completed_appraisals_json,
+        appraisal_client_profiles_json, active_draft_json, completed_appraisal_ids_json, completed_appraisals_json,
         report_exports_json, updated_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(scope_key) DO UPDATE SET
         plan_id = excluded.plan_id,
         monthly_appraisals = excluded.monthly_appraisals,
         appraisal_clients = excluded.appraisal_clients,
         in_progress_appraisals = excluded.in_progress_appraisals,
+        appraisal_client_profiles_json = excluded.appraisal_client_profiles_json,
         active_draft_json = excluded.active_draft_json,
         completed_appraisal_ids_json = excluded.completed_appraisal_ids_json,
         completed_appraisals_json = excluded.completed_appraisals_json,
@@ -141,6 +148,7 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record) {
       normalized.monthlyAppraisals,
       normalized.appraisalClients,
       normalized.inProgressAppraisals,
+      JSON.stringify(normalized.appraisalClientProfiles),
       normalized.activeDraft ? JSON.stringify(normalized.activeDraft) : null,
       JSON.stringify(normalized.completedAppraisalIds),
       JSON.stringify(normalized.completedAppraisals),
@@ -174,6 +182,106 @@ async function saveReportEvent(env = {}, workspaceId, userId, record, event) {
     "studio.report.generated.v1",
     event.generatedAt,
   ).run();
+}
+
+function getAiPlatformCoreUrl(env = {}) {
+  return env.AI_PLATFORM_CORE_URL
+    || env.NUMERIA_AI_PLATFORM_CORE_URL
+    || globalThis.AI_PLATFORM_CORE_URL
+    || globalThis.NUMERIA_AI_PLATFORM_CORE_URL
+    || "";
+}
+
+function getAiUsageForwardingMode(env = {}) {
+  const raw = env.AI_USAGE_FORWARDING_MODE
+    || env.NUMERIA_AI_USAGE_FORWARDING_MODE
+    || globalThis.AI_USAGE_FORWARDING_MODE
+    || "observe";
+  return String(raw).toLowerCase() === "send" ? "send" : "observe";
+}
+
+function createAiUsageEvent({
+  eventName,
+  workspaceId,
+  userId,
+  planId,
+  featureKey,
+  status = "success",
+  correlationId,
+}) {
+  return {
+    eventId: `aiu_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    eventName,
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    workspaceId,
+    userId,
+    planId,
+    featureKey,
+    status,
+    occurredAt: new Date().toISOString(),
+    correlationId: correlationId || null,
+    dataPolicy: "metadata-only-no-consultation-body",
+  };
+}
+
+async function recordAiUsageEvent(env = {}, event) {
+  runtimeAiUsageEvents.push(event);
+  if (runtimeAiUsageEvents.length > 50) runtimeAiUsageEvents.shift();
+
+  const endpoint = getAiPlatformCoreUrl(env);
+  const forwardingMode = getAiUsageForwardingMode(env);
+  if (!endpoint || forwardingMode !== "send") {
+    return {
+      forwarded: false,
+      forwardingMode,
+      reason: endpoint ? "observe-mode" : "endpoint-not-configured",
+    };
+  }
+
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify(event),
+    });
+    return {
+      forwarded: response.ok,
+      forwardingMode,
+      statusCode: response.status,
+    };
+  } catch (error) {
+    return {
+      forwarded: false,
+      forwardingMode,
+      reason: error?.message || "forwarding-failed",
+    };
+  }
+}
+
+function aiUsageStatusResponse(env = {}) {
+  const endpoint = getAiPlatformCoreUrl(env);
+  const forwardingMode = getAiUsageForwardingMode(env);
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    aiUsageContractVersion: AI_USAGE_CONTRACT_VERSION,
+    forwardingMode,
+    endpointConfigured: Boolean(endpoint),
+    willForwardInCurrentMode: Boolean(endpoint && forwardingMode === "send"),
+    eventNames: [
+      "studio.session.completed.v1",
+      "studio.report.generated.v1",
+    ],
+    retainedEventCount: runtimeAiUsageEvents.length,
+    recentEvents: runtimeAiUsageEvents.slice(-5),
+    dataPolicy: "metadata-only-no-consultation-body",
+    secretValuesReturned: false,
+    message: endpoint
+      ? "AI Platform Coreへの利用イベント送信を有効化できます。"
+      : "AI Platform Core URL未設定のため、現在は送信せず契約とローカル記録のみです。",
+  };
 }
 
 async function persistenceStatusResponse(env = {}) {
@@ -290,6 +398,8 @@ function createReportSnapshot({ exportId, reportType, branding, body = {} }) {
     reportType,
     branding,
     clientName: String(body.clientName || "未設定").trim(),
+    birthDate: String(body.birthDate || "").trim(),
+    lifePathNumber: body.lifePathNumber || null,
     question: String(body.question || "").trim(),
     resultSummary: String(body.resultSummary || "").trim(),
     notes: reportType === "detailed" ? String(body.notes || "").trim() : "",
@@ -303,6 +413,8 @@ function createReportPdfBase64({ exportId, reportType, branding, body = {} }) {
     branding === "hidden" ? "Branding: Hidden" : "Branding: Numeria Studio",
     `Export ID: ${exportId}`,
     `Client: ${asciiPdfText(body.clientName)}`,
+    `Birth Date: ${asciiPdfText(body.birthDate, "Not provided")}`,
+    `Life Path: ${asciiPdfText(body.lifePathNumber ? `LP${body.lifePathNumber}` : "", "Not calculated")}`,
     `Question: ${asciiPdfText(body.question, "No question provided")}`,
     `Result: ${asciiPdfText(body.resultSummary, "No result summary provided")}`,
     reportType === "detailed"
@@ -320,12 +432,13 @@ function createReportPdfBase64({ exportId, reportType, branding, body = {} }) {
     "q 0.73 0.58 0.20 RG 54 684 504 1 re f Q",
     "BT /F1 14 Tf 54 660 Td (Report Details) Tj ET",
     `BT /F1 12 Tf 54 620 Td (${escapePdfText(lines[3])}) Tj ET`,
-    `BT /F1 12 Tf 54 570 Td (${escapePdfText(lines[4])}) Tj ET`,
-    "q 0.85 0.83 0.88 RG 54 542 504 1 re f Q",
-    `BT /F1 12 Tf 54 505 Td (${escapePdfText(lines[5])}) Tj ET`,
-    `BT /F1 12 Tf 54 455 Td (${escapePdfText(lines[6])}) Tj ET`,
-    "q 0.85 0.83 0.88 RG 54 425 504 1 re f Q",
-    `BT /F1 9 Tf 54 52 Td (${escapePdfText(lines[7])}) Tj ET`,
+    `BT /F1 12 Tf 54 585 Td (${escapePdfText(lines[4])}) Tj ET`,
+    `BT /F1 12 Tf 54 550 Td (${escapePdfText(lines[5])}) Tj ET`,
+    "q 0.85 0.83 0.88 RG 54 522 504 1 re f Q",
+    `BT /F1 12 Tf 54 485 Td (${escapePdfText(lines[6])}) Tj ET`,
+    `BT /F1 12 Tf 54 435 Td (${escapePdfText(lines[7])}) Tj ET`,
+    "q 0.85 0.83 0.88 RG 54 405 504 1 re f Q",
+    `BT /F1 9 Tf 54 52 Td (${escapePdfText(lines[8])}) Tj ET`,
   ].join("\n");
   const stream = `${contentLines}\n`;
   const objects = [
@@ -399,13 +512,15 @@ async function releaseStatusResponse(env = {}) {
       "Feedback Hub embed payload",
       "Admin preview menus for unreleased features",
       "Server-side auth readiness contract",
+      "Server-side Clerk JWT verification in observe/enforce modes",
+      "AI Platform Core usage event contract",
     ],
     pendingFeatures: [
       "Stripe real subscription sync",
       "Growth Engine Business handoff",
-      "AI Platform Core usage event forwarding",
+      "AI Platform Core production endpoint forwarding",
       "Production-grade PDF template rendering",
-      "Server-side Clerk session verification",
+      "Clerk enforce-mode production rollout after token header confirmation",
     ],
     deferredFeatures: [
       "Business plan purchase",
@@ -531,7 +646,8 @@ async function adminAccountResponse(request, env = {}, body = {}) {
 
 async function contractsStatusResponse(env = {}) {
   const persistence = await persistenceStatusResponse(env);
-  const auth = authStatusResponse(new Request("https://local.test/contracts/status"), env);
+  const auth = await authStatusResponse(new Request("https://local.test/contracts/status"), env);
+  const aiUsage = aiUsageStatusResponse(env);
   return {
     status: "success",
     appId: "numeria-studio",
@@ -544,7 +660,7 @@ async function contractsStatusResponse(env = {}) {
         completionCountTrigger: PLAN_CONFIG.free.entitlements.completionCountTrigger,
         inProgressAppraisals: PLAN_CONFIG.free.entitlements.inProgressAppraisals,
         viewableCompletedAppraisals: PLAN_CONFIG.free.entitlements.viewableCompletedAppraisals,
-        appraisalClients: "unlimited",
+        appraisalClients: PLAN_CONFIG.free.entitlements.appraisalClients,
         pdfExport: PLAN_CONFIG.free.entitlements.pdfExport,
         mainDivinationLocked: PLAN_CONFIG.free.entitlements.mainDivinationLocked,
       },
@@ -587,6 +703,10 @@ async function contractsStatusResponse(env = {}) {
       sessionCompleted: "studio.session.completed.v1",
       reportGenerated: "studio.report.generated.v1",
     },
+    aiUsage: {
+      statusEndpoint: "/ai-usage/status",
+      ...aiUsage,
+    },
     auth: {
       statusEndpoint: "/auth/status",
       ...auth,
@@ -615,6 +735,24 @@ function getClerkSecretKey(env = {}) {
     || "";
 }
 
+function getClerkJwksUrl(request, env = {}) {
+  const explicitUrl = env.CLERK_JWKS_URL
+    || env.NUMERIA_CLERK_JWKS_URL
+    || globalThis.CLERK_JWKS_URL
+    || globalThis.NUMERIA_CLERK_JWKS_URL
+    || "";
+  if (explicitUrl) return explicitUrl;
+
+  const publishableKey = getClerkPublishableKey(request, env);
+  const encodedFrontendHost = String(publishableKey).split("_").at(-1) || "";
+  try {
+    const frontendHost = atob(encodedFrontendHost).replace(/\$$/, "");
+    return frontendHost ? `https://${frontendHost}/.well-known/jwks.json` : "";
+  } catch {
+    return "";
+  }
+}
+
 function getAuthEnforcementMode(env = {}) {
   const raw = env.AUTH_ENFORCEMENT_MODE
     || env.NUMERIA_AUTH_ENFORCEMENT_MODE
@@ -629,11 +767,140 @@ function getBearerToken(request) {
   return match ? match[1].trim() : "";
 }
 
-function authStatusResponse(request, env = {}) {
+function base64UrlDecode(value) {
+  const normalized = String(value).replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+  const binary = atob(padded);
+  return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+}
+
+function base64UrlJson(value) {
+  return JSON.parse(new TextDecoder().decode(base64UrlDecode(value)));
+}
+
+function getExpectedClerkIssuer(env = {}) {
+  return env.CLERK_JWT_ISSUER
+    || env.CLERK_ISSUER
+    || env.NUMERIA_CLERK_ISSUER
+    || globalThis.CLERK_JWT_ISSUER
+    || globalThis.CLERK_ISSUER
+    || "";
+}
+
+async function fetchClerkJwks(jwksUrl) {
+  const response = await fetch(jwksUrl, {
+    headers: { Accept: "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error(`JWKS fetch failed: ${response.status}`);
+  }
+  const body = await response.json();
+  return Array.isArray(body.keys) ? body.keys : [];
+}
+
+async function verifyClerkSessionToken(request, env = {}) {
+  const token = getBearerToken(request);
+  const jwksUrl = getClerkJwksUrl(request, env);
+  if (!token) {
+    return { verified: false, reason: "missing-bearer-token", userId: "", method: jwksUrl ? "jwks-rs256" : "not-configured" };
+  }
+  if (!jwksUrl) {
+    return { verified: false, reason: "jwks-not-configured", userId: "", method: "not-configured" };
+  }
+
+  try {
+    const [headerPart, payloadPart, signaturePart] = token.split(".");
+    if (!headerPart || !payloadPart || !signaturePart) {
+      return { verified: false, reason: "malformed-jwt", userId: "", method: "jwks-rs256" };
+    }
+
+    const header = base64UrlJson(headerPart);
+    const payload = base64UrlJson(payloadPart);
+    if (header.alg !== "RS256") {
+      return { verified: false, reason: "unsupported-algorithm", userId: "", method: "jwks-rs256" };
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.exp && Number(payload.exp) <= now) {
+      return { verified: false, reason: "token-expired", userId: "", method: "jwks-rs256" };
+    }
+    if (payload.nbf && Number(payload.nbf) > now) {
+      return { verified: false, reason: "token-not-yet-valid", userId: "", method: "jwks-rs256" };
+    }
+
+    const expectedIssuer = getExpectedClerkIssuer(env);
+    if (expectedIssuer && payload.iss !== expectedIssuer) {
+      return { verified: false, reason: "issuer-mismatch", userId: "", method: "jwks-rs256" };
+    }
+
+    const keys = await fetchClerkJwks(jwksUrl);
+    const jwk = keys.find((key) => key.kid === header.kid) || keys[0];
+    if (!jwk) {
+      return { verified: false, reason: "jwks-key-not-found", userId: "", method: "jwks-rs256" };
+    }
+
+    const key = await crypto.subtle.importKey(
+      "jwk",
+      jwk,
+      { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+      false,
+      ["verify"],
+    );
+    const verified = await crypto.subtle.verify(
+      "RSASSA-PKCS1-v1_5",
+      key,
+      base64UrlDecode(signaturePart),
+      new TextEncoder().encode(`${headerPart}.${payloadPart}`),
+    );
+
+    return {
+      verified,
+      reason: verified ? "verified" : "signature-invalid",
+      userId: verified ? String(payload.sub || "") : "",
+      sessionId: verified ? String(payload.sid || "") : "",
+      method: "jwks-rs256",
+    };
+  } catch (error) {
+    return {
+      verified: false,
+      reason: `verification-error:${error?.message || "unknown"}`,
+      userId: "",
+      method: "jwks-rs256",
+    };
+  }
+}
+
+function isAuthOptionalApi(pathname) {
+  return pathname === "/api/plans" || pathname === "/api/auth/config";
+}
+
+async function authenticateApiRequest(request, env = {}) {
+  const url = new URL(request.url);
+  const enforcementMode = getAuthEnforcementMode(env);
+  const verification = await verifyClerkSessionToken(request, env);
+  if (enforcementMode === "enforce" && !verification.verified && !isAuthOptionalApi(url.pathname)) {
+    return {
+      auth: verification,
+      response: json({
+        status: "error",
+        errorCode: "AUTH_SESSION_REQUIRED",
+        message: "ログインセッションを確認できません。再ログインしてからお試しください。",
+        authProvider: "clerk",
+        enforcementMode,
+        verificationReason: verification.reason,
+      }, { status: 401 }),
+    };
+  }
+  return { auth: verification, response: null };
+}
+
+async function authStatusResponse(request, env = {}) {
   const publishableKey = getClerkPublishableKey(request, env);
   const secretKey = getClerkSecretKey(env);
+  const jwksUrl = getClerkJwksUrl(request, env);
   const enforcementMode = getAuthEnforcementMode(env);
-  const serverVerificationReady = Boolean(secretKey);
+  const verification = await verifyClerkSessionToken(request, env);
+  const serverVerificationReady = Boolean(secretKey || jwksUrl);
 
   return {
     status: serverVerificationReady || enforcementMode === "observe" ? "success" : "warning",
@@ -643,13 +910,18 @@ function authStatusResponse(request, env = {}) {
     authContractVersion: AUTH_CONTRACT_VERSION,
     clientAuthReady: Boolean(publishableKey),
     serverVerificationReady,
+    serverVerificationMethod: jwksUrl ? "jwks-rs256" : "not-configured",
     enforcementMode,
     incomingRequestHasBearerToken: Boolean(getBearerToken(request)),
+    incomingRequestVerified: verification.verified,
+    incomingRequestVerificationReason: verification.reason,
     identityMode: "workspaceId+userId",
     secretValuesReturned: false,
-    message: serverVerificationReady
-      ? "サーバー側認証検証を有効化できます。"
-      : "MVPではobserveモードです。CLERK_SECRET_KEYを設定するとサーバー側検証を有効化できます。",
+    message: verification.verified
+      ? "ClerkセッションJWTをサーバー側で検証しました。"
+      : serverVerificationReady
+        ? "サーバー側認証検証を有効化できます。"
+        : "MVPではobserveモードです。CLERK_JWKS_URLを設定するとサーバー側検証を有効化できます。",
   };
 }
 
@@ -744,7 +1016,10 @@ async function clerkBrowserAssetResponse(request, env = {}) {
 async function handleApi(request, env = {}) {
   const url = new URL(request.url);
   const body = await readJson(request);
-  const { workspaceId, userId } = getScope(request, body);
+  const { auth, response: authResponse } = await authenticateApiRequest(request, env);
+  if (authResponse) return authResponse;
+
+  const { workspaceId, userId } = getScope(request, body, auth);
   const record = await loadUsageRecord(env, workspaceId, userId);
 
   if (url.pathname === "/api/plans" && request.method === "GET") {
@@ -840,13 +1115,25 @@ async function handleApi(request, env = {}) {
     if (!decision.allowed) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
-    record.appraisalClients += 1;
+    const appraisalClientRef = `acl_${Date.now()}`;
+    const appraisalClient = {
+      id: appraisalClientRef,
+      clientName: String(body.clientName || "未設定").trim() || "未設定",
+      birthDate: String(body.birthDate || "").trim(),
+      createdAt: new Date().toISOString(),
+    };
+    record.appraisalClientProfiles = [
+      ...(record.appraisalClientProfiles || []),
+      appraisalClient,
+    ];
+    record.appraisalClients = Math.max(Number(record.appraisalClients || 0) + 1, record.appraisalClientProfiles.length);
     await saveUsageRecord(env, workspaceId, userId, record);
     return json({
       status: "success",
-      appraisalClientRef: `acl_${Date.now()}`,
+      appraisalClientRef,
+      appraisalClient,
       sourceOfTruth: "numeria-appraisal-client-profile",
-      limitPolicy: "profile-count-unlimited",
+      limitPolicy: isUnlimited(snapshot.entitlements.appraisalClients) ? "profile-count-unlimited" : "free-three-appraisal-client-profiles",
       usage: usageResponse(record),
     }, { status: 201 });
   }
@@ -879,6 +1166,8 @@ async function handleApi(request, env = {}) {
     record.activeDraft = {
       id: appraisalId,
       clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
+      birthDate: String(body.birthDate || currentDraft?.birthDate || "").trim(),
+      lifePathNumber: body.lifePathNumber || currentDraft?.lifePathNumber || null,
       question: String(body.question || currentDraft?.question || "").trim(),
       notes: String(body.notes || currentDraft?.notes || "").trim(),
       resultSummary: String(body.resultSummary || currentDraft?.resultSummary || "").trim(),
@@ -916,6 +1205,8 @@ async function handleApi(request, env = {}) {
     const completedAppraisal = {
       id: appraisalId,
       clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
+      birthDate: String(body.birthDate || currentDraft?.birthDate || "").trim(),
+      lifePathNumber: body.lifePathNumber || currentDraft?.lifePathNumber || null,
       question: String(body.question || currentDraft?.question || "").trim(),
       notes: String(body.notes || currentDraft?.notes || "").trim(),
       resultSummary: String(body.resultSummary || currentDraft?.resultSummary || "").trim(),
@@ -929,6 +1220,15 @@ async function handleApi(request, env = {}) {
     record.completedAppraisalIds = [...(record.completedAppraisalIds || []), appraisalId];
     record.completedAppraisals = [...(record.completedAppraisals || []), completedAppraisal];
     await saveUsageRecord(env, workspaceId, userId, record);
+    const aiUsageEvent = createAiUsageEvent({
+      eventName: "studio.session.completed.v1",
+      workspaceId,
+      userId,
+      planId: record.planId,
+      featureKey: "appraisal_completion",
+      correlationId: appraisalId,
+    });
+    const aiUsageDelivery = await recordAiUsageEvent(env, aiUsageEvent);
     const updatedUsage = usageResponse(record);
     return json({
       status: "success",
@@ -937,6 +1237,14 @@ async function handleApi(request, env = {}) {
       sessionStatus: "completed",
       eventName: "studio.session.completed.v1",
       countPolicy: "appraisal_completed_button",
+      aiUsageEvent: {
+        eventId: aiUsageEvent.eventId,
+        eventName: aiUsageEvent.eventName,
+        recorded: true,
+        forwarded: aiUsageDelivery.forwarded,
+        forwardingMode: aiUsageDelivery.forwardingMode,
+        dataPolicy: aiUsageEvent.dataPolicy,
+      },
       historyPolicy: {
         visibleCompletedAppraisals: updatedUsage.entitlements.viewableCompletedAppraisals,
         visibleCompletedAppraisalIds: updatedUsage.visibleCompletedAppraisalIds,
@@ -1004,6 +1312,15 @@ async function handleApi(request, env = {}) {
     ];
     await saveUsageRecord(env, workspaceId, userId, record);
     await saveReportEvent(env, workspaceId, userId, record, reportEvent);
+    const aiUsageEvent = createAiUsageEvent({
+      eventName: "studio.report.generated.v1",
+      workspaceId,
+      userId,
+      planId: record.planId,
+      featureKey: `report_export_${reportType}`,
+      correlationId: exportId,
+    });
+    const aiUsageDelivery = await recordAiUsageEvent(env, aiUsageEvent);
     const updatedUsage = usageResponse(record);
     return json({
       status: "success",
@@ -1018,6 +1335,14 @@ async function handleApi(request, env = {}) {
       downloadUrl: `data:application/pdf;base64,${pdfBase64}`,
       downloadPolicy: "inline-pdf-data-url-mvp",
       reportSnapshot,
+      aiUsageEvent: {
+        eventId: aiUsageEvent.eventId,
+        eventName: aiUsageEvent.eventName,
+        recorded: true,
+        forwarded: aiUsageDelivery.forwarded,
+        forwardingMode: aiUsageDelivery.forwardingMode,
+        dataPolicy: aiUsageEvent.dataPolicy,
+      },
       message: "PDFを生成しました。ダウンロードできます。",
       usage: updatedUsage,
     }, { status: 201 });
@@ -1039,7 +1364,10 @@ export default {
       return json(await releaseStatusResponse(env));
     }
     if (url.pathname === "/auth/status") {
-      return json(authStatusResponse(request, env));
+      return json(await authStatusResponse(request, env));
+    }
+    if (url.pathname === "/ai-usage/status") {
+      return json(aiUsageStatusResponse(env));
     }
     if (url.pathname === "/contracts/status") {
       return json(await contractsStatusResponse(env));
