@@ -554,6 +554,91 @@ h2 {
   background: #f1fbf4;
 }
 
+.client-profile-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.client-profile-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.client-profile-chip {
+  display: grid;
+  gap: 3px;
+  min-width: 142px;
+  border: 1px solid #d8cbb9;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #2c263f;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.client-profile-chip strong {
+  font-size: 0.92rem;
+}
+
+.client-profile-chip span {
+  color: #7d6e61;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.client-limit-card {
+  display: grid;
+  gap: 4px;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 14px;
+  background: #fffaf2;
+}
+
+.client-limit-card span,
+.client-limit-card small {
+  color: #746b62;
+  font-weight: 700;
+}
+
+.client-limit-card strong {
+  color: #17202a;
+  font-size: 1.4rem;
+}
+
+.client-limit-card.warning {
+  border-color: #e7c3a3;
+  background: #fff4ea;
+}
+
+.client-profile-form {
+  display: grid;
+  gap: 8px;
+  color: #4b5563;
+  font-weight: 700;
+}
+
+.client-profile-form input {
+  width: 100%;
+  border: 1px solid #e2d7c6;
+  border-radius: 8px;
+  padding: 12px;
+  color: #17202a;
+  background: #fff;
+}
+
+.lock-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 0;
+  color: #8f6731;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
 .pricing-panel {
   padding: 22px;
 }
@@ -667,7 +752,7 @@ h2 {
 
 .release-summary {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
   gap: 10px;
 }
 
@@ -915,6 +1000,76 @@ h2 {
   padding: 11px 12px;
   color: #17202a;
   background: #fff;
+}
+
+.numerology-preview {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+  border: 1px solid #e0d5c3;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fffaf0;
+}
+
+.numerology-preview h3 {
+  margin: 2px 0 0;
+  color: #241a3d;
+  font-size: 1rem;
+}
+
+.numerology-preview-grid {
+  display: grid;
+  grid-template-columns: 116px 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.number-orb,
+.formula-card {
+  border: 1px solid #d8cbb9;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.number-orb {
+  display: grid;
+  place-items: center;
+  padding: 16px 10px;
+  color: #251b3d;
+  text-align: center;
+}
+
+.number-orb span,
+.formula-card span {
+  color: #9b7f3d;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.number-orb strong {
+  color: #251b3d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.formula-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+}
+
+.formula-card strong {
+  color: #302846;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.formula-card small {
+  color: #6c6471;
+  line-height: 1.6;
 }
 
 .history-panel {
@@ -1258,6 +1413,10 @@ textarea {
   .feedback-button,
   .feedback-chat {
     width: 100%;
+  }
+
+  .numerology-preview-grid {
+    grid-template-columns: 1fr;
   }
 
   .client-history-heading {
