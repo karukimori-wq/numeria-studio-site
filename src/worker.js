@@ -124,8 +124,9 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record) {
       INSERT INTO usage_records (
         scope_key, workspace_id, user_id, billing_month, plan_id,
         monthly_appraisals, appraisal_clients, in_progress_appraisals,
-        appraisal_client_profiles_json, active_draft_json, completed_appraisal_ids_json, completed_appraisals_json,
-        report_exports_json, updated_at
+        appraisal_client_profiles_json, active_draft_json,
+        completed_appraisal_ids_json, completed_appraisals_json, report_exports_json,
+        updated_at
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(scope_key) DO UPDATE SET
@@ -512,7 +513,7 @@ async function releaseStatusResponse(env = {}) {
       "Basic PDF export",
       "Pro detailed report and branding controls",
       "D1 persistence for usage, drafts, appraisal client profiles, completed appraisals, and report exports",
-      "Selectable appraisal client profile chips",
+      "Selectable and editable appraisal client profile chips",
       "Numerology calculation preview while writing appraisals",
       "Feedback Hub embed payload",
       "Admin preview menus for unreleased features",
@@ -525,7 +526,6 @@ async function releaseStatusResponse(env = {}) {
       "Growth Engine Business handoff",
       "AI Platform Core production endpoint forwarding",
       "Production-grade PDF template rendering",
-      "Editable saved appraisal client profiles",
       "Clerk enforce-mode production rollout after token header confirmation",
     ],
     deferredFeatures: [
@@ -1121,12 +1121,14 @@ async function handleApi(request, env = {}) {
     if (!decision.allowed) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
-    const appraisalClientRef = `acl_${Date.now()}`;
+    const profileIndex = (record.appraisalClientProfiles || []).length + 1;
+    const profileTimestamp = Date.now();
     const appraisalClient = {
-      id: appraisalClientRef,
+      id: `acl_${profileTimestamp}_${profileIndex}_${Math.random().toString(36).slice(2, 8)}`,
       clientName: String(body.clientName || "未設定").trim() || "未設定",
       birthDate: String(body.birthDate || "").trim(),
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     record.appraisalClientProfiles = [
       ...(record.appraisalClientProfiles || []),
@@ -1136,12 +1138,52 @@ async function handleApi(request, env = {}) {
     await saveUsageRecord(env, workspaceId, userId, record);
     return json({
       status: "success",
-      appraisalClientRef,
+      appraisalClientRef: appraisalClient.id,
       appraisalClient,
       sourceOfTruth: "numeria-appraisal-client-profile",
       limitPolicy: isUnlimited(snapshot.entitlements.appraisalClients) ? "profile-count-unlimited" : "free-three-appraisal-client-profiles",
       usage: usageResponse(record),
     }, { status: 201 });
+  }
+
+  if (url.pathname.startsWith("/api/appraisal-clients/") && ["PATCH", "DELETE"].includes(request.method)) {
+    const profileId = decodeURIComponent(url.pathname.split("/").pop() || "");
+    const profiles = Array.isArray(record.appraisalClientProfiles) ? record.appraisalClientProfiles : [];
+    const existingProfile = profiles.find((profile) => profile.id === profileId);
+    if (!existingProfile) {
+      return json({
+        status: "error",
+        errorCode: "APPRAISAL_CLIENT_PROFILE_NOT_FOUND",
+        message: "依頼者プロフィールが見つかりません。",
+        usage: usageResponse(record),
+      }, { status: 404 });
+    }
+
+    if (request.method === "DELETE") {
+      record.appraisalClientProfiles = profiles.filter((profile) => profile.id !== profileId);
+      record.appraisalClients = record.appraisalClientProfiles.length;
+      await saveUsageRecord(env, workspaceId, userId, record);
+      return json({
+        status: "success",
+        deletedAppraisalClientRef: profileId,
+        usage: usageResponse(record),
+      });
+    }
+
+    const updatedProfile = {
+      ...existingProfile,
+      clientName: String(body.clientName || existingProfile.clientName || "未設定").trim() || "未設定",
+      birthDate: String(body.birthDate ?? existingProfile.birthDate ?? "").trim(),
+      updatedAt: new Date().toISOString(),
+    };
+    record.appraisalClientProfiles = profiles.map((profile) => profile.id === profileId ? updatedProfile : profile);
+    record.appraisalClients = record.appraisalClientProfiles.length;
+    await saveUsageRecord(env, workspaceId, userId, record);
+    return json({
+      status: "success",
+      appraisalClient: updatedProfile,
+      usage: usageResponse(record),
+    });
   }
 
   if (url.pathname === "/api/sessions/start" && request.method === "POST") {
