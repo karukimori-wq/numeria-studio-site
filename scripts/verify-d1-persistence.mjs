@@ -185,16 +185,20 @@ const headers = {
 const persistence = await jsonFetch("/persistence/status", {}, env);
 assert.equal(persistence.body.storageDriver, "durable-d1");
 assert.equal(persistence.body.durable, true);
+assert.ok(persistence.body.retainedDataClasses.includes("appraisalClientProfiles"));
 
 const releaseStatus = await jsonFetch("/release/status", {}, env);
 assert.equal(releaseStatus.response.status, 200);
 assert.equal(releaseStatus.body.releaseScope, "free-pro");
-assert.ok(releaseStatus.body.completedFeatures.includes("D1 persistence for usage, drafts, completed appraisals, and report exports"));
+assert.ok(releaseStatus.body.completedFeatures.includes("D1 persistence for usage, drafts, appraisal client profiles, completed appraisals, and report exports"));
+assert.ok(releaseStatus.body.completedFeatures.includes("Selectable appraisal client profile chips"));
+assert.ok(releaseStatus.body.completedFeatures.includes("Numerology calculation preview while writing appraisals"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side auth readiness contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side Clerk JWT verification in observe/enforce modes"));
 assert.ok(releaseStatus.body.completedFeatures.includes("AI Platform Core usage event contract"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Stripe real subscription sync"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("AI Platform Core production endpoint forwarding"));
+assert.ok(releaseStatus.body.pendingFeatures.includes("Editable saved appraisal client profiles"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Clerk enforce-mode production rollout after token header confirmation"));
 assert.ok(releaseStatus.body.deferredFeatures.includes("Business plan purchase"));
 
