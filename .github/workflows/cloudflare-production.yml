@@ -54,6 +54,9 @@ jobs:
             exit 1
           fi
 
+      - name: Apply D1 migrations
+        run: npx wrangler d1 migrations apply numeria-studio-db --remote
+
       - name: Deploy Worker static assets
         run: npx wrangler deploy --var VITE_CLERK_PUBLISHABLE_KEY:"$VITE_CLERK_PUBLISHABLE_KEY"
 
