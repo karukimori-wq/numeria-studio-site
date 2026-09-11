@@ -1171,12 +1171,31 @@ h2 {
   font-weight: 700;
 }
 
+.history-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.profile-pill,
 .lock-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   border-radius: 999px;
   padding: 6px 10px;
+  color: #6c6471;
+  background: #f4f1ed;
+  white-space: nowrap;
+}
+
+.profile-pill.registered {
+  color: #5d451f;
+  background: #f1e3c1;
+}
+
+.lock-pill {
   color: #5d451f;
   background: #f1e3c1;
   white-space: nowrap;
@@ -1206,6 +1225,16 @@ h2 {
 .history-toggle strong {
   color: #8f6731;
   white-space: nowrap;
+}
+
+.history-case-meta {
+  display: grid;
+  gap: 4px;
+}
+
+.history-case-meta small {
+  color: #7d6e61;
+  font-weight: 800;
 }
 
 .history-detail {
