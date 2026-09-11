@@ -145,15 +145,26 @@ export function getPlanPrice(plan, env = {}) {
   return env[plan.priceEnvKey] || plan.defaultPriceLabel;
 }
 
-function createClientHistorySummary(completedAppraisals, visibleCompletedAppraisalIds, lockedCompletedAppraisalIds) {
+function normalizeClientName(clientName) {
+  return String(clientName || "未設定").trim() || "未設定";
+}
+
+function createClientHistorySummary(completedAppraisals, visibleCompletedAppraisalIds, lockedCompletedAppraisalIds, appraisalClientProfiles = []) {
   const clientMap = new Map();
   const visibleSet = new Set(visibleCompletedAppraisalIds);
   const lockedSet = new Set(lockedCompletedAppraisalIds);
+  const profileMap = new Map(
+    appraisalClientProfiles.map((profile) => [normalizeClientName(profile.clientName), profile])
+  );
 
   completedAppraisals.forEach((appraisal) => {
-    const clientName = appraisal.clientName || "未設定";
+    const clientName = normalizeClientName(appraisal.clientName);
+    const matchedProfile = profileMap.get(clientName);
     const current = clientMap.get(clientName) || {
       clientName,
+      profileId: matchedProfile?.id || null,
+      profileBirthDate: matchedProfile?.birthDate || appraisal.birthDate || "",
+      profileRegistered: Boolean(matchedProfile),
       totalAppraisals: 0,
       visibleAppraisals: [],
       lockedAppraisalIds: [],
@@ -202,7 +213,7 @@ export function createUsageSnapshot({ planId = PLAN_IDS.FREE, monthlyAppraisals 
     visibleCompletedAppraisalIds,
     visibleCompletedAppraisals,
     lockedCompletedAppraisalIds,
-    clientHistorySummaries: createClientHistorySummary(completedAppraisals, visibleCompletedAppraisalIds, lockedCompletedAppraisalIds),
+    clientHistorySummaries: createClientHistorySummary(completedAppraisals, visibleCompletedAppraisalIds, lockedCompletedAppraisalIds, normalizedAppraisalClientProfiles),
     reportExports,
     entitlements: plan.entitlements,
   };
