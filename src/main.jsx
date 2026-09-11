@@ -1058,7 +1058,27 @@ function AppraisalHistoryPanel({ usage, onStartFollowUp }) {
   const lockedCount = usage.lockedCompletedAppraisalIds?.length || 0;
   const [selectedClientName, setSelectedClientName] = useState("");
   const [openAppraisalId, setOpenAppraisalId] = useState("");
-  const selectedClient = clients.find((client) => client.clientName === selectedClientName) || clients[0];
+  const [historySearch, setHistorySearch] = useState("");
+  const normalizedSearch = historySearch.trim().toLowerCase();
+  const filteredClients = normalizedSearch
+    ? clients.filter((client) => {
+        const searchable = [
+          client.clientName,
+          client.profileBirthDate,
+          client.profileRegistered ? "登録プロフィール" : "履歴のみ",
+          ...client.visibleAppraisals.flatMap((appraisal) => [
+            appraisal.question,
+            appraisal.resultSummary,
+            appraisal.notes,
+            appraisal.lifePathNumber ? `life path ${appraisal.lifePathNumber}` : "",
+            appraisal.lifePathNumber ? `lp${appraisal.lifePathNumber}` : "",
+          ]),
+        ].join(" ").toLowerCase();
+        return searchable.includes(normalizedSearch);
+      })
+    : clients;
+  const selectedClient =
+    filteredClients.find((client) => client.clientName === selectedClientName) || filteredClients[0];
 
   useEffect(() => {
     if (!clients.length) {
@@ -1067,11 +1087,11 @@ function AppraisalHistoryPanel({ usage, onStartFollowUp }) {
       return;
     }
 
-    if (!clients.some((client) => client.clientName === selectedClientName)) {
-      setSelectedClientName(clients[0].clientName);
+    if (!filteredClients.some((client) => client.clientName === selectedClientName)) {
+      setSelectedClientName(filteredClients[0]?.clientName || "");
       setOpenAppraisalId("");
     }
-  }, [clients, selectedClientName]);
+  }, [clients, filteredClients, selectedClientName]);
 
   return (
     <div className="work-panel history-panel">
@@ -1088,8 +1108,22 @@ function AppraisalHistoryPanel({ usage, onStartFollowUp }) {
       {clients.length === 0 && <div className="empty-state">まだ完成した鑑定はありません。</div>}
       {clients.length > 0 && (
         <>
+          <label className="history-search">
+            履歴を検索
+            <input
+              value={historySearch}
+              onChange={(event) => {
+                setHistorySearch(event.target.value);
+                setOpenAppraisalId("");
+              }}
+              placeholder="依頼者名・相談内容・LPで検索"
+            />
+          </label>
+          {filteredClients.length === 0 && (
+            <div className="empty-state">一致する履歴はありません。</div>
+          )}
           <div className="client-selector" aria-label="依頼者を選択">
-            {clients.map((client) => (
+            {filteredClients.map((client) => (
               <button
                 className={client.clientName === selectedClient?.clientName ? "client-chip active" : "client-chip"}
                 key={client.clientName}
