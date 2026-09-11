@@ -163,6 +163,10 @@ assert.match(mainSource, /updateAppraisalClientProfile/);
 assert.match(mainSource, /deleteAppraisalClientProfile/);
 assert.match(mainSource, /依頼者プロフィール/);
 assert.match(mainSource, /プロフィール編集/);
+assert.match(mainSource, /profileRegistered/);
+assert.match(mainSource, /登録プロフィール/);
+assert.match(mainSource, /履歴のみ/);
+assert.match(mainSource, /Life Path/);
 assert.match(mainSource, /Freeで追加できる残り/);
 assert.match(mainSource, /依頼者を追加/);
 assert.match(mainSource, /\/persistence\/status/);
@@ -349,6 +353,23 @@ assert.equal(evaluateUsageLimit(freeAtClientLimit, "create_appraisal_client").re
 const freeVisibleHistory = createUsageSnapshot({ planId: "free", completedAppraisalIds: ["a", "b", "c", "d", "e"] });
 assert.deepEqual(freeVisibleHistory.visibleCompletedAppraisalIds, ["c", "d", "e"]);
 assert.deepEqual(freeVisibleHistory.lockedCompletedAppraisalIds, ["a", "b"]);
+
+const profiledHistory = createUsageSnapshot({
+  planId: "free",
+  appraisalClientProfiles: [{ id: "profile_1", clientName: "Aさん", birthDate: "1990-04-19" }],
+  completedAppraisalIds: ["case_1"],
+  completedAppraisals: [{ id: "case_1", clientName: "Aさん", completedAt: "2026-09-11T00:00:00.000Z" }],
+});
+assert.equal(profiledHistory.clientHistorySummaries[0].profileRegistered, true);
+assert.equal(profiledHistory.clientHistorySummaries[0].profileBirthDate, "1990-04-19");
+
+const unprofiledHistory = createUsageSnapshot({
+  planId: "free",
+  completedAppraisalIds: ["case_2"],
+  completedAppraisals: [{ id: "case_2", clientName: "Bさん", birthDate: "1992-03-04", completedAt: "2026-09-11T00:00:00.000Z" }],
+});
+assert.equal(unprofiledHistory.clientHistorySummaries[0].profileRegistered, false);
+assert.equal(unprofiledHistory.clientHistorySummaries[0].profileBirthDate, "1992-03-04");
 
 const dashboardSource = readFileSync("src/main.jsx", "utf8");
 assert.match(dashboardSource, /鑑定完成/);
