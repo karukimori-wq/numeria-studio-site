@@ -13,13 +13,13 @@ export const PLAN_CONFIG = {
     id: PLAN_IDS.FREE,
     name: "Free",
     headline: "まず鑑定を試す",
-    description: "月20件までの鑑定、未完了1案件、直近3完了案件の詳細閲覧を無料で使えます。依頼者プロフィールは人数上限なしです。",
+    description: "月20件までの鑑定、依頼者プロフィール3名、未完了1案件、直近3完了案件の詳細閲覧を無料で使えます。",
     priceEnvKey: "VITE_PRICE_FREE_LABEL",
     defaultPriceLabel: "無料",
     available: true,
     entitlements: {
       monthlyAppraisals: 20,
-      appraisalClients: PLAN_LIMITS.UNLIMITED,
+      appraisalClients: 3,
       inProgressAppraisals: 1,
       viewableCompletedAppraisals: 3,
       completionCountTrigger: "appraisal_completed_button",
@@ -179,9 +179,11 @@ function createClientHistorySummary(completedAppraisals, visibleCompletedApprais
   });
 }
 
-export function createUsageSnapshot({ planId = PLAN_IDS.FREE, monthlyAppraisals = 0, appraisalClients = 0, inProgressAppraisals = 0, completedAppraisalIds = [], completedAppraisals = [], activeDraft = null, reportExports = [], billingMonth = getBillingMonth() } = {}) {
+export function createUsageSnapshot({ planId = PLAN_IDS.FREE, monthlyAppraisals = 0, appraisalClients = 0, appraisalClientProfiles = [], inProgressAppraisals = 0, completedAppraisalIds = [], completedAppraisals = [], activeDraft = null, reportExports = [], billingMonth = getBillingMonth() } = {}) {
   const normalizedPlanId = normalizePlanId(planId);
   const plan = PLAN_CONFIG[normalizedPlanId] || PLAN_CONFIG.free;
+  const normalizedAppraisalClientProfiles = Array.isArray(appraisalClientProfiles) ? appraisalClientProfiles : [];
+  const normalizedAppraisalClients = Math.max(Number(appraisalClients || 0), normalizedAppraisalClientProfiles.length);
   const visibleCompletedAppraisalIds = isUnlimited(plan.entitlements.viewableCompletedAppraisals) ? completedAppraisalIds : completedAppraisalIds.slice(-plan.entitlements.viewableCompletedAppraisals);
   const lockedCompletedAppraisalIds = isUnlimited(plan.entitlements.viewableCompletedAppraisals) ? [] : completedAppraisalIds.slice(0, Math.max(0, completedAppraisalIds.length - plan.entitlements.viewableCompletedAppraisals));
   const visibleCompletedAppraisals = completedAppraisals.filter((appraisal) => visibleCompletedAppraisalIds.includes(appraisal.id));
@@ -191,7 +193,8 @@ export function createUsageSnapshot({ planId = PLAN_IDS.FREE, monthlyAppraisals 
     billingMonth,
     billingAnchor: "calendar-month",
     monthlyAppraisals,
-    appraisalClients,
+    appraisalClients: normalizedAppraisalClients,
+    appraisalClientProfiles: normalizedAppraisalClientProfiles,
     inProgressAppraisals,
     activeDraft,
     completedAppraisalIds,
@@ -235,6 +238,17 @@ export function evaluateUsageLimit(snapshot, action) {
         reason: "FREE_IN_PROGRESS_APPRAISAL_LIMIT",
         message: `Freeプランで途中保存できる未完了案件は${entitlement.inProgressAppraisals}件までです。`,
         upgradeBenefit: "Proにすると複数の依頼者・案件を切り替えながら作業できます。",
+      };
+    }
+  }
+
+  if (action === "create_appraisal_client" && !isUnlimited(entitlement.appraisalClients)) {
+    if (snapshot.appraisalClients >= entitlement.appraisalClients) {
+      return {
+        allowed: false,
+        reason: "FREE_APPRAISAL_CLIENT_LIMIT",
+        message: `Freeプランで登録できる依頼者プロフィールは${entitlement.appraisalClients}名までです。`,
+        upgradeBenefit: "Proにすると依頼者プロフィールを上限なしで管理できます。",
       };
     }
   }
