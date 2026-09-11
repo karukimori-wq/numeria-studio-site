@@ -1084,14 +1084,22 @@ function AppraisalHistoryPanel({ usage }) {
               <div className="client-history-heading">
                 <div>
                   <strong>{selectedClient.clientName}</strong>
-                  <span>過去依頼 {selectedClient.totalAppraisals}件</span>
-                </div>
-                {selectedClient.lockedAppraisalIds.length > 0 && (
-                  <span className="lock-pill">
-                    <Lock size={14} />
-                    {selectedClient.lockedAppraisalIds.length}件ロック
+                  <span>
+                    過去依頼 {selectedClient.totalAppraisals}件
+                    {selectedClient.profileBirthDate ? ` / ${selectedClient.profileBirthDate}` : ""}
                   </span>
-                )}
+                </div>
+                <div className="history-badges">
+                  <span className={selectedClient.profileRegistered ? "profile-pill registered" : "profile-pill"}>
+                    {selectedClient.profileRegistered ? "登録プロフィール" : "履歴のみ"}
+                  </span>
+                  {selectedClient.lockedAppraisalIds.length > 0 && (
+                    <span className="lock-pill">
+                      <Lock size={14} />
+                      {selectedClient.lockedAppraisalIds.length}件ロック
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="history-list">
                 {selectedClient.visibleAppraisals.map((appraisal) => {
@@ -1102,7 +1110,10 @@ function AppraisalHistoryPanel({ usage }) {
                         className="history-toggle"
                         onClick={() => setOpenAppraisalId(isOpen ? "" : appraisal.id)}
                       >
-                        <span>{new Date(appraisal.completedAt).toLocaleString("ja-JP")}</span>
+                        <span className="history-case-meta">
+                          <span>{new Date(appraisal.completedAt).toLocaleString("ja-JP")}</span>
+                          {appraisal.lifePathNumber && <small>Life Path {appraisal.lifePathNumber}</small>}
+                        </span>
                         <strong>{isOpen ? "閉じる" : "内容を見る"}</strong>
                       </button>
                       {isOpen && (
