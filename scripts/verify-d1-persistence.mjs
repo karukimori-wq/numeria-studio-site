@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { webcrypto } from "node:crypto";
 import worker from "../src/worker.js";
 
 class MockD1 {
@@ -55,6 +56,7 @@ class MockD1Statement {
         monthlyAppraisals,
         appraisalClients,
         inProgressAppraisals,
+        appraisalClientProfilesJson,
         activeDraftJson,
         completedAppraisalIdsJson,
         completedAppraisalsJson,
@@ -74,6 +76,7 @@ class MockD1Statement {
         monthly_appraisals: monthlyAppraisals,
         appraisal_clients: appraisalClients,
         in_progress_appraisals: inProgressAppraisals,
+        appraisal_client_profiles_json: appraisalClientProfilesJson,
         active_draft_json: activeDraftJson,
         completed_appraisal_ids_json: completedAppraisalIdsJson,
         completed_appraisals_json: completedAppraisalsJson,
@@ -121,6 +124,56 @@ async function jsonFetch(path, options = {}, env) {
   return { response, body };
 }
 
+const subtle = globalThis.crypto?.subtle || webcrypto.subtle;
+
+function base64UrlEncode(value) {
+  const bytes = typeof value === "string" ? new TextEncoder().encode(value) : new Uint8Array(value);
+  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+async function createSignedJwt(privateKey, header, payload) {
+  const encodedHeader = base64UrlEncode(JSON.stringify(header));
+  const encodedPayload = base64UrlEncode(JSON.stringify(payload));
+  const signingInput = `${encodedHeader}.${encodedPayload}`;
+  const signature = await subtle.sign(
+    "RSASSA-PKCS1-v1_5",
+    privateKey,
+    new TextEncoder().encode(signingInput),
+  );
+  return `${signingInput}.${base64UrlEncode(signature)}`;
+}
+
+async function createTestClerkJwt() {
+  const keyPair = await subtle.generateKey(
+    {
+      name: "RSASSA-PKCS1-v1_5",
+      modulusLength: 2048,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: "SHA-256",
+    },
+    true,
+    ["sign", "verify"],
+  );
+  const publicJwk = await subtle.exportKey("jwk", keyPair.publicKey);
+  publicJwk.kid = "test-key";
+  publicJwk.alg = "RS256";
+  publicJwk.use = "sig";
+  const now = Math.floor(Date.now() / 1000);
+  const token = await createSignedJwt(
+    keyPair.privateKey,
+    { kid: "test-key", alg: "RS256", typ: "JWT" },
+    {
+      sub: "clerk_user_1",
+      sid: "sess_1",
+      iss: "https://clerk.test",
+      nbf: now - 60,
+      exp: now + 3600,
+    },
+  );
+  return { token, publicJwk };
+}
+
 const db = new MockD1();
 const env = { NUMERIA_DB: db };
 const headers = {
@@ -138,7 +191,11 @@ assert.equal(releaseStatus.response.status, 200);
 assert.equal(releaseStatus.body.releaseScope, "free-pro");
 assert.ok(releaseStatus.body.completedFeatures.includes("D1 persistence for usage, drafts, completed appraisals, and report exports"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side auth readiness contract"));
+assert.ok(releaseStatus.body.completedFeatures.includes("Server-side Clerk JWT verification in observe/enforce modes"));
+assert.ok(releaseStatus.body.completedFeatures.includes("AI Platform Core usage event contract"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Stripe real subscription sync"));
+assert.ok(releaseStatus.body.pendingFeatures.includes("AI Platform Core production endpoint forwarding"));
+assert.ok(releaseStatus.body.pendingFeatures.includes("Clerk enforce-mode production rollout after token header confirmation"));
 assert.ok(releaseStatus.body.deferredFeatures.includes("Business plan purchase"));
 
 const authStatus = await jsonFetch("/auth/status", {
@@ -152,14 +209,70 @@ assert.equal(authStatus.body.authProvider, "clerk");
 assert.equal(authStatus.body.authContractVersion, "clerk-server-auth-readiness.v1");
 assert.equal(authStatus.body.clientAuthReady, true);
 assert.equal(authStatus.body.serverVerificationReady, true);
+assert.equal(authStatus.body.serverVerificationMethod, "jwks-rs256");
 assert.equal(authStatus.body.incomingRequestHasBearerToken, true);
+assert.equal(authStatus.body.incomingRequestVerified, false);
 assert.equal(authStatus.body.secretValuesReturned, false);
 assert.doesNotMatch(JSON.stringify(authStatus.body), /sk_test_not_returned/);
+
+const { token: testToken, publicJwk } = await createTestClerkJwt();
+const authFetch = globalThis.fetch;
+globalThis.fetch = async (url) => {
+  if (String(url) === "https://clerk.test/.well-known/jwks.json") {
+    return new Response(JSON.stringify({ keys: [publicJwk] }), {
+      headers: { "content-type": "application/json" },
+    });
+  }
+  return authFetch(url);
+};
+
+const verifiedEnv = {
+  ...env,
+  CLERK_JWKS_URL: "https://clerk.test/.well-known/jwks.json",
+  CLERK_JWT_ISSUER: "https://clerk.test",
+};
+
+try {
+  const verifiedAuthStatus = await jsonFetch("/auth/status", {
+    headers: { authorization: `Bearer ${testToken}` },
+  }, verifiedEnv);
+  assert.equal(verifiedAuthStatus.response.status, 200);
+  assert.equal(verifiedAuthStatus.body.incomingRequestVerified, true);
+  assert.equal(verifiedAuthStatus.body.incomingRequestVerificationReason, "verified");
+  assert.equal(verifiedAuthStatus.body.serverVerificationMethod, "jwks-rs256");
+
+  const blockedApi = await jsonFetch("/api/usage", {}, {
+    ...verifiedEnv,
+    AUTH_ENFORCEMENT_MODE: "enforce",
+  });
+  assert.equal(blockedApi.response.status, 401);
+  assert.equal(blockedApi.body.errorCode, "AUTH_SESSION_REQUIRED");
+
+  const verifiedApi = await jsonFetch("/api/usage", {
+    headers: {
+      authorization: `Bearer ${testToken}`,
+      "x-workspace-id": "auth_ws",
+      "x-user-id": "spoofed_user",
+    },
+  }, {
+    ...verifiedEnv,
+    AUTH_ENFORCEMENT_MODE: "enforce",
+  });
+  assert.equal(verifiedApi.response.status, 200);
+  assert.equal(verifiedApi.body.workspaceId, "auth_ws");
+  assert.equal(verifiedApi.body.userId, "clerk_user_1");
+} finally {
+  globalThis.fetch = authFetch;
+}
 
 const contractStatus = await jsonFetch("/contracts/status", {}, { ...env, CLERK_SECRET_KEY: "sk_test_not_returned" });
 assert.equal(contractStatus.body.auth.statusEndpoint, "/auth/status");
 assert.equal(contractStatus.body.auth.serverVerificationReady, true);
 assert.equal(contractStatus.body.auth.secretValuesReturned, false);
+assert.equal(contractStatus.body.aiUsage.statusEndpoint, "/ai-usage/status");
+assert.equal(contractStatus.body.aiUsage.aiUsageContractVersion, "ai-platform-core-usage-events.v1");
+assert.equal(contractStatus.body.aiUsage.endpointConfigured, false);
+assert.equal(contractStatus.body.aiUsage.secretValuesReturned, false);
 
 const draft = await jsonFetch("/api/appraisals/save-draft", {
   method: "POST",
@@ -167,11 +280,15 @@ const draft = await jsonFetch("/api/appraisals/save-draft", {
   body: JSON.stringify({
     appraisalId: "app_d1_1",
     clientName: "A",
+    birthDate: "1990-04-19",
+    lifePathNumber: 6,
     question: "相談",
     resultSummary: "結果",
   }),
 }, env);
 assert.equal(draft.response.status, 201);
+assert.equal(draft.body.activeDraft.birthDate, "1990-04-19");
+assert.equal(draft.body.activeDraft.lifePathNumber, 6);
 assert.equal(db.usageRecords.size, 1);
 
 const completed = await jsonFetch("/api/appraisals/complete", {
@@ -181,6 +298,24 @@ const completed = await jsonFetch("/api/appraisals/complete", {
 }, env);
 assert.equal(completed.response.status, 201);
 assert.equal(completed.body.usage.monthlyAppraisals, 1);
+assert.equal(completed.body.appraisal.birthDate, "1990-04-19");
+assert.equal(completed.body.appraisal.lifePathNumber, 6);
+assert.equal(completed.body.aiUsageEvent.eventName, "studio.session.completed.v1");
+assert.equal(completed.body.aiUsageEvent.recorded, true);
+assert.equal(completed.body.aiUsageEvent.forwarded, false);
+assert.equal(completed.body.aiUsageEvent.forwardingMode, "observe");
+assert.equal(completed.body.aiUsageEvent.dataPolicy, "metadata-only-no-consultation-body");
+
+const aiUsageAfterCompletion = await jsonFetch("/ai-usage/status", {}, env);
+assert.equal(aiUsageAfterCompletion.response.status, 200);
+assert.equal(aiUsageAfterCompletion.body.aiUsageContractVersion, "ai-platform-core-usage-events.v1");
+assert.equal(aiUsageAfterCompletion.body.endpointConfigured, false);
+assert.equal(aiUsageAfterCompletion.body.willForwardInCurrentMode, false);
+assert.equal(aiUsageAfterCompletion.body.secretValuesReturned, false);
+assert.ok(aiUsageAfterCompletion.body.retainedEventCount >= 1);
+assert.equal(aiUsageAfterCompletion.body.recentEvents.at(-1).eventName, "studio.session.completed.v1");
+assert.equal(aiUsageAfterCompletion.body.recentEvents.at(-1).dataPolicy, "metadata-only-no-consultation-body");
+assert.doesNotMatch(JSON.stringify(aiUsageAfterCompletion.body.recentEvents.at(-1)), /相談|結果/);
 
 const report = await jsonFetch("/api/reports/export", {
   method: "POST",
@@ -190,18 +325,35 @@ const report = await jsonFetch("/api/reports/export", {
     format: "pdf",
     reportType: "basic",
     clientName: "A",
+    birthDate: "1990-04-19",
+    lifePathNumber: 6,
     question: "相談",
     resultSummary: "結果",
   }),
 }, env);
 assert.equal(report.response.status, 201);
 assert.equal(report.body.eventName, "studio.report.generated.v1");
+assert.equal(report.body.reportSnapshot.birthDate, "1990-04-19");
+assert.equal(report.body.reportSnapshot.lifePathNumber, 6);
 assert.equal(report.body.usage.reportExports.length, 1);
 assert.equal(db.reportEvents.size, 1);
+assert.equal(report.body.aiUsageEvent.eventName, "studio.report.generated.v1");
+assert.equal(report.body.aiUsageEvent.recorded, true);
+assert.equal(report.body.aiUsageEvent.forwarded, false);
+assert.equal(report.body.aiUsageEvent.forwardingMode, "observe");
+assert.equal(report.body.aiUsageEvent.dataPolicy, "metadata-only-no-consultation-body");
+
+const aiUsageAfterReport = await jsonFetch("/ai-usage/status", {}, env);
+assert.ok(aiUsageAfterReport.body.retainedEventCount >= 2);
+assert.equal(aiUsageAfterReport.body.recentEvents.at(-1).eventName, "studio.report.generated.v1");
+assert.equal(aiUsageAfterReport.body.recentEvents.at(-1).featureKey, "report_export_basic");
+assert.doesNotMatch(JSON.stringify(aiUsageAfterReport.body.recentEvents.at(-1)), /相談|結果/);
 
 const usage = await jsonFetch("/api/usage", { headers }, env);
 assert.equal(usage.body.usage.monthlyAppraisals, 1);
 assert.equal(usage.body.usage.completedAppraisals.length, 1);
+assert.equal(usage.body.usage.completedAppraisals[0].birthDate, "1990-04-19");
+assert.equal(usage.body.usage.completedAppraisals[0].lifePathNumber, 6);
 assert.equal(usage.body.usage.reportExports.length, 1);
 
 const appraisalStatus = await jsonFetch("/api/appraisals/status", { headers }, env);
@@ -211,6 +363,31 @@ assert.equal(appraisalStatus.body.completedAppraisals.length, 1);
 assert.equal(appraisalStatus.body.visibleCompletedAppraisals.length, 1);
 assert.equal(appraisalStatus.body.lockedCompletedAppraisalIds.length, 0);
 assert.equal(appraisalStatus.body.reportExports.length, 1);
+
+for (const clientIndex of [1, 2, 3]) {
+  const clientResponse = await jsonFetch("/api/appraisal-clients", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ clientName: `client_${clientIndex}`, birthDate: `1990-01-0${clientIndex}` }),
+  }, env);
+  assert.equal(clientResponse.response.status, 201);
+  assert.equal(clientResponse.body.limitPolicy, "free-three-appraisal-client-profiles");
+  assert.equal(clientResponse.body.appraisalClient.clientName, `client_${clientIndex}`);
+  assert.equal(clientResponse.body.usage.appraisalClientProfiles.length, clientIndex);
+}
+
+const blockedClient = await jsonFetch("/api/appraisal-clients", {
+  method: "POST",
+  headers,
+  body: JSON.stringify({ clientName: "client_4" }),
+}, env);
+assert.equal(blockedClient.response.status, 402);
+assert.equal(blockedClient.body.errorCode, "FREE_APPRAISAL_CLIENT_LIMIT");
+const profileUsage = await jsonFetch("/api/usage", { headers }, env);
+assert.deepEqual(
+  profileUsage.body.usage.appraisalClientProfiles.map((profile) => profile.clientName),
+  ["client_1", "client_2", "client_3"],
+);
 
 const adminAccount = await jsonFetch("/api/admin/account", {
   method: "POST",
