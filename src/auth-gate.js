@@ -1,5 +1,9 @@
 import { FEATURE_LABELS, PLAN_CONFIG } from "./plan-config.js";
 
+function formatLimit(current, limit) {
+  return limit === "unlimited" ? `${current} / 上限なし` : `${current} / ${limit}`;
+}
+
 const appState = {
   clerk: null,
   usage: null,
@@ -40,12 +44,14 @@ function getScope() {
 
 async function api(path, options = {}) {
   const scope = getScope();
+  const authToken = await appState.clerk?.session?.getToken?.().catch(() => null);
   const headers = {
     "Content-Type": "application/json",
     "X-Workspace-Id": scope.workspaceId,
     "X-User-Id": scope.userId,
     ...options.headers,
   };
+  if (authToken) headers.Authorization = `Bearer ${authToken}`;
   const response = await fetch(path, { ...options, headers });
   const data = await response.json();
   if (!response.ok) {
@@ -93,13 +99,14 @@ function renderBilling() {
   const appraisalLimit = usage.entitlements.monthlyAppraisals;
   const draftLimit = usage.entitlements.inProgressAppraisals;
   const historyLimit = usage.entitlements.viewableCompletedAppraisals;
+  const clientLimit = usage.entitlements.appraisalClients;
   const visibleHistory = usage.visibleCompletedAppraisalIds?.length || 0;
   els.usageSummary.innerHTML = `
     <strong>現在のプラン: ${usage.planName}</strong>
-    <span>今月の鑑定完成数: ${usage.monthlyAppraisals}${appraisalLimit === null ? " / 無制限" : ` / ${appraisalLimit}`}</span>
-    <span>途中保存: ${usage.inProgressAppraisals}${draftLimit === null ? " / 無制限" : ` / ${draftLimit}`}</span>
-    <span>表示できる鑑定履歴: ${visibleHistory}${historyLimit === null ? " / 無制限" : ` / ${historyLimit}`}</span>
-    <span>鑑定対象者プロフィール: 上限なし</span>
+    <span>今月の鑑定完成数: ${formatLimit(usage.monthlyAppraisals, appraisalLimit)}</span>
+    <span>途中保存: ${formatLimit(usage.inProgressAppraisals, draftLimit)}</span>
+    <span>表示できる鑑定履歴: ${formatLimit(visibleHistory, historyLimit)}</span>
+    <span>依頼者プロフィール: ${formatLimit(usage.appraisalClients, clientLimit)}</span>
   `;
 
   els.planGrid.innerHTML = Object.values(PLAN_CONFIG).map((plan) => {
