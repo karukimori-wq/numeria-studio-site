@@ -5,6 +5,7 @@ import {
   SignInButton,
   SignUpButton,
   UserButton,
+  useAuth,
   useUser,
 } from "@clerk/react";
 import {
@@ -50,8 +51,24 @@ function getDeviceLabel() {
   return "desktop";
 }
 
-async function apiRequest(path, { method = "GET", scope, body } = {}) {
+function calculateLifePathNumber(birthDate) {
+  const digits = String(birthDate || "").replace(/\D/g, "").split("").map(Number);
+  if (digits.length !== 8 || digits.some(Number.isNaN)) {
+    return { lifePathNumber: null, formula: "", digitSum: 0 };
+  }
+
+  let digitSum = digits.reduce((sum, digit) => sum + digit, 0);
+  const formula = digits.join(" + ");
+  while (digitSum > 9 && ![11, 22, 33].includes(digitSum)) {
+    digitSum = String(digitSum).split("").reduce((sum, digit) => sum + Number(digit), 0);
+  }
+
+  return { lifePathNumber: digitSum, formula, digitSum: digits.reduce((sum, digit) => sum + digit, 0) };
+}
+
+async function apiRequest(path, { method = "GET", scope, body, authToken } = {}) {
   const headers = { "Content-Type": "application/json" };
+  if (authToken) headers.Authorization = `Bearer ${authToken}`;
   if (scope?.workspaceId) headers["X-Workspace-Id"] = scope.workspaceId;
   if (scope?.userId) headers["X-User-Id"] = scope.userId;
   const response = await fetch(path, {
@@ -139,7 +156,7 @@ function SignedOutHome() {
         <h2>ログインすると利用量とプランを確認できます</h2>
         <p>
           Freeでは月20件まで鑑定でき、鑑定完成ボタンを押した時点で1件として数えます。
-          途中保存は1案件まで、鑑定対象者のプロフィール登録とPDF出力は無料で使えます。
+          依頼者プロフィールは3名まで、途中保存は1案件まで、PDF出力は無料で使えます。
         </p>
         <div className="hero-actions">
           <SignInButton mode="modal">
@@ -157,6 +174,7 @@ function SignedOutHome() {
 
 function SignedInWorkspace() {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const primaryEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase() || "";
   const isAdmin = adminEmails.includes(primaryEmail);
   const workspaceId = user?.organizationMemberships?.[0]?.organization?.id || "ws_personal";
@@ -173,11 +191,13 @@ function SignedInWorkspace() {
     reportType: "basic",
     removeBranding: false,
   });
+  const [clientProfileName, setClientProfileName] = useState("");
 
   function createEmptyCase() {
     return {
       id: `case_${Date.now()}`,
       clientName: "",
+      birthDate: "",
       question: "",
       notes: "",
       resultSummary: "",
@@ -188,10 +208,19 @@ function SignedInWorkspace() {
     setCurrentCase((current) => ({ ...current, [field]: value }));
   }
 
+  async function authedApiRequest(path, options = {}) {
+    const authToken = await getToken().catch(() => null);
+    return apiRequest(path, {
+      ...options,
+      scope: options.scope || scope,
+      authToken,
+    });
+  }
+
   async function refreshUsage() {
     setLoading(true);
     try {
-      const response = await apiRequest("/api/usage", { scope });
+      const response = await authedApiRequest("/api/usage");
       setUsage(response.usage);
       setNotice(null);
     } catch {
@@ -212,7 +241,7 @@ function SignedInWorkspace() {
 
   useEffect(() => {
     let active = true;
-    apiRequest("/api/admin/status", {
+    authedApiRequest("/api/admin/status", {
       scope,
       body: { adminEmail: primaryEmail },
     })
@@ -272,6 +301,11 @@ function SignedInWorkspace() {
                 durable: false,
               },
             },
+            aiUsage: {
+              endpointConfigured: false,
+              forwardingMode: "unknown",
+              retainedEventCount: 0,
+            },
           });
         }
       });
@@ -293,9 +327,8 @@ function SignedInWorkspace() {
     try {
       const nextCase = createEmptyCase();
       setCurrentCase(nextCase);
-      const response = await apiRequest("/api/sessions/start", {
+      const response = await authedApiRequest("/api/sessions/start", {
         method: "POST",
-        scope,
         body: { sessionId: nextCase.id },
       });
       setUsage(response.usage);
@@ -312,9 +345,8 @@ function SignedInWorkspace() {
 
   async function saveDraft() {
     try {
-      const response = await apiRequest("/api/appraisals/save-draft", {
+      const response = await authedApiRequest("/api/appraisals/save-draft", {
         method: "POST",
-        scope,
         body: currentCase,
       });
       setUsage(response.usage);
@@ -331,9 +363,8 @@ function SignedInWorkspace() {
 
   async function completeAppraisal() {
     try {
-      const response = await apiRequest("/api/appraisals/complete", {
+      const response = await authedApiRequest("/api/appraisals/complete", {
         method: "POST",
-        scope,
         body: currentCase,
       });
       setUsage(response.usage);
@@ -351,9 +382,8 @@ function SignedInWorkspace() {
 
   async function changePlan(planId) {
     try {
-      const response = await apiRequest("/api/billing/subscription", {
+      const response = await authedApiRequest("/api/billing/subscription", {
         method: "PATCH",
-        scope,
         body: { planId },
       });
       setUsage(response.usage);
@@ -361,7 +391,7 @@ function SignedInWorkspace() {
         type: "success",
         title: `${PLAN_CONFIG[planId].name}へ反映しました`,
         body: planId === PLAN_IDS.PRO
-          ? "鑑定件数、途中保存、履歴表示が上限なしになりました。"
+          ? "鑑定件数、依頼者プロフィール、途中保存、履歴表示が上限なしになりました。"
           : "Freeプランへ戻しました。月20件、途中保存1案件、直近3件表示の上限が即時に反映されます。",
       });
     } catch (error) {
@@ -369,17 +399,54 @@ function SignedInWorkspace() {
     }
   }
 
-  async function exportReport() {
+  async function createAppraisalClientProfile() {
     try {
-      const response = await apiRequest("/api/reports/export", {
+      const response = await authedApiRequest("/api/appraisal-clients", {
         method: "POST",
-        scope,
+        body: {
+          clientName: clientProfileName.trim() || currentCase.clientName.trim() || "未設定",
+          birthDate: currentCase.birthDate,
+        },
+      });
+      setUsage(response.usage);
+      setClientProfileName("");
+      setNotice({
+        type: "success",
+        title: "依頼者プロフィールを追加しました",
+        body: `登録数は ${formatLimit(response.usage.appraisalClients, response.usage.entitlements.appraisalClients)} です。`,
+      });
+    } catch (error) {
+      setNotice(limitNotice(error.data));
+      if (error.data?.usage) setUsage(error.data.usage);
+    }
+  }
+
+  function selectAppraisalClientProfile(profile) {
+    setCurrentCase((current) => ({
+      ...current,
+      clientName: profile.clientName || current.clientName,
+      birthDate: profile.birthDate || current.birthDate,
+    }));
+    setNotice({
+      type: "success",
+      title: "依頼者プロフィールを案件に反映しました",
+      body: `${profile.clientName || "依頼者"}の情報を現在の鑑定案件に入れました。`,
+    });
+  }
+
+  async function exportReport() {
+    const numerologyPreview = calculateLifePathNumber(currentCase.birthDate);
+    try {
+      const response = await authedApiRequest("/api/reports/export", {
+        method: "POST",
         body: {
           format: "pdf",
           reportType: reportOptions.reportType,
           removeBranding: reportOptions.removeBranding,
           appraisalId: currentCase.id,
           clientName: currentCase.clientName,
+          birthDate: currentCase.birthDate,
+          lifePathNumber: numerologyPreview.lifePathNumber,
           question: currentCase.question,
           notes: currentCase.notes,
           resultSummary: currentCase.resultSummary,
@@ -428,6 +495,7 @@ function SignedInWorkspace() {
 
     const title = reportOptions.reportType === "detailed" ? "鑑定書（詳細）" : "鑑定書（基本）";
     const branding = reportOptions.removeBranding ? "" : "<div class=\"brand\">Numeria Studio</div>";
+    const numerologyPreview = calculateLifePathNumber(currentCase.birthDate);
     const field = (label, value, fallback = "未入力") => `
       <section><h2>${escapePrintHtml(label)}</h2><p>${escapePrintHtml(value || fallback)}</p></section>`;
     printWindow.document.write(`<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>${escapePrintHtml(title)}</title>
@@ -448,6 +516,8 @@ function SignedInWorkspace() {
       <header><h1>${escapePrintHtml(title)}</h1></header>
       <main>${branding}<p class="meta">出力日時: ${escapePrintHtml(new Date().toLocaleString("ja-JP"))}</p>
         ${field("依頼者", currentCase.clientName)}
+        ${field("生年月日", currentCase.birthDate)}
+        ${field("ライフパスナンバー", numerologyPreview.lifePathNumber ? `LP${numerologyPreview.lifePathNumber}` : "")}
         ${field("相談内容", currentCase.question)}
         ${field("鑑定結果", currentCase.resultSummary)}
         ${reportOptions.reportType === "detailed" ? field("鑑定メモ", currentCase.notes) : ""}
@@ -493,9 +563,9 @@ function SignedInWorkspace() {
             />
             <UsageCard
               icon={<Users size={18} />}
-              label="表示できる鑑定履歴"
-              current={usage.visibleCompletedAppraisalIds?.length || 0}
-              limit={usage.entitlements.viewableCompletedAppraisals}
+              label="依頼者プロフィール"
+              current={usage.appraisalClients}
+              limit={usage.entitlements.appraisalClients}
             />
             <UsageCard
               icon={<Download size={18} />}
@@ -510,6 +580,7 @@ function SignedInWorkspace() {
             usage={usage}
             onChange={updateCurrentCase}
           />
+          <NumerologyPreviewPanel currentCase={currentCase} />
           <div className="action-row">
             <button className="button secondary" onClick={startSession}>
               新しい案件を始める
@@ -533,6 +604,14 @@ function SignedInWorkspace() {
         />
 
         <PersistencePanel status={persistenceStatus} />
+
+        <AppraisalClientPanel
+          usage={usage}
+          value={clientProfileName}
+          onChange={setClientProfileName}
+          onCreate={createAppraisalClientProfile}
+          onSelect={selectAppraisalClientProfile}
+        />
 
         {showAdminFeatures && <AdminPreviewPanel releaseStatus={releaseStatus} />}
 
@@ -583,6 +662,64 @@ function PersistencePanel({ status }) {
   );
 }
 
+function AppraisalClientPanel({ usage, value, onChange, onCreate, onSelect }) {
+  const decision = evaluateUsageLimit(usage, "create_appraisal_client");
+  const isUnlimitedProfiles = isUnlimited(usage.entitlements.appraisalClients);
+  const profiles = usage.appraisalClientProfiles || [];
+  const remaining = isUnlimitedProfiles
+    ? "上限なし"
+    : Math.max(0, usage.entitlements.appraisalClients - usage.appraisalClients);
+
+  return (
+    <div className="work-panel client-profile-panel">
+      <div className="panel-heading">
+        <Users size={20} />
+        <div>
+          <p className="eyebrow">Clients</p>
+          <h2>依頼者プロフィール</h2>
+        </div>
+      </div>
+      <div className={decision.allowed ? "client-limit-card" : "client-limit-card warning"}>
+        <span>登録数</span>
+        <strong>{formatLimit(usage.appraisalClients, usage.entitlements.appraisalClients)}</strong>
+        <small>{isUnlimitedProfiles ? "Proでは依頼者を気にせず追加できます。" : `Freeで追加できる残り: ${remaining}名`}</small>
+      </div>
+      {profiles.length > 0 && (
+        <div className="client-profile-list" aria-label="登録済み依頼者プロフィール">
+          {profiles.map((profile) => (
+            <button
+              className="client-profile-chip"
+              type="button"
+              key={profile.id}
+              onClick={() => onSelect(profile)}
+            >
+              <strong>{profile.clientName}</strong>
+              <span>{profile.birthDate || "生年月日なし"}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      <label className="client-profile-form">
+        依頼者名
+        <input
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder="例: Aさん"
+        />
+      </label>
+      <button className="button primary" onClick={onCreate} disabled={!decision.allowed}>
+        依頼者を追加
+      </button>
+      {!decision.allowed && (
+        <p className="lock-note">
+          <Lock size={14} />
+          {decision.message} Proにすると上限なしで管理できます。
+        </p>
+      )}
+    </div>
+  );
+}
+
 function AdminPreviewPanel({ releaseStatus }) {
   const previewItems = [
     {
@@ -597,8 +734,10 @@ function AdminPreviewPanel({ releaseStatus }) {
     },
     {
       title: "AI利用記録",
-      status: "準備中",
-      body: "AI Platform CoreへUsageと生成イベントを送る動作を管理者だけ検証します。",
+      status: releaseStatus?.aiUsage?.endpointConfigured ? "送信準備OK" : "契約APIあり",
+      body: releaseStatus?.aiUsage?.endpointConfigured
+        ? "AI Platform Core URLが設定されています。送信モードを切り替えるとイベント連携できます。"
+        : "現在は相談本文を送らず、利用イベントのメタデータだけをローカル記録します。",
     },
     {
       title: "リリース状態",
@@ -611,6 +750,7 @@ function AdminPreviewPanel({ releaseStatus }) {
     ["未追加", releaseStatus?.pendingFeatures?.length ?? "-"],
     ["後回し", releaseStatus?.deferredFeatures?.length ?? "-"],
     ["D1", releaseStatus?.checks?.persistence?.storageDriver || "確認中"],
+    ["AI Core", releaseStatus?.aiUsage?.endpointConfigured ? "URLあり" : "未接続"],
   ];
   const releaseGroups = [
     ["追加できた機能", releaseStatus?.completedFeatures || []],
@@ -774,6 +914,14 @@ function AppraisalCaseForm({ currentCase, usage, onChange }) {
         />
       </label>
       <label>
+        生年月日
+        <input
+          type="date"
+          value={currentCase.birthDate}
+          onChange={(event) => onChange("birthDate", event.target.value)}
+        />
+      </label>
+      <label>
         相談内容
         <textarea
           value={currentCase.question}
@@ -801,6 +949,34 @@ function AppraisalCaseForm({ currentCase, usage, onChange }) {
         />
       </label>
     </div>
+  );
+}
+
+function NumerologyPreviewPanel({ currentCase }) {
+  const preview = calculateLifePathNumber(currentCase.birthDate);
+
+  return (
+    <section className="numerology-preview" aria-label="数秘術の計算プレビュー">
+      <div>
+        <p className="eyebrow">Calculation</p>
+        <h3>計算プレビュー</h3>
+      </div>
+      <div className="numerology-preview-grid">
+        <div className="number-orb">
+          <span>Life Path</span>
+          <strong>{preview.lifePathNumber || "-"}</strong>
+        </div>
+        <div className="formula-card">
+          <span>計算式</span>
+          <strong>{preview.formula || "生年月日を入力してください"}</strong>
+          <small>
+            {preview.lifePathNumber
+              ? `合計 ${preview.digitSum} から LP${preview.lifePathNumber} を表示しています。`
+              : "入力すると鑑定メモを見ながら数字を確認できます。"}
+          </small>
+        </div>
+      </div>
+    </section>
   );
 }
 
