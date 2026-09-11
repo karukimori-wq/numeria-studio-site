@@ -343,6 +343,30 @@ function SignedInWorkspace() {
     }
   }
 
+  async function startFollowUpFromHistory(appraisal) {
+    try {
+      const nextCase = {
+        ...createEmptyCase(),
+        clientName: appraisal.clientName || "",
+        birthDate: appraisal.birthDate || "",
+      };
+      setCurrentCase(nextCase);
+      const response = await authedApiRequest("/api/sessions/start", {
+        method: "POST",
+        body: { sessionId: nextCase.id, clientName: nextCase.clientName },
+      });
+      setUsage(response.usage);
+      setNotice({
+        type: "success",
+        title: "過去案件から再相談を始めました",
+        body: `${nextCase.clientName || "依頼者"}の名前と生年月日だけを引き継ぎました。相談内容と鑑定結果は新しい案件として入力できます。`,
+      });
+    } catch (error) {
+      setNotice(limitNotice(error.data));
+      if (error.data?.usage) setUsage(error.data.usage);
+    }
+  }
+
   async function saveDraft() {
     try {
       const response = await authedApiRequest("/api/appraisals/save-draft", {
@@ -667,7 +691,7 @@ function SignedInWorkspace() {
 
         <PlanComparison currentPlanId={usage.planId} onSelectPlan={changePlan} isAdmin={showAdminFeatures} />
 
-        <AppraisalHistoryPanel usage={usage} />
+        <AppraisalHistoryPanel usage={usage} onStartFollowUp={startFollowUpFromHistory} />
       </section>
 
       <FeedbackWidget workspaceId={workspaceId} userId={userId} planId={usage.planId} screenName="Free Pro Dashboard" />
@@ -1029,7 +1053,7 @@ function NumerologyPreviewPanel({ currentCase }) {
   );
 }
 
-function AppraisalHistoryPanel({ usage }) {
+function AppraisalHistoryPanel({ usage, onStartFollowUp }) {
   const clients = usage.clientHistorySummaries || [];
   const lockedCount = usage.lockedCompletedAppraisalIds?.length || 0;
   const [selectedClientName, setSelectedClientName] = useState("");
@@ -1121,6 +1145,13 @@ function AppraisalHistoryPanel({ usage }) {
                           <p><strong>相談内容</strong>{appraisal.question || "未入力"}</p>
                           <p><strong>鑑定結果</strong>{appraisal.resultSummary || "未入力"}</p>
                           {appraisal.notes && <p><strong>鑑定メモ</strong>{appraisal.notes}</p>}
+                          <button
+                            className="history-follow-up"
+                            type="button"
+                            onClick={() => onStartFollowUp(appraisal)}
+                          >
+                            この依頼者で再相談を始める
+                          </button>
                         </div>
                       )}
                     </article>
