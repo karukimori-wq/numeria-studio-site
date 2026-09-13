@@ -1,10 +1,11 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 
-const APP_VERSION = "0.3.1-release-monitoring";
+const APP_VERSION = "0.3.2-apc-forwarding";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
 const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
 const AUTH_CONTRACT_VERSION = "clerk-server-auth-readiness.v1";
 const AI_USAGE_CONTRACT_VERSION = "ai-platform-core-usage-events.v1";
+const APC_CONTRACT_VERSION = "ai-platform-core-activity-forwarding.v1";
 
 const runtimeStore = globalThis.__numeriaUsageStore || new Map();
 globalThis.__numeriaUsageStore = runtimeStore;
@@ -381,6 +382,92 @@ function getPlanConfigForPlan(planId) {
   return PLAN_CONFIG[normalizePlanId(planId)] || PLAN_CONFIG.free;
 }
 
+function getApcActivitiesUrl(env = {}) {
+  const directUrl = env.APC_ACTIVITIES_URL || env.VITE_APC_ACTIVITIES_URL || "";
+  if (directUrl) return String(directUrl);
+  const baseUrl = env.AI_PLATFORM_CORE_BASE_URL || env.VITE_AI_PLATFORM_CORE_BASE_URL || "";
+  if (!baseUrl) return "";
+  return `${String(baseUrl).replace(/\/$/, "")}/api/activities`;
+}
+
+function getApcToken(env = {}) {
+  return env.APC_API_TOKEN || env.AI_PLATFORM_CORE_API_TOKEN || "";
+}
+
+function createCorrelationId(prefix = "num") {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function apcStatusResponse(env = {}) {
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    apcContractVersion: APC_CONTRACT_VERSION,
+    configured: Boolean(getApcActivitiesUrl(env)),
+    endpointConfigured: Boolean(getApcActivitiesUrl(env)),
+    tokenConfigured: Boolean(getApcToken(env)),
+    activityEndpoint: getApcActivitiesUrl(env) ? "/api/activities" : null,
+    forwardedEvents: [
+      "studio.session.started.v1",
+      "studio.session.completed.v1",
+      "studio.report.generated.v1",
+    ],
+    failurePolicy: "non_blocking",
+    secretValuesReturned: false,
+  };
+}
+
+async function forwardApcActivity(env = {}, activity = {}) {
+  const url = getApcActivitiesUrl(env);
+  if (!url) {
+    return { status: "skipped", reason: "APC_NOT_CONFIGURED" };
+  }
+
+  const token = getApcToken(env);
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const payload = {
+    appId: "numeria-studio",
+    appName: "Numeria Studio Site",
+    appVersion: APP_VERSION,
+    status: "success",
+    source: "numeria-studio-site-worker",
+    occurredAt: new Date().toISOString(),
+    ...activity,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+    });
+    return {
+      status: response.ok ? "success" : "warning",
+      statusCode: response.status,
+    };
+  } catch (error) {
+    return {
+      status: "warning",
+      reason: "APC_FORWARD_FAILED",
+      message: error?.message || "AI Platform Core activity forwarding failed.",
+    };
+  }
+}
+
+function enqueueApcActivity(ctx, env, activity) {
+  const task = forwardApcActivity(env, activity);
+  if (ctx && typeof ctx.waitUntil === "function") {
+    ctx.waitUntil(task);
+    return { status: "queued" };
+  }
+  return task;
+}
+
 function asciiPdfText(value, fallback = "Not set") {
   const text = String(value || fallback)
     .replace(/[^\x20-\x7E]/g, " ")
@@ -520,11 +607,11 @@ async function releaseStatusResponse(env = {}) {
       "Server-side auth readiness contract",
       "Server-side Clerk JWT verification in observe/enforce modes",
       "AI Platform Core usage event contract",
+      "AI Platform Core usage event forwarding",
     ],
     pendingFeatures: [
       "Stripe real subscription sync",
       "Growth Engine Business handoff",
-      "AI Platform Core production endpoint forwarding",
       "Production-grade PDF template rendering",
       "Clerk enforce-mode production rollout after token header confirmation",
     ],
@@ -535,6 +622,14 @@ async function releaseStatusResponse(env = {}) {
     ],
     checks: {
       persistence,
+      aiUsage: {
+        statusEndpoint: "/ai-usage/status",
+        ...aiUsageStatusResponse(env),
+      },
+      aiPlatformCore: {
+        statusEndpoint: "/apc/status",
+        ...apcStatusResponse(env),
+      },
       businessPurchasable: false,
       sourceOfTruth: "Numeria owns sessions, calculations, report snapshots, and appraisal client snapshots only.",
     },
@@ -654,6 +749,7 @@ async function contractsStatusResponse(env = {}) {
   const persistence = await persistenceStatusResponse(env);
   const auth = await authStatusResponse(new Request("https://local.test/contracts/status"), env);
   const aiUsage = aiUsageStatusResponse(env);
+  const aiPlatformCore = apcStatusResponse(env);
   return {
     status: "success",
     appId: "numeria-studio",
@@ -712,6 +808,10 @@ async function contractsStatusResponse(env = {}) {
     aiUsage: {
       statusEndpoint: "/ai-usage/status",
       ...aiUsage,
+    },
+    aiPlatformCore: {
+      statusEndpoint: "/apc/status",
+      ...aiPlatformCore,
     },
     auth: {
       statusEndpoint: "/auth/status",
@@ -1019,7 +1119,7 @@ async function clerkBrowserAssetResponse(request, env = {}) {
   });
 }
 
-async function handleApi(request, env = {}) {
+async function handleApi(request, env = {}, ctx = null) {
   const url = new URL(request.url);
   const body = await readJson(request);
   const { auth, response: authResponse } = await authenticateApiRequest(request, env);
@@ -1189,14 +1289,30 @@ async function handleApi(request, env = {}) {
   if (url.pathname === "/api/sessions/start" && request.method === "POST") {
     const sessionId = body.sessionId || `ses_${Date.now()}`;
     await saveUsageRecord(env, workspaceId, userId, record);
+    const usage = usageResponse(record);
+    const correlationId = body.correlationId || createCorrelationId("session");
+    enqueueApcActivity(ctx, env, {
+      workspaceId,
+      userId,
+      planId: usage.planId,
+      featureKey: "studio.session",
+      eventName: "studio.session.started.v1",
+      correlationId,
+      metadata: {
+        sessionId,
+        countPolicy: "completion-button-only",
+        draftPolicy: "not-counted-until-draft-save",
+      },
+    });
     return json({
       status: "success",
       sessionId,
       sessionStatus: "started",
       eventName: "studio.session.started.v1",
+      correlationId,
       countPolicy: "completion-button-only",
       draftPolicy: "not-counted-until-draft-save",
-      usage: usageResponse(record),
+      usage,
     }, { status: 201 });
   }
 
@@ -1278,12 +1394,27 @@ async function handleApi(request, env = {}) {
     });
     const aiUsageDelivery = await recordAiUsageEvent(env, aiUsageEvent);
     const updatedUsage = usageResponse(record);
+    const correlationId = body.correlationId || createCorrelationId("complete");
+    enqueueApcActivity(ctx, env, {
+      workspaceId,
+      userId,
+      planId: updatedUsage.planId,
+      featureKey: "studio.appraisal.complete",
+      eventName: "studio.session.completed.v1",
+      correlationId,
+      metadata: {
+        appraisalId,
+        monthlyAppraisals: updatedUsage.monthlyAppraisals,
+        countPolicy: "appraisal_completed_button",
+      },
+    });
     return json({
       status: "success",
       appraisalId,
       appraisal: completedAppraisal,
       sessionStatus: "completed",
       eventName: "studio.session.completed.v1",
+      correlationId,
       countPolicy: "appraisal_completed_button",
       aiUsageEvent: {
         eventId: aiUsageEvent.eventId,
@@ -1370,10 +1501,27 @@ async function handleApi(request, env = {}) {
     });
     const aiUsageDelivery = await recordAiUsageEvent(env, aiUsageEvent);
     const updatedUsage = usageResponse(record);
+    const correlationId = body.correlationId || createCorrelationId("report");
+    enqueueApcActivity(ctx, env, {
+      workspaceId,
+      userId,
+      planId: updatedUsage.planId,
+      featureKey: "studio.report.export",
+      eventName: "studio.report.generated.v1",
+      correlationId,
+      metadata: {
+        exportId,
+        appraisalId: body.appraisalId || null,
+        reportType,
+        format,
+        branding,
+      },
+    });
     return json({
       status: "success",
       exportId,
       eventName: "studio.report.generated.v1",
+      correlationId,
       generatedAt,
       format,
       reportType,
@@ -1400,7 +1548,7 @@ async function handleApi(request, env = {}) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === "/health") {
       return json(healthResponse());
@@ -1410,6 +1558,9 @@ export default {
     }
     if (url.pathname === "/release/status") {
       return json(await releaseStatusResponse(env));
+    }
+    if (url.pathname === "/apc/status") {
+      return json(apcStatusResponse(env));
     }
     if (url.pathname === "/auth/status") {
       return json(await authStatusResponse(request, env));
@@ -1431,7 +1582,7 @@ export default {
       return clerkBrowserAssetResponse(request, env);
     }
     if (url.pathname.startsWith("/api/")) {
-      return handleApi(request, env);
+      return handleApi(request, env, ctx);
     }
     if (isAppRouteFallback(request, url)) {
       const fallbackUrl = new URL("/original.html", request.url);

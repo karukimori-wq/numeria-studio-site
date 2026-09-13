@@ -82,9 +82,20 @@ Set this in GitHub Actions Variables or Secrets:
 Optional:
 
 - `VITE_FEEDBACK_HUB_BASE_URL`
+- `AI_PLATFORM_CORE_BASE_URL`
+- `APC_ACTIVITIES_URL`
+- `APC_API_TOKEN`
 - `VITE_PRICE_FREE_LABEL`
 - `VITE_PRICE_PRO_LABEL`
 - `VITE_PRICE_BUSINESS_LABEL`
+
+AI Platform Core forwarding is non-blocking. When `AI_PLATFORM_CORE_BASE_URL`
+or `APC_ACTIVITIES_URL` is configured, the Worker forwards these activity
+events without returning secret values:
+
+- `studio.session.started.v1`
+- `studio.session.completed.v1`
+- `studio.report.generated.v1`
 
 Backend-only Clerk secrets such as `CLERK_SECRET_KEY` must not be committed to this repository.
 

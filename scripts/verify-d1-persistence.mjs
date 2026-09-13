@@ -196,10 +196,25 @@ assert.ok(releaseStatus.body.completedFeatures.includes("Numerology calculation 
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side auth readiness contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side Clerk JWT verification in observe/enforce modes"));
 assert.ok(releaseStatus.body.completedFeatures.includes("AI Platform Core usage event contract"));
+assert.ok(releaseStatus.body.completedFeatures.includes("AI Platform Core usage event forwarding"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Stripe real subscription sync"));
-assert.ok(releaseStatus.body.pendingFeatures.includes("AI Platform Core production endpoint forwarding"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Clerk enforce-mode production rollout after token header confirmation"));
+assert.equal(releaseStatus.body.checks.aiUsage.statusEndpoint, "/ai-usage/status");
+assert.equal(releaseStatus.body.checks.aiPlatformCore.statusEndpoint, "/apc/status");
+assert.equal(releaseStatus.body.checks.aiPlatformCore.failurePolicy, "non_blocking");
 assert.ok(releaseStatus.body.deferredFeatures.includes("Business plan purchase"));
+
+const apcStatus = await jsonFetch("/apc/status", {}, {
+  ...env,
+  AI_PLATFORM_CORE_BASE_URL: "https://ai-platform-core.karukimori.workers.dev",
+  APC_API_TOKEN: "apc_secret_not_returned",
+});
+assert.equal(apcStatus.response.status, 200);
+assert.equal(apcStatus.body.apcContractVersion, "ai-platform-core-activity-forwarding.v1");
+assert.equal(apcStatus.body.configured, true);
+assert.equal(apcStatus.body.tokenConfigured, true);
+assert.equal(apcStatus.body.secretValuesReturned, false);
+assert.doesNotMatch(JSON.stringify(apcStatus.body), /apc_secret_not_returned/);
 
 const authStatus = await jsonFetch("/auth/status", {
   headers: {
