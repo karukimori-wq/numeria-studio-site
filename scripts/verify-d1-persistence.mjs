@@ -195,14 +195,128 @@ assert.ok(releaseStatus.body.completedFeatures.includes("Selectable and editable
 assert.ok(releaseStatus.body.completedFeatures.includes("Numerology calculation preview while writing appraisals"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side auth readiness contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side Clerk JWT verification in observe/enforce modes"));
+assert.ok(releaseStatus.body.completedFeatures.includes("Billing source readiness contract"));
+assert.ok(releaseStatus.body.completedFeatures.includes("Custom domain readiness contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("AI Platform Core usage event contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("AI Platform Core usage event forwarding"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Stripe real subscription sync"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Clerk enforce-mode production rollout after token header confirmation"));
+assert.equal(releaseStatus.body.checks.auth.statusEndpoint, "/auth/status");
+assert.equal(releaseStatus.body.checks.auth.enforcementMode, "observe");
+assert.equal(releaseStatus.body.checks.domain.statusEndpoint, "/domain/status");
+assert.equal(releaseStatus.body.checks.domain.currentRoute, "unknown-host");
+assert.equal(releaseStatus.body.checks.domain.secretValuesReturned, false);
 assert.equal(releaseStatus.body.checks.aiUsage.statusEndpoint, "/ai-usage/status");
+assert.equal(releaseStatus.body.checks.billing.statusEndpoint, "/billing/status");
+assert.equal(releaseStatus.body.checks.billing.secretValuesReturned, false);
 assert.equal(releaseStatus.body.checks.aiPlatformCore.statusEndpoint, "/apc/status");
 assert.equal(releaseStatus.body.checks.aiPlatformCore.failurePolicy, "non_blocking");
 assert.ok(releaseStatus.body.deferredFeatures.includes("Business plan purchase"));
+
+const billingStatus = await jsonFetch("/billing/status", {}, {
+  ...env,
+  GROWTH_ENGINE_BILLING_STATUS_URL: "https://growth-engine.karukimori.workers.dev/api/billing/status",
+  GROWTH_ENGINE_API_TOKEN: "growth_secret_not_returned",
+});
+assert.equal(billingStatus.response.status, 200);
+assert.equal(billingStatus.body.billingContractVersion, "growth-engine-stripe-subscription-readiness.v1");
+assert.equal(billingStatus.body.configured, true);
+assert.equal(billingStatus.body.provider, "growth-engine");
+assert.equal(billingStatus.body.tokenConfigured, true);
+assert.equal(billingStatus.body.timeoutMs, 1500);
+assert.equal(billingStatus.body.businessPurchasable, false);
+assert.equal(billingStatus.body.secretValuesReturned, false);
+assert.doesNotMatch(JSON.stringify(billingStatus.body), /growth_secret_not_returned/);
+
+const domainStatus = await jsonFetch("/domain/status", {}, env);
+assert.equal(domainStatus.response.status, 200);
+assert.equal(domainStatus.body.domainContractVersion, "cloudflare-custom-domain-readiness.v1");
+assert.equal(domainStatus.body.currentRoute, "unknown-host");
+assert.equal(domainStatus.body.expectedCustomDomain, "numeria-studio.com");
+assert.equal(domainStatus.body.secretValuesReturned, false);
+
+const customDomainStatus = await worker.fetch(new Request("https://numeria-studio.com/domain/status"), env);
+const customDomainBody = await customDomainStatus.json();
+assert.equal(customDomainStatus.status, 200);
+assert.equal(customDomainBody.currentRoute, "custom-domain");
+assert.equal(customDomainBody.customDomainReady, true);
+
+const originalFetchForBilling = globalThis.fetch;
+globalThis.fetch = async (url, init) => {
+  const requestUrl = new URL(String(url));
+  if (requestUrl.origin === "https://growth-engine.karukimori.workers.dev") {
+    assert.equal(requestUrl.searchParams.get("workspaceId"), "billing_ws");
+    assert.equal(requestUrl.searchParams.get("userId"), "billing_user");
+    assert.equal(init.headers.Authorization, "Bearer growth_secret_not_returned");
+    return new Response(JSON.stringify({
+      status: "success",
+      subscription: {
+        planId: "pro",
+        billingStatus: "active",
+        currentPeriod: "2026-09",
+        source: "growth-engine",
+      },
+    }), { headers: { "content-type": "application/json" } });
+  }
+  return originalFetchForBilling(url, init);
+};
+
+try {
+  const externalUsage = await jsonFetch("/api/usage", {
+    headers: {
+      "content-type": "application/json",
+      "x-workspace-id": "billing_ws",
+      "x-user-id": "billing_user",
+    },
+  }, {
+    ...env,
+    GROWTH_ENGINE_BILLING_STATUS_URL: "https://growth-engine.karukimori.workers.dev/api/billing/status",
+    GROWTH_ENGINE_API_TOKEN: "growth_secret_not_returned",
+  });
+  assert.equal(externalUsage.response.status, 200);
+  assert.equal(externalUsage.body.subscriptionSource, "external");
+  assert.equal(externalUsage.body.usage.planId, "pro");
+  assert.equal(externalUsage.body.usage.entitlements.monthlyAppraisals, "unlimited");
+
+  const externalSubscription = await jsonFetch("/api/billing/subscription", {
+    headers: {
+      "content-type": "application/json",
+      "x-workspace-id": "billing_ws",
+      "x-user-id": "billing_user",
+    },
+  }, {
+    ...env,
+    GROWTH_ENGINE_BILLING_STATUS_URL: "https://growth-engine.karukimori.workers.dev/api/billing/status",
+    GROWTH_ENGINE_API_TOKEN: "growth_secret_not_returned",
+  });
+  assert.equal(externalSubscription.response.status, 200);
+  assert.equal(externalSubscription.body.subscription.planId, "pro");
+  assert.equal(externalSubscription.body.subscription.source, "growth-engine");
+  assert.equal(externalSubscription.body.subscription.readStatus, "success");
+} finally {
+  globalThis.fetch = originalFetchForBilling;
+}
+
+let authConfigBillingFetchCalled = false;
+globalThis.fetch = async (url, init) => {
+  if (String(url).startsWith("https://growth-engine.karukimori.workers.dev")) {
+    authConfigBillingFetchCalled = true;
+    return new Response("unexpected billing fetch", { status: 500 });
+  }
+  return originalFetchForBilling(url, init);
+};
+
+try {
+  const authConfig = await jsonFetch("/api/auth/config", {}, {
+    ...env,
+    GROWTH_ENGINE_BILLING_STATUS_URL: "https://growth-engine.karukimori.workers.dev/api/billing/status",
+    GROWTH_ENGINE_API_TOKEN: "growth_secret_not_returned",
+  });
+  assert.equal(authConfig.response.status, 200);
+  assert.equal(authConfigBillingFetchCalled, false);
+} finally {
+  globalThis.fetch = originalFetchForBilling;
+}
 
 const apcStatus = await jsonFetch("/apc/status", {}, {
   ...env,
@@ -228,6 +342,9 @@ assert.equal(authStatus.body.authContractVersion, "clerk-server-auth-readiness.v
 assert.equal(authStatus.body.clientAuthReady, true);
 assert.equal(authStatus.body.serverVerificationReady, true);
 assert.equal(authStatus.body.serverVerificationMethod, "jwks-rs256");
+assert.equal(authStatus.body.enforceModeReady, true);
+assert.equal(authStatus.body.enforceModeRollout.ready, true);
+assert.equal(authStatus.body.enforceModeRollout.targetMode, "enforce");
 assert.equal(authStatus.body.incomingRequestHasBearerToken, true);
 assert.equal(authStatus.body.incomingRequestVerified, false);
 assert.equal(authStatus.body.secretValuesReturned, false);
@@ -287,6 +404,9 @@ const contractStatus = await jsonFetch("/contracts/status", {}, { ...env, CLERK_
 assert.equal(contractStatus.body.auth.statusEndpoint, "/auth/status");
 assert.equal(contractStatus.body.auth.serverVerificationReady, true);
 assert.equal(contractStatus.body.auth.secretValuesReturned, false);
+assert.equal(contractStatus.body.domain.statusEndpoint, "/domain/status");
+assert.equal(contractStatus.body.domain.domainContractVersion, "cloudflare-custom-domain-readiness.v1");
+assert.equal(contractStatus.body.domain.expectedWorkerHost, "numeria-studio-site.karukimori.workers.dev");
 assert.equal(contractStatus.body.aiUsage.statusEndpoint, "/ai-usage/status");
 assert.equal(contractStatus.body.aiUsage.aiUsageContractVersion, "ai-platform-core-usage-events.v1");
 assert.equal(contractStatus.body.aiUsage.endpointConfigured, false);

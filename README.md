@@ -82,6 +82,10 @@ Set this in GitHub Actions Variables or Secrets:
 Optional:
 
 - `VITE_FEEDBACK_HUB_BASE_URL`
+- `GROWTH_ENGINE_BILLING_STATUS_URL`
+- `GROWTH_ENGINE_API_TOKEN`
+- `STRIPE_SUBSCRIPTION_STATUS_URL`
+- `BILLING_STATUS_API_TOKEN`
 - `AI_PLATFORM_CORE_BASE_URL`
 - `APC_ACTIVITIES_URL`
 - `APC_API_TOKEN`
@@ -105,7 +109,7 @@ Free:
 
 - Monthly completed appraisals: 20, counted when the appraisal completion button is pressed
 - In-progress draft appraisals: 1 account-wide unfinished appraisal
-- Appraisal client profiles: unlimited
+- Appraisal client profiles: 3
 - Visible completed appraisal details: latest 3 completed appraisals
 - PDF export, basic appraisal, basic report, and basic templates
 
@@ -127,6 +131,30 @@ Business:
 - Reserved for Growth Engine and cross-app integrations
 
 See [FREE_PRO_RELEASE_PLAN.md](FREE_PRO_RELEASE_PLAN.md) for the release contract and remaining durable billing notes.
+See [BILLING_INTEGRATION_CONTRACT.md](BILLING_INTEGRATION_CONTRACT.md) for the Growth Engine / Stripe billing read contract.
+
+Release monitoring endpoints:
+
+- `GET /health`
+- `GET /version`
+- `GET /contracts/status`
+- `GET /release/status`
+- `GET /auth/status`
+- `GET /domain/status`
+- `GET /billing/status`
+- `GET /persistence/status`
+- `GET /ai-usage/status`
+- `GET /apc/status`
+
+`GET /auth/status` includes Clerk enforce-mode rollout readiness without returning backend secrets.
+`GET /domain/status` reports whether the current request reached the Worker through the expected custom domain or the Workers fallback host.
+
+Production smoke check:
+
+- `npm run verify:production`
+- `NUMERIA_PRODUCTION_URL=https://numeria-studio.com npm run verify:production`
+
+The production check verifies the page, release contracts, auth, domain, billing, persistence, AI usage, and APC status endpoints without expecting secrets to be returned.
 
 Clerk CLI note:
 

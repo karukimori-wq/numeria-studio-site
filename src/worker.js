@@ -1,9 +1,11 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 
-const APP_VERSION = "0.3.2-apc-forwarding";
+const APP_VERSION = "0.3.5-domain-readiness";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
 const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
 const AUTH_CONTRACT_VERSION = "clerk-server-auth-readiness.v1";
+const BILLING_CONTRACT_VERSION = "growth-engine-stripe-subscription-readiness.v1";
+const DOMAIN_CONTRACT_VERSION = "cloudflare-custom-domain-readiness.v1";
 const AI_USAGE_CONTRACT_VERSION = "ai-platform-core-usage-events.v1";
 const APC_CONTRACT_VERSION = "ai-platform-core-activity-forwarding.v1";
 
@@ -418,6 +420,161 @@ function apcStatusResponse(env = {}) {
   };
 }
 
+function getBillingSourceUrl(env = {}) {
+  return env.GROWTH_ENGINE_BILLING_STATUS_URL
+    || env.STRIPE_SUBSCRIPTION_STATUS_URL
+    || env.VITE_GROWTH_ENGINE_BILLING_STATUS_URL
+    || "";
+}
+
+function getBillingSourceToken(env = {}) {
+  return env.GROWTH_ENGINE_API_TOKEN
+    || env.STRIPE_API_TOKEN
+    || env.BILLING_STATUS_API_TOKEN
+    || "";
+}
+
+function getBillingFetchTimeoutMs(env = {}) {
+  const value = Number(env.BILLING_STATUS_TIMEOUT_MS || 1500);
+  return Number.isFinite(value) && value > 0 ? Math.min(value, 5000) : 1500;
+}
+
+function billingStatusResponse(env = {}) {
+  const sourceUrl = getBillingSourceUrl(env);
+  const provider = env.GROWTH_ENGINE_BILLING_STATUS_URL || env.VITE_GROWTH_ENGINE_BILLING_STATUS_URL
+    ? "growth-engine"
+    : env.STRIPE_SUBSCRIPTION_STATUS_URL
+      ? "stripe"
+      : "numeria-worker-mvp";
+
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    billingContractVersion: BILLING_CONTRACT_VERSION,
+    configured: Boolean(sourceUrl),
+    provider,
+    subscriptionSource: sourceUrl ? "external-readiness" : "numeria-worker-mvp",
+    sourceOfTruth: sourceUrl ? provider : "pending-external-billing",
+    tokenConfigured: Boolean(getBillingSourceToken(env)),
+    timeoutMs: getBillingFetchTimeoutMs(env),
+    mvpPlanSwitchingEnabled: true,
+    supportedPlans: ["free", "pro"],
+    businessPurchasable: false,
+    failurePolicy: "fallback_to_mvp_subscription",
+    secretValuesReturned: false,
+    message: sourceUrl
+      ? "外部の契約状態を読み取る準備ができています。"
+      : "現在はNumeria Worker内のMVP契約状態を表示しています。",
+  };
+}
+
+function normalizeBillingPayload(payload = {}) {
+  const subscription = payload.subscription || payload.billing || payload;
+  const planId = normalizePlanId(
+    subscription.planId
+      || subscription.currentPlan
+      || subscription.currentPlanId
+      || payload.planId
+  );
+
+  return {
+    planId,
+    billingStatus: subscription.billingStatus
+      || subscription.status
+      || (planId === PLAN_IDS.FREE ? "free" : "active"),
+    currentPeriod: subscription.currentPeriod
+      || subscription.billingMonth
+      || payload.currentPeriod
+      || getBillingMonth(),
+    source: subscription.source || payload.source || "external-billing",
+  };
+}
+
+async function fetchExternalBillingSubscription(env = {}, workspaceId = "ws_personal", userId = "anonymous") {
+  const readiness = billingStatusResponse(env);
+  const sourceUrl = getBillingSourceUrl(env);
+
+  if (!sourceUrl) {
+    return {
+      status: "skipped",
+      reason: "BILLING_SOURCE_NOT_CONFIGURED",
+      readiness,
+      subscription: null,
+    };
+  }
+
+  try {
+    const url = new URL(sourceUrl);
+    url.searchParams.set("workspaceId", workspaceId);
+    url.searchParams.set("userId", userId);
+    url.searchParams.set("appId", "numeria-studio");
+
+    const headers = {
+      Accept: "application/json",
+    };
+    const token = getBillingSourceToken(env);
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const signal = typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function"
+      ? AbortSignal.timeout(getBillingFetchTimeoutMs(env))
+      : undefined;
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers,
+      signal,
+    });
+
+    if (!response.ok) {
+      return {
+        status: "fallback",
+        reason: "BILLING_SOURCE_HTTP_ERROR",
+        readiness,
+        subscription: null,
+      };
+    }
+
+    const payload = await response.json();
+    const subscription = normalizeBillingPayload(payload);
+
+    if (subscription.planId === PLAN_IDS.BUSINESS) {
+      return {
+        status: "fallback",
+        reason: "BUSINESS_PREPARING",
+        readiness,
+        subscription: null,
+      };
+    }
+
+    return {
+      status: "success",
+      reason: "external_billing_subscription_loaded",
+      readiness,
+      subscription,
+    };
+  } catch (error) {
+    return {
+      status: "fallback",
+      reason: "BILLING_SOURCE_FETCH_FAILED",
+      message: error?.message || "External billing source could not be read.",
+      readiness,
+      subscription: null,
+    };
+  }
+}
+
+function applyBillingSubscription(record, billingSubscription) {
+  if (!billingSubscription?.subscription?.planId) {
+    return record;
+  }
+
+  return {
+    ...record,
+    planId: billingSubscription.subscription.planId,
+    billingMonth: billingSubscription.subscription.currentPeriod || record.billingMonth,
+  };
+}
+
 async function forwardApcActivity(env = {}, activity = {}) {
   const url = getApcActivitiesUrl(env);
   if (!url) {
@@ -583,8 +740,57 @@ function versionResponse() {
   };
 }
 
-async function releaseStatusResponse(env = {}) {
+function getExpectedCustomDomain(env = {}) {
+  return env.NUMERIA_CUSTOM_DOMAIN
+    || env.CUSTOM_DOMAIN
+    || env.VITE_NUMERIA_CUSTOM_DOMAIN
+    || "numeria-studio.com";
+}
+
+function getExpectedWorkerHost(env = {}) {
+  return env.NUMERIA_WORKER_HOST
+    || env.CLOUDFLARE_WORKER_HOST
+    || "numeria-studio-site.karukimori.workers.dev";
+}
+
+function domainStatusResponse(request, env = {}) {
+  const url = new URL(request.url);
+  const currentHost = url.host.toLowerCase();
+  const expectedCustomDomain = getExpectedCustomDomain(env).toLowerCase();
+  const expectedWorkerHost = getExpectedWorkerHost(env).toLowerCase();
+  const isCustomDomain = currentHost === expectedCustomDomain || currentHost.endsWith(`.${expectedCustomDomain}`);
+  const isWorkerHost = currentHost === expectedWorkerHost;
+  const routeReady = isCustomDomain || isWorkerHost;
+
+  return {
+    status: routeReady ? "success" : "warning",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    domainContractVersion: DOMAIN_CONTRACT_VERSION,
+    currentHost,
+    expectedCustomDomain,
+    expectedWorkerHost,
+    canonicalUrl: `https://${expectedCustomDomain}`,
+    productionUrl: `https://${expectedWorkerHost}`,
+    routeReady,
+    currentRoute: isCustomDomain ? "custom-domain" : isWorkerHost ? "worker-host" : "unknown-host",
+    customDomainReady: isCustomDomain,
+    workerHostReady: isWorkerHost,
+    cloudflareBindingRequired: true,
+    secretValuesReturned: false,
+    message: isCustomDomain
+      ? "独自ドメインでWorkerへ到達しています。"
+      : isWorkerHost
+        ? "Cloudflare Workers標準URLで到達しています。独自ドメインの接続確認は未完了です。"
+        : "想定外のHostで到達しています。CloudflareのWorker routeまたはCustom Domain設定を確認してください。",
+  };
+}
+
+async function releaseStatusResponse(request = new Request("https://numeria-studio-site.karukimori.workers.dev/release/status"), env = {}) {
   const persistence = await persistenceStatusResponse(env);
+  const billing = billingStatusResponse(env);
+  const auth = await authStatusResponse(new Request("https://local.test/release/status"), env);
+  const domain = domainStatusResponse(request, env);
   return {
     status: persistence.status === "success" ? "success" : "warning",
     appId: "numeria-studio",
@@ -606,6 +812,8 @@ async function releaseStatusResponse(env = {}) {
       "Admin preview menus for unreleased features",
       "Server-side auth readiness contract",
       "Server-side Clerk JWT verification in observe/enforce modes",
+      "Billing source readiness contract",
+      "Custom domain readiness contract",
       "AI Platform Core usage event contract",
       "AI Platform Core usage event forwarding",
     ],
@@ -631,6 +839,18 @@ async function releaseStatusResponse(env = {}) {
         ...apcStatusResponse(env),
       },
       businessPurchasable: false,
+      auth: {
+        statusEndpoint: "/auth/status",
+        ...auth,
+      },
+      billing: {
+        statusEndpoint: "/billing/status",
+        ...billing,
+      },
+      domain: {
+        statusEndpoint: "/domain/status",
+        ...domain,
+      },
       sourceOfTruth: "Numeria owns sessions, calculations, report snapshots, and appraisal client snapshots only.",
     },
   };
@@ -673,6 +893,7 @@ function adminStatusResponse(request, env = {}, body = {}) {
       contracts: "/contracts/status",
       usage: "/api/usage",
       subscription: "/api/billing/subscription",
+      billing: "/billing/status",
     },
     planSummary: {
       free: {
@@ -715,7 +936,9 @@ async function adminAccountResponse(request, env = {}, body = {}) {
     String(body.targetUserId || body.userId || url.searchParams.get("userId") || "")
       .trim() || "browser-user";
   const targetRecord = await loadUsageRecord(env, targetWorkspaceId, targetUserId);
-  const planId = normalizePlanId(targetRecord.planId);
+  const billingSubscription = await fetchExternalBillingSubscription(env, targetWorkspaceId, targetUserId);
+  const effectiveRecord = applyBillingSubscription(targetRecord, billingSubscription);
+  const planId = normalizePlanId(effectiveRecord.planId);
   const plan = getPlanConfigForPlan(planId);
 
   return {
@@ -734,9 +957,12 @@ async function adminAccountResponse(request, env = {}, body = {}) {
       planId,
       planName: plan.name,
       billingStatus: planId === PLAN_IDS.FREE ? "free" : "active",
-      source: "numeria-worker-mvp",
+      source: billingSubscription.subscription?.source || "numeria-worker-mvp",
+      readStatus: billingSubscription.status,
+      readReason: billingSubscription.reason,
+      externalBilling: billingStatusResponse(env),
     },
-    usage: usageResponse(targetRecord),
+    usage: usageResponse(effectiveRecord),
     limits: plan.entitlements,
     historyPolicy: {
       visibleCompletedAppraisals: plan.entitlements.viewableCompletedAppraisals,
@@ -748,6 +974,8 @@ async function adminAccountResponse(request, env = {}, body = {}) {
 async function contractsStatusResponse(env = {}) {
   const persistence = await persistenceStatusResponse(env);
   const auth = await authStatusResponse(new Request("https://local.test/contracts/status"), env);
+  const billing = billingStatusResponse(env);
+  const domain = domainStatusResponse(new Request("https://numeria-studio-site.karukimori.workers.dev/contracts/status"), env);
   const aiUsage = aiUsageStatusResponse(env);
   const aiPlatformCore = apcStatusResponse(env);
   return {
@@ -804,6 +1032,14 @@ async function contractsStatusResponse(env = {}) {
       sessionStarted: "studio.session.started.v1",
       sessionCompleted: "studio.session.completed.v1",
       reportGenerated: "studio.report.generated.v1",
+    },
+    billing: {
+      statusEndpoint: "/billing/status",
+      ...billing,
+    },
+    domain: {
+      statusEndpoint: "/domain/status",
+      ...domain,
     },
     aiUsage: {
       statusEndpoint: "/ai-usage/status",
@@ -1007,6 +1243,12 @@ async function authStatusResponse(request, env = {}) {
   const enforcementMode = getAuthEnforcementMode(env);
   const verification = await verifyClerkSessionToken(request, env);
   const serverVerificationReady = Boolean(secretKey || jwksUrl);
+  const clientAuthReady = Boolean(publishableKey);
+  const enforceModeReady = clientAuthReady && Boolean(jwksUrl);
+  const rolloutBlockers = [
+    !clientAuthReady ? "CLERK_PUBLISHABLE_KEY is not configured." : "",
+    !jwksUrl ? "CLERK_JWKS_URL could not be resolved." : "",
+  ].filter(Boolean);
 
   return {
     status: serverVerificationReady || enforcementMode === "observe" ? "success" : "warning",
@@ -1014,10 +1256,25 @@ async function authStatusResponse(request, env = {}) {
     appVersion: APP_VERSION,
     authProvider: "clerk",
     authContractVersion: AUTH_CONTRACT_VERSION,
-    clientAuthReady: Boolean(publishableKey),
+    clientAuthReady,
     serverVerificationReady,
     serverVerificationMethod: jwksUrl ? "jwks-rs256" : "not-configured",
     enforcementMode,
+    enforceModeReady,
+    enforceModeRollout: {
+      currentMode: enforcementMode,
+      targetMode: "enforce",
+      ready: enforceModeReady,
+      recommendedAction: enforceModeReady
+        ? "AUTH_ENFORCEMENT_MODE=enforce can be tested with a signed-in production user."
+        : "Keep observe mode until Clerk publishable key and JWKS URL are configured.",
+      requiredRuntimeConfig: [
+        "CLERK_PUBLISHABLE_KEY or VITE_CLERK_PUBLISHABLE_KEY",
+        "CLERK_JWKS_URL or a Clerk publishable key that can resolve JWKS",
+        "AUTH_ENFORCEMENT_MODE=enforce",
+      ],
+      blockers: rolloutBlockers,
+    },
     incomingRequestHasBearerToken: Boolean(getBearerToken(request)),
     incomingRequestVerified: verification.verified,
     incomingRequestVerificationReason: verification.reason,
@@ -1125,9 +1382,6 @@ async function handleApi(request, env = {}, ctx = null) {
   const { auth, response: authResponse } = await authenticateApiRequest(request, env);
   if (authResponse) return authResponse;
 
-  const { workspaceId, userId } = getScope(request, body, auth);
-  const record = await loadUsageRecord(env, workspaceId, userId);
-
   if (url.pathname === "/api/plans" && request.method === "GET") {
     return json({ status: "success", plans: PLAN_CONFIG });
   }
@@ -1154,13 +1408,26 @@ async function handleApi(request, env = {}, ctx = null) {
     return json(adminAccount, { status: adminAccount.adminMode ? 200 : 403 });
   }
 
+  const { workspaceId, userId } = getScope(request, body, auth);
+  const record = await loadUsageRecord(env, workspaceId, userId);
+  const billingSubscription = await fetchExternalBillingSubscription(env, workspaceId, userId);
+  const effectiveRecord = applyBillingSubscription(record, billingSubscription);
+
   if (url.pathname === "/api/usage" && request.method === "GET") {
-    const usage = usageResponse(record);
-    return json({ status: "success", workspaceId, userId, usage, historyPolicy: { visibleCompletedAppraisals: usage.entitlements.viewableCompletedAppraisals, lockedDetailsAreRetained: true } });
+    const usage = usageResponse(effectiveRecord);
+    return json({
+      status: "success",
+      workspaceId,
+      userId,
+      usage,
+      subscriptionSource: billingSubscription.status === "success" ? "external" : "numeria-worker-mvp",
+      billingReadiness: billingSubscription.readiness,
+      historyPolicy: { visibleCompletedAppraisals: usage.entitlements.viewableCompletedAppraisals, lockedDetailsAreRetained: true },
+    });
   }
 
   if (url.pathname === "/api/appraisals/status" && request.method === "GET") {
-    const usage = usageResponse(record);
+    const usage = usageResponse(effectiveRecord);
     return json({
       status: "success",
       workspaceId,
@@ -1180,15 +1447,21 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/billing/subscription" && request.method === "GET") {
+    const billing = billingStatusResponse(env);
+    const externalSubscription = billingSubscription.subscription;
+    const effectivePlanId = externalSubscription?.planId || record.planId;
     return json({
       status: "success",
       workspaceId,
       userId,
       subscription: {
-        planId: record.planId,
-        billingStatus: record.planId === PLAN_IDS.FREE ? "free" : "active",
-        currentPeriod: record.billingMonth,
-        source: "numeria-worker-mvp",
+        planId: effectivePlanId,
+        billingStatus: externalSubscription?.billingStatus || (effectivePlanId === PLAN_IDS.FREE ? "free" : "active"),
+        currentPeriod: externalSubscription?.currentPeriod || record.billingMonth,
+        source: externalSubscription ? externalSubscription.source : "numeria-worker-mvp",
+        readStatus: billingSubscription.status,
+        readReason: billingSubscription.reason,
+        externalBilling: billing,
       },
     });
   }
@@ -1216,7 +1489,7 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/appraisal-clients" && request.method === "POST") {
-    const snapshot = usageResponse(record);
+    const snapshot = usageResponse(effectiveRecord);
     const decision = evaluateUsageLimit(snapshot, "create_appraisal_client");
     if (!decision.allowed) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
@@ -1242,7 +1515,7 @@ async function handleApi(request, env = {}, ctx = null) {
       appraisalClient,
       sourceOfTruth: "numeria-appraisal-client-profile",
       limitPolicy: isUnlimited(snapshot.entitlements.appraisalClients) ? "profile-count-unlimited" : "free-three-appraisal-client-profiles",
-      usage: usageResponse(record),
+      usage: usageResponse(applyBillingSubscription(record, billingSubscription)),
     }, { status: 201 });
   }
 
@@ -1255,7 +1528,7 @@ async function handleApi(request, env = {}, ctx = null) {
         status: "error",
         errorCode: "APPRAISAL_CLIENT_PROFILE_NOT_FOUND",
         message: "依頼者プロフィールが見つかりません。",
-        usage: usageResponse(record),
+        usage: usageResponse(effectiveRecord),
       }, { status: 404 });
     }
 
@@ -1266,7 +1539,7 @@ async function handleApi(request, env = {}, ctx = null) {
       return json({
         status: "success",
         deletedAppraisalClientRef: profileId,
-        usage: usageResponse(record),
+        usage: usageResponse(applyBillingSubscription(record, billingSubscription)),
       });
     }
 
@@ -1282,14 +1555,14 @@ async function handleApi(request, env = {}, ctx = null) {
     return json({
       status: "success",
       appraisalClient: updatedProfile,
-      usage: usageResponse(record),
+      usage: usageResponse(applyBillingSubscription(record, billingSubscription)),
     });
   }
 
   if (url.pathname === "/api/sessions/start" && request.method === "POST") {
     const sessionId = body.sessionId || `ses_${Date.now()}`;
     await saveUsageRecord(env, workspaceId, userId, record);
-    const usage = usageResponse(record);
+    const usage = usageResponse(effectiveRecord);
     const correlationId = body.correlationId || createCorrelationId("session");
     enqueueApcActivity(ctx, env, {
       workspaceId,
@@ -1317,7 +1590,7 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/appraisals/save-draft" && request.method === "POST") {
-    const snapshot = usageResponse(record);
+    const snapshot = usageResponse(effectiveRecord);
     const appraisalId = body.appraisalId || body.id || body.draftId || `draft_${Date.now()}`;
     const currentDraft = record.activeDraft;
     const isSameDraft = currentDraft && currentDraft.id === appraisalId;
@@ -1344,12 +1617,12 @@ async function handleApi(request, env = {}, ctx = null) {
       draftId: appraisalId,
       activeDraft: record.activeDraft,
       limitPolicy: "free-one-in-progress-appraisal",
-      usage: usageResponse(record),
+      usage: usageResponse(applyBillingSubscription(record, billingSubscription)),
     }, { status: 201 });
   }
 
   if (url.pathname === "/api/appraisals/complete" && request.method === "POST") {
-    const snapshot = usageResponse(record);
+    const snapshot = usageResponse(effectiveRecord);
     const decision = evaluateUsageLimit(snapshot, "complete_appraisal");
     if (!decision.allowed) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
@@ -1384,16 +1657,16 @@ async function handleApi(request, env = {}, ctx = null) {
     record.completedAppraisalIds = [...(record.completedAppraisalIds || []), appraisalId];
     record.completedAppraisals = [...(record.completedAppraisals || []), completedAppraisal];
     await saveUsageRecord(env, workspaceId, userId, record);
+    const updatedUsage = usageResponse(applyBillingSubscription(record, billingSubscription));
     const aiUsageEvent = createAiUsageEvent({
       eventName: "studio.session.completed.v1",
       workspaceId,
       userId,
-      planId: record.planId,
+      planId: updatedUsage.planId,
       featureKey: "appraisal_completion",
       correlationId: appraisalId,
     });
     const aiUsageDelivery = await recordAiUsageEvent(env, aiUsageEvent);
-    const updatedUsage = usageResponse(record);
     const correlationId = body.correlationId || createCorrelationId("complete");
     enqueueApcActivity(ctx, env, {
       workspaceId,
@@ -1435,7 +1708,7 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/reports/export" && request.method === "POST") {
-    const snapshot = usageResponse(record);
+    const snapshot = usageResponse(effectiveRecord);
     const format = String(body.format || "pdf").toLowerCase();
     const reportType = String(body.reportType || "basic").toLowerCase();
     const removeBranding = Boolean(body.removeBranding);
@@ -1491,16 +1764,16 @@ async function handleApi(request, env = {}, ctx = null) {
     ];
     await saveUsageRecord(env, workspaceId, userId, record);
     await saveReportEvent(env, workspaceId, userId, record, reportEvent);
+    const updatedUsage = usageResponse(applyBillingSubscription(record, billingSubscription));
     const aiUsageEvent = createAiUsageEvent({
       eventName: "studio.report.generated.v1",
       workspaceId,
       userId,
-      planId: record.planId,
+      planId: updatedUsage.planId,
       featureKey: `report_export_${reportType}`,
       correlationId: exportId,
     });
     const aiUsageDelivery = await recordAiUsageEvent(env, aiUsageEvent);
-    const updatedUsage = usageResponse(record);
     const correlationId = body.correlationId || createCorrelationId("report");
     enqueueApcActivity(ctx, env, {
       workspaceId,
@@ -1557,13 +1830,19 @@ export default {
       return json(versionResponse());
     }
     if (url.pathname === "/release/status") {
-      return json(await releaseStatusResponse(env));
+      return json(await releaseStatusResponse(request, env));
+    }
+    if (url.pathname === "/domain/status") {
+      return json(domainStatusResponse(request, env));
     }
     if (url.pathname === "/apc/status") {
       return json(apcStatusResponse(env));
     }
     if (url.pathname === "/auth/status") {
       return json(await authStatusResponse(request, env));
+    }
+    if (url.pathname === "/billing/status") {
+      return json(billingStatusResponse(env));
     }
     if (url.pathname === "/ai-usage/status") {
       return json(aiUsageStatusResponse(env));

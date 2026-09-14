@@ -14,6 +14,7 @@ const requiredFiles = [
   "scripts/restore-original-site.mjs",
   "scripts/patch-legacy-static-assets.mjs",
   "scripts/verify-d1-persistence.mjs",
+  "scripts/verify-production-readiness.mjs",
   "migrations/0001_numeria_usage_store.sql",
   "migrations/0002_appraisal_client_profiles.sql",
   "favicon.svg",
@@ -49,6 +50,7 @@ const releasePlan = readFileSync("FREE_PRO_RELEASE_PLAN.md", "utf8");
 const d1Migration = readFileSync("migrations/0001_numeria_usage_store.sql", "utf8");
 const d1ProfileMigration = readFileSync("migrations/0002_appraisal_client_profiles.sql", "utf8");
 const envExample = readFileSync(".env.example", "utf8");
+const productionReadinessScript = readFileSync("scripts/verify-production-readiness.mjs", "utf8");
 assert.match(html, /Numeria Studio/);
 assert.match(html, /window\.location\.replace\("\/original\.html"\)/);
 assert.doesNotMatch(html, /\/src\/auth-gate\.js/);
@@ -95,6 +97,15 @@ assert.match(readFileSync("scripts/verify-d1-persistence.mjs", "utf8"), /MockD1/
 assert.match(readFileSync("scripts/verify-d1-persistence.mjs", "utf8"), /storageDriver, "durable-d1"/);
 assert.match(packageJson, /restore-original-site\.mjs/);
 assert.match(packageJson, /verify-d1-persistence\.mjs/);
+assert.match(packageJson, /verify:production/);
+assert.match(productionReadinessScript, /NUMERIA_PRODUCTION_URL/);
+assert.match(productionReadinessScript, /\/contracts\/status/);
+assert.match(productionReadinessScript, /\/release\/status/);
+assert.match(productionReadinessScript, /\/auth\/status/);
+assert.match(productionReadinessScript, /\/domain\/status/);
+assert.match(productionReadinessScript, /\/billing\/status/);
+assert.match(productionReadinessScript, /secretValuesReturned/);
+assert.match(productionReadinessScript, /businessPurchasable/);
 assert.doesNotMatch(html, /https:\/\/numeria-studio\.karukimori\.workers\.dev/);
 assert.match(authGateSource, /@clerk\/clerk-js/);
 assert.match(authGateSource, /\/api\/auth\/config/);
@@ -175,6 +186,18 @@ assert.match(mainSource, /filteredClients/);
 assert.match(mainSource, /履歴を検索/);
 assert.match(mainSource, /依頼者名・相談内容・LPで検索/);
 assert.match(mainSource, /一致する履歴はありません/);
+assert.match(mainSource, /APC活動転送/);
+assert.match(mainSource, /外部連携ヘルス/);
+assert.match(mainSource, /aiPlatformCore/);
+assert.match(mainSource, /APC_ACTIVITIES_URL/);
+assert.match(mainSource, /\/billing\/status/);
+assert.match(mainSource, /契約正本/);
+assert.match(mainSource, /Clerk認証/);
+assert.match(mainSource, /enforce準備OK/);
+assert.match(mainSource, /外部同期準備OK/);
+assert.match(mainSource, /Growth EngineまたはStripeの契約API設定待ち/);
+assert.match(mainSource, /ドメイン到達/);
+assert.match(mainSource, /独自ドメインOK/);
 assert.match(mainSource, /Freeで追加できる残り/);
 assert.match(mainSource, /依頼者を追加/);
 assert.match(mainSource, /\/persistence\/status/);
@@ -262,10 +285,31 @@ assert.match(workerSource, /Selectable and editable appraisal client profile chi
 assert.match(workerSource, /Server-side auth readiness contract/);
 assert.match(workerSource, /AI Platform Core usage event contract/);
 assert.match(workerSource, /Server-side Clerk JWT verification in observe\/enforce modes/);
+assert.match(workerSource, /Billing source readiness contract/);
+assert.match(workerSource, /BILLING_CONTRACT_VERSION/);
+assert.match(workerSource, /growth-engine-stripe-subscription-readiness\.v1/);
+assert.match(workerSource, /DOMAIN_CONTRACT_VERSION/);
+assert.match(workerSource, /cloudflare-custom-domain-readiness\.v1/);
+assert.match(workerSource, /domainStatusResponse/);
+assert.match(workerSource, /\/domain\/status/);
+assert.match(workerSource, /NUMERIA_CUSTOM_DOMAIN/);
+assert.match(workerSource, /numeria-studio\.com/);
+assert.match(workerSource, /billingStatusResponse/);
+assert.match(workerSource, /fetchExternalBillingSubscription/);
+assert.match(workerSource, /applyBillingSubscription/);
+assert.match(workerSource, /fallback_to_mvp_subscription/);
+assert.match(workerSource, /BILLING_STATUS_TIMEOUT_MS/);
+assert.match(workerSource, /AbortSignal\.timeout/);
+assert.match(workerSource, /\/billing\/status/);
+assert.match(workerSource, /GROWTH_ENGINE_BILLING_STATUS_URL/);
+assert.match(workerSource, /STRIPE_SUBSCRIPTION_STATUS_URL/);
 assert.match(workerSource, /Clerk enforce-mode production rollout after token header confirmation/);
 assert.match(workerSource, /CLERK_JWKS_URL/);
 assert.match(workerSource, /verifyClerkSessionToken/);
 assert.match(workerSource, /authenticateApiRequest/);
+assert.match(workerSource, /enforceModeReady/);
+assert.match(workerSource, /enforceModeRollout/);
+assert.match(workerSource, /AUTH_ENFORCEMENT_MODE=enforce/);
 assert.match(workerSource, /jwks-rs256/);
 assert.match(workerSource, /AUTH_SESSION_REQUIRED/);
 assert.match(workerSource, /incomingRequestVerified/);

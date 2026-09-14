@@ -554,6 +554,48 @@ h2 {
   background: #f1fbf4;
 }
 
+.billing-source-card {
+  display: grid;
+  gap: 6px;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  padding: 12px;
+  background: #fffaf2;
+}
+
+.billing-source-card.connected {
+  border-color: #b9dac5;
+  background: #f1fbf4;
+}
+
+.billing-source-card span {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: #5d451f;
+  background: #f1e3c1;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.billing-source-card.connected span {
+  color: #215b36;
+  background: #dfeedd;
+}
+
+.billing-source-card strong {
+  color: #17202a;
+  font-size: 1rem;
+}
+
+.billing-source-card small {
+  color: #6a6259;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 .client-profile-panel {
   display: grid;
   gap: 14px;
@@ -804,6 +846,44 @@ h2 {
 .release-summary-card strong {
   color: #241a3d;
   font-size: 1.05rem;
+}
+
+.integration-health-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.integration-health-card {
+  display: grid;
+  gap: 7px;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fffdf8;
+}
+
+.integration-health-card span {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: #314b35;
+  background: #dfeedd;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.integration-health-card strong {
+  color: #241a3d;
+  font-size: 0.96rem;
+}
+
+.integration-health-card small {
+  overflow-wrap: anywhere;
+  color: #6a6259;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 .release-detail-grid {
@@ -1485,6 +1565,7 @@ textarea {
   .workspace-grid,
   .stat-grid,
   .release-summary,
+  .integration-health-grid,
   .release-detail-grid,
   .admin-preview-grid,
   .plan-grid {

@@ -105,12 +105,18 @@ Business integrations should pass reference IDs only.
   - `POST /api/sessions/start` starts work without incrementing monthly completed count
   - `POST /api/appraisals/save-draft` enforces the 1 unfinished appraisal limit
   - `POST /api/appraisals/complete` increments monthly completed count and updates latest-history visibility
-  - `POST /api/appraisal-clients` keeps profile count unlimited
+  - `POST /api/appraisal-clients` enforces the Free 3-profile limit and keeps Pro profiles unlimited
 - Usage and billing status APIs:
   - `GET /api/usage`
+  - `GET /billing/status`
   - `GET /api/billing/subscription`
   - `PATCH /api/billing/subscription`
 - Business returns `BUSINESS_PREPARING`.
+
+Billing source readiness is exposed through `GET /billing/status`.
+Numeria can detect a future Growth Engine or Stripe subscription source without
+returning secret values. Until the external source is configured, the app keeps
+using the Worker MVP subscription state.
 
 ## Release Caveat
 

@@ -4,7 +4,8 @@
     "test": "node scripts/verify-static-site.mjs && node scripts/verify-d1-persistence.mjs",
     "build": "vite build && node scripts/restore-original-site.mjs",
     "dev": "vite --host 0.0.0.0",
-    "smoke": "npm test && npm run build"
+    "smoke": "npm test && npm run build",
+    "verify:production": "node scripts/verify-production-readiness.mjs"
   },
   "dependencies": {
     "@clerk/react": "^6.14.8",

@@ -13,8 +13,9 @@ env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
   PRODUCTION_URL: https://numeria-studio-site.karukimori.workers.dev
+  NUMERIA_PRODUCTION_URL: https://numeria-studio-site.karukimori.workers.dev
   VITE_CLERK_APPLICATION_ID: app_3ImOuQXNBc9Rpqs3XoJEtw2NogR
-  VITE_APP_VERSION: 0.3.0-free-pro-release
+  VITE_APP_VERSION: 0.3.5-domain-readiness
   VITE_ADMIN_EMAILS: illusionddt@gmail.com
   VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY || secrets.VITE_CLERK_PUBLISHABLE_KEY }}
   VITE_FEEDBACK_HUB_BASE_URL: ${{ vars.VITE_FEEDBACK_HUB_BASE_URL || secrets.VITE_FEEDBACK_HUB_BASE_URL }}
@@ -61,27 +62,4 @@ jobs:
         run: npx wrangler deploy --var VITE_CLERK_PUBLISHABLE_KEY:"$VITE_CLERK_PUBLISHABLE_KEY"
 
       - name: Verify production
-        run: |
-          for path in "" "/index.html"; do
-            url="$PRODUCTION_URL$path"
-            echo "Checking $url"
-            for attempt in $(seq 1 18); do
-              status=$(curl --silent --show-error --location --output /tmp/index.html --write-out "%{http_code}" "$url" || true)
-              echo "Attempt $attempt for $url returned HTTP $status"
-              if [ "$status" = "200" ] && node - <<'NODE'
-          const fs = require("node:fs");
-          const html = fs.readFileSync("/tmp/index.html", "utf8");
-          if (!html.includes("Numeria Studio")) {
-            process.exit(1);
-          }
-          NODE
-              then
-                echo "Production page verified at $url"
-                exit 0
-              fi
-              sleep 5
-            done
-          done
-
-          echo "::error::Production page did not include Numeria Studio marker at $PRODUCTION_URL or $PRODUCTION_URL/index.html"
-          exit 1
+        run: npm run verify:production

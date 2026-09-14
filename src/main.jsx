@@ -37,7 +37,7 @@ import "./styles.css";
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const clerkApplicationId = import.meta.env.VITE_CLERK_APPLICATION_ID || "app_3ImOuQXNBc9Rpqs3XoJEtw2NogR";
-const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.0-free-pro-release";
+const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.5-domain-readiness";
 const feedbackApiBase = import.meta.env.VITE_FEEDBACK_HUB_BASE_URL || "";
 const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "illusionddt@gmail.com")
   .split(",")
@@ -185,6 +185,7 @@ function SignedInWorkspace() {
   const [loading, setLoading] = useState(true);
   const [serverAdminMode, setServerAdminMode] = useState(false);
   const [persistenceStatus, setPersistenceStatus] = useState(null);
+  const [billingStatus, setBillingStatus] = useState(null);
   const [releaseStatus, setReleaseStatus] = useState(null);
   const [currentCase, setCurrentCase] = useState(createEmptyCase);
   const [reportOptions, setReportOptions] = useState({
@@ -269,6 +270,28 @@ function SignedInWorkspace() {
             storageDriver: "unknown",
             durable: false,
             warning: "保存状態を確認できませんでした。",
+          });
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    apiRequest("/billing/status")
+      .then((response) => {
+        if (active) setBillingStatus(response);
+      })
+      .catch(() => {
+        if (active) {
+          setBillingStatus({
+            status: "warning",
+            configured: false,
+            provider: "unknown",
+            subscriptionSource: "unknown",
+            message: "契約状態の確認先を取得できませんでした。",
           });
         }
       });
@@ -663,6 +686,7 @@ function SignedInWorkspace() {
 
         <BillingPanel
           usage={usage}
+          billingStatus={billingStatus}
           onUpgrade={() => changePlan(PLAN_IDS.PRO)}
           onDowngrade={() => changePlan(PLAN_IDS.FREE)}
         />
@@ -789,6 +813,17 @@ function AppraisalClientPanel({ usage, value, onChange, onCreate, onSelect, onUp
 }
 
 function AdminPreviewPanel({ releaseStatus }) {
+  const aiUsage = releaseStatus?.checks?.aiUsage || releaseStatus?.aiUsage || {};
+  const aiPlatformCore = releaseStatus?.checks?.aiPlatformCore || {};
+  const billing = releaseStatus?.checks?.billing || {};
+  const auth = releaseStatus?.checks?.auth || {};
+  const domain = releaseStatus?.checks?.domain || {};
+  const aiUsageConfigured = Boolean(aiUsage.endpointConfigured);
+  const apcConfigured = Boolean(aiPlatformCore.endpointConfigured || aiPlatformCore.configured);
+  const apcTokenConfigured = Boolean(aiPlatformCore.tokenConfigured);
+  const billingConfigured = Boolean(billing.configured);
+  const authEnforceReady = Boolean(auth.enforceModeReady);
+  const customDomainReady = Boolean(domain.customDomainReady);
   const previewItems = [
     {
       title: "Business連携",
@@ -807,10 +842,17 @@ function AdminPreviewPanel({ releaseStatus }) {
     },
     {
       title: "AI利用記録",
-      status: releaseStatus?.aiUsage?.endpointConfigured ? "送信準備OK" : "契約APIあり",
-      body: releaseStatus?.aiUsage?.endpointConfigured
+      status: aiUsageConfigured ? "送信準備OK" : "契約APIあり",
+      body: aiUsageConfigured
         ? "AI Platform Core URLが設定されています。送信モードを切り替えるとイベント連携できます。"
         : "現在は相談本文を送らず、利用イベントのメタデータだけをローカル記録します。",
+    },
+    {
+      title: "APC活動転送",
+      status: apcConfigured ? "接続先あり" : "未接続",
+      body: apcConfigured
+        ? "鑑定開始、鑑定完了、レポート生成をAI Platform Coreへ非同期で転送します。"
+        : "APC Activities URLを設定すると、外部知能側へ活動イベントを残せます。",
     },
     {
       title: "リリース状態",
@@ -823,7 +865,51 @@ function AdminPreviewPanel({ releaseStatus }) {
     ["未追加", releaseStatus?.pendingFeatures?.length ?? "-"],
     ["後回し", releaseStatus?.deferredFeatures?.length ?? "-"],
     ["D1", releaseStatus?.checks?.persistence?.storageDriver || "確認中"],
-    ["AI Core", releaseStatus?.aiUsage?.endpointConfigured ? "URLあり" : "未接続"],
+    ["認証", authEnforceReady ? "enforce準備OK" : auth.enforcementMode || "observe"],
+    ["Domain", customDomainReady ? "独自OK" : domain.currentRoute || "確認中"],
+    ["課金", billingConfigured ? billing.provider || "外部" : "MVP"],
+    ["AI Core", aiUsageConfigured ? "URLあり" : "未接続"],
+    ["APC", apcConfigured ? (apcTokenConfigured ? "URL・Tokenあり" : "URLあり") : "未接続"],
+  ];
+  const integrationChecks = [
+    {
+      label: "Clerk認証",
+      status: authEnforceReady ? "enforce準備OK" : `${auth.enforcementMode || "observe"}運用`,
+      detail: authEnforceReady
+        ? "本番ユーザーで検証後、AUTH_ENFORCEMENT_MODE=enforceへ進めます。"
+        : "Clerk公開キーとJWKS URLの確認後に強制モードへ進めます。",
+    },
+    {
+      label: "契約正本",
+      status: billingConfigured ? "外部同期準備OK" : "MVP契約状態",
+      detail: billingConfigured
+        ? `provider: ${billing.provider || "external"}`
+        : "Growth EngineまたはStripeの契約API設定待ちです。",
+    },
+    {
+      label: "ドメイン到達",
+      status: customDomainReady ? "独自ドメインOK" : domain.currentRoute || "確認中",
+      detail: customDomainReady
+        ? `${domain.expectedCustomDomain || "numeria-studio.com"} で到達しています。`
+        : "CloudflareのWorker routeまたはCustom Domain接続を確認します。",
+    },
+    {
+      label: "AI利用イベント",
+      status: aiUsageConfigured ? "送信先あり" : "ローカル記録",
+      detail: `mode: ${aiUsage.forwardingMode || "unknown"}`,
+    },
+    {
+      label: "APC活動転送",
+      status: apcConfigured ? "非ブロッキング転送" : "未接続",
+      detail: apcConfigured
+        ? `token: ${apcTokenConfigured ? "configured" : "not configured"}`
+        : "APC_ACTIVITIES_URL または AI_PLATFORM_CORE_BASE_URL が必要です。",
+    },
+    {
+      label: "失敗時ポリシー",
+      status: aiPlatformCore.failurePolicy || "non_blocking",
+      detail: "外部送信に失敗しても鑑定フローは止めません。",
+    },
   ];
   const releaseGroups = [
     ["追加できた機能", releaseStatus?.completedFeatures || []],
@@ -849,6 +935,15 @@ function AdminPreviewPanel({ releaseStatus }) {
             <span>{label}</span>
             <strong>{value}</strong>
           </div>
+        ))}
+      </div>
+      <div className="integration-health-grid" aria-label="外部連携ヘルス">
+        {integrationChecks.map((item) => (
+          <article className="integration-health-card" key={item.label}>
+            <span>{item.status}</span>
+            <strong>{item.label}</strong>
+            <small>{item.detail}</small>
+          </article>
         ))}
       </div>
       <div className="release-detail-grid">
@@ -1229,8 +1324,14 @@ function UsageCard({ icon, label, current, limit }) {
   );
 }
 
-function BillingPanel({ usage, onUpgrade, onDowngrade }) {
+function BillingPanel({ usage, billingStatus, onUpgrade, onDowngrade }) {
   const isPro = usage.planId === PLAN_IDS.PRO;
+  const billingConfigured = Boolean(billingStatus?.configured);
+  const billingProviderLabel = billingStatus?.provider === "growth-engine"
+    ? "Growth Engine"
+    : billingStatus?.provider === "stripe"
+      ? "Stripe"
+      : "MVP";
   return (
     <div className="work-panel billing-panel">
       <div className="panel-heading">
@@ -1253,7 +1354,16 @@ function BillingPanel({ usage, onUpgrade, onDowngrade }) {
           <dt>状態</dt>
           <dd>{isPro ? "有効" : "Free利用中"}</dd>
         </div>
+        <div>
+          <dt>契約正本</dt>
+          <dd>{billingConfigured ? `${billingProviderLabel}準備OK` : "MVP契約状態"}</dd>
+        </div>
       </dl>
+      <div className={billingConfigured ? "billing-source-card connected" : "billing-source-card"}>
+        <span>{billingConfigured ? "外部同期準備OK" : "MVP運用中"}</span>
+        <strong>{billingProviderLabel}</strong>
+        <small>{billingStatus?.message || "契約状態を確認しています。"}</small>
+      </div>
       <p className="note">
         Stripe実処理・返金・売上管理はGrowth Engine側を正にします。Numeria Studioでは必要な契約状態だけ表示します。
       </p>
