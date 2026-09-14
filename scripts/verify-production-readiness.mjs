@@ -52,10 +52,18 @@ async function verifyHtml(path) {
 }
 
 async function verifyJson(path) {
-  const response = await fetchWithRetry(path);
-  const contentType = response.headers.get("content-type") || "";
+  let response;
+  let contentType = "";
+  let body = "";
+  for (let attempt = 1; attempt <= 12; attempt += 1) {
+    response = await fetchWithRetry(path, 1);
+    contentType = response.headers.get("content-type") || "";
+    body = await response.text();
+    if (/application\/json/.test(contentType)) break;
+    await new Promise((resolve) => setTimeout(resolve, 1500 * attempt));
+  }
   assert.match(contentType, /application\/json/, `${path} should return JSON`);
-  const data = await response.json();
+  const data = JSON.parse(body);
   assert.equal(data.appId, "numeria-studio", `${path} should identify numeria-studio`);
   assert.ok(["success", "warning"].includes(data.status), `${path} should return success or warning status`);
   assert.deepEqual(collectSecretLeaks(data), [], `${path} must not expose secret values`);
