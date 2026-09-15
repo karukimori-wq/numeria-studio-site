@@ -127,6 +127,9 @@ Billing source readiness is exposed through `GET /billing/status`.
 Numeria can detect a future Growth Engine or Stripe subscription source without
 returning secret values. Until the external source is configured, the app keeps
 using the Worker MVP subscription state.
+Once Growth Engine or Stripe is configured, Numeria reads the external
+subscription state and makes the MVP plan switching endpoint read-only by
+default.
 
 ## Release Caveat
 

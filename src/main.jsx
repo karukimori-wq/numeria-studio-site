@@ -38,7 +38,7 @@ import "./styles.css";
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const clerkApplicationId = import.meta.env.VITE_CLERK_APPLICATION_ID || "app_3ImOuQXNBc9Rpqs3XoJEtw2NogR";
-const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.8-integration-readiness";
+const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.9-billing-read-only";
 const feedbackApiBase = import.meta.env.VITE_FEEDBACK_HUB_BASE_URL || "";
 const feedbackSubmitEndpoint = feedbackApiBase
   ? `${feedbackApiBase.replace(/\/$/, "")}/api/embed/feedback`
@@ -740,7 +740,12 @@ function SignedInWorkspace() {
           onPrint={printJapaneseReport}
         />
 
-        <PlanComparison currentPlanId={usage.planId} onSelectPlan={changePlan} isAdmin={showAdminFeatures} />
+        <PlanComparison
+          currentPlanId={usage.planId}
+          onSelectPlan={changePlan}
+          isAdmin={showAdminFeatures}
+          mvpPlanSwitchingEnabled={billingStatus?.mvpPlanSwitchingEnabled !== false}
+        />
 
         <AppraisalHistoryPanel usage={usage} onStartFollowUp={startFollowUpFromHistory} />
       </section>
@@ -1447,6 +1452,7 @@ function UsageCard({ icon, label, current, limit }) {
 function BillingPanel({ usage, billingStatus, onUpgrade, onDowngrade }) {
   const isPro = usage.planId === PLAN_IDS.PRO;
   const billingConfigured = Boolean(billingStatus?.configured);
+  const canSwitchPlanInNumeria = billingStatus?.mvpPlanSwitchingEnabled !== false;
   const billingProviderLabel = billingStatus?.provider === "growth-engine"
     ? "Growth Engine"
     : billingStatus?.provider === "stripe"
@@ -1485,17 +1491,19 @@ function BillingPanel({ usage, billingStatus, onUpgrade, onDowngrade }) {
         <small>{billingStatus?.message || "契約状態を確認しています。"}</small>
       </div>
       <p className="note">
-        Stripe実処理・返金・売上管理はGrowth Engine側を正にします。Numeria Studioでは必要な契約状態だけ表示します。
+        {canSwitchPlanInNumeria
+          ? "Stripe実処理・返金・売上管理はGrowth Engine側を正にします。Numeria Studioでは必要な契約状態だけ表示します。"
+          : "契約状態は外部の請求元を正として読み取ります。Numeria内ではプランを直接変更できません。"}
       </p>
       <div className="action-row">
-        {!isPro && <button className="button primary" onClick={onUpgrade}>Proへアップグレード</button>}
-        {isPro && <button className="button secondary" onClick={onDowngrade}>Freeへ戻す</button>}
+        {!isPro && <button className="button primary" onClick={onUpgrade} disabled={!canSwitchPlanInNumeria}>Proへアップグレード</button>}
+        {isPro && <button className="button secondary" onClick={onDowngrade} disabled={!canSwitchPlanInNumeria}>Freeへ戻す</button>}
       </div>
     </div>
   );
 }
 
-function PlanComparison({ currentPlanId, onSelectPlan, isAdmin = false }) {
+function PlanComparison({ currentPlanId, onSelectPlan, isAdmin = false, mvpPlanSwitchingEnabled = true }) {
   const plans = [PLAN_CONFIG.free, PLAN_CONFIG.pro, PLAN_CONFIG.business];
   return (
     <section className="pricing-panel">
@@ -1519,11 +1527,13 @@ function PlanComparison({ currentPlanId, onSelectPlan, isAdmin = false }) {
             {onSelectPlan && (
               <button
                 className={plan.id === PLAN_IDS.PRO ? "button primary" : "button secondary"}
-                disabled={!plan.available || plan.id === currentPlanId}
+                disabled={!mvpPlanSwitchingEnabled || !plan.available || plan.id === currentPlanId}
                 onClick={() => onSelectPlan(plan.id)}
               >
                 {plan.id === currentPlanId
                   ? "現在利用中"
+                  : !mvpPlanSwitchingEnabled
+                    ? "外部契約で管理"
                   : plan.available
                     ? `${plan.name}を選ぶ`
                     : isAdmin

@@ -196,10 +196,11 @@ assert.ok(releaseStatus.body.completedFeatures.includes("Numerology calculation 
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side auth readiness contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side Clerk JWT verification in observe/enforce modes"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Billing source readiness contract"));
+assert.ok(releaseStatus.body.completedFeatures.includes("External billing read-only guard"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Custom domain readiness contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("AI Platform Core usage event contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("AI Platform Core usage event forwarding"));
-assert.ok(releaseStatus.body.pendingFeatures.includes("Stripe real subscription sync"));
+assert.ok(releaseStatus.body.pendingFeatures.includes("Live Growth Engine or Stripe subscription credential confirmation"));
 assert.ok(releaseStatus.body.pendingFeatures.includes("Clerk enforce-mode production rollout after token header confirmation"));
 assert.equal(releaseStatus.body.checks.auth.statusEndpoint, "/auth/status");
 assert.equal(releaseStatus.body.checks.auth.enforcementMode, "observe");
@@ -228,6 +229,7 @@ assert.equal(billingStatus.body.configured, true);
 assert.equal(billingStatus.body.provider, "growth-engine");
 assert.equal(billingStatus.body.tokenConfigured, true);
 assert.equal(billingStatus.body.timeoutMs, 1500);
+assert.equal(billingStatus.body.mvpPlanSwitchingEnabled, false);
 assert.equal(billingStatus.body.businessPurchasable, false);
 assert.equal(billingStatus.body.secretValuesReturned, false);
 assert.doesNotMatch(JSON.stringify(billingStatus.body), /growth_secret_not_returned/);
@@ -400,6 +402,25 @@ try {
   assert.equal(externalSubscription.body.subscription.planId, "pro");
   assert.equal(externalSubscription.body.subscription.source, "growth-engine");
   assert.equal(externalSubscription.body.subscription.readStatus, "success");
+
+  const externalPlanPatch = await jsonFetch("/api/billing/subscription", {
+    method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+      "x-workspace-id": "billing_ws",
+      "x-user-id": "billing_user",
+    },
+    body: JSON.stringify({ planId: "free" }),
+  }, {
+    ...env,
+    GROWTH_ENGINE_BILLING_STATUS_URL: "https://growth-engine.karukimori.workers.dev/api/billing/status",
+    GROWTH_ENGINE_API_TOKEN: "growth_secret_not_returned",
+  });
+  assert.equal(externalPlanPatch.response.status, 409);
+  assert.equal(externalPlanPatch.body.errorCode, "EXTERNAL_BILLING_SOURCE_READ_ONLY");
+  assert.equal(externalPlanPatch.body.billing.provider, "growth-engine");
+  assert.equal(externalPlanPatch.body.billing.mvpPlanSwitchingEnabled, false);
+  assert.doesNotMatch(JSON.stringify(externalPlanPatch.body), /growth_secret_not_returned/);
 } finally {
   globalThis.fetch = originalFetchForBilling;
 }

@@ -1,7 +1,7 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 
-const APP_VERSION = "0.3.8-integration-readiness";
+const APP_VERSION = "0.3.9-billing-read-only";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
 const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
 const AUTH_CONTRACT_VERSION = "clerk-server-auth-readiness.v1";
@@ -445,6 +445,10 @@ function getBillingFetchTimeoutMs(env = {}) {
   return Number.isFinite(value) && value > 0 ? Math.min(value, 5000) : 1500;
 }
 
+function isMvpPlanSwitchingEnabled(env = {}) {
+  return !getBillingSourceUrl(env) || env.NUMERIA_ENABLE_MVP_PLAN_SWITCHING === "1";
+}
+
 function billingStatusResponse(env = {}) {
   const sourceUrl = getBillingSourceUrl(env);
   const provider = env.GROWTH_ENGINE_BILLING_STATUS_URL || env.VITE_GROWTH_ENGINE_BILLING_STATUS_URL
@@ -464,13 +468,13 @@ function billingStatusResponse(env = {}) {
     sourceOfTruth: sourceUrl ? provider : "pending-external-billing",
     tokenConfigured: Boolean(getBillingSourceToken(env)),
     timeoutMs: getBillingFetchTimeoutMs(env),
-    mvpPlanSwitchingEnabled: true,
+    mvpPlanSwitchingEnabled: isMvpPlanSwitchingEnabled(env),
     supportedPlans: ["free", "pro"],
     businessPurchasable: false,
     failurePolicy: "fallback_to_mvp_subscription",
     secretValuesReturned: false,
     message: sourceUrl
-      ? "外部の契約状態を読み取る準備ができています。"
+      ? "外部の契約状態を読み取る準備ができています。Numeria内のMVPプラン切替は停止します。"
       : "現在はNumeria Worker内のMVP契約状態を表示しています。",
   };
 }
@@ -1183,6 +1187,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
       "Server-side auth readiness contract",
       "Server-side Clerk JWT verification in observe/enforce modes",
       "Billing source readiness contract",
+      "External billing read-only guard",
       "Custom domain readiness contract",
       "Growth Engine reservation handoff receiver",
       "Feedback Hub Free/Pro intake contract",
@@ -1191,7 +1196,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
       "AI Platform Core usage event forwarding",
     ],
     pendingFeatures: [
-      "Stripe real subscription sync",
+      "Live Growth Engine or Stripe subscription credential confirmation",
       "Growth Engine Business plan handoff after Business release",
       "Japanese native PDF typography beyond browser print flow",
       "Clerk enforce-mode production rollout after token header confirmation",
@@ -1866,6 +1871,16 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/billing/subscription" && request.method === "PATCH") {
+    const billing = billingStatusResponse(env);
+    if (!billing.mvpPlanSwitchingEnabled) {
+      return json({
+        status: "error",
+        errorCode: "EXTERNAL_BILLING_SOURCE_READ_ONLY",
+        message: "契約状態は外部の請求元を正として読み取ります。Numeria内ではプランを直接変更できません。",
+        billing,
+      }, { status: 409 });
+    }
+
     const requestedPlanId = normalizePlanId(body.planId);
     if (requestedPlanId === PLAN_IDS.BUSINESS) {
       return json({

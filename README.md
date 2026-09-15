@@ -89,6 +89,7 @@ Optional:
 - `GROWTH_ENGINE_API_TOKEN`
 - `STRIPE_SUBSCRIPTION_STATUS_URL`
 - `BILLING_STATUS_API_TOKEN`
+- `NUMERIA_ENABLE_MVP_PLAN_SWITCHING`
 - `AI_PLATFORM_CORE_BASE_URL`
 - `APC_ACTIVITIES_URL`
 - `APC_API_TOKEN`
@@ -113,6 +114,9 @@ receipt if forwarding fails.
 External release dependencies can be reviewed through `GET /integrations/status`.
 It summarizes Growth Engine, Feedback Hub, AI Platform Core, Clerk, billing, and
 domain readiness for the Free / Pro release without returning secret values.
+
+When Growth Engine or Stripe is configured as the billing source, Numeria reads
+that subscription state and disables direct MVP plan switching by default.
 
 Backend-only Clerk secrets such as `CLERK_SECRET_KEY` must not be committed to this repository.
 

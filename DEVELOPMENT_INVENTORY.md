@@ -2,7 +2,7 @@
 
 Updated: 2026-09-15
 
-Current app version: `0.3.8-integration-readiness`
+Current app version: `0.3.9-billing-read-only`
 
 ## Current Position
 
@@ -32,6 +32,7 @@ The current production target is:
 - Feedback Hub Free/Pro intake contract with non-blocking Worker receipt.
 - External integration readiness inventory for Growth Engine, Feedback Hub, AI Platform Core, Clerk, billing, and domain checks.
 - Billing source readiness contract for Growth Engine or Stripe.
+- External billing read-only guard that disables Numeria MVP plan switching once Growth Engine or Stripe is configured as the subscription source.
 - Custom domain readiness diagnostics for Cloudflare Worker routing.
 - Automated production smoke check for page, release, auth, domain, billing, persistence, AI usage, and APC endpoints.
 - Strict auth release check for Clerk enforce readiness and enforce-mode confirmation.
@@ -60,7 +61,7 @@ The current production target is:
 
 High priority:
 
-- Replace MVP plan switching with live Stripe or Growth Engine subscription fetch.
+- Confirm live Growth Engine or Stripe subscription fetch against production credentials and keep Numeria plan changes read-only when configured.
 - Confirm Clerk enforce-mode rollout in production after token header behavior is verified, then run `verify:auth-release`.
 - Configure Feedback Hub submit URL and confirm receipt correlation IDs in the external hub.
 

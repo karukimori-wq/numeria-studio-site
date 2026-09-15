@@ -1,6 +1,6 @@
 # Numeria Studio Billing Integration Contract
 
-Updated: 2026-09-13
+Updated: 2026-09-15
 
 ## Purpose
 
@@ -10,6 +10,8 @@ state until Growth Engine or Stripe subscription status is available.
 
 When an external billing source is configured, Numeria reads the subscription
 state and applies the returned `planId` to entitlement checks.
+At that point, Numeria's MVP plan switching endpoint becomes read-only by
+default so Growth Engine or Stripe remains the subscription source of truth.
 
 ## Runtime Configuration
 
@@ -29,6 +31,8 @@ Safety:
 - External billing fetch timeout defaults to `1500ms`.
 - `BILLING_STATUS_TIMEOUT_MS` may tune the timeout up to `5000ms`.
 - Fetch failures fall back to the Numeria Worker MVP subscription state.
+- `NUMERIA_ENABLE_MVP_PLAN_SWITCHING=1` can temporarily allow local or test plan
+  switching even when an external billing URL is configured.
 
 ## Numeria Status Endpoint
 
@@ -49,7 +53,7 @@ Example:
   "sourceOfTruth": "growth-engine",
   "tokenConfigured": true,
   "timeoutMs": 1500,
-  "mvpPlanSwitchingEnabled": true,
+  "mvpPlanSwitchingEnabled": false,
   "supportedPlans": ["free", "pro"],
   "businessPurchasable": false,
   "failurePolicy": "fallback_to_mvp_subscription",
@@ -103,3 +107,10 @@ Accepted aliases:
 
 Business remains unavailable for purchase in Numeria Studio during the Free / Pro
 release.
+
+## Plan Mutation Behavior
+
+`PATCH /api/billing/subscription` is kept for MVP and local verification.
+When Growth Engine or Stripe is configured as the billing source, the endpoint
+returns `409 EXTERNAL_BILLING_SOURCE_READ_ONLY` unless
+`NUMERIA_ENABLE_MVP_PLAN_SWITCHING=1` is explicitly set.
