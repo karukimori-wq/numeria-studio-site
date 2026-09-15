@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 const DEFAULT_PRODUCTION_URL = "https://numeria-studio-site.karukimori.workers.dev";
 const rawBaseUrl = process.argv[2] || process.env.NUMERIA_PRODUCTION_URL || process.env.PRODUCTION_URL || DEFAULT_PRODUCTION_URL;
 const baseUrl = rawBaseUrl.replace(/\/+$/, "");
+const requireClerkEnforceReady = process.env.REQUIRE_CLERK_ENFORCE_READY === "1";
+const requireAuthEnforceMode = process.env.REQUIRE_AUTH_ENFORCE_MODE === "1";
 
 const jsonEndpoints = [
   "/health",
@@ -89,9 +91,26 @@ const domain = results.get("/domain/status");
 assert.ok(["custom-domain", "worker-host", "unknown-host"].includes(domain.currentRoute), "Domain status should report the route class");
 assert.equal(domain.secretValuesReturned, false, "Domain status must not expose secrets");
 
+const auth = results.get("/auth/status");
+assert.equal(auth.authProvider, "clerk", "Auth status should identify Clerk");
+assert.equal(auth.secretValuesReturned, false, "Auth status must not expose secrets");
+assert.ok(auth.enforceModeRollout, "Auth status should include enforce rollout details");
+assert.equal(auth.enforceModeRollout.targetMode, "enforce", "Auth rollout should target enforce mode");
+assert.ok(Array.isArray(auth.enforceModeRollout.requiredRuntimeConfig), "Auth rollout should list required runtime config");
+assert.ok(Array.isArray(auth.enforceModeRollout.blockers), "Auth rollout should list blockers");
+if (requireClerkEnforceReady) {
+  assert.equal(auth.enforceModeReady, true, "Clerk enforce readiness is required");
+  assert.equal(auth.enforceModeRollout.ready, true, "Clerk enforce rollout should be ready");
+}
+if (requireAuthEnforceMode) {
+  assert.equal(auth.enforcementMode, "enforce", "Auth enforcement mode should be enforce");
+}
+
 const release = results.get("/release/status");
 assert.equal(release.releaseScope, "free-pro", "Release scope should stay Free / Pro");
 assert.equal(release.checks?.businessPurchasable, false, "Release status must keep Business unavailable");
+assert.equal(release.checks?.auth?.authProvider, "clerk", "Release auth check should identify Clerk");
+assert.ok(release.checks?.auth?.enforceModeRollout, "Release auth check should include enforce rollout");
 assert.equal(release.checks?.billing?.secretValuesReturned, false, "Release billing check must not expose secrets");
 assert.equal(release.checks?.domain?.secretValuesReturned, false, "Release domain check must not expose secrets");
 

@@ -886,6 +886,60 @@ h2 {
   line-height: 1.5;
 }
 
+.release-action-panel {
+  display: grid;
+  gap: 12px;
+  border: 1px solid #ded0bd;
+  border-radius: 8px;
+  padding: 14px;
+  background: #fffaf0;
+}
+
+.release-action-panel h3 {
+  margin: 0;
+  color: #241a3d;
+}
+
+.release-action-list {
+  display: grid;
+  gap: 8px;
+}
+
+.release-action-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  border-top: 1px solid #eadfce;
+  padding-top: 10px;
+}
+
+.release-action-item strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #241a3d;
+  font-size: 0.95rem;
+}
+
+.release-action-item small {
+  display: block;
+  overflow-wrap: anywhere;
+  color: #6a6259;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.release-action-item span {
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: #513912;
+  background: #f2dfba;
+  font-size: 0.74rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
 .release-detail-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

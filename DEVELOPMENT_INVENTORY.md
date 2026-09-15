@@ -33,9 +33,10 @@ The current production target is:
 - Billing source readiness contract for Growth Engine or Stripe.
 - Custom domain readiness diagnostics for Cloudflare Worker routing.
 - Automated production smoke check for page, release, auth, domain, billing, persistence, AI usage, and APC endpoints.
+- Strict auth release check for Clerk enforce readiness and enforce-mode confirmation.
 - AI Platform Core usage event contract.
 - AI Platform Core activity forwarding for official studio events.
-- Admin preview panel with release and external-integration health.
+- Admin preview panel with release, external-integration health, and release action inventory.
 
 ## Release Monitoring Endpoints
 
@@ -55,7 +56,7 @@ The current production target is:
 High priority:
 
 - Replace MVP plan switching with live Stripe or Growth Engine subscription fetch.
-- Confirm Clerk enforce-mode rollout in production after token header behavior is verified.
+- Confirm Clerk enforce-mode rollout in production after token header behavior is verified, then run `verify:auth-release`.
 
 Medium priority:
 

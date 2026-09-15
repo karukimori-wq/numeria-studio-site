@@ -47,6 +47,8 @@ Frontend-safe:
 Backend-only:
 
 - `CLERK_SECRET_KEY`
+- `CLERK_JWKS_URL` or a Clerk publishable key that can resolve JWKS
+- `AUTH_ENFORCEMENT_MODE=enforce` for the final protected API cutover
 - `CLERK_WEBHOOK_SIGNING_SECRET`
 
 Do not commit backend-only values to GitHub.
@@ -117,9 +119,14 @@ The recommended path is option 2 if the original source cannot be recovered.
 - [x] Add Feedback Hub question/improvement UI behind sign-in.
 - [x] Add setup screen when `VITE_CLERK_PUBLISHABLE_KEY` is not configured.
 - [x] Add Clerk publishable key to frontend build configuration.
+- [x] Add `/auth/status` enforce-mode readiness diagnostics.
+- [x] Add strict production auth release check: `npm run verify:auth-release`.
 - [ ] Add Cloudflare production domain to Clerk.
 - [ ] Choose sign-in methods.
 - [ ] Add Clerk secret key only to protected backend/Worker secrets.
+- [ ] Verify `/auth/status` shows `enforceModeReady: true` on production.
+- [ ] Verify signed-in production API traffic, then set `AUTH_ENFORCEMENT_MODE=enforce`.
+- [ ] Run `NUMERIA_PRODUCTION_URL=https://numeria-studio.com npm run verify:auth-release`.
 - [ ] Make `illusionddt@gmail.com` admin through server-controlled metadata or database row for protected admin operations.
 - [ ] Verify sign-up, sign-in, logout, session restore, and admin access on Cloudflare.
 

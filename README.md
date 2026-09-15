@@ -153,8 +153,10 @@ Production smoke check:
 
 - `npm run verify:production`
 - `NUMERIA_PRODUCTION_URL=https://numeria-studio.com npm run verify:production`
+- `NUMERIA_PRODUCTION_URL=https://numeria-studio.com npm run verify:auth-release`
 
 The production check verifies the page, release contracts, auth, domain, billing, persistence, AI usage, and APC status endpoints without expecting secrets to be returned.
+The auth release check uses the same endpoint set but requires Clerk enforce readiness and `AUTH_ENFORCEMENT_MODE=enforce`, so run it after signed-in production API traffic has been verified.
 
 PDF reports:
 

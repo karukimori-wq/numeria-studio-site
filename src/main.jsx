@@ -935,6 +935,29 @@ function AdminPreviewPanel({ releaseStatus }) {
       detail: "外部送信に失敗しても鑑定フローは止めません。",
     },
   ];
+  const releaseActionItems = [
+    {
+      label: "Clerk enforce切替",
+      status: authEnforceReady ? "本番ログイン検証へ" : "設定確認待ち",
+      body: authEnforceReady
+        ? "署名済みユーザーで主要APIを確認したあと、AUTH_ENFORCEMENT_MODE=enforceへ切り替えます。"
+        : (auth.enforceModeRollout?.blockers || []).join(" / ") || "Clerk公開キーとJWKS URLの両方を確認します。",
+    },
+    {
+      label: "契約同期",
+      status: billingConfigured ? "外部正本へ接続済み" : "Growth Engine/Stripe待ち",
+      body: billingConfigured
+        ? "Free/Proの権限は外部契約APIの応答で上書きできます。"
+        : "本番課金の正本URLと読み取りトークンを設定するまで、MVP契約状態を使います。",
+    },
+    {
+      label: "独自ドメイン",
+      status: customDomainReady ? "到達OK" : "経路確認待ち",
+      body: customDomainReady
+        ? `${domain.expectedCustomDomain || "numeria-studio.com"} からWorkerへ到達しています。`
+        : `${domain.expectedCustomDomain || "numeria-studio.com"} とWorker routeの接続確認を続けます。`,
+    },
+  ];
   const releaseGroups = [
     ["追加できた機能", releaseStatus?.completedFeatures || []],
     ["未追加の機能", releaseStatus?.pendingFeatures || []],
@@ -970,6 +993,23 @@ function AdminPreviewPanel({ releaseStatus }) {
           </article>
         ))}
       </div>
+      <section className="release-action-panel" aria-label="リリース前アクション">
+        <div>
+          <p className="eyebrow">Release Actions</p>
+          <h3>次に確認すること</h3>
+        </div>
+        <div className="release-action-list">
+          {releaseActionItems.map((item) => (
+            <article className="release-action-item" key={item.label}>
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.body}</small>
+              </div>
+              <span>{item.status}</span>
+            </article>
+          ))}
+        </div>
+      </section>
       <div className="release-detail-grid">
         {releaseGroups.map(([title, items]) => (
           <section className="release-detail-card" key={title}>
