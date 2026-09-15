@@ -74,6 +74,17 @@ async function verifyJson(path) {
   return data;
 }
 
+async function verifyJsonCondition(path, predicate, message, attempts = 8) {
+  let latest;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    latest = await verifyJson(path);
+    if (predicate(latest)) return latest;
+    await new Promise((resolve) => setTimeout(resolve, 1500 * attempt));
+  }
+  assert.ok(predicate(latest), message);
+  return latest;
+}
+
 await verifyHtml("/");
 await verifyHtml("/index.html");
 
@@ -125,24 +136,40 @@ if (requireAuthEnforceMode) {
 }
 
 const release = results.get("/release/status");
-assert.equal(release.releaseScope, "free-pro", "Release scope should stay Free / Pro");
-assert.equal(release.checks?.businessPurchasable, false, "Release status must keep Business unavailable");
-assert.equal(release.checks?.auth?.authProvider, "clerk", "Release auth check should identify Clerk");
-assert.ok(release.checks?.auth?.enforceModeRollout, "Release auth check should include enforce rollout");
-assert.equal(release.checks?.growthEngineHandoff?.receiverReady, true, "Release status should include Growth Engine handoff readiness");
-assert.equal(release.checks?.growthEngineHandoff?.businessPurchasable, false, "Release Growth handoff must keep Business unavailable");
-assert.equal(release.checks?.feedbackHub?.businessRequired, false, "Release Feedback Hub check must not require Business");
-assert.equal(release.checks?.feedbackHub?.billingBlocked, false, "Release Feedback Hub check must not be billing-blocked");
-assert.equal(release.checks?.billing?.secretValuesReturned, false, "Release billing check must not expose secrets");
-assert.equal(release.checks?.domain?.secretValuesReturned, false, "Release domain check must not expose secrets");
+if (!release.checks?.feedbackHub) {
+  results.set("/release/status", await verifyJsonCondition(
+    "/release/status",
+    (data) => Boolean(data.checks?.feedbackHub),
+    "Release status should include Feedback Hub readiness after deployment propagation",
+  ));
+}
+const readyRelease = results.get("/release/status");
+assert.equal(readyRelease.releaseScope, "free-pro", "Release scope should stay Free / Pro");
+assert.equal(readyRelease.checks?.businessPurchasable, false, "Release status must keep Business unavailable");
+assert.equal(readyRelease.checks?.auth?.authProvider, "clerk", "Release auth check should identify Clerk");
+assert.ok(readyRelease.checks?.auth?.enforceModeRollout, "Release auth check should include enforce rollout");
+assert.equal(readyRelease.checks?.growthEngineHandoff?.receiverReady, true, "Release status should include Growth Engine handoff readiness");
+assert.equal(readyRelease.checks?.growthEngineHandoff?.businessPurchasable, false, "Release Growth handoff must keep Business unavailable");
+assert.equal(readyRelease.checks?.feedbackHub?.businessRequired, false, "Release Feedback Hub check must not require Business");
+assert.equal(readyRelease.checks?.feedbackHub?.billingBlocked, false, "Release Feedback Hub check must not be billing-blocked");
+assert.equal(readyRelease.checks?.billing?.secretValuesReturned, false, "Release billing check must not expose secrets");
+assert.equal(readyRelease.checks?.domain?.secretValuesReturned, false, "Release domain check must not expose secrets");
 
 const contracts = results.get("/contracts/status");
-assert.equal(contracts.plans?.business?.purchasable, false, "Contracts status must keep Business unavailable");
-assert.equal(contracts.integrations?.growthEngineHandoff?.receiverReady, true, "Contracts status should include Growth Engine handoff readiness");
-assert.equal(contracts.integrations?.growthEngineHandoff?.queryIdentityTrustedForAuthorization, false, "Contracts Growth handoff must not trust query identity");
-assert.equal(contracts.integrations?.feedbackHub?.feedbackHubContractVersion, "feedback-hub-free-pro-intake.v1", "Contracts status should include Feedback Hub readiness");
-assert.equal(contracts.integrations?.feedbackHub?.businessRequired, false, "Contracts Feedback Hub must not require Business");
-assert.equal(contracts.billing?.secretValuesReturned, false, "Contracts billing check must not expose secrets");
-assert.equal(contracts.domain?.secretValuesReturned, false, "Contracts domain check must not expose secrets");
+if (!contracts.integrations?.feedbackHub) {
+  results.set("/contracts/status", await verifyJsonCondition(
+    "/contracts/status",
+    (data) => Boolean(data.integrations?.feedbackHub),
+    "Contracts status should include Feedback Hub readiness after deployment propagation",
+  ));
+}
+const readyContracts = results.get("/contracts/status");
+assert.equal(readyContracts.plans?.business?.purchasable, false, "Contracts status must keep Business unavailable");
+assert.equal(readyContracts.integrations?.growthEngineHandoff?.receiverReady, true, "Contracts status should include Growth Engine handoff readiness");
+assert.equal(readyContracts.integrations?.growthEngineHandoff?.queryIdentityTrustedForAuthorization, false, "Contracts Growth handoff must not trust query identity");
+assert.equal(readyContracts.integrations?.feedbackHub?.feedbackHubContractVersion, "feedback-hub-free-pro-intake.v1", "Contracts status should include Feedback Hub readiness");
+assert.equal(readyContracts.integrations?.feedbackHub?.businessRequired, false, "Contracts Feedback Hub must not require Business");
+assert.equal(readyContracts.billing?.secretValuesReturned, false, "Contracts billing check must not expose secrets");
+assert.equal(readyContracts.domain?.secretValuesReturned, false, "Contracts domain check must not expose secrets");
 
 console.log(`Production readiness verified at ${baseUrl}`);
