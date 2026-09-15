@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ClerkProvider,
@@ -33,6 +33,7 @@ import {
   getPlanPrice,
   isUnlimited,
 } from "./plan-config.js";
+import { parseGrowthEngineHandoff, toGrowthEngineExternalReferences } from "./growth-handoff.js";
 import "./styles.css";
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -180,6 +181,12 @@ function SignedInWorkspace() {
   const workspaceId = user?.organizationMemberships?.[0]?.organization?.id || "ws_personal";
   const userId = user?.id || "unknown";
   const scope = useMemo(() => ({ workspaceId, userId }), [workspaceId, userId]);
+  const growthEngineHandoff = useMemo(() => parseGrowthEngineHandoff(window.location), []);
+  const growthEngineExternalReferences = useMemo(
+    () => toGrowthEngineExternalReferences(growthEngineHandoff),
+    [growthEngineHandoff]
+  );
+  const growthHandoffStartedRef = useRef(false);
   const [usage, setUsage] = useState(createUsageSnapshot());
   const [notice, setNotice] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -194,7 +201,7 @@ function SignedInWorkspace() {
   });
   const [clientProfileName, setClientProfileName] = useState("");
 
-  function createEmptyCase() {
+  function createEmptyCase({ includeGrowthHandoff = true } = {}) {
     return {
       id: `case_${Date.now()}`,
       clientName: "",
@@ -202,6 +209,7 @@ function SignedInWorkspace() {
       question: "",
       notes: "",
       resultSummary: "",
+      externalReferences: includeGrowthHandoff ? growthEngineExternalReferences : null,
     };
   }
 
@@ -346,19 +354,35 @@ function SignedInWorkspace() {
     }));
   }, [usage.activeDraft]);
 
+  useEffect(() => {
+    if (!growthEngineExternalReferences || growthHandoffStartedRef.current || loading) return;
+    growthHandoffStartedRef.current = true;
+    if (usage.activeDraft) {
+      setNotice({
+        type: "warning",
+        title: "Growth Engineの予約を受け取りました",
+        body: "未完了の鑑定があるため自動開始していません。現在の案件を完成してから予約を開き直してください。",
+      });
+      return;
+    }
+    startSession();
+  }, [growthEngineExternalReferences, loading, usage.activeDraft]);
+
   async function startSession() {
     try {
       const nextCase = createEmptyCase();
       setCurrentCase(nextCase);
       const response = await authedApiRequest("/api/sessions/start", {
         method: "POST",
-        body: { sessionId: nextCase.id },
+        body: { sessionId: nextCase.id, ...(nextCase.externalReferences || {}) },
       });
       setUsage(response.usage);
       setNotice({
         type: "success",
         title: "鑑定セッションを開始しました",
-        body: "この時点では月20件の鑑定数にも未完了案件数にも加算されません。途中保存した時点で未完了1案件として扱います。",
+        body: nextCase.externalReferences
+          ? `Growth Engineの予約 ${nextCase.externalReferences.reservationId} を参照して鑑定を開始しました。途中保存した時点で未完了1案件として扱います。`
+          : "この時点では月20件の鑑定数にも未完了案件数にも加算されません。途中保存した時点で未完了1案件として扱います。",
       });
     } catch (error) {
       setNotice(limitNotice(error.data));
@@ -369,7 +393,7 @@ function SignedInWorkspace() {
   async function startFollowUpFromHistory(appraisal) {
     try {
       const nextCase = {
-        ...createEmptyCase(),
+        ...createEmptyCase({ includeGrowthHandoff: false }),
         clientName: appraisal.clientName || "",
         birthDate: appraisal.birthDate || "",
       };
@@ -415,7 +439,7 @@ function SignedInWorkspace() {
         body: currentCase,
       });
       setUsage(response.usage);
-      setCurrentCase(createEmptyCase());
+      setCurrentCase(createEmptyCase({ includeGrowthHandoff: false }));
       setNotice({
         type: "success",
         title: "鑑定を完成として記録しました",

@@ -1,4 +1,5 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
+import { normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 
 const APP_VERSION = "0.3.6-report-template";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
@@ -1603,6 +1604,7 @@ async function handleApi(request, env = {}, ctx = null) {
 
   if (url.pathname === "/api/sessions/start" && request.method === "POST") {
     const sessionId = body.sessionId || `ses_${Date.now()}`;
+    const externalReferences = normalizeGrowthEngineExternalReferences(body);
     await saveUsageRecord(env, workspaceId, userId, record);
     const usage = usageResponse(effectiveRecord);
     const correlationId = body.correlationId || createCorrelationId("session");
@@ -1615,6 +1617,7 @@ async function handleApi(request, env = {}, ctx = null) {
       correlationId,
       metadata: {
         sessionId,
+        externalReferences,
         countPolicy: "completion-button-only",
         draftPolicy: "not-counted-until-draft-save",
       },
@@ -1625,6 +1628,7 @@ async function handleApi(request, env = {}, ctx = null) {
       sessionStatus: "started",
       eventName: "studio.session.started.v1",
       correlationId,
+      externalReferences,
       countPolicy: "completion-button-only",
       draftPolicy: "not-counted-until-draft-save",
       usage,
@@ -1650,6 +1654,7 @@ async function handleApi(request, env = {}, ctx = null) {
       question: String(body.question || currentDraft?.question || "").trim(),
       notes: String(body.notes || currentDraft?.notes || "").trim(),
       resultSummary: String(body.resultSummary || currentDraft?.resultSummary || "").trim(),
+      externalReferences: normalizeGrowthEngineExternalReferences(body) || currentDraft?.externalReferences || null,
       updatedAt: new Date().toISOString(),
     };
     record.inProgressAppraisals = record.activeDraft ? 1 : 0;
@@ -1689,6 +1694,7 @@ async function handleApi(request, env = {}, ctx = null) {
       question: String(body.question || currentDraft?.question || "").trim(),
       notes: String(body.notes || currentDraft?.notes || "").trim(),
       resultSummary: String(body.resultSummary || currentDraft?.resultSummary || "").trim(),
+      externalReferences: normalizeGrowthEngineExternalReferences(body) || currentDraft?.externalReferences || null,
       completedAt,
     };
     record.monthlyAppraisals += 1;
