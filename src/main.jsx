@@ -33,6 +33,7 @@ import {
   getPlanPrice,
   isUnlimited,
 } from "./plan-config.js";
+import { parseGrowthEngineHandoff, toGrowthEngineExternalReferences } from "./growth-handoff.js";
 import "./styles.css";
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -180,6 +181,11 @@ function SignedInWorkspace() {
   const workspaceId = user?.organizationMemberships?.[0]?.organization?.id || "ws_personal";
   const userId = user?.id || "unknown";
   const scope = useMemo(() => ({ workspaceId, userId }), [workspaceId, userId]);
+  const growthEngineHandoff = useMemo(() => parseGrowthEngineHandoff(window.location), []);
+  const growthEngineExternalReferences = useMemo(
+    () => toGrowthEngineExternalReferences(growthEngineHandoff),
+    [growthEngineHandoff]
+  );
   const [usage, setUsage] = useState(createUsageSnapshot());
   const [notice, setNotice] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -194,7 +200,7 @@ function SignedInWorkspace() {
   });
   const [clientProfileName, setClientProfileName] = useState("");
 
-  function createEmptyCase() {
+  function createEmptyCase({ includeGrowthHandoff = true } = {}) {
     return {
       id: `case_${Date.now()}`,
       clientName: "",
@@ -202,6 +208,7 @@ function SignedInWorkspace() {
       question: "",
       notes: "",
       resultSummary: "",
+      externalReferences: includeGrowthHandoff ? growthEngineExternalReferences : null,
     };
   }
 
@@ -352,7 +359,7 @@ function SignedInWorkspace() {
       setCurrentCase(nextCase);
       const response = await authedApiRequest("/api/sessions/start", {
         method: "POST",
-        body: { sessionId: nextCase.id },
+        body: { sessionId: nextCase.id, ...(nextCase.externalReferences || {}) },
       });
       setUsage(response.usage);
       setNotice({
@@ -369,7 +376,7 @@ function SignedInWorkspace() {
   async function startFollowUpFromHistory(appraisal) {
     try {
       const nextCase = {
-        ...createEmptyCase(),
+        ...createEmptyCase({ includeGrowthHandoff: false }),
         clientName: appraisal.clientName || "",
         birthDate: appraisal.birthDate || "",
       };
@@ -415,7 +422,7 @@ function SignedInWorkspace() {
         body: currentCase,
       });
       setUsage(response.usage);
-      setCurrentCase(createEmptyCase());
+      setCurrentCase(createEmptyCase({ includeGrowthHandoff: false }));
       setNotice({
         type: "success",
         title: "鑑定を完成として記録しました",
