@@ -15,7 +15,7 @@ env:
   PRODUCTION_URL: https://numeria-studio-site.karukimori.workers.dev
   NUMERIA_PRODUCTION_URL: https://numeria-studio-site.karukimori.workers.dev
   VITE_CLERK_APPLICATION_ID: app_3ImOuQXNBc9Rpqs3XoJEtw2NogR
-  VITE_APP_VERSION: 0.3.5-domain-readiness
+  VITE_APP_VERSION: 0.3.6-report-template
   VITE_ADMIN_EMAILS: illusionddt@gmail.com
   VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY || secrets.VITE_CLERK_PUBLISHABLE_KEY }}
   VITE_FEEDBACK_HUB_BASE_URL: ${{ vars.VITE_FEEDBACK_HUB_BASE_URL || secrets.VITE_FEEDBACK_HUB_BASE_URL }}

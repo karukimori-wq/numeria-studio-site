@@ -2,7 +2,7 @@
 
 Updated: 2026-09-14
 
-Current app version: `0.3.5-domain-readiness`
+Current app version: `0.3.6-report-template`
 
 ## Current Position
 
@@ -28,7 +28,7 @@ The current production target is:
 - Appraisal history grouped by client.
 - Appraisal history search.
 - Follow-up start from visible appraisal history.
-- Basic PDF export and Japanese print-to-PDF flow.
+- Structured one-page PDF export and Japanese print-to-PDF flow.
 - Feedback Hub payload preparation.
 - Billing source readiness contract for Growth Engine or Stripe.
 - Custom domain readiness diagnostics for Cloudflare Worker routing.
@@ -59,7 +59,7 @@ High priority:
 
 Medium priority:
 
-- Improve production-grade PDF template rendering.
+- Improve native Japanese PDF typography beyond the current browser print flow.
 - Prepare Growth Engine Business handoff without making Business purchasable.
 - Keep documentation aligned with Free / Pro entitlement changes.
 

@@ -1,6 +1,6 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 
-const APP_VERSION = "0.3.5-domain-readiness";
+const APP_VERSION = "0.3.6-report-template";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
 const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
 const AUTH_CONTRACT_VERSION = "clerk-server-auth-readiness.v1";
@@ -8,6 +8,7 @@ const BILLING_CONTRACT_VERSION = "growth-engine-stripe-subscription-readiness.v1
 const DOMAIN_CONTRACT_VERSION = "cloudflare-custom-domain-readiness.v1";
 const AI_USAGE_CONTRACT_VERSION = "ai-platform-core-usage-events.v1";
 const APC_CONTRACT_VERSION = "ai-platform-core-activity-forwarding.v1";
+const REPORT_TEMPLATE_VERSION = "numeria-report-template.v1";
 
 const runtimeStore = globalThis.__numeriaUsageStore || new Map();
 globalThis.__numeriaUsageStore = runtimeStore;
@@ -640,11 +641,50 @@ function escapePdfText(value) {
     .replace(/\)/g, "\\)");
 }
 
+function wrapPdfText(value, maxLineLength = 72, maxLines = 3) {
+  const words = asciiPdfText(value, "Not provided").split(" ");
+  const lines = [];
+  let currentLine = "";
+  for (const word of words) {
+    const nextLine = currentLine ? `${currentLine} ${word}` : word;
+    if (nextLine.length <= maxLineLength) {
+      currentLine = nextLine;
+      continue;
+    }
+    if (currentLine) lines.push(currentLine);
+    currentLine = word;
+    if (lines.length >= maxLines) break;
+  }
+  if (currentLine && lines.length < maxLines) lines.push(currentLine);
+  if (words.join(" ").length > lines.join(" ").length && lines.length) {
+    lines[lines.length - 1] = `${lines[lines.length - 1].replace(/\.*$/, "")}...`;
+  }
+  return lines.length ? lines : ["Not provided"];
+}
+
+function pdfTextLine({ x = 54, y, size = 10, color = "0.12 0.10 0.17", text }) {
+  return `${color} rg BT /F1 ${size} Tf ${x} ${y} Td (${escapePdfText(text)}) Tj ET`;
+}
+
+function pdfWrappedLines({ x = 54, y, size = 10, color = "0.12 0.10 0.17", text, maxLineLength = 72, maxLines = 3, lineGap = 15 }) {
+  return wrapPdfText(text, maxLineLength, maxLines)
+    .map((line, index) => pdfTextLine({ x, y: y - (index * lineGap), size, color, text: line }));
+}
+
+function pdfSection({ y, label, text, maxLines = 3 }) {
+  return [
+    `q 0.86 0.79 0.55 RG 54 ${y + 18} 504 1 re f Q`,
+    pdfTextLine({ x: 54, y, size: 11, color: "0.48 0.38 0.16", text: label.toUpperCase() }),
+    ...pdfWrappedLines({ x: 54, y: y - 22, size: 11, text, maxLines, maxLineLength: 76, lineGap: 16 }),
+  ];
+}
+
 function createReportSnapshot({ exportId, reportType, branding, body = {} }) {
   return {
     exportId,
     reportType,
     branding,
+    templateVersion: REPORT_TEMPLATE_VERSION,
     clientName: String(body.clientName || "未設定").trim(),
     birthDate: String(body.birthDate || "").trim(),
     lifePathNumber: body.lifePathNumber || null,
@@ -655,38 +695,34 @@ function createReportSnapshot({ exportId, reportType, branding, body = {} }) {
 }
 
 function createReportPdfBase64({ exportId, reportType, branding, body = {} }) {
-  const title = reportType === "detailed" ? "Numeria Studio Detailed Report" : "Numeria Studio Basic Report";
-  const lines = [
-    title,
-    branding === "hidden" ? "Branding: Hidden" : "Branding: Numeria Studio",
-    `Export ID: ${exportId}`,
-    `Client: ${asciiPdfText(body.clientName)}`,
-    `Birth Date: ${asciiPdfText(body.birthDate, "Not provided")}`,
-    `Life Path: ${asciiPdfText(body.lifePathNumber ? `LP${body.lifePathNumber}` : "", "Not calculated")}`,
-    `Question: ${asciiPdfText(body.question, "No question provided")}`,
-    `Result: ${asciiPdfText(body.resultSummary, "No result summary provided")}`,
-    reportType === "detailed"
-      ? `Notes: ${asciiPdfText(body.notes, "No notes provided")}`
-      : "Report Type: Basic",
-  ];
+  const isDetailed = reportType === "detailed";
+  const title = isDetailed ? "Detailed Appraisal Report" : "Basic Appraisal Report";
+  const subtitle = branding === "hidden" ? "Prepared without Numeria branding" : "Prepared by Numeria Studio";
+  const lifePath = body.lifePathNumber ? `Life Path ${body.lifePathNumber}` : "Life Path not calculated";
+  const nextStep = isDetailed
+    ? "Use the notes section to shape the final wording, delivery timing, and follow-up proposal."
+    : "Share the basic result first, then upgrade to Pro when a detailed paid report is needed.";
   const contentLines = [
-    "q 0.12 0.09 0.20 rg 0 742 612 50 re f Q",
-    "q 0.73 0.58 0.20 RG 54 728 504 1 re f Q",
-    "1 1 1 rg",
-    `BT /F1 20 Tf 54 760 Td (${escapePdfText(lines[0])}) Tj ET`,
-    "0.08 0.07 0.12 rg",
-    `BT /F1 11 Tf 54 714 Td (${escapePdfText(lines[1])}) Tj ET`,
-    `BT /F1 9 Tf 420 714 Td (${escapePdfText(lines[2])}) Tj ET`,
-    "q 0.73 0.58 0.20 RG 54 684 504 1 re f Q",
-    "BT /F1 14 Tf 54 660 Td (Report Details) Tj ET",
-    `BT /F1 12 Tf 54 620 Td (${escapePdfText(lines[3])}) Tj ET`,
-    `BT /F1 12 Tf 54 585 Td (${escapePdfText(lines[4])}) Tj ET`,
-    `BT /F1 12 Tf 54 550 Td (${escapePdfText(lines[5])}) Tj ET`,
-    "q 0.85 0.83 0.88 RG 54 522 504 1 re f Q",
-    `BT /F1 12 Tf 54 485 Td (${escapePdfText(lines[6])}) Tj ET`,
-    `BT /F1 12 Tf 54 435 Td (${escapePdfText(lines[7])}) Tj ET`,
-    "q 0.85 0.83 0.88 RG 54 405 504 1 re f Q",
-    `BT /F1 9 Tf 54 52 Td (${escapePdfText(lines[8])}) Tj ET`,
+    "q 0.10 0.08 0.16 rg 0 0 612 792 re f Q",
+    "q 0.96 0.94 0.90 rg 28 28 556 736 re f Q",
+    "q 0.14 0.10 0.22 rg 28 674 556 90 re f Q",
+    "q 0.74 0.59 0.22 rg 52 674 3 90 re f Q",
+    pdfTextLine({ x: 54, y: 730, size: 22, color: "1 1 1", text: `Numeria Studio ${title}` }),
+    pdfTextLine({ x: 54, y: 704, size: 10, color: "0.86 0.79 0.55", text: subtitle }),
+    pdfTextLine({ x: 420, y: 704, size: 8, color: "0.86 0.79 0.55", text: `Export ${exportId}` }),
+    "q 1 1 1 rg 54 604 504 42 re f Q",
+    pdfTextLine({ x: 68, y: 630, size: 12, color: "0.48 0.38 0.16", text: asciiPdfText(body.clientName, "Client not set") }),
+    pdfTextLine({ x: 270, y: 630, size: 11, color: "0.12 0.10 0.17", text: asciiPdfText(body.birthDate, "Birth date not set") }),
+    pdfTextLine({ x: 420, y: 630, size: 11, color: "0.12 0.10 0.17", text: lifePath }),
+    pdfTextLine({ x: 68, y: 614, size: 8, color: "0.47 0.44 0.51", text: "CLIENT" }),
+    pdfTextLine({ x: 270, y: 614, size: 8, color: "0.47 0.44 0.51", text: "BIRTH DATE" }),
+    pdfTextLine({ x: 420, y: 614, size: 8, color: "0.47 0.44 0.51", text: "NUMEROLOGY" }),
+    ...pdfSection({ y: 566, label: "Consultation Question", text: body.question, maxLines: 3 }),
+    ...pdfSection({ y: 446, label: "Appraisal Summary", text: body.resultSummary, maxLines: isDetailed ? 5 : 4 }),
+    ...pdfSection({ y: 286, label: isDetailed ? "Detailed Notes" : "Recommended Next Step", text: isDetailed ? body.notes : nextStep, maxLines: isDetailed ? 4 : 2 }),
+    "q 0.14 0.10 0.22 rg 28 28 556 38 re f Q",
+    pdfTextLine({ x: 54, y: 44, size: 8, color: "0.86 0.79 0.55", text: `${REPORT_TEMPLATE_VERSION} / ${reportType} / ${branding}` }),
+    pdfTextLine({ x: 396, y: 44, size: 8, color: "0.86 0.79 0.55", text: "Generated by Numeria Studio" }),
   ].join("\n");
   const stream = `${contentLines}\n`;
   const objects = [
@@ -810,6 +846,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
       "Numerology calculation preview while writing appraisals",
       "Feedback Hub embed payload",
       "Admin preview menus for unreleased features",
+      "Structured PDF report template",
       "Server-side auth readiness contract",
       "Server-side Clerk JWT verification in observe/enforce modes",
       "Billing source readiness contract",
@@ -820,7 +857,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
     pendingFeatures: [
       "Stripe real subscription sync",
       "Growth Engine Business handoff",
-      "Production-grade PDF template rendering",
+      "Japanese native PDF typography beyond browser print flow",
       "Clerk enforce-mode production rollout after token header confirmation",
     ],
     deferredFeatures: [
@@ -1032,6 +1069,11 @@ async function contractsStatusResponse(env = {}) {
       sessionStarted: "studio.session.started.v1",
       sessionCompleted: "studio.session.completed.v1",
       reportGenerated: "studio.report.generated.v1",
+    },
+    reports: {
+      templateVersion: REPORT_TEMPLATE_VERSION,
+      workerPdf: "structured-one-page-pdf",
+      japanesePrintFlow: "browser-print-to-pdf",
     },
     billing: {
       statusEndpoint: "/billing/status",
@@ -1804,6 +1846,7 @@ async function handleApi(request, env = {}, ctx = null) {
       downloadUrl: `data:application/pdf;base64,${pdfBase64}`,
       downloadPolicy: "inline-pdf-data-url-mvp",
       reportSnapshot,
+      reportTemplateVersion: REPORT_TEMPLATE_VERSION,
       aiUsageEvent: {
         eventId: aiUsageEvent.eventId,
         eventName: aiUsageEvent.eventName,

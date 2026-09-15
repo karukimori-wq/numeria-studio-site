@@ -20,7 +20,7 @@ Includes:
 - Visible completed appraisal details: latest 3 completed appraisals
 - PDF export
 - Basic appraisal
-- Basic report
+- Structured basic report
 - Basic templates
 - AI assistance within the free quota
 
@@ -112,6 +112,7 @@ Business integrations should pass reference IDs only.
   - `GET /api/billing/subscription`
   - `PATCH /api/billing/subscription`
 - Business returns `BUSINESS_PREPARING`.
+- Worker PDF export uses `numeria-report-template.v1` for the structured one-page report.
 
 Billing source readiness is exposed through `GET /billing/status`.
 Numeria can detect a future Growth Engine or Stripe subscription source without

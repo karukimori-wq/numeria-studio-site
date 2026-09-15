@@ -111,7 +111,7 @@ Free:
 - In-progress draft appraisals: 1 account-wide unfinished appraisal
 - Appraisal client profiles: 3
 - Visible completed appraisal details: latest 3 completed appraisals
-- PDF export, basic appraisal, basic report, and basic templates
+- PDF export, basic appraisal, structured basic report, and basic templates
 
 Pro:
 
@@ -155,6 +155,13 @@ Production smoke check:
 - `NUMERIA_PRODUCTION_URL=https://numeria-studio.com npm run verify:production`
 
 The production check verifies the page, release contracts, auth, domain, billing, persistence, AI usage, and APC status endpoints without expecting secrets to be returned.
+
+PDF reports:
+
+- Worker PDF export uses `numeria-report-template.v1`.
+- Free can export the structured basic report.
+- Pro can export detailed reports and hide Numeria branding.
+- Native Japanese PDF output remains available through the browser print-to-PDF flow.
 
 Clerk CLI note:
 

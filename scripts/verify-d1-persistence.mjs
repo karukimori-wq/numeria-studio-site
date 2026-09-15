@@ -473,6 +473,8 @@ assert.equal(report.response.status, 201);
 assert.equal(report.body.eventName, "studio.report.generated.v1");
 assert.equal(report.body.reportSnapshot.birthDate, "1990-04-19");
 assert.equal(report.body.reportSnapshot.lifePathNumber, 6);
+assert.equal(report.body.reportSnapshot.templateVersion, "numeria-report-template.v1");
+assert.equal(report.body.reportTemplateVersion, "numeria-report-template.v1");
 assert.equal(report.body.usage.reportExports.length, 1);
 assert.equal(db.reportEvents.size, 1);
 assert.equal(report.body.aiUsageEvent.eventName, "studio.report.generated.v1");
