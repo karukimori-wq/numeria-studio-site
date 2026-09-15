@@ -12,11 +12,17 @@ const requiredFiles = [
   "src/worker.js",
   "vite.config.mjs",
   "scripts/restore-original-site.mjs",
+  "scripts/patch-legacy-static-assets.mjs",
   "scripts/verify-d1-persistence.mjs",
   "scripts/verify-production-readiness.mjs",
   "migrations/0001_numeria_usage_store.sql",
   "migrations/0002_appraisal_client_profiles.sql",
   "favicon.svg",
+  "legacy-static/README.md",
+  "assets/index-CEGe-9Xe.css",
+  "assets/index-CYZnnbch.js",
+  "assets/framework-CXnKph_e.js",
+  "assets/numeria-app-Cckhajir.js",
   "CLERK_AUTH_PLAN.md",
   "FREE_PRO_RELEASE_PLAN.md",
   "SUPABASE_MIGRATION_PLAN.md",
@@ -29,9 +35,11 @@ for (const file of requiredFiles) {
 
 const html = readFileSync("index.html", "utf8");
 const originalHtml = readFileSync("original.html", "utf8");
+const legacyHtml = readFileSync("original.html", "utf8");
 const packageJson = readFileSync("package.json", "utf8");
 const mainSource = readFileSync("src/main.jsx", "utf8");
 const authGateSource = readFileSync("src/auth-gate.js", "utf8");
+const numeriaAppSource = readFileSync("assets/numeria-app-Cckhajir.js", "utf8");
 const workerSource = readFileSync("src/worker.js", "utf8");
 const planSource = readFileSync("src/plan-config.js", "utf8");
 const wranglerConfig = readFileSync("wrangler.jsonc", "utf8");
@@ -44,9 +52,7 @@ const d1ProfileMigration = readFileSync("migrations/0002_appraisal_client_profil
 const envExample = readFileSync(".env.example", "utf8");
 const productionReadinessScript = readFileSync("scripts/verify-production-readiness.mjs", "utf8");
 assert.match(html, /Numeria Studio/);
-assert.match(html, /id="root"/);
-assert.match(html, /type="module" src="\/src\/main\.jsx"/);
-assert.doesNotMatch(html, /window\.location\.replace\("\/original\.html"\)/);
+assert.match(html, /window\.location\.replace\("\/original\.html"\)/);
 assert.doesNotMatch(html, /\/src\/auth-gate\.js/);
 assert.doesNotMatch(html, /studio-auth-bar/);
 assert.doesNotMatch(html, /signed-in-panel/);
@@ -56,11 +62,36 @@ assert.doesNotMatch(html, /ログアウト/);
 assert.doesNotMatch(html, /Clerk/);
 assert.match(originalHtml, /Numeria Studio｜数秘術鑑定書作成/);
 assert.match(originalHtml, /数秘術鑑定を10分で/);
-assert.match(originalHtml, /id="root"/);
-assert.match(originalHtml, /type="module" src="\/src\/main\.jsx"/);
-assert.match(readFileSync("scripts/restore-original-site.mjs", "utf8"), /dist\/index\.html/);
-assert.match(readFileSync("scripts/restore-original-site.mjs", "utf8"), /dist\/original\.html/);
-assert.match(readFileSync("scripts/restore-original-site.mjs", "utf8"), /Numeria Studio app shell copied/);
+assert.match(originalHtml, /NumeriaInstallAuthBridge/);
+assert.match(originalHtml, /\/api\/auth\/config/);
+assert.match(originalHtml, /\/clerk\.browser\.js/);
+assert.match(originalHtml, /cdn\.jsdelivr\.net\/npm\/@clerk\/clerk-js/, "login should have a CDN fallback when the Worker proxy cannot fetch the login library");
+assert.match(originalHtml, /unpkg\.com\/@clerk\/clerk-js/, "login should have a second CDN fallback when the primary login script fails");
+assert.doesNotMatch(originalHtml, /esm\.sh\/@clerk/);
+assert.doesNotMatch(originalHtml, /openSignIn/);
+assert.doesNotMatch(originalHtml, /openSignUp/);
+assert.doesNotMatch(originalHtml, /authRedirectUrl/);
+assert.doesNotMatch(originalHtml, /window\.location\.assign/);
+assert.match(originalHtml, /client\.signUp\.create/);
+assert.match(originalHtml, /prepareEmailAddressVerification/);
+assert.match(originalHtml, /attemptEmailAddressVerification/);
+assert.match(originalHtml, /client\.signIn\.create/);
+assert.match(originalHtml, /setActive/);
+assert.match(originalHtml, /data-clerk-publishable-key/);
+assert.match(originalHtml, /typeof window\.Clerk==="function"/);
+assert.doesNotMatch(originalHtml, /;window\.Clerk=new window\.Clerk\(config\.publishableKey\)\}await/);
+assert.match(legacyHtml, /assets\/numeria-app-Cckhajir\.js/);
+assert.match(numeriaAppSource, /NumeriaInstallAuthBridge\?\.\(X\)/);
+assert.match(numeriaAppSource, /タロットを選んだFreeユーザーはタロットを利用できます/);
+assert.match(numeriaAppSource, /無料版では初回に選んだメイン占術を固定します/);
+assert.doesNotMatch(numeriaAppSource, /タロットは管理者確認用/);
+assert.doesNotMatch(numeriaAppSource, /無料版で利用できる占術は1つです/);
+assert.match(numeriaAppSource, /\/api\/appraisals\/save-draft/);
+assert.match(numeriaAppSource, /Ci=async\(\)=>/);
+assert.match(numeriaAppSource, /Ii=async\(\)=>/);
+assert.match(readFileSync("scripts/patch-legacy-static-assets.mjs", "utf8"), /Expected three legacy PDF navigation calls/);
+assert.match(readFileSync("scripts/patch-legacy-static-assets.mjs", "utf8"), /manticDraftPayloadWithDetails/);
+assert.match(readFileSync("scripts/patch-legacy-static-assets.mjs", "utf8"), /numerologyDraftPayloadWithDetails/);
 assert.match(readFileSync("scripts/verify-d1-persistence.mjs", "utf8"), /D1 persistence compatibility verified/);
 assert.match(readFileSync("scripts/verify-d1-persistence.mjs", "utf8"), /MockD1/);
 assert.match(readFileSync("scripts/verify-d1-persistence.mjs", "utf8"), /storageDriver, "durable-d1"/);

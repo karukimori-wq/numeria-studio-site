@@ -30,7 +30,6 @@ The current production target is:
 - Follow-up start from visible appraisal history.
 - Structured one-page PDF export and Japanese print-to-PDF flow.
 - Report delivery snapshot controls for prepaid/postpaid partial preview, paid amount, expected amount, and delivery due date.
-- Custom-domain entrypoint now serves the current Free / Pro React app shell from `/original.html` instead of the retained legacy static build.
 - Feedback Hub Free/Pro intake contract with non-blocking Worker receipt.
 - External integration readiness inventory for Growth Engine, Feedback Hub, AI Platform Core, Clerk, billing, and domain checks.
 - Billing source readiness contract for Growth Engine or Stripe.

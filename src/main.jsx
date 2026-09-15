@@ -90,38 +90,12 @@ async function apiRequest(path, { method = "GET", scope, body, authToken } = {})
 }
 
 function App() {
-  const [runtimeClerkPublishableKey, setRuntimeClerkPublishableKey] = useState(clerkPublishableKey || "");
-  const [clerkConfigChecked, setClerkConfigChecked] = useState(Boolean(clerkPublishableKey));
-
-  useEffect(() => {
-    if (clerkPublishableKey) return;
-    let active = true;
-    fetch("/api/auth/config")
-      .then((response) => response.json())
-      .then((config) => {
-        if (active && config?.publishableKey) {
-          setRuntimeClerkPublishableKey(config.publishableKey);
-        }
-      })
-      .catch(() => {})
-      .finally(() => {
-        if (active) setClerkConfigChecked(true);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  if (!runtimeClerkPublishableKey && !clerkConfigChecked) {
-    return <LoadingPanel />;
-  }
-
-  if (!runtimeClerkPublishableKey) {
+  if (!clerkPublishableKey) {
     return <ClerkSetupScreen />;
   }
 
   return (
-    <ClerkProvider publishableKey={runtimeClerkPublishableKey}>
+    <ClerkProvider publishableKey={clerkPublishableKey}>
       <StudioShell />
     </ClerkProvider>
   );
