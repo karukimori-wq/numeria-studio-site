@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ClerkProvider,
@@ -186,6 +186,7 @@ function SignedInWorkspace() {
     () => toGrowthEngineExternalReferences(growthEngineHandoff),
     [growthEngineHandoff]
   );
+  const growthHandoffStartedRef = useRef(false);
   const [usage, setUsage] = useState(createUsageSnapshot());
   const [notice, setNotice] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -353,6 +354,20 @@ function SignedInWorkspace() {
     }));
   }, [usage.activeDraft]);
 
+  useEffect(() => {
+    if (!growthEngineExternalReferences || growthHandoffStartedRef.current || loading) return;
+    growthHandoffStartedRef.current = true;
+    if (usage.activeDraft) {
+      setNotice({
+        type: "warning",
+        title: "Growth Engineの予約を受け取りました",
+        body: "未完了の鑑定があるため自動開始していません。現在の案件を完成してから予約を開き直してください。",
+      });
+      return;
+    }
+    startSession();
+  }, [growthEngineExternalReferences, loading, usage.activeDraft]);
+
   async function startSession() {
     try {
       const nextCase = createEmptyCase();
@@ -365,7 +380,9 @@ function SignedInWorkspace() {
       setNotice({
         type: "success",
         title: "鑑定セッションを開始しました",
-        body: "この時点では月20件の鑑定数にも未完了案件数にも加算されません。途中保存した時点で未完了1案件として扱います。",
+        body: nextCase.externalReferences
+          ? `Growth Engineの予約 ${nextCase.externalReferences.reservationId} を参照して鑑定を開始しました。途中保存した時点で未完了1案件として扱います。`
+          : "この時点では月20件の鑑定数にも未完了案件数にも加算されません。途中保存した時点で未完了1案件として扱います。",
       });
     } catch (error) {
       setNotice(limitNotice(error.data));
