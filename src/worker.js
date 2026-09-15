@@ -1,7 +1,7 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 
-const APP_VERSION = "0.3.11-original-admin-readiness";
+const APP_VERSION = "0.3.12-report-delivery-status";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
 const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
 const AUTH_CONTRACT_VERSION = "clerk-server-auth-readiness.v1";
@@ -12,6 +12,7 @@ const APC_CONTRACT_VERSION = "ai-platform-core-activity-forwarding.v1";
 const REPORT_TEMPLATE_VERSION = "numeria-report-template.v1";
 const FEEDBACK_HUB_CONTRACT_VERSION = "feedback-hub-free-pro-intake.v1";
 const INTEGRATIONS_CONTRACT_VERSION = "numeria-free-pro-integrations-readiness.v1";
+const REPORT_DELIVERY_CONTRACT_VERSION = "numeria-report-delivery-status.v1";
 
 const runtimeStore = globalThis.__numeriaUsageStore || new Map();
 globalThis.__numeriaUsageStore = runtimeStore;
@@ -572,6 +573,16 @@ function feedbackHubStatusResponse(env = {}) {
   };
 }
 
+function reportDeliveryReadinessResponse(env = {}) {
+  const readiness = reportDeliveryStatusReadiness(env);
+  return {
+    ...readiness,
+    supportedPaymentStatuses: ["paid", "partial", "unpaid", "refunded", "canceled"],
+    deliveryModes: ["full_delivery", "partial_preview", "hold_until_payment"],
+    sourceOfTruthPolicy: "Numeria reads payment status when configured, but Growth Engine or Stripe remains the payment source of truth.",
+  };
+}
+
 function safeFeedbackText(value, maxLength = 2000) {
   if (typeof value !== "string") return "";
   return value.replace(/\s+/g, " ").trim().slice(0, maxLength);
@@ -678,6 +689,7 @@ async function integrationsStatusResponse(request = new Request("https://numeria
   const billing = billingStatusResponse(env);
   const growthEngineHandoff = growthEngineHandoffStatusResponse();
   const feedbackHub = feedbackHubStatusResponse(env);
+  const reportDelivery = reportDeliveryStatusReadiness(env);
   const aiUsage = aiUsageStatusResponse(env);
   const aiPlatformCore = apcStatusResponse(env);
   const domainHost = String(domain.currentHost || "").split(":")[0];
@@ -723,6 +735,16 @@ async function integrationsStatusResponse(request = new Request("https://numeria
       readyForFreePro: true,
       releaseBlocking: false,
       fallback: feedbackHub.failurePolicy,
+    },
+    {
+      key: "reportDeliveryPaymentStatus",
+      appName: "Growth Engine / Stripe",
+      role: "report-delivery-payment-status",
+      statusEndpoint: "/report-delivery/status",
+      configured: reportDelivery.paymentStatusConfigured,
+      readyForFreePro: true,
+      releaseBlocking: false,
+      fallback: reportDelivery.failurePolicy,
     },
     {
       key: "aiPlatformCoreUsage",
@@ -773,6 +795,7 @@ async function integrationsStatusResponse(request = new Request("https://numeria
       billing: "/billing/status",
       growthEngineHandoff: "/growth-handoff/status",
       feedbackHub: "/feedback-hub/status",
+      reportDelivery: "/report-delivery/status",
       aiUsage: "/ai-usage/status",
       aiPlatformCore: "/apc/status",
     },
@@ -781,6 +804,7 @@ async function integrationsStatusResponse(request = new Request("https://numeria
       "CLERK_JWKS_URL before AUTH_ENFORCEMENT_MODE=enforce",
       "GROWTH_ENGINE_BILLING_STATUS_URL or STRIPE_SUBSCRIPTION_STATUS_URL when external subscription sync is enabled",
       "FEEDBACK_HUB_BASE_URL or FEEDBACK_HUB_SUBMIT_URL when external feedback forwarding is enabled",
+      "GROWTH_ENGINE_PAYMENT_STATUS_URL, NUMERIA_REPORT_PAYMENT_STATUS_URL, or STRIPE_PAYMENT_STATUS_URL when external report delivery payment status is enabled",
       "AI_PLATFORM_CORE_BASE_URL, APC_ACTIVITIES_URL, or AI_PLATFORM_CORE_URL when APC forwarding is enabled",
     ],
     dataBoundary: {
@@ -1037,6 +1061,173 @@ function normalizeReportDeliverySettings(body = {}) {
   };
 }
 
+function getReportPaymentStatusUrl(env = {}) {
+  return env.GROWTH_ENGINE_PAYMENT_STATUS_URL
+    || env.NUMERIA_REPORT_PAYMENT_STATUS_URL
+    || env.STRIPE_PAYMENT_STATUS_URL
+    || env.VITE_GROWTH_ENGINE_PAYMENT_STATUS_URL
+    || "";
+}
+
+function getReportPaymentStatusToken(env = {}) {
+  return env.GROWTH_ENGINE_API_TOKEN
+    || env.NUMERIA_REPORT_PAYMENT_STATUS_TOKEN
+    || env.STRIPE_API_TOKEN
+    || "";
+}
+
+function getReportPaymentStatusTimeoutMs(env = {}) {
+  const value = Number(env.REPORT_PAYMENT_STATUS_TIMEOUT_MS || 1500);
+  return Number.isFinite(value) && value > 0 ? Math.min(value, 5000) : 1500;
+}
+
+function reportDeliveryStatusReadiness(env = {}) {
+  const endpoint = getReportPaymentStatusUrl(env);
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    reportDeliveryContractVersion: REPORT_DELIVERY_CONTRACT_VERSION,
+    endpoint: "/api/reports/delivery-status",
+    paymentStatusConfigured: Boolean(endpoint),
+    paymentStatusProvider: endpoint
+      ? endpoint.includes("stripe") ? "stripe" : "growth-engine"
+      : "numeria-snapshot-only",
+    tokenConfigured: Boolean(getReportPaymentStatusToken(env)),
+    timeoutMs: getReportPaymentStatusTimeoutMs(env),
+    sourceOfTruth: endpoint ? "external-payment-status" : "numeria-report-delivery-snapshot",
+    failurePolicy: "fallback_to_report_snapshot",
+    secretValuesReturned: false,
+  };
+}
+
+function normalizeExternalPaymentStatus(payload = {}) {
+  const payment = payload.payment || payload.paymentStatus || payload.status || payload;
+  const rawStatus = String(
+    payment.status
+      || payment.paymentStatus
+      || payment.state
+      || payload.status
+      || ""
+  ).toLowerCase();
+  const paidAmount = Math.max(0, Number(payment.paidAmount ?? payment.amountPaid ?? payload.paidAmount ?? 0));
+  const expectedAmount = Math.max(0, Number(payment.expectedAmount ?? payment.amountDue ?? payload.expectedAmount ?? 0));
+  const normalizedStatus = ["paid", "partial", "unpaid", "refunded", "canceled"].includes(rawStatus)
+    ? rawStatus
+    : expectedAmount > 0 && paidAmount >= expectedAmount
+      ? "paid"
+      : paidAmount > 0
+        ? "partial"
+        : "unpaid";
+
+  return {
+    paymentStatus: normalizedStatus,
+    paidAmount,
+    expectedAmount,
+    source: payment.source || payload.source || "external-payment-status",
+    updatedAt: payment.updatedAt || payload.updatedAt || null,
+  };
+}
+
+async function fetchExternalReportPaymentStatus(env = {}, { workspaceId, userId, reportExport } = {}) {
+  const readiness = reportDeliveryStatusReadiness(env);
+  const endpoint = getReportPaymentStatusUrl(env);
+  if (!endpoint || !reportExport?.exportId) {
+    return {
+      status: "skipped",
+      reason: endpoint ? "REPORT_EXPORT_ID_MISSING" : "PAYMENT_STATUS_SOURCE_NOT_CONFIGURED",
+      readiness,
+      payment: null,
+    };
+  }
+
+  try {
+    const url = new URL(endpoint);
+    url.searchParams.set("appId", "numeria-studio");
+    url.searchParams.set("workspaceId", workspaceId || "ws_personal");
+    url.searchParams.set("userId", userId || "anonymous");
+    url.searchParams.set("exportId", reportExport.exportId);
+    if (reportExport.appraisalId) url.searchParams.set("appraisalId", reportExport.appraisalId);
+
+    const headers = { Accept: "application/json" };
+    const token = getReportPaymentStatusToken(env);
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const signal = typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function"
+      ? AbortSignal.timeout(getReportPaymentStatusTimeoutMs(env))
+      : undefined;
+
+    const response = await fetch(url.toString(), { method: "GET", headers, signal });
+    if (!response.ok) {
+      return {
+        status: "fallback",
+        reason: "PAYMENT_STATUS_HTTP_ERROR",
+        upstreamStatus: response.status,
+        readiness,
+        payment: null,
+      };
+    }
+
+    const payload = await response.json();
+    return {
+      status: "success",
+      reason: "external_payment_status_loaded",
+      readiness,
+      payment: normalizeExternalPaymentStatus(payload),
+    };
+  } catch (error) {
+    return {
+      status: "fallback",
+      reason: "PAYMENT_STATUS_FETCH_FAILED",
+      message: error?.message || "Payment status could not be read.",
+      readiness,
+      payment: null,
+    };
+  }
+}
+
+function createReportDeliveryStatus({ reportExport = {}, externalPaymentStatus = null } = {}) {
+  const snapshot = reportExport.deliverySettings || normalizeReportDeliverySettings({});
+  const externalPayment = externalPaymentStatus?.payment || null;
+  const effectivePaymentStatus = externalPayment?.paymentStatus || snapshot.paymentStatus || "unpaid";
+  const paidAmount = externalPayment?.paidAmount ?? snapshot.paidAmount ?? 0;
+  const expectedAmount = externalPayment?.expectedAmount ?? snapshot.expectedAmount ?? 0;
+  const isPaid = effectivePaymentStatus === "paid" || (expectedAmount > 0 && paidAmount >= expectedAmount);
+  const isPartialPreview = snapshot.partialPreviewEnabled && !isPaid;
+  const deliveryMode = isPaid
+    ? "full_delivery"
+    : isPartialPreview
+      ? "partial_preview"
+      : "hold_until_payment";
+
+  return {
+    exportId: reportExport.exportId || null,
+    appraisalId: reportExport.appraisalId || null,
+    reportType: reportExport.reportType || "basic",
+    generatedAt: reportExport.generatedAt || null,
+    reportDeliveryContractVersion: REPORT_DELIVERY_CONTRACT_VERSION,
+    deliveryMode,
+    fullDeliveryAllowed: deliveryMode === "full_delivery",
+    partialPreviewAllowed: deliveryMode === "partial_preview",
+    paymentStatus: effectivePaymentStatus,
+    paidAmount,
+    expectedAmount,
+    deliveryDueDate: snapshot.deliveryDueDate || "",
+    deliveryDueDays: snapshot.deliveryDueDays || 7,
+    snapshotDeliverySettings: snapshot,
+    paymentStatusSource: externalPayment ? externalPayment.source : snapshot.sourceOfTruth,
+    externalPaymentStatus: externalPaymentStatus ? {
+      status: externalPaymentStatus.status,
+      reason: externalPaymentStatus.reason,
+      upstreamStatus: externalPaymentStatus.upstreamStatus || null,
+      updatedAt: externalPayment?.updatedAt || null,
+    } : null,
+    dataBoundary: {
+      numeriaOwns: ["ReportSnapshot", "ReportDeliverySnapshot"],
+      externalOwns: ["Payment", "Sales", "Refund"],
+    },
+  };
+}
+
 function createReportSnapshot({ exportId, reportType, branding, body = {} }) {
   const deliverySettings = normalizeReportDeliverySettings(body);
   return {
@@ -1196,6 +1387,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
   const billing = billingStatusResponse(env);
   const growthEngineHandoff = growthEngineHandoffStatusResponse();
   const feedbackHub = feedbackHubStatusResponse(env);
+  const reportDelivery = reportDeliveryReadinessResponse(env);
   const auth = await authStatusResponse(new Request("https://local.test/release/status"), env);
   const domain = domainStatusResponse(request, env);
   return {
@@ -1213,6 +1405,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
       "Basic PDF export",
       "Pro detailed report and branding controls",
       "Report delivery and payment snapshot controls",
+      "Report delivery status endpoint with external payment read fallback",
       "Original Numeria admin readiness panel for release, persistence, integrations, and delivery history",
       "D1 persistence for usage, drafts, appraisal client profiles, completed appraisals, and report exports",
       "Selectable and editable appraisal client profile chips",
@@ -1264,6 +1457,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
       },
       growthEngineHandoff,
       feedbackHub,
+      reportDelivery,
       domain: {
         statusEndpoint: "/domain/status",
         ...domain,
@@ -1401,6 +1595,7 @@ async function contractsStatusResponse(env = {}) {
   const aiPlatformCore = apcStatusResponse(env);
   const growthEngineHandoff = growthEngineHandoffStatusResponse();
   const feedbackHub = feedbackHubStatusResponse(env);
+  const reportDelivery = reportDeliveryReadinessResponse(env);
   return {
     status: "success",
     appId: "numeria-studio",
@@ -1461,11 +1656,14 @@ async function contractsStatusResponse(env = {}) {
       externalIntegrations,
       growthEngineHandoff,
       feedbackHub,
+      reportDelivery,
     },
     reports: {
       templateVersion: REPORT_TEMPLATE_VERSION,
       workerPdf: "structured-one-page-pdf",
       japanesePrintFlow: "browser-print-to-pdf",
+      deliveryStatusEndpoint: "/api/reports/delivery-status",
+      deliveryContractVersion: REPORT_DELIVERY_CONTRACT_VERSION,
     },
     billing: {
       statusEndpoint: "/billing/status",
@@ -1882,6 +2080,49 @@ async function handleApi(request, env = {}, ctx = null) {
       historyPolicy: {
         visibleCompletedAppraisals: usage.entitlements.viewableCompletedAppraisals,
         lockedDetailsAreRetained: true,
+      },
+    });
+  }
+
+  if (url.pathname === "/api/reports/delivery-status" && request.method === "GET") {
+    const usage = usageResponse(effectiveRecord);
+    const exportId = url.searchParams.get("exportId") || "";
+    const reportExports = Array.isArray(usage.reportExports) ? usage.reportExports : [];
+    const selectedReports = exportId
+      ? reportExports.filter((reportExport) => reportExport.exportId === exportId)
+      : reportExports;
+
+    if (exportId && selectedReports.length === 0) {
+      return json({
+        status: "error",
+        errorCode: "REPORT_EXPORT_NOT_FOUND",
+        message: "指定されたレポート出力が見つかりません。",
+        workspaceId,
+        userId,
+      }, { status: 404 });
+    }
+
+    const deliveries = [];
+    for (const reportExport of selectedReports) {
+      const externalPaymentStatus = await fetchExternalReportPaymentStatus(env, {
+        workspaceId,
+        userId,
+        reportExport,
+      });
+      deliveries.push(createReportDeliveryStatus({ reportExport, externalPaymentStatus }));
+    }
+
+    return json({
+      status: "success",
+      workspaceId,
+      userId,
+      reportDeliveryContractVersion: REPORT_DELIVERY_CONTRACT_VERSION,
+      readiness: reportDeliveryStatusReadiness(env),
+      reportDeliveries: deliveries,
+      reportDelivery: exportId ? deliveries[0] || null : null,
+      dataBoundary: {
+        numeriaOwns: ["ReportSnapshot", "ReportDeliverySnapshot"],
+        externalOwns: ["Payment", "Sales", "Refund"],
       },
     });
   }
@@ -2312,6 +2553,9 @@ export default {
     }
     if (url.pathname === "/feedback-hub/status") {
       return json(feedbackHubStatusResponse(env));
+    }
+    if (url.pathname === "/report-delivery/status") {
+      return json(reportDeliveryReadinessResponse(env));
     }
     if (url.pathname === "/growth-handoff/status") {
       return json(growthEngineHandoffStatusResponse());

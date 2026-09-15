@@ -194,6 +194,7 @@ assert.ok(releaseStatus.body.completedFeatures.includes("D1 persistence for usag
 assert.ok(releaseStatus.body.completedFeatures.includes("Selectable and editable appraisal client profile chips"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Numerology calculation preview while writing appraisals"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Report delivery and payment snapshot controls"));
+assert.ok(releaseStatus.body.completedFeatures.includes("Report delivery status endpoint with external payment read fallback"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side auth readiness contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side Clerk JWT verification in observe/enforce modes"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Billing source readiness contract"));
@@ -625,6 +626,32 @@ assert.equal(report.body.aiUsageEvent.recorded, true);
 assert.equal(report.body.aiUsageEvent.forwarded, false);
 assert.equal(report.body.aiUsageEvent.forwardingMode, "observe");
 assert.equal(report.body.aiUsageEvent.dataPolicy, "metadata-only-no-consultation-body");
+
+const reportDeliveryReadiness = await jsonFetch("/report-delivery/status", {}, env);
+assert.equal(reportDeliveryReadiness.response.status, 200);
+assert.equal(reportDeliveryReadiness.body.reportDeliveryContractVersion, "numeria-report-delivery-status.v1");
+assert.equal(reportDeliveryReadiness.body.paymentStatusConfigured, false);
+assert.equal(reportDeliveryReadiness.body.failurePolicy, "fallback_to_report_snapshot");
+assert.equal(reportDeliveryReadiness.body.secretValuesReturned, false);
+
+const deliveryStatus = await jsonFetch(`/api/reports/delivery-status?exportId=${report.body.exportId}`, { headers }, env);
+assert.equal(deliveryStatus.response.status, 200);
+assert.equal(deliveryStatus.body.reportDeliveryContractVersion, "numeria-report-delivery-status.v1");
+assert.equal(deliveryStatus.body.reportDelivery.exportId, report.body.exportId);
+assert.equal(deliveryStatus.body.reportDelivery.deliveryMode, "partial_preview");
+assert.equal(deliveryStatus.body.reportDelivery.partialPreviewAllowed, true);
+assert.equal(deliveryStatus.body.reportDelivery.fullDeliveryAllowed, false);
+assert.equal(deliveryStatus.body.reportDelivery.paymentStatus, "partial");
+assert.equal(deliveryStatus.body.reportDelivery.paymentStatusSource, "numeria-report-delivery-snapshot");
+assert.deepEqual(deliveryStatus.body.reportDelivery.dataBoundary.externalOwns, ["Payment", "Sales", "Refund"]);
+
+const allDeliveryStatus = await jsonFetch("/api/reports/delivery-status", { headers }, env);
+assert.equal(allDeliveryStatus.response.status, 200);
+assert.equal(allDeliveryStatus.body.reportDeliveries.length, 1);
+
+const missingDeliveryStatus = await jsonFetch("/api/reports/delivery-status?exportId=rep_missing", { headers }, env);
+assert.equal(missingDeliveryStatus.response.status, 404);
+assert.equal(missingDeliveryStatus.body.errorCode, "REPORT_EXPORT_NOT_FOUND");
 
 const aiUsageAfterReport = await jsonFetch("/ai-usage/status", {}, env);
 assert.ok(aiUsageAfterReport.body.retainedEventCount >= 2);

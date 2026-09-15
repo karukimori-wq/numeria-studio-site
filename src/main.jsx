@@ -38,7 +38,7 @@ import "./styles.css";
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const clerkApplicationId = import.meta.env.VITE_CLERK_APPLICATION_ID || "app_3ImOuQXNBc9Rpqs3XoJEtw2NogR";
-const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.11-original-admin-readiness";
+const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.12-report-delivery-status";
 const feedbackApiBase = import.meta.env.VITE_FEEDBACK_HUB_BASE_URL || "";
 const feedbackSubmitEndpoint = feedbackApiBase
   ? `${feedbackApiBase.replace(/\/$/, "")}/api/embed/feedback`

@@ -16,6 +16,7 @@ const jsonEndpoints = [
   "/domain/status",
   "/billing/status",
   "/feedback-hub/status",
+  "/report-delivery/status",
   "/growth-handoff/status",
   "/persistence/status",
   "/ai-usage/status",
@@ -108,6 +109,12 @@ assert.equal(feedbackHub.businessRequired, false, "Feedback Hub must not require
 assert.equal(feedbackHub.billingBlocked, false, "Feedback Hub must not be billing-blocked");
 assert.equal(feedbackHub.secretValuesReturned, false, "Feedback Hub status must not expose secrets");
 
+const reportDelivery = results.get("/report-delivery/status");
+assert.equal(reportDelivery.reportDeliveryContractVersion, "numeria-report-delivery-status.v1", "Report delivery status should expose its contract");
+assert.equal(reportDelivery.failurePolicy, "fallback_to_report_snapshot", "Report delivery should fall back to Numeria snapshots");
+assert.equal(reportDelivery.secretValuesReturned, false, "Report delivery status must not expose secrets");
+assert.ok(reportDelivery.deliveryModes.includes("partial_preview"), "Report delivery should support partial preview");
+
 const integrations = results.get("/integrations/status");
 assert.equal(integrations.integrationsContractVersion, "numeria-free-pro-integrations-readiness.v1", "Integrations status should expose its contract");
 assert.equal(integrations.releaseScope, "free-pro", "Integrations status should stay Free / Pro scoped");
@@ -115,6 +122,7 @@ assert.equal(integrations.overallReadyForFreePro, true, "Integrations status sho
 assert.ok(Array.isArray(integrations.readinessItems), "Integrations status should include readiness items");
 assert.ok(integrations.readinessItems.some((item) => item.key === "growthEngineHandoff"), "Integrations status should include Growth Engine handoff");
 assert.ok(integrations.readinessItems.some((item) => item.key === "feedbackHub"), "Integrations status should include Feedback Hub");
+assert.ok(integrations.readinessItems.some((item) => item.key === "reportDeliveryPaymentStatus"), "Integrations status should include report delivery payment status");
 assert.ok(integrations.readinessItems.some((item) => item.key === "aiPlatformCoreActivity"), "Integrations status should include APC activity forwarding");
 assert.equal(integrations.secretValuesReturned, false, "Integrations status must not expose secrets");
 
@@ -163,6 +171,8 @@ assert.equal(readyRelease.checks?.growthEngineHandoff?.receiverReady, true, "Rel
 assert.equal(readyRelease.checks?.growthEngineHandoff?.businessPurchasable, false, "Release Growth handoff must keep Business unavailable");
 assert.equal(readyRelease.checks?.feedbackHub?.businessRequired, false, "Release Feedback Hub check must not require Business");
 assert.equal(readyRelease.checks?.feedbackHub?.billingBlocked, false, "Release Feedback Hub check must not be billing-blocked");
+assert.equal(readyRelease.checks?.reportDelivery?.reportDeliveryContractVersion, "numeria-report-delivery-status.v1", "Release status should include report delivery readiness");
+assert.equal(readyRelease.checks?.reportDelivery?.failurePolicy, "fallback_to_report_snapshot", "Release report delivery should keep snapshot fallback");
 assert.equal(readyRelease.checks?.externalIntegrations?.overallReadyForFreePro, true, "Release status should include external integration readiness");
 assert.equal(readyRelease.checks?.billing?.secretValuesReturned, false, "Release billing check must not expose secrets");
 assert.equal(readyRelease.checks?.domain?.secretValuesReturned, false, "Release domain check must not expose secrets");
@@ -181,6 +191,8 @@ assert.equal(readyContracts.integrations?.growthEngineHandoff?.receiverReady, tr
 assert.equal(readyContracts.integrations?.growthEngineHandoff?.queryIdentityTrustedForAuthorization, false, "Contracts Growth handoff must not trust query identity");
 assert.equal(readyContracts.integrations?.feedbackHub?.feedbackHubContractVersion, "feedback-hub-free-pro-intake.v1", "Contracts status should include Feedback Hub readiness");
 assert.equal(readyContracts.integrations?.feedbackHub?.businessRequired, false, "Contracts Feedback Hub must not require Business");
+assert.equal(readyContracts.integrations?.reportDelivery?.reportDeliveryContractVersion, "numeria-report-delivery-status.v1", "Contracts status should include report delivery readiness");
+assert.equal(readyContracts.reports?.deliveryStatusEndpoint, "/api/reports/delivery-status", "Contracts reports should expose delivery status endpoint");
 assert.equal(readyContracts.integrations?.externalIntegrations?.integrationsContractVersion, "numeria-free-pro-integrations-readiness.v1", "Contracts status should include external integration readiness");
 assert.equal(readyContracts.integrations?.externalIntegrations?.overallReadyForFreePro, true, "Contracts external integration readiness should be Free / Pro ready");
 assert.equal(readyContracts.billing?.secretValuesReturned, false, "Contracts billing check must not expose secrets");

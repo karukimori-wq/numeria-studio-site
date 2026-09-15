@@ -125,6 +125,10 @@ Business integrations should pass reference IDs only.
 - Report export can store a Numeria-owned delivery snapshot for prepaid/postpaid
   partial preview, paid amount, expected amount, and delivery due date. Payment
   and sales records remain owned by Growth Engine or Stripe.
+- `GET /api/reports/delivery-status` can turn that snapshot into a delivery
+  decision (`full_delivery`, `partial_preview`, or `hold_until_payment`) and can
+  read Growth Engine or Stripe payment status when the external endpoint is
+  configured. Numeria still does not own payment or sales records.
 
 Billing source readiness is exposed through `GET /billing/status`.
 Numeria can detect a future Growth Engine or Stripe subscription source without

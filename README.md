@@ -161,6 +161,7 @@ Release monitoring endpoints:
 - `GET /auth/status`
 - `GET /domain/status`
 - `GET /billing/status`
+- `GET /report-delivery/status`
 - `GET /growth-handoff/status`
 - `GET /persistence/status`
 - `GET /ai-usage/status`
@@ -168,6 +169,7 @@ Release monitoring endpoints:
 
 `GET /auth/status` includes Clerk enforce-mode rollout readiness without returning backend secrets.
 `GET /domain/status` reports whether the current request reached the Worker through the expected custom domain or the Workers fallback host.
+`GET /report-delivery/status` confirms that report delivery can fall back to Numeria-owned snapshots while reading live Growth Engine or Stripe payment status when configured.
 `GET /growth-handoff/status` confirms that Growth Engine reservation references can be received without enabling Business purchase, payment, sales, or customer-master storage inside Numeria.
 
 Production smoke check:
@@ -176,7 +178,7 @@ Production smoke check:
 - `NUMERIA_PRODUCTION_URL=https://numeria-studio.com npm run verify:production`
 - `NUMERIA_PRODUCTION_URL=https://numeria-studio.com npm run verify:auth-release`
 
-The production check verifies the page, release contracts, auth, domain, billing, persistence, AI usage, and APC status endpoints without expecting secrets to be returned.
+The production check verifies the page, release contracts, auth, domain, billing, report delivery, persistence, AI usage, and APC status endpoints without expecting secrets to be returned.
 The auth release check uses the same endpoint set but requires Clerk enforce readiness and `AUTH_ENFORCEMENT_MODE=enforce`, so run it after signed-in production API traffic has been verified.
 
 PDF reports:
@@ -185,6 +187,7 @@ PDF reports:
 - Free can export the structured basic report.
 - Pro can export detailed reports and hide Numeria branding.
 - Report exports include a delivery snapshot for prepaid/postpaid partial preview, paid amount, expected amount, and delivery due date.
+- `GET /api/reports/delivery-status` returns full-delivery, partial-preview, or hold-until-payment decisions from the report snapshot, with optional external payment-status lookup.
 - Native Japanese PDF output remains available through the browser print-to-PDF flow.
 
 Clerk CLI note:

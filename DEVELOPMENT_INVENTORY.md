@@ -2,7 +2,7 @@
 
 Updated: 2026-09-15
 
-Current app version: `0.3.11-original-admin-readiness`
+Current app version: `0.3.12-report-delivery-status`
 
 ## Current Position
 
@@ -30,6 +30,7 @@ The current production target is:
 - Follow-up start from visible appraisal history.
 - Structured one-page PDF export and Japanese print-to-PDF flow.
 - Report delivery snapshot controls for prepaid/postpaid partial preview, paid amount, expected amount, and delivery due date.
+- Report delivery status API with external Growth Engine or Stripe payment-status read fallback.
 - Original Numeria Studio admin readiness panel for release, persistence, integrations, and delivery history checks without replacing the main UI.
 - Feedback Hub Free/Pro intake contract with non-blocking Worker receipt.
 - External integration readiness inventory for Growth Engine, Feedback Hub, AI Platform Core, Clerk, billing, and domain checks.
@@ -54,6 +55,7 @@ The current production target is:
 - `GET /domain/status`
 - `GET /billing/status`
 - `GET /feedback-hub/status`
+- `GET /report-delivery/status`
 - `GET /growth-handoff/status`
 - `GET /persistence/status`
 - `GET /ai-usage/status`
@@ -64,13 +66,14 @@ The current production target is:
 High priority:
 
 - Confirm live Growth Engine or Stripe subscription fetch against production credentials and keep Numeria plan changes read-only when configured.
+- Configure live Growth Engine or Stripe payment-status URL for report delivery, while keeping Numeria snapshot fallback active.
 - Confirm Clerk enforce-mode rollout in production after token header behavior is verified, then run `verify:auth-release`.
 - Configure Feedback Hub submit URL and confirm receipt correlation IDs in the external hub.
 
 Medium priority:
 
 - Improve native Japanese PDF typography beyond the current browser print flow.
-- Turn the report delivery snapshot into a fuller customer-facing paid delivery flow after Growth Engine payment state is connected.
+- Turn the report delivery status API into a fuller customer-facing paid delivery flow after Growth Engine payment state is connected.
 - Prepare Growth Engine Business plan handoff without making Business purchasable.
 - Keep documentation aligned with Free / Pro entitlement changes.
 
