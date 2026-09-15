@@ -14,6 +14,7 @@ const jsonEndpoints = [
   "/auth/status",
   "/domain/status",
   "/billing/status",
+  "/feedback-hub/status",
   "/growth-handoff/status",
   "/persistence/status",
   "/ai-usage/status",
@@ -88,6 +89,13 @@ assert.ok(Array.isArray(billing.supportedPlans), "Billing status should list sup
 assert.ok(billing.supportedPlans.includes("free"), "Billing status should include free");
 assert.ok(billing.supportedPlans.includes("pro"), "Billing status should include pro");
 
+const feedbackHub = results.get("/feedback-hub/status");
+assert.equal(feedbackHub.feedbackHubContractVersion, "feedback-hub-free-pro-intake.v1", "Feedback Hub status should expose its contract");
+assert.deepEqual(feedbackHub.allowedPlans, ["free", "pro"], "Feedback Hub should support Free and Pro");
+assert.equal(feedbackHub.businessRequired, false, "Feedback Hub must not require Business");
+assert.equal(feedbackHub.billingBlocked, false, "Feedback Hub must not be billing-blocked");
+assert.equal(feedbackHub.secretValuesReturned, false, "Feedback Hub status must not expose secrets");
+
 const growthHandoff = results.get("/growth-handoff/status");
 assert.equal(growthHandoff.sourceApp, "growth-engine", "Growth handoff status should identify Growth Engine");
 assert.equal(growthHandoff.receiverReady, true, "Growth handoff receiver should be ready");
@@ -123,6 +131,8 @@ assert.equal(release.checks?.auth?.authProvider, "clerk", "Release auth check sh
 assert.ok(release.checks?.auth?.enforceModeRollout, "Release auth check should include enforce rollout");
 assert.equal(release.checks?.growthEngineHandoff?.receiverReady, true, "Release status should include Growth Engine handoff readiness");
 assert.equal(release.checks?.growthEngineHandoff?.businessPurchasable, false, "Release Growth handoff must keep Business unavailable");
+assert.equal(release.checks?.feedbackHub?.businessRequired, false, "Release Feedback Hub check must not require Business");
+assert.equal(release.checks?.feedbackHub?.billingBlocked, false, "Release Feedback Hub check must not be billing-blocked");
 assert.equal(release.checks?.billing?.secretValuesReturned, false, "Release billing check must not expose secrets");
 assert.equal(release.checks?.domain?.secretValuesReturned, false, "Release domain check must not expose secrets");
 
@@ -130,6 +140,8 @@ const contracts = results.get("/contracts/status");
 assert.equal(contracts.plans?.business?.purchasable, false, "Contracts status must keep Business unavailable");
 assert.equal(contracts.integrations?.growthEngineHandoff?.receiverReady, true, "Contracts status should include Growth Engine handoff readiness");
 assert.equal(contracts.integrations?.growthEngineHandoff?.queryIdentityTrustedForAuthorization, false, "Contracts Growth handoff must not trust query identity");
+assert.equal(contracts.integrations?.feedbackHub?.feedbackHubContractVersion, "feedback-hub-free-pro-intake.v1", "Contracts status should include Feedback Hub readiness");
+assert.equal(contracts.integrations?.feedbackHub?.businessRequired, false, "Contracts Feedback Hub must not require Business");
 assert.equal(contracts.billing?.secretValuesReturned, false, "Contracts billing check must not expose secrets");
 assert.equal(contracts.domain?.secretValuesReturned, false, "Contracts domain check must not expose secrets");
 

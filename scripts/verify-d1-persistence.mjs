@@ -245,6 +245,77 @@ assert.equal(growthHandoffStatus.body.queryIdentityTrustedForAuthorization, fals
 assert.equal(growthHandoffStatus.body.externalReferencesOnly, true);
 assert.equal(growthHandoffStatus.body.secretValuesReturned, false);
 
+const feedbackHubStatus = await jsonFetch("/feedback-hub/status", {}, env);
+assert.equal(feedbackHubStatus.response.status, 200);
+assert.equal(feedbackHubStatus.body.feedbackHubContractVersion, "feedback-hub-free-pro-intake.v1");
+assert.deepEqual(feedbackHubStatus.body.allowedPlans, ["free", "pro"]);
+assert.equal(feedbackHubStatus.body.businessRequired, false);
+assert.equal(feedbackHubStatus.body.billingBlocked, false);
+assert.equal(feedbackHubStatus.body.secretValuesReturned, false);
+
+const feedbackFallback = await jsonFetch("/api/feedback/submit", {
+  method: "POST",
+  headers,
+  body: JSON.stringify({
+    planId: "free",
+    currentScreen: "Free Pro Dashboard",
+    category: "plan_or_limit_question",
+    initialMessage: "Free上限の案内を改善したい",
+    secret: "secret_not_returned",
+    customerMaster: { name: "do not send" },
+  }),
+}, env);
+assert.equal(feedbackFallback.response.status, 202);
+assert.equal(feedbackFallback.body.accepted, true);
+assert.equal(feedbackFallback.body.allowedPlans.includes("free"), true);
+assert.equal(feedbackFallback.body.businessRequired, false);
+assert.equal(feedbackFallback.body.billingBlocked, false);
+assert.equal(feedbackFallback.body.forwarding.forwarded, false);
+assert.equal(feedbackFallback.body.forwarding.reason, "FEEDBACK_HUB_NOT_CONFIGURED");
+assert.equal(feedbackFallback.body.secretValuesReturned, false);
+assert.doesNotMatch(JSON.stringify(feedbackFallback.body), /secret_not_returned|customerMaster|do not send/);
+
+const feedbackFetch = globalThis.fetch;
+globalThis.fetch = async (url, init) => {
+  if (String(url) === "https://feedback-hub.karukimori.workers.dev/api/embed/feedback") {
+    assert.equal(init.headers.Authorization, "Bearer feedback_secret_not_returned");
+    const payload = JSON.parse(init.body);
+    assert.equal(payload.sourceApp, "numeria-studio");
+    assert.equal(payload.planId, "pro");
+    assert.equal(payload.currentScreen, "Free Pro Dashboard");
+    assert.equal(payload.category, "bug_report");
+    assert.doesNotMatch(JSON.stringify(payload), /feedback_secret_not_returned|secret_not_returned|customerMaster/);
+    return new Response(JSON.stringify({ status: "success" }), {
+      headers: { "content-type": "application/json" },
+    });
+  }
+  return feedbackFetch(url, init);
+};
+
+try {
+  const feedbackForwarded = await jsonFetch("/api/feedback/submit", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      planId: "pro",
+      currentScreen: "Free Pro Dashboard",
+      category: "bug_report",
+      initialMessage: "保存時にエラーが出ました",
+      secret: "secret_not_returned",
+    }),
+  }, {
+    ...env,
+    FEEDBACK_HUB_SUBMIT_URL: "https://feedback-hub.karukimori.workers.dev/api/embed/feedback",
+    FEEDBACK_HUB_API_TOKEN: "feedback_secret_not_returned",
+  });
+  assert.equal(feedbackForwarded.response.status, 202);
+  assert.equal(feedbackForwarded.body.forwarding.forwarded, true);
+  assert.equal(feedbackForwarded.body.secretValuesReturned, false);
+  assert.doesNotMatch(JSON.stringify(feedbackForwarded.body), /feedback_secret_not_returned|secret_not_returned/);
+} finally {
+  globalThis.fetch = feedbackFetch;
+}
+
 const domainStatus = await jsonFetch("/domain/status", {}, env);
 assert.equal(domainStatus.response.status, 200);
 assert.equal(domainStatus.body.domainContractVersion, "cloudflare-custom-domain-readiness.v1");

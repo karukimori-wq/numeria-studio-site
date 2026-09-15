@@ -34,7 +34,7 @@ Completed:
 - Clerk CLI added as a project dev dependency
 - Existing Clerk app recorded: `AITEC Apps` / `app_3ImOuQXNBc9Rpqs3XoJEtw2NogR` / Development
 - Admin candidate email configured as `illusionddt@gmail.com`
-- Feedback Hub question/improvement UI added with mock fallback
+- Feedback Hub question/improvement UI added with Numeria Worker intake and mock fallback
 - Free / Pro pricing comparison UI added
 - Free usage counters added: completed appraisals, in-progress draft, and latest visible history
 - Worker API limit checks added for completed appraisals and one unfinished draft
@@ -82,6 +82,9 @@ Set this in GitHub Actions Variables or Secrets:
 Optional:
 
 - `VITE_FEEDBACK_HUB_BASE_URL`
+- `FEEDBACK_HUB_BASE_URL`
+- `FEEDBACK_HUB_SUBMIT_URL`
+- `FEEDBACK_HUB_API_TOKEN`
 - `GROWTH_ENGINE_BILLING_STATUS_URL`
 - `GROWTH_ENGINE_API_TOKEN`
 - `STRIPE_SUBSCRIPTION_STATUS_URL`
@@ -100,6 +103,12 @@ events without returning secret values:
 - `studio.session.started.v1`
 - `studio.session.completed.v1`
 - `studio.report.generated.v1`
+
+Feedback Hub intake is available at `POST /api/feedback/submit`. It accepts
+Free and Pro questions or improvement requests without requiring Business or a
+billing success state. When `FEEDBACK_HUB_BASE_URL` or `FEEDBACK_HUB_SUBMIT_URL`
+is configured, the Worker forwards the request and keeps a non-blocking local
+receipt if forwarding fails.
 
 Backend-only Clerk secrets such as `CLERK_SECRET_KEY` must not be committed to this repository.
 

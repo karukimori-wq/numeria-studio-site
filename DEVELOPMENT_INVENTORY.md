@@ -1,8 +1,8 @@
 # Numeria Studio Site Development Inventory
 
-Updated: 2026-09-14
+Updated: 2026-09-15
 
-Current app version: `0.3.6-report-template`
+Current app version: `0.3.7-feedback-hub-intake`
 
 ## Current Position
 
@@ -29,7 +29,7 @@ The current production target is:
 - Appraisal history search.
 - Follow-up start from visible appraisal history.
 - Structured one-page PDF export and Japanese print-to-PDF flow.
-- Feedback Hub payload preparation.
+- Feedback Hub Free/Pro intake contract with non-blocking Worker receipt.
 - Billing source readiness contract for Growth Engine or Stripe.
 - Custom domain readiness diagnostics for Cloudflare Worker routing.
 - Automated production smoke check for page, release, auth, domain, billing, persistence, AI usage, and APC endpoints.
@@ -48,6 +48,7 @@ The current production target is:
 - `GET /auth/status`
 - `GET /domain/status`
 - `GET /billing/status`
+- `GET /feedback-hub/status`
 - `GET /growth-handoff/status`
 - `GET /persistence/status`
 - `GET /ai-usage/status`
@@ -59,6 +60,7 @@ High priority:
 
 - Replace MVP plan switching with live Stripe or Growth Engine subscription fetch.
 - Confirm Clerk enforce-mode rollout in production after token header behavior is verified, then run `verify:auth-release`.
+- Configure Feedback Hub submit URL and confirm receipt correlation IDs in the external hub.
 
 Medium priority:
 

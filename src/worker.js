@@ -1,7 +1,7 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 
-const APP_VERSION = "0.3.6-report-template";
+const APP_VERSION = "0.3.7-feedback-hub-intake";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
 const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
 const AUTH_CONTRACT_VERSION = "clerk-server-auth-readiness.v1";
@@ -10,11 +10,14 @@ const DOMAIN_CONTRACT_VERSION = "cloudflare-custom-domain-readiness.v1";
 const AI_USAGE_CONTRACT_VERSION = "ai-platform-core-usage-events.v1";
 const APC_CONTRACT_VERSION = "ai-platform-core-activity-forwarding.v1";
 const REPORT_TEMPLATE_VERSION = "numeria-report-template.v1";
+const FEEDBACK_HUB_CONTRACT_VERSION = "feedback-hub-free-pro-intake.v1";
 
 const runtimeStore = globalThis.__numeriaUsageStore || new Map();
 globalThis.__numeriaUsageStore = runtimeStore;
 const runtimeAiUsageEvents = globalThis.__numeriaAiUsageEvents || [];
 globalThis.__numeriaAiUsageEvents = runtimeAiUsageEvents;
+const runtimeFeedbackReceipts = globalThis.__numeriaFeedbackReceipts || [];
+globalThis.__numeriaFeedbackReceipts = runtimeFeedbackReceipts;
 
 function json(data, init = {}) {
   return new Response(JSON.stringify(data), {
@@ -500,6 +503,170 @@ function growthEngineHandoffStatusResponse() {
   };
 }
 
+function getFeedbackHubSubmitUrl(env = {}) {
+  const directUrl = env.FEEDBACK_HUB_SUBMIT_URL || env.VITE_FEEDBACK_HUB_SUBMIT_URL || "";
+  if (directUrl) return String(directUrl);
+  const baseUrl = env.FEEDBACK_HUB_BASE_URL || env.VITE_FEEDBACK_HUB_BASE_URL || "";
+  if (!baseUrl) return "";
+  return `${String(baseUrl).replace(/\/$/, "")}/api/embed/feedback`;
+}
+
+function getFeedbackHubToken(env = {}) {
+  return env.FEEDBACK_HUB_API_TOKEN
+    || env.FEEDBACK_HUB_SUBMIT_TOKEN
+    || env.VITE_FEEDBACK_HUB_SUBMIT_TOKEN
+    || "";
+}
+
+function feedbackHubStatusResponse(env = {}) {
+  const submitUrl = getFeedbackHubSubmitUrl(env);
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    feedbackHubContractVersion: FEEDBACK_HUB_CONTRACT_VERSION,
+    statusEndpoint: "/feedback-hub/status",
+    intakeEndpoint: "/api/feedback/submit",
+    configured: Boolean(submitUrl),
+    endpointConfigured: Boolean(submitUrl),
+    provider: "feedback-hub",
+    sourceApp: "numeria-studio",
+    allowedPlans: ["free", "pro"],
+    businessRequired: false,
+    businessPurchasable: false,
+    billingBlocked: false,
+    failurePolicy: "non_blocking_local_ack",
+    tokenConfigured: Boolean(getFeedbackHubToken(env)),
+    payloadFields: [
+      "sourceApp",
+      "appVersion",
+      "planId",
+      "workspaceId",
+      "userId",
+      "currentScreen",
+      "category",
+      "message",
+      "occurredAt",
+      "correlationId",
+    ],
+    forbiddenPayloadFields: [
+      "secret",
+      "apiKey",
+      "fullPrompt",
+      "paymentDetails",
+      "customerMaster",
+      "conversationText",
+      "reportBody",
+    ],
+    secretValuesReturned: false,
+    retainedReceiptCount: runtimeFeedbackReceipts.length,
+    recentReceipts: runtimeFeedbackReceipts.slice(-5),
+    message: submitUrl
+      ? "Feedback Hubへ問い合わせを転送できます。"
+      : "現在はNumeria Workerで問い合わせを受理し、外部転送は未接続です。",
+  };
+}
+
+function safeFeedbackText(value, maxLength = 2000) {
+  if (typeof value !== "string") return "";
+  return value.replace(/\s+/g, " ").trim().slice(0, maxLength);
+}
+
+function safeFeedbackCategory(value) {
+  const normalized = safeFeedbackText(value, 64).replace(/[^a-z0-9_-]/gi, "_").toLowerCase();
+  return normalized || "improvement_request";
+}
+
+function createFeedbackPayload(body = {}, scope = {}) {
+  const correlationId = safeFeedbackText(body.correlationId, 96) || createCorrelationId("feedback");
+  return {
+    sourceApp: "numeria-studio",
+    appId: "numeria-studio",
+    appName: "Numeria Studio",
+    appVersion: APP_VERSION,
+    planId: normalizePlanId(body.planId || PLAN_IDS.FREE),
+    workspaceId: safeFeedbackText(scope.workspaceId || body.workspaceId || "ws_personal", 120),
+    userId: safeFeedbackText(scope.userId || body.userId || "anonymous", 120),
+    currentScreen: safeFeedbackText(body.currentScreen || body.screenName || "unknown", 120),
+    route: safeFeedbackText(body.route || "", 160),
+    category: safeFeedbackCategory(body.category),
+    device: safeFeedbackText(body.device || "", 80),
+    occurredAt: Number.isNaN(Date.parse(body.occurredAt)) ? new Date().toISOString() : new Date(body.occurredAt).toISOString(),
+    correlationId,
+    message: safeFeedbackText(body.message || body.initialMessage || body.body || body.description, 2000),
+  };
+}
+
+async function forwardFeedbackHub(env = {}, payload = {}) {
+  const submitUrl = getFeedbackHubSubmitUrl(env);
+  if (!submitUrl) {
+    return { status: "skipped", forwarded: false, reason: "FEEDBACK_HUB_NOT_CONFIGURED" };
+  }
+
+  const headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  const token = getFeedbackHubToken(env);
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  try {
+    const response = await fetch(submitUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+      signal: typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function"
+        ? AbortSignal.timeout(2000)
+        : undefined,
+    });
+    return {
+      status: response.ok ? "success" : "fallback",
+      forwarded: response.ok,
+      reason: response.ok ? "feedback_forwarded" : "FEEDBACK_HUB_HTTP_ERROR",
+      upstreamStatus: response.status,
+    };
+  } catch (error) {
+    return {
+      status: "fallback",
+      forwarded: false,
+      reason: "FEEDBACK_HUB_FETCH_FAILED",
+      message: error?.message || "Feedback Hub could not be reached.",
+    };
+  }
+}
+
+async function feedbackSubmitResponse(env = {}, body = {}, scope = {}) {
+  const payload = createFeedbackPayload(body, scope);
+  const delivery = await forwardFeedbackHub(env, payload);
+  const receipt = {
+    correlationId: payload.correlationId,
+    planId: payload.planId,
+    category: payload.category,
+    currentScreen: payload.currentScreen,
+    receivedAt: new Date().toISOString(),
+    forwarded: delivery.forwarded,
+    forwardingStatus: delivery.status,
+  };
+  runtimeFeedbackReceipts.push(receipt);
+  if (runtimeFeedbackReceipts.length > 50) runtimeFeedbackReceipts.shift();
+
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    feedbackHubContractVersion: FEEDBACK_HUB_CONTRACT_VERSION,
+    accepted: true,
+    forwarding: delivery,
+    receipt,
+    allowedPlans: ["free", "pro"],
+    businessRequired: false,
+    billingBlocked: false,
+    secretValuesReturned: false,
+    message: delivery.forwarded
+      ? "Feedback Hubへ送信しました。"
+      : "問い合わせを受理しました。外部転送が未接続または一時失敗しても、鑑定フローは止めません。",
+  };
+}
+
 function normalizeBillingPayload(payload = {}) {
   const subscription = payload.subscription || payload.billing || payload;
   const planId = normalizePlanId(
@@ -856,6 +1023,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
   const persistence = await persistenceStatusResponse(env);
   const billing = billingStatusResponse(env);
   const growthEngineHandoff = growthEngineHandoffStatusResponse();
+  const feedbackHub = feedbackHubStatusResponse(env);
   const auth = await authStatusResponse(new Request("https://local.test/release/status"), env);
   const domain = domainStatusResponse(request, env);
   return {
@@ -883,6 +1051,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
       "Billing source readiness contract",
       "Custom domain readiness contract",
       "Growth Engine reservation handoff receiver",
+      "Feedback Hub Free/Pro intake contract",
       "AI Platform Core usage event contract",
       "AI Platform Core usage event forwarding",
     ],
@@ -917,6 +1086,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
         ...billing,
       },
       growthEngineHandoff,
+      feedbackHub,
       domain: {
         statusEndpoint: "/domain/status",
         ...domain,
@@ -1049,6 +1219,7 @@ async function contractsStatusResponse(env = {}) {
   const aiUsage = aiUsageStatusResponse(env);
   const aiPlatformCore = apcStatusResponse(env);
   const growthEngineHandoff = growthEngineHandoffStatusResponse();
+  const feedbackHub = feedbackHubStatusResponse(env);
   return {
     status: "success",
     appId: "numeria-studio",
@@ -1106,6 +1277,7 @@ async function contractsStatusResponse(env = {}) {
     },
     integrations: {
       growthEngineHandoff,
+      feedbackHub,
     },
     reports: {
       templateVersion: REPORT_TEMPLATE_VERSION,
@@ -1488,6 +1660,12 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   const { workspaceId, userId } = getScope(request, body, auth);
+
+  if (url.pathname === "/api/feedback/submit" && request.method === "POST") {
+    const feedback = await feedbackSubmitResponse(env, body, { workspaceId, userId });
+    return json(feedback, { status: 202 });
+  }
+
   const record = await loadUsageRecord(env, workspaceId, userId);
   const billingSubscription = await fetchExternalBillingSubscription(env, workspaceId, userId);
   const effectiveRecord = applyBillingSubscription(record, billingSubscription);
@@ -1928,6 +2106,9 @@ export default {
     }
     if (url.pathname === "/billing/status") {
       return json(billingStatusResponse(env));
+    }
+    if (url.pathname === "/feedback-hub/status") {
+      return json(feedbackHubStatusResponse(env));
     }
     if (url.pathname === "/growth-handoff/status") {
       return json(growthEngineHandoffStatusResponse());

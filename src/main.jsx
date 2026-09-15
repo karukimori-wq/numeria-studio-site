@@ -38,8 +38,11 @@ import "./styles.css";
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const clerkApplicationId = import.meta.env.VITE_CLERK_APPLICATION_ID || "app_3ImOuQXNBc9Rpqs3XoJEtw2NogR";
-const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.5-domain-readiness";
+const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.7-feedback-hub-intake";
 const feedbackApiBase = import.meta.env.VITE_FEEDBACK_HUB_BASE_URL || "";
+const feedbackSubmitEndpoint = feedbackApiBase
+  ? `${feedbackApiBase.replace(/\/$/, "")}/api/embed/feedback`
+  : "/api/feedback/submit";
 const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "illusionddt@gmail.com")
   .split(",")
   .map((email) => email.trim().toLowerCase())
@@ -843,10 +846,12 @@ function AdminPreviewPanel({ releaseStatus }) {
   const auth = releaseStatus?.checks?.auth || {};
   const domain = releaseStatus?.checks?.domain || {};
   const growthEngineHandoff = releaseStatus?.checks?.growthEngineHandoff || {};
+  const feedbackHub = releaseStatus?.checks?.feedbackHub || {};
   const aiUsageConfigured = Boolean(aiUsage.endpointConfigured);
   const apcConfigured = Boolean(aiPlatformCore.endpointConfigured || aiPlatformCore.configured);
   const apcTokenConfigured = Boolean(aiPlatformCore.tokenConfigured);
   const billingConfigured = Boolean(billing.configured);
+  const feedbackConfigured = Boolean(feedbackHub.configured || feedbackHub.endpointConfigured);
   const authEnforceReady = Boolean(auth.enforceModeReady);
   const customDomainReady = Boolean(domain.customDomainReady);
   const growthHandoffReady = Boolean(growthEngineHandoff.receiverReady);
@@ -867,6 +872,13 @@ function AdminPreviewPanel({ releaseStatus }) {
       title: "プロフィール編集",
       status: "追加済み",
       body: "保存済み依頼者の名前・生年月日を管理者が先行して更新・削除できます。",
+    },
+    {
+      title: "Feedback Hub",
+      status: feedbackConfigured ? "外部転送OK" : "Numeria受付OK",
+      body: feedbackConfigured
+        ? "Free/Proどちらの問い合わせもFeedback Hubへ転送できます。課金状態では止めません。"
+        : "Hub未接続でもNumeria Workerで問い合わせを受理し、鑑定フローを止めません。",
     },
     {
       title: "AI利用記録",
@@ -896,6 +908,7 @@ function AdminPreviewPanel({ releaseStatus }) {
     ["認証", authEnforceReady ? "enforce準備OK" : auth.enforcementMode || "observe"],
     ["Domain", customDomainReady ? "独自OK" : domain.currentRoute || "確認中"],
     ["課金", billingConfigured ? billing.provider || "外部" : "MVP"],
+    ["Feedback", feedbackConfigured ? "転送OK" : "受付OK"],
     ["GE予約", growthHandoffReady ? "受け口OK" : "確認中"],
     ["AI Core", aiUsageConfigured ? "URLあり" : "未接続"],
     ["APC", apcConfigured ? (apcTokenConfigured ? "URL・Tokenあり" : "URLあり") : "未接続"],
@@ -921,6 +934,13 @@ function AdminPreviewPanel({ releaseStatus }) {
       detail: customDomainReady
         ? `${domain.expectedCustomDomain || "numeria-studio.com"} で到達しています。`
         : "CloudflareのWorker routeまたはCustom Domain接続を確認します。",
+    },
+    {
+      label: "Feedback Hub",
+      status: feedbackConfigured ? "外部転送OK" : "Numeria受付",
+      detail: feedbackConfigured
+        ? "Free/Proどちらも問い合わせ可能。Business契約や課金状態ではブロックしません。"
+        : "未接続時も /api/feedback/submit で受け付け、後続接続を待てます。",
     },
     {
       label: "AI利用イベント",
@@ -968,6 +988,13 @@ function AdminPreviewPanel({ releaseStatus }) {
       body: growthHandoffReady
         ? "Growth Engineからの予約ID・顧客IDを参照として受け、支払い/売上/顧客正本はGrowth Engineに残します。"
         : "Growth Engineの予約開始URLから鑑定開始できるか確認します。",
+    },
+    {
+      label: "問い合わせ連携",
+      status: feedbackConfigured ? "Hub転送確認へ" : "受け口確認済み",
+      body: feedbackConfigured
+        ? "Feedback Hub側の受信ログで相関IDを照合します。"
+        : "外部Hub URL未設定でも、Free/Proの問い合わせはNumeria Workerで受理できます。",
     },
     {
       label: "独自ドメイン",
@@ -1563,15 +1590,8 @@ function FeedbackWidget({ workspaceId, userId, planId, screenName }) {
     if (!message.trim()) return;
     setStatus("sending");
 
-    if (!feedbackApiBase) {
-      localStorage.setItem("numeria.feedback.mock.last", JSON.stringify(payload));
-      setStatus("mocked");
-      setCorrelationId(createCorrelationId());
-      return;
-    }
-
     try {
-      const response = await fetch(`${feedbackApiBase}/api/embed/feedback`, {
+      const response = await fetch(feedbackSubmitEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -1597,7 +1617,7 @@ function FeedbackWidget({ workspaceId, userId, planId, screenName }) {
             <MessageSquare size={18} />
             <div>
               <strong>質問・改善</strong>
-              <span>{feedbackApiBase ? "Feedback Hub接続" : "未接続: モック保存"}</span>
+              <span>{feedbackApiBase ? "Feedback Hub接続" : "Numeria受付"}</span>
             </div>
           </div>
           <div className="chat-bubble">
@@ -1618,7 +1638,7 @@ function FeedbackWidget({ workspaceId, userId, planId, screenName }) {
               {status === "sending" && "送信しています..."}
               {status === "sent" && "送信しました。ありがとうございます。"}
               {status === "needs_followup" && "追加で確認したいことがあります。"}
-              {status === "mocked" && "Feedback Hub未接続のため、この端末にモック保存しました。"}
+              {status === "mocked" && "一時的に送信できないため、この端末にモック保存しました。"}
             </p>
           )}
         </form>

@@ -109,9 +109,15 @@ Business integrations should pass reference IDs only.
 - Usage and billing status APIs:
   - `GET /api/usage`
   - `GET /billing/status`
+  - `GET /feedback-hub/status`
   - `GET /growth-handoff/status`
   - `GET /api/billing/subscription`
   - `PATCH /api/billing/subscription`
+- Feedback and support intake:
+  - `POST /api/feedback/submit` accepts Free and Pro questions/improvement requests
+  - Business is not required
+  - Billing failures do not block intake
+  - External Feedback Hub forwarding is non-blocking
 - Business returns `BUSINESS_PREPARING`.
 - Growth Engine reservation handoff stores only safe external reference IDs.
 - Worker PDF export uses `numeria-report-template.v1` for the structured one-page report.
