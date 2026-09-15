@@ -2,7 +2,7 @@
 
 Updated: 2026-09-15
 
-Current app version: `0.3.10-report-delivery-settings`
+Current app version: `0.3.11-original-admin-readiness`
 
 ## Current Position
 
@@ -30,6 +30,7 @@ The current production target is:
 - Follow-up start from visible appraisal history.
 - Structured one-page PDF export and Japanese print-to-PDF flow.
 - Report delivery snapshot controls for prepaid/postpaid partial preview, paid amount, expected amount, and delivery due date.
+- Original Numeria Studio admin readiness panel for release, persistence, integrations, and delivery history checks without replacing the main UI.
 - Feedback Hub Free/Pro intake contract with non-blocking Worker receipt.
 - External integration readiness inventory for Growth Engine, Feedback Hub, AI Platform Core, Clerk, billing, and domain checks.
 - Billing source readiness contract for Growth Engine or Stripe.
@@ -40,7 +41,7 @@ The current production target is:
 - Growth Engine reservation handoff receiver with external reference-only storage.
 - AI Platform Core usage event contract.
 - AI Platform Core activity forwarding for official studio events.
-- Admin preview panel with release, external-integration health, and release action inventory.
+- Admin preview panel with release, persistence, external-integration health, delivery history, and release action inventory.
 
 ## Release Monitoring Endpoints
 

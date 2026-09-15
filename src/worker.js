@@ -1,7 +1,7 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 
-const APP_VERSION = "0.3.10-report-delivery-settings";
+const APP_VERSION = "0.3.11-original-admin-readiness";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
 const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
 const AUTH_CONTRACT_VERSION = "clerk-server-auth-readiness.v1";
@@ -1213,6 +1213,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
       "Basic PDF export",
       "Pro detailed report and branding controls",
       "Report delivery and payment snapshot controls",
+      "Original Numeria admin readiness panel for release, persistence, integrations, and delivery history",
       "D1 persistence for usage, drafts, appraisal client profiles, completed appraisals, and report exports",
       "Selectable and editable appraisal client profile chips",
       "Numerology calculation preview while writing appraisals",
