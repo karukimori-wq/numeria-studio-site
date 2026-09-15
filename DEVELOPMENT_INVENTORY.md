@@ -2,7 +2,7 @@
 
 Updated: 2026-09-15
 
-Current app version: `0.3.7-feedback-hub-intake`
+Current app version: `0.3.8-integration-readiness`
 
 ## Current Position
 
@@ -30,6 +30,7 @@ The current production target is:
 - Follow-up start from visible appraisal history.
 - Structured one-page PDF export and Japanese print-to-PDF flow.
 - Feedback Hub Free/Pro intake contract with non-blocking Worker receipt.
+- External integration readiness inventory for Growth Engine, Feedback Hub, AI Platform Core, Clerk, billing, and domain checks.
 - Billing source readiness contract for Growth Engine or Stripe.
 - Custom domain readiness diagnostics for Cloudflare Worker routing.
 - Automated production smoke check for page, release, auth, domain, billing, persistence, AI usage, and APC endpoints.
@@ -45,6 +46,7 @@ The current production target is:
 - `GET /version`
 - `GET /contracts/status`
 - `GET /release/status`
+- `GET /integrations/status`
 - `GET /auth/status`
 - `GET /domain/status`
 - `GET /billing/status`

@@ -38,7 +38,7 @@ import "./styles.css";
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const clerkApplicationId = import.meta.env.VITE_CLERK_APPLICATION_ID || "app_3ImOuQXNBc9Rpqs3XoJEtw2NogR";
-const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.7-feedback-hub-intake";
+const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.8-integration-readiness";
 const feedbackApiBase = import.meta.env.VITE_FEEDBACK_HUB_BASE_URL || "";
 const feedbackSubmitEndpoint = feedbackApiBase
   ? `${feedbackApiBase.replace(/\/$/, "")}/api/embed/feedback`
@@ -847,11 +847,13 @@ function AdminPreviewPanel({ releaseStatus }) {
   const domain = releaseStatus?.checks?.domain || {};
   const growthEngineHandoff = releaseStatus?.checks?.growthEngineHandoff || {};
   const feedbackHub = releaseStatus?.checks?.feedbackHub || {};
+  const externalIntegrations = releaseStatus?.checks?.externalIntegrations || {};
   const aiUsageConfigured = Boolean(aiUsage.endpointConfigured);
   const apcConfigured = Boolean(aiPlatformCore.endpointConfigured || aiPlatformCore.configured);
   const apcTokenConfigured = Boolean(aiPlatformCore.tokenConfigured);
   const billingConfigured = Boolean(billing.configured);
   const feedbackConfigured = Boolean(feedbackHub.configured || feedbackHub.endpointConfigured);
+  const integrationsReady = Boolean(externalIntegrations.overallReadyForFreePro);
   const authEnforceReady = Boolean(auth.enforceModeReady);
   const customDomainReady = Boolean(domain.customDomainReady);
   const growthHandoffReady = Boolean(growthEngineHandoff.receiverReady);
@@ -905,6 +907,7 @@ function AdminPreviewPanel({ releaseStatus }) {
     ["未追加", releaseStatus?.pendingFeatures?.length ?? "-"],
     ["後回し", releaseStatus?.deferredFeatures?.length ?? "-"],
     ["D1", releaseStatus?.checks?.persistence?.storageDriver || "確認中"],
+    ["連携", integrationsReady ? "Free/Pro OK" : "確認中"],
     ["認証", authEnforceReady ? "enforce準備OK" : auth.enforcementMode || "observe"],
     ["Domain", customDomainReady ? "独自OK" : domain.currentRoute || "確認中"],
     ["課金", billingConfigured ? billing.provider || "外部" : "MVP"],
@@ -914,6 +917,13 @@ function AdminPreviewPanel({ releaseStatus }) {
     ["APC", apcConfigured ? (apcTokenConfigured ? "URL・Tokenあり" : "URLあり") : "未接続"],
   ];
   const integrationChecks = [
+    {
+      label: "連携棚卸",
+      status: integrationsReady ? "Free/Pro OK" : "確認中",
+      detail: externalIntegrations.integrationsContractVersion
+        ? `${externalIntegrations.readinessItems?.length || 0}件の外部連携を集約確認しています。`
+        : "/integrations/status の反映を確認します。",
+    },
     {
       label: "Clerk認証",
       status: authEnforceReady ? "enforce準備OK" : `${auth.enforcementMode || "observe"}運用`,

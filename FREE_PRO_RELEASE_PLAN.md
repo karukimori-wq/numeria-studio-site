@@ -108,6 +108,7 @@ Business integrations should pass reference IDs only.
   - `POST /api/appraisal-clients` enforces the Free 3-profile limit and keeps Pro profiles unlimited
 - Usage and billing status APIs:
   - `GET /api/usage`
+  - `GET /integrations/status`
   - `GET /billing/status`
   - `GET /feedback-hub/status`
   - `GET /growth-handoff/status`

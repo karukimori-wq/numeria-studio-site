@@ -1,7 +1,7 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 
-const APP_VERSION = "0.3.7-feedback-hub-intake";
+const APP_VERSION = "0.3.8-integration-readiness";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
 const ADMIN_CONTRACT_VERSION = "admin-mode-mvp.v1";
 const AUTH_CONTRACT_VERSION = "clerk-server-auth-readiness.v1";
@@ -11,6 +11,7 @@ const AI_USAGE_CONTRACT_VERSION = "ai-platform-core-usage-events.v1";
 const APC_CONTRACT_VERSION = "ai-platform-core-activity-forwarding.v1";
 const REPORT_TEMPLATE_VERSION = "numeria-report-template.v1";
 const FEEDBACK_HUB_CONTRACT_VERSION = "feedback-hub-free-pro-intake.v1";
+const INTEGRATIONS_CONTRACT_VERSION = "numeria-free-pro-integrations-readiness.v1";
 
 const runtimeStore = globalThis.__numeriaUsageStore || new Map();
 globalThis.__numeriaUsageStore = runtimeStore;
@@ -667,6 +668,138 @@ async function feedbackSubmitResponse(env = {}, body = {}, scope = {}) {
   };
 }
 
+async function integrationsStatusResponse(request = new Request("https://numeria-studio-site.karukimori.workers.dev/integrations/status"), env = {}) {
+  const auth = await authStatusResponse(new Request("https://local.test/integrations/status"), env);
+  const domain = domainStatusResponse(request, env);
+  const billing = billingStatusResponse(env);
+  const growthEngineHandoff = growthEngineHandoffStatusResponse();
+  const feedbackHub = feedbackHubStatusResponse(env);
+  const aiUsage = aiUsageStatusResponse(env);
+  const aiPlatformCore = apcStatusResponse(env);
+  const domainHost = String(domain.currentHost || "").split(":")[0];
+  const isLocalDomainCheck = ["local.test", "localhost", "127.0.0.1"].includes(domainHost);
+  const domainReadyForFreePro = domain.routeReady || isLocalDomainCheck;
+  const items = [
+    {
+      key: "auth",
+      appName: "Clerk",
+      role: "login-and-session",
+      statusEndpoint: "/auth/status",
+      configured: auth.clientAuthReady,
+      readyForFreePro: auth.enforcementMode === "observe" || auth.enforceModeReady,
+      releaseBlocking: false,
+      fallback: auth.enforcementMode === "observe" ? "observe-mode" : "none",
+    },
+    {
+      key: "growthEngineBilling",
+      appName: "Growth Engine / Stripe",
+      role: "subscription-source",
+      statusEndpoint: "/billing/status",
+      configured: billing.configured,
+      readyForFreePro: true,
+      releaseBlocking: false,
+      fallback: billing.failurePolicy,
+    },
+    {
+      key: "growthEngineHandoff",
+      appName: "Growth Engine",
+      role: "reservation-handoff",
+      statusEndpoint: "/growth-handoff/status",
+      configured: growthEngineHandoff.receiverReady,
+      readyForFreePro: growthEngineHandoff.receiverReady,
+      releaseBlocking: false,
+      fallback: "external-references-only",
+    },
+    {
+      key: "feedbackHub",
+      appName: "Feedback Hub",
+      role: "question-improvement-intake",
+      statusEndpoint: "/feedback-hub/status",
+      configured: feedbackHub.configured,
+      readyForFreePro: true,
+      releaseBlocking: false,
+      fallback: feedbackHub.failurePolicy,
+    },
+    {
+      key: "aiPlatformCoreUsage",
+      appName: "AI Platform Core",
+      role: "usage-events",
+      statusEndpoint: "/ai-usage/status",
+      configured: aiUsage.endpointConfigured,
+      readyForFreePro: true,
+      releaseBlocking: false,
+      fallback: aiUsage.forwardingMode === "send" ? "send-mode" : "observe-mode-local-record",
+    },
+    {
+      key: "aiPlatformCoreActivity",
+      appName: "AI Platform Core",
+      role: "activity-forwarding",
+      statusEndpoint: "/apc/status",
+      configured: aiPlatformCore.configured,
+      readyForFreePro: true,
+      releaseBlocking: false,
+      fallback: aiPlatformCore.failurePolicy,
+    },
+    {
+      key: "domain",
+      appName: "Cloudflare",
+      role: "worker-route-and-custom-domain",
+      statusEndpoint: "/domain/status",
+      configured: domain.routeReady,
+      readyForFreePro: domainReadyForFreePro,
+      releaseBlocking: !domainReadyForFreePro,
+      fallback: domain.workerHostReady ? "worker-host" : "none",
+    },
+  ];
+  const blockingItems = items.filter((item) => item.releaseBlocking || !item.readyForFreePro);
+
+  return {
+    status: blockingItems.length === 0 ? "success" : "warning",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    integrationsContractVersion: INTEGRATIONS_CONTRACT_VERSION,
+    releaseScope: "free-pro",
+    statusEndpoint: "/integrations/status",
+    overallReadyForFreePro: blockingItems.length === 0,
+    blockingItems: blockingItems.map((item) => item.key),
+    readinessItems: items,
+    endpoints: {
+      auth: "/auth/status",
+      domain: "/domain/status",
+      billing: "/billing/status",
+      growthEngineHandoff: "/growth-handoff/status",
+      feedbackHub: "/feedback-hub/status",
+      aiUsage: "/ai-usage/status",
+      aiPlatformCore: "/apc/status",
+    },
+    requiredRuntimeConfig: [
+      "VITE_CLERK_PUBLISHABLE_KEY or CLERK_PUBLISHABLE_KEY",
+      "CLERK_JWKS_URL before AUTH_ENFORCEMENT_MODE=enforce",
+      "GROWTH_ENGINE_BILLING_STATUS_URL or STRIPE_SUBSCRIPTION_STATUS_URL when external subscription sync is enabled",
+      "FEEDBACK_HUB_BASE_URL or FEEDBACK_HUB_SUBMIT_URL when external feedback forwarding is enabled",
+      "AI_PLATFORM_CORE_BASE_URL, APC_ACTIVITIES_URL, or AI_PLATFORM_CORE_URL when APC forwarding is enabled",
+    ],
+    dataBoundary: {
+      numeriaOwns: [
+        "Session",
+        "ReportSnapshot",
+        "CalculationResult",
+        "AppraisalClientSnapshot",
+      ],
+      externalOwns: [
+        "Customer",
+        "Reservation",
+        "Payment",
+        "Sales",
+        "AIActivity",
+        "AIUsage",
+        "FeedbackAnalysis",
+      ],
+    },
+    secretValuesReturned: false,
+  };
+}
+
 function normalizeBillingPayload(payload = {}) {
   const subscription = payload.subscription || payload.billing || payload;
   const planId = normalizePlanId(
@@ -1021,6 +1154,7 @@ function domainStatusResponse(request, env = {}) {
 
 async function releaseStatusResponse(request = new Request("https://numeria-studio-site.karukimori.workers.dev/release/status"), env = {}) {
   const persistence = await persistenceStatusResponse(env);
+  const integrations = await integrationsStatusResponse(request, env);
   const billing = billingStatusResponse(env);
   const growthEngineHandoff = growthEngineHandoffStatusResponse();
   const feedbackHub = feedbackHubStatusResponse(env);
@@ -1052,6 +1186,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
       "Custom domain readiness contract",
       "Growth Engine reservation handoff receiver",
       "Feedback Hub Free/Pro intake contract",
+      "External integrations readiness inventory",
       "AI Platform Core usage event contract",
       "AI Platform Core usage event forwarding",
     ],
@@ -1076,6 +1211,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
         statusEndpoint: "/apc/status",
         ...apcStatusResponse(env),
       },
+      externalIntegrations: integrations,
       businessPurchasable: false,
       auth: {
         statusEndpoint: "/auth/status",
@@ -1213,6 +1349,10 @@ async function adminAccountResponse(request, env = {}, body = {}) {
 
 async function contractsStatusResponse(env = {}) {
   const persistence = await persistenceStatusResponse(env);
+  const externalIntegrations = await integrationsStatusResponse(
+    new Request("https://numeria-studio-site.karukimori.workers.dev/contracts/status"),
+    env,
+  );
   const auth = await authStatusResponse(new Request("https://local.test/contracts/status"), env);
   const billing = billingStatusResponse(env);
   const domain = domainStatusResponse(new Request("https://numeria-studio-site.karukimori.workers.dev/contracts/status"), env);
@@ -1276,6 +1416,8 @@ async function contractsStatusResponse(env = {}) {
       reportGenerated: "studio.report.generated.v1",
     },
     integrations: {
+      statusEndpoint: "/integrations/status",
+      externalIntegrations,
       growthEngineHandoff,
       feedbackHub,
     },
@@ -2106,6 +2248,9 @@ export default {
     }
     if (url.pathname === "/billing/status") {
       return json(billingStatusResponse(env));
+    }
+    if (url.pathname === "/integrations/status") {
+      return json(await integrationsStatusResponse(request, env));
     }
     if (url.pathname === "/feedback-hub/status") {
       return json(feedbackHubStatusResponse(env));

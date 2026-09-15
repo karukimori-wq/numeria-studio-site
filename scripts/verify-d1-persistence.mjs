@@ -253,6 +253,25 @@ assert.equal(feedbackHubStatus.body.businessRequired, false);
 assert.equal(feedbackHubStatus.body.billingBlocked, false);
 assert.equal(feedbackHubStatus.body.secretValuesReturned, false);
 
+const integrationsStatus = await jsonFetch("/integrations/status", {}, {
+  ...env,
+  GROWTH_ENGINE_BILLING_STATUS_URL: "https://growth-engine.karukimori.workers.dev/api/billing/status",
+  GROWTH_ENGINE_API_TOKEN: "growth_secret_not_returned",
+  FEEDBACK_HUB_SUBMIT_URL: "https://feedback-hub.karukimori.workers.dev/api/embed/feedback",
+  FEEDBACK_HUB_API_TOKEN: "feedback_secret_not_returned",
+  AI_PLATFORM_CORE_BASE_URL: "https://ai-platform-core.karukimori.workers.dev",
+  APC_API_TOKEN: "apc_secret_not_returned",
+});
+assert.equal(integrationsStatus.response.status, 200);
+assert.equal(integrationsStatus.body.integrationsContractVersion, "numeria-free-pro-integrations-readiness.v1");
+assert.equal(integrationsStatus.body.releaseScope, "free-pro");
+assert.equal(integrationsStatus.body.overallReadyForFreePro, true);
+assert.equal(integrationsStatus.body.secretValuesReturned, false);
+assert.ok(integrationsStatus.body.readinessItems.some((item) => item.key === "growthEngineBilling" && item.configured === true));
+assert.ok(integrationsStatus.body.readinessItems.some((item) => item.key === "feedbackHub" && item.configured === true));
+assert.ok(integrationsStatus.body.readinessItems.some((item) => item.key === "aiPlatformCoreActivity" && item.configured === true));
+assert.doesNotMatch(JSON.stringify(integrationsStatus.body), /growth_secret_not_returned|feedback_secret_not_returned|apc_secret_not_returned/);
+
 const feedbackFallback = await jsonFetch("/api/feedback/submit", {
   method: "POST",
   headers,

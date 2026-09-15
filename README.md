@@ -110,6 +110,10 @@ billing success state. When `FEEDBACK_HUB_BASE_URL` or `FEEDBACK_HUB_SUBMIT_URL`
 is configured, the Worker forwards the request and keeps a non-blocking local
 receipt if forwarding fails.
 
+External release dependencies can be reviewed through `GET /integrations/status`.
+It summarizes Growth Engine, Feedback Hub, AI Platform Core, Clerk, billing, and
+domain readiness for the Free / Pro release without returning secret values.
+
 Backend-only Clerk secrets such as `CLERK_SECRET_KEY` must not be committed to this repository.
 
 ## Free / Pro release
