@@ -14,6 +14,7 @@ const jsonEndpoints = [
   "/auth/status",
   "/domain/status",
   "/billing/status",
+  "/growth-handoff/status",
   "/persistence/status",
   "/ai-usage/status",
   "/apc/status",
@@ -87,6 +88,15 @@ assert.ok(Array.isArray(billing.supportedPlans), "Billing status should list sup
 assert.ok(billing.supportedPlans.includes("free"), "Billing status should include free");
 assert.ok(billing.supportedPlans.includes("pro"), "Billing status should include pro");
 
+const growthHandoff = results.get("/growth-handoff/status");
+assert.equal(growthHandoff.sourceApp, "growth-engine", "Growth handoff status should identify Growth Engine");
+assert.equal(growthHandoff.receiverReady, true, "Growth handoff receiver should be ready");
+assert.equal(growthHandoff.businessPurchasable, false, "Growth handoff must not make Business purchasable");
+assert.equal(growthHandoff.businessFeatureEnabled, false, "Growth handoff must not enable Business features");
+assert.equal(growthHandoff.queryIdentityTrustedForAuthorization, false, "Growth handoff must not trust query identity for authorization");
+assert.equal(growthHandoff.externalReferencesOnly, true, "Growth handoff should store external references only");
+assert.deepEqual(collectSecretLeaks(growthHandoff), [], "Growth handoff status must not expose secret values");
+
 const domain = results.get("/domain/status");
 assert.ok(["custom-domain", "worker-host", "unknown-host"].includes(domain.currentRoute), "Domain status should report the route class");
 assert.equal(domain.secretValuesReturned, false, "Domain status must not expose secrets");
@@ -111,11 +121,15 @@ assert.equal(release.releaseScope, "free-pro", "Release scope should stay Free /
 assert.equal(release.checks?.businessPurchasable, false, "Release status must keep Business unavailable");
 assert.equal(release.checks?.auth?.authProvider, "clerk", "Release auth check should identify Clerk");
 assert.ok(release.checks?.auth?.enforceModeRollout, "Release auth check should include enforce rollout");
+assert.equal(release.checks?.growthEngineHandoff?.receiverReady, true, "Release status should include Growth Engine handoff readiness");
+assert.equal(release.checks?.growthEngineHandoff?.businessPurchasable, false, "Release Growth handoff must keep Business unavailable");
 assert.equal(release.checks?.billing?.secretValuesReturned, false, "Release billing check must not expose secrets");
 assert.equal(release.checks?.domain?.secretValuesReturned, false, "Release domain check must not expose secrets");
 
 const contracts = results.get("/contracts/status");
 assert.equal(contracts.plans?.business?.purchasable, false, "Contracts status must keep Business unavailable");
+assert.equal(contracts.integrations?.growthEngineHandoff?.receiverReady, true, "Contracts status should include Growth Engine handoff readiness");
+assert.equal(contracts.integrations?.growthEngineHandoff?.queryIdentityTrustedForAuthorization, false, "Contracts Growth handoff must not trust query identity");
 assert.equal(contracts.billing?.secretValuesReturned, false, "Contracts billing check must not expose secrets");
 assert.equal(contracts.domain?.secretValuesReturned, false, "Contracts domain check must not expose secrets");
 

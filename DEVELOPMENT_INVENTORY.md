@@ -34,6 +34,7 @@ The current production target is:
 - Custom domain readiness diagnostics for Cloudflare Worker routing.
 - Automated production smoke check for page, release, auth, domain, billing, persistence, AI usage, and APC endpoints.
 - Strict auth release check for Clerk enforce readiness and enforce-mode confirmation.
+- Growth Engine reservation handoff receiver with external reference-only storage.
 - AI Platform Core usage event contract.
 - AI Platform Core activity forwarding for official studio events.
 - Admin preview panel with release, external-integration health, and release action inventory.
@@ -47,6 +48,7 @@ The current production target is:
 - `GET /auth/status`
 - `GET /domain/status`
 - `GET /billing/status`
+- `GET /growth-handoff/status`
 - `GET /persistence/status`
 - `GET /ai-usage/status`
 - `GET /apc/status`
@@ -61,7 +63,7 @@ High priority:
 Medium priority:
 
 - Improve native Japanese PDF typography beyond the current browser print flow.
-- Prepare Growth Engine Business handoff without making Business purchasable.
+- Prepare Growth Engine Business plan handoff without making Business purchasable.
 - Keep documentation aligned with Free / Pro entitlement changes.
 
 Low priority:

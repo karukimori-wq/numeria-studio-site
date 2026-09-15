@@ -109,9 +109,11 @@ Business integrations should pass reference IDs only.
 - Usage and billing status APIs:
   - `GET /api/usage`
   - `GET /billing/status`
+  - `GET /growth-handoff/status`
   - `GET /api/billing/subscription`
   - `PATCH /api/billing/subscription`
 - Business returns `BUSINESS_PREPARING`.
+- Growth Engine reservation handoff stores only safe external reference IDs.
 - Worker PDF export uses `numeria-report-template.v1` for the structured one-page report.
 
 Billing source readiness is exposed through `GET /billing/status`.

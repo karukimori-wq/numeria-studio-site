@@ -1,5 +1,5 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
-import { normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
+import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 
 const APP_VERSION = "0.3.6-report-template";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
@@ -471,6 +471,35 @@ function billingStatusResponse(env = {}) {
   };
 }
 
+function growthEngineHandoffStatusResponse() {
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    appVersion: APP_VERSION,
+    contractVersion: "growth-engine-reservation-handoff.v1",
+    sourceApp: "growth-engine",
+    statusEndpoint: "/growth-handoff/status",
+    routePath: growthEngineHandoffContract.path,
+    acceptedIntent: growthEngineHandoffContract.intent,
+    receiverReady: true,
+    businessPurchasable: false,
+    businessFeatureEnabled: false,
+    authorizationSource: growthEngineHandoffContract.authorizationSource,
+    queryIdentityTrustedForAuthorization: growthEngineHandoffContract.queryIdentityTrustedForAuthorization,
+    acceptedReferenceFields: [
+      "reservationId",
+      "customerId",
+      "traceId",
+      "correlationId",
+    ],
+    forbiddenQueryKeys: growthEngineHandoffContract.forbiddenQueryKeys,
+    externalReferencesOnly: true,
+    sourceOfTruth: "Growth Engine owns customer, reservation, payment, and sales records. Numeria stores only safe external reference IDs on sessions and report snapshots.",
+    secretValuesReturned: false,
+    message: "Growth Engineの予約参照を受け取れます。Business本体、支払い、売上、顧客正本はNumeriaに取り込みません。",
+  };
+}
+
 function normalizeBillingPayload(payload = {}) {
   const subscription = payload.subscription || payload.billing || payload;
   const planId = normalizePlanId(
@@ -826,6 +855,7 @@ function domainStatusResponse(request, env = {}) {
 async function releaseStatusResponse(request = new Request("https://numeria-studio-site.karukimori.workers.dev/release/status"), env = {}) {
   const persistence = await persistenceStatusResponse(env);
   const billing = billingStatusResponse(env);
+  const growthEngineHandoff = growthEngineHandoffStatusResponse();
   const auth = await authStatusResponse(new Request("https://local.test/release/status"), env);
   const domain = domainStatusResponse(request, env);
   return {
@@ -852,12 +882,13 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
       "Server-side Clerk JWT verification in observe/enforce modes",
       "Billing source readiness contract",
       "Custom domain readiness contract",
+      "Growth Engine reservation handoff receiver",
       "AI Platform Core usage event contract",
       "AI Platform Core usage event forwarding",
     ],
     pendingFeatures: [
       "Stripe real subscription sync",
-      "Growth Engine Business handoff",
+      "Growth Engine Business plan handoff after Business release",
       "Japanese native PDF typography beyond browser print flow",
       "Clerk enforce-mode production rollout after token header confirmation",
     ],
@@ -885,6 +916,7 @@ async function releaseStatusResponse(request = new Request("https://numeria-stud
         statusEndpoint: "/billing/status",
         ...billing,
       },
+      growthEngineHandoff,
       domain: {
         statusEndpoint: "/domain/status",
         ...domain,
@@ -1016,6 +1048,7 @@ async function contractsStatusResponse(env = {}) {
   const domain = domainStatusResponse(new Request("https://numeria-studio-site.karukimori.workers.dev/contracts/status"), env);
   const aiUsage = aiUsageStatusResponse(env);
   const aiPlatformCore = apcStatusResponse(env);
+  const growthEngineHandoff = growthEngineHandoffStatusResponse();
   return {
     status: "success",
     appId: "numeria-studio",
@@ -1070,6 +1103,9 @@ async function contractsStatusResponse(env = {}) {
       sessionStarted: "studio.session.started.v1",
       sessionCompleted: "studio.session.completed.v1",
       reportGenerated: "studio.report.generated.v1",
+    },
+    integrations: {
+      growthEngineHandoff,
     },
     reports: {
       templateVersion: REPORT_TEMPLATE_VERSION,
@@ -1892,6 +1928,9 @@ export default {
     }
     if (url.pathname === "/billing/status") {
       return json(billingStatusResponse(env));
+    }
+    if (url.pathname === "/growth-handoff/status") {
+      return json(growthEngineHandoffStatusResponse());
     }
     if (url.pathname === "/ai-usage/status") {
       return json(aiUsageStatusResponse(env));

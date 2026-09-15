@@ -842,17 +842,21 @@ function AdminPreviewPanel({ releaseStatus }) {
   const billing = releaseStatus?.checks?.billing || {};
   const auth = releaseStatus?.checks?.auth || {};
   const domain = releaseStatus?.checks?.domain || {};
+  const growthEngineHandoff = releaseStatus?.checks?.growthEngineHandoff || {};
   const aiUsageConfigured = Boolean(aiUsage.endpointConfigured);
   const apcConfigured = Boolean(aiPlatformCore.endpointConfigured || aiPlatformCore.configured);
   const apcTokenConfigured = Boolean(aiPlatformCore.tokenConfigured);
   const billingConfigured = Boolean(billing.configured);
   const authEnforceReady = Boolean(auth.enforceModeReady);
   const customDomainReady = Boolean(domain.customDomainReady);
+  const growthHandoffReady = Boolean(growthEngineHandoff.receiverReady);
   const previewItems = [
     {
       title: "Business連携",
-      status: "開発中",
-      body: "Growth Engine連携、予約・売上・決済正本との接続を管理者だけ先行確認します。",
+      status: growthHandoffReady ? "予約受け口OK" : "開発中",
+      body: growthHandoffReady
+        ? "Growth Engineの予約参照を受け取り、鑑定セッションへ引き継げます。売上・決済・顧客正本は取り込みません。"
+        : "Growth Engine連携、予約・売上・決済正本との接続を管理者だけ先行確認します。",
     },
     {
       title: "依頼者プロフィール",
@@ -892,6 +896,7 @@ function AdminPreviewPanel({ releaseStatus }) {
     ["認証", authEnforceReady ? "enforce準備OK" : auth.enforcementMode || "observe"],
     ["Domain", customDomainReady ? "独自OK" : domain.currentRoute || "確認中"],
     ["課金", billingConfigured ? billing.provider || "外部" : "MVP"],
+    ["GE予約", growthHandoffReady ? "受け口OK" : "確認中"],
     ["AI Core", aiUsageConfigured ? "URLあり" : "未接続"],
     ["APC", apcConfigured ? (apcTokenConfigured ? "URL・Tokenあり" : "URLあり") : "未接続"],
   ];
@@ -923,6 +928,13 @@ function AdminPreviewPanel({ releaseStatus }) {
       detail: `mode: ${aiUsage.forwardingMode || "unknown"}`,
     },
     {
+      label: "GE予約ハンドオフ",
+      status: growthHandoffReady ? "参照受け口OK" : "確認中",
+      detail: growthHandoffReady
+        ? "reservationId / customerId など安全な参照だけ保存します。"
+        : "Growth Engineからの予約開始URLを確認します。",
+    },
+    {
       label: "APC活動転送",
       status: apcConfigured ? "非ブロッキング転送" : "未接続",
       detail: apcConfigured
@@ -949,6 +961,13 @@ function AdminPreviewPanel({ releaseStatus }) {
       body: billingConfigured
         ? "Free/Proの権限は外部契約APIの応答で上書きできます。"
         : "本番課金の正本URLと読み取りトークンを設定するまで、MVP契約状態を使います。",
+    },
+    {
+      label: "予約ハンドオフ",
+      status: growthHandoffReady ? "受け口確認済み" : "動作確認待ち",
+      body: growthHandoffReady
+        ? "Growth Engineからの予約ID・顧客IDを参照として受け、支払い/売上/顧客正本はGrowth Engineに残します。"
+        : "Growth Engineの予約開始URLから鑑定開始できるか確認します。",
     },
     {
       label: "独自ドメイン",

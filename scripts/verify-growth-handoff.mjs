@@ -99,6 +99,33 @@ assert.equal("paymentStatus" in sessionBody.externalReferences, false);
 assert.equal("salesAmount" in sessionBody.externalReferences, false);
 assert.equal("reportBody" in sessionBody.externalReferences, false);
 
+const handoffStatusResponse = await worker.fetch(new Request("https://numeria-studio.com/growth-handoff/status"), env, ctx);
+assert.equal(handoffStatusResponse.status, 200);
+const handoffStatus = await handoffStatusResponse.json();
+assert.equal(handoffStatus.contractVersion, "growth-engine-reservation-handoff.v1");
+assert.equal(handoffStatus.receiverReady, true);
+assert.equal(handoffStatus.businessPurchasable, false);
+assert.equal(handoffStatus.businessFeatureEnabled, false);
+assert.equal(handoffStatus.queryIdentityTrustedForAuthorization, false);
+assert.deepEqual(handoffStatus.acceptedReferenceFields, [
+  "reservationId",
+  "customerId",
+  "traceId",
+  "correlationId",
+]);
+
+const releaseResponse = await worker.fetch(new Request("https://numeria-studio.com/release/status"), env, ctx);
+const releaseBody = await releaseResponse.json();
+assert.ok(releaseBody.completedFeatures.includes("Growth Engine reservation handoff receiver"));
+assert.ok(releaseBody.pendingFeatures.includes("Growth Engine Business plan handoff after Business release"));
+assert.equal(releaseBody.checks.growthEngineHandoff.receiverReady, true);
+assert.equal(releaseBody.checks.growthEngineHandoff.businessPurchasable, false);
+
+const contractsResponse = await worker.fetch(new Request("https://numeria-studio.com/contracts/status"), env, ctx);
+const contractsBody = await contractsResponse.json();
+assert.equal(contractsBody.integrations.growthEngineHandoff.receiverReady, true);
+assert.equal(contractsBody.integrations.growthEngineHandoff.externalReferencesOnly, true);
+
 const draftRequest = new Request("https://numeria-studio.com/api/appraisals/save-draft", {
   method: "POST",
   headers: scopeHeaders,

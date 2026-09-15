@@ -129,6 +129,8 @@ Business:
 - Preparing
 - Not purchasable in this release
 - Reserved for Growth Engine and cross-app integrations
+- Growth Engine reservation handoff is accepted as external references only
+- Customer, reservation, payment, and sales records remain owned by Growth Engine
 
 See [FREE_PRO_RELEASE_PLAN.md](FREE_PRO_RELEASE_PLAN.md) for the release contract and remaining durable billing notes.
 See [BILLING_INTEGRATION_CONTRACT.md](BILLING_INTEGRATION_CONTRACT.md) for the Growth Engine / Stripe billing read contract.
@@ -142,12 +144,14 @@ Release monitoring endpoints:
 - `GET /auth/status`
 - `GET /domain/status`
 - `GET /billing/status`
+- `GET /growth-handoff/status`
 - `GET /persistence/status`
 - `GET /ai-usage/status`
 - `GET /apc/status`
 
 `GET /auth/status` includes Clerk enforce-mode rollout readiness without returning backend secrets.
 `GET /domain/status` reports whether the current request reached the Worker through the expected custom domain or the Workers fallback host.
+`GET /growth-handoff/status` confirms that Growth Engine reservation references can be received without enabling Business purchase, payment, sales, or customer-master storage inside Numeria.
 
 Production smoke check:
 
