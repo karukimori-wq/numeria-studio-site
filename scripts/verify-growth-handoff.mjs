@@ -64,6 +64,8 @@ assert.match(mainSource, /parseGrowthEngineHandoff/);
 assert.match(mainSource, /toGrowthEngineExternalReferences/);
 assert.match(mainSource, /window\.location/);
 assert.match(mainSource, /externalReferences/);
+assert.match(mainSource, /growthHandoffStartedRef/);
+assert.match(mainSource, /growthHandoffStartedRef\.current/);
 assert.doesNotMatch(mainSource, /requestedUserId\s*:/, "query userId must not be copied into the appraisal case");
 assert.doesNotMatch(mainSource, /requestedWorkspaceId\s*:/, "query workspaceId must not be copied into the appraisal case");
 
