@@ -122,6 +122,9 @@ Business integrations should pass reference IDs only.
 - Business returns `BUSINESS_PREPARING`.
 - Growth Engine reservation handoff stores only safe external reference IDs.
 - Worker PDF export uses `numeria-report-template.v1` for the structured one-page report.
+- Report export can store a Numeria-owned delivery snapshot for prepaid/postpaid
+  partial preview, paid amount, expected amount, and delivery due date. Payment
+  and sales records remain owned by Growth Engine or Stripe.
 
 Billing source readiness is exposed through `GET /billing/status`.
 Numeria can detect a future Growth Engine or Stripe subscription source without

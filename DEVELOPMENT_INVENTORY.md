@@ -2,7 +2,7 @@
 
 Updated: 2026-09-15
 
-Current app version: `0.3.9-billing-read-only`
+Current app version: `0.3.10-report-delivery-settings`
 
 ## Current Position
 
@@ -29,6 +29,7 @@ The current production target is:
 - Appraisal history search.
 - Follow-up start from visible appraisal history.
 - Structured one-page PDF export and Japanese print-to-PDF flow.
+- Report delivery snapshot controls for prepaid/postpaid partial preview, paid amount, expected amount, and delivery due date.
 - Feedback Hub Free/Pro intake contract with non-blocking Worker receipt.
 - External integration readiness inventory for Growth Engine, Feedback Hub, AI Platform Core, Clerk, billing, and domain checks.
 - Billing source readiness contract for Growth Engine or Stripe.
@@ -68,6 +69,7 @@ High priority:
 Medium priority:
 
 - Improve native Japanese PDF typography beyond the current browser print flow.
+- Turn the report delivery snapshot into a fuller customer-facing paid delivery flow after Growth Engine payment state is connected.
 - Prepare Growth Engine Business plan handoff without making Business purchasable.
 - Keep documentation aligned with Free / Pro entitlement changes.
 

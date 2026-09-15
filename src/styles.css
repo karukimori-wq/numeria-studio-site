@@ -809,6 +809,43 @@ h2 {
   gap: 14px;
 }
 
+.delivery-settings {
+  display: grid;
+  gap: 12px;
+  border: 1px solid #eadfce;
+  border-radius: 8px;
+  padding: 14px;
+  background: #fffdf8;
+}
+
+.delivery-settings-heading h3 {
+  margin: 2px 0 0;
+  color: #241a3d;
+}
+
+.delivery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.delivery-grid label {
+  display: grid;
+  gap: 6px;
+  color: #5c5149;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.delivery-grid input {
+  width: 100%;
+  border: 1px solid #ded3c4;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #17202a;
+  background: #fff;
+}
+
 .admin-preview-panel {
   display: grid;
   gap: 14px;
@@ -1622,6 +1659,7 @@ textarea {
   .integration-health-grid,
   .release-detail-grid,
   .admin-preview-grid,
+  .delivery-grid,
   .plan-grid {
     grid-template-columns: 1fr;
   }

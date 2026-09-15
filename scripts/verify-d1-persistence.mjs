@@ -193,6 +193,7 @@ assert.equal(releaseStatus.body.releaseScope, "free-pro");
 assert.ok(releaseStatus.body.completedFeatures.includes("D1 persistence for usage, drafts, appraisal client profiles, completed appraisals, and report exports"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Selectable and editable appraisal client profile chips"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Numerology calculation preview while writing appraisals"));
+assert.ok(releaseStatus.body.completedFeatures.includes("Report delivery and payment snapshot controls"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side auth readiness contract"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Server-side Clerk JWT verification in observe/enforce modes"));
 assert.ok(releaseStatus.body.completedFeatures.includes("Billing source readiness contract"));
@@ -595,6 +596,11 @@ const report = await jsonFetch("/api/reports/export", {
     lifePathNumber: 6,
     question: "相談",
     resultSummary: "結果",
+    paymentMode: "postpaid_partial_preview",
+    paidAmount: 1000,
+    expectedAmount: 5000,
+    deliveryDueDays: 7,
+    deliveryDueDate: "2026-09-22",
   }),
 }, env);
 assert.equal(report.response.status, 201);
@@ -602,8 +608,17 @@ assert.equal(report.body.eventName, "studio.report.generated.v1");
 assert.equal(report.body.reportSnapshot.birthDate, "1990-04-19");
 assert.equal(report.body.reportSnapshot.lifePathNumber, 6);
 assert.equal(report.body.reportSnapshot.templateVersion, "numeria-report-template.v1");
+assert.equal(report.body.reportSnapshot.deliverySettings.paymentMode, "postpaid_partial_preview");
+assert.equal(report.body.reportSnapshot.deliverySettings.paymentStatus, "partial");
+assert.equal(report.body.reportSnapshot.deliverySettings.partialPreviewEnabled, true);
+assert.equal(report.body.reportSnapshot.deliverySettings.paidAmount, 1000);
+assert.equal(report.body.reportSnapshot.deliverySettings.expectedAmount, 5000);
+assert.equal(report.body.reportSnapshot.deliverySettings.deliveryDueDate, "2026-09-22");
+assert.equal(report.body.reportSnapshot.deliverySettings.externalPaymentSourceOfTruth, "growth-engine-or-stripe");
+assert.equal(report.body.deliverySettings.paymentModeLabel, "後払い（一部だけ見せる）");
 assert.equal(report.body.reportTemplateVersion, "numeria-report-template.v1");
 assert.equal(report.body.usage.reportExports.length, 1);
+assert.equal(report.body.usage.reportExports[0].deliverySettings.paymentStatus, "partial");
 assert.equal(db.reportEvents.size, 1);
 assert.equal(report.body.aiUsageEvent.eventName, "studio.report.generated.v1");
 assert.equal(report.body.aiUsageEvent.recorded, true);

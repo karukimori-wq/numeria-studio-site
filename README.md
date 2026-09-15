@@ -184,6 +184,7 @@ PDF reports:
 - Worker PDF export uses `numeria-report-template.v1`.
 - Free can export the structured basic report.
 - Pro can export detailed reports and hide Numeria branding.
+- Report exports include a delivery snapshot for prepaid/postpaid partial preview, paid amount, expected amount, and delivery due date.
 - Native Japanese PDF output remains available through the browser print-to-PDF flow.
 
 Clerk CLI note:

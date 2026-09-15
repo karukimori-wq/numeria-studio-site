@@ -38,7 +38,7 @@ import "./styles.css";
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const clerkApplicationId = import.meta.env.VITE_CLERK_APPLICATION_ID || "app_3ImOuQXNBc9Rpqs3XoJEtw2NogR";
-const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.9-billing-read-only";
+const appVersion = import.meta.env.VITE_APP_VERSION || "0.3.10-report-delivery-settings";
 const feedbackApiBase = import.meta.env.VITE_FEEDBACK_HUB_BASE_URL || "";
 const feedbackSubmitEndpoint = feedbackApiBase
   ? `${feedbackApiBase.replace(/\/$/, "")}/api/embed/feedback`
@@ -201,6 +201,11 @@ function SignedInWorkspace() {
   const [reportOptions, setReportOptions] = useState({
     reportType: "basic",
     removeBranding: false,
+    paymentMode: "prepaid",
+    paidAmount: "",
+    expectedAmount: "",
+    deliveryDueDays: 7,
+    deliveryDueDate: "",
   });
   const [clientProfileName, setClientProfileName] = useState("");
 
@@ -557,6 +562,11 @@ function SignedInWorkspace() {
           format: "pdf",
           reportType: reportOptions.reportType,
           removeBranding: reportOptions.removeBranding,
+          paymentMode: reportOptions.paymentMode,
+          paidAmount: reportOptions.paidAmount,
+          expectedAmount: reportOptions.expectedAmount,
+          deliveryDueDays: reportOptions.deliveryDueDays,
+          deliveryDueDate: reportOptions.deliveryDueDate,
           appraisalId: currentCase.id,
           clientName: currentCase.clientName,
           birthDate: currentCase.birthDate,
@@ -577,7 +587,7 @@ function SignedInWorkspace() {
       setNotice({
         type: "success",
         title: "PDFを生成しました",
-        body: `${response.fileName} をダウンロードできます。${response.branding === "hidden" ? "ロゴは非表示です。" : "Numeriaロゴ付きで出力します。"}`,
+        body: `${response.fileName} をダウンロードできます。${response.deliverySettings?.paymentModeLabel || "納品条件"}も控えとして保存しました。`,
       });
     } catch (error) {
       setNotice(limitNotice(error.data));
@@ -610,6 +620,11 @@ function SignedInWorkspace() {
     const title = reportOptions.reportType === "detailed" ? "鑑定書（詳細）" : "鑑定書（基本）";
     const branding = reportOptions.removeBranding ? "" : "<div class=\"brand\">Numeria Studio</div>";
     const numerologyPreview = calculateLifePathNumber(currentCase.birthDate);
+    const paymentModeLabel = reportOptions.paymentMode === "postpaid_partial_preview" ? "後払い（一部だけ見せる）" : "前払い";
+    const paidAmount = Number(reportOptions.paidAmount || 0);
+    const expectedAmount = Number(reportOptions.expectedAmount || 0);
+    const paymentStatus = expectedAmount > 0 && paidAmount >= expectedAmount ? "支払い済み" : paidAmount > 0 ? "一部入金" : "未入金";
+    const deliveryDue = reportOptions.deliveryDueDate || `${reportOptions.deliveryDueDays || 7}日以内`;
     const field = (label, value, fallback = "未入力") => `
       <section><h2>${escapePrintHtml(label)}</h2><p>${escapePrintHtml(value || fallback)}</p></section>`;
     printWindow.document.write(`<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>${escapePrintHtml(title)}</title>
@@ -635,6 +650,7 @@ function SignedInWorkspace() {
         ${field("相談内容", currentCase.question)}
         ${field("鑑定結果", currentCase.resultSummary)}
         ${reportOptions.reportType === "detailed" ? field("鑑定メモ", currentCase.notes) : ""}
+        ${field("納品条件", `${paymentModeLabel}\n支払い状態: ${paymentStatus}\n支払い済み金額: ${Number.isFinite(paidAmount) ? paidAmount : 0}円\n予定金額: ${Number.isFinite(expectedAmount) ? expectedAmount : 0}円\n納品期限: ${deliveryDue}\n支払い前プレビュー: ${reportOptions.paymentMode === "postpaid_partial_preview" ? "一部だけ見せる" : "支払い確認後に納品"}`)}
       </main><footer>この鑑定書はNumeria Studioで作成されました。</footer>
       <script>window.onload=()=>window.print();</script></body></html>`);
     printWindow.document.close();
@@ -1154,6 +1170,72 @@ function ReportExportPanel({ options, usage, onChange, onExport, onPrint }) {
         </span>
         <span className={options.removeBranding ? "switch on" : "switch"} />
       </button>
+      <section className="delivery-settings" aria-label="納品条件">
+        <div className="delivery-settings-heading">
+          <p className="eyebrow">Delivery</p>
+          <h3>納品・支払い条件</h3>
+        </div>
+        <div className="segmented-control" aria-label="支払い方法">
+          <button
+            className={options.paymentMode === "prepaid" ? "active" : ""}
+            onClick={() => onChange((current) => ({ ...current, paymentMode: "prepaid" }))}
+          >
+            前払い
+          </button>
+          <button
+            className={options.paymentMode === "postpaid_partial_preview" ? "active" : ""}
+            onClick={() => onChange((current) => ({ ...current, paymentMode: "postpaid_partial_preview" }))}
+          >
+            後払い・一部表示
+          </button>
+        </div>
+        <div className="delivery-grid">
+          <label>
+            予定金額
+            <input
+              type="number"
+              min="0"
+              inputMode="numeric"
+              value={options.expectedAmount}
+              onChange={(event) => onChange((current) => ({ ...current, expectedAmount: event.target.value }))}
+              placeholder="例: 5000"
+            />
+          </label>
+          <label>
+            支払い済み金額
+            <input
+              type="number"
+              min="0"
+              inputMode="numeric"
+              value={options.paidAmount}
+              onChange={(event) => onChange((current) => ({ ...current, paidAmount: event.target.value }))}
+              placeholder="例: 1000"
+            />
+          </label>
+          <label>
+            納品期限（日数）
+            <input
+              type="number"
+              min="1"
+              max="60"
+              inputMode="numeric"
+              value={options.deliveryDueDays}
+              onChange={(event) => onChange((current) => ({ ...current, deliveryDueDays: event.target.value }))}
+            />
+          </label>
+          <label>
+            納品日
+            <input
+              type="date"
+              value={options.deliveryDueDate}
+              onChange={(event) => onChange((current) => ({ ...current, deliveryDueDate: event.target.value }))}
+            />
+          </label>
+        </div>
+        <p className="note">
+          支払い処理・売上管理はGrowth Engine側を正にし、Numeriaではレポート納品時の控えだけ保存します。
+        </p>
+      </section>
       <div className="action-row">
         <button className="button primary" onClick={onExport}>
           PDF出力
