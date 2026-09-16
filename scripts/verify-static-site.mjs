@@ -116,6 +116,8 @@ assert.match(productionReadinessScript, /requiredRuntimeConfig/);
 assert.match(productionReadinessScript, /businessPurchasable/);
 assert.match(restoreOriginalSource, /NumeriaInstallAuthTokenBridge/);
 assert.match(restoreOriginalSource, /session\.getToken/);
+assert.match(restoreOriginalSource, /認証確認/);
+assert.match(restoreOriginalSource, /headers\.Authorization="Bearer "\+token/);
 assert.doesNotMatch(html, /https:\/\/numeria-studio\.karukimori\.workers\.dev/);
 assert.match(authGateSource, /@clerk\/clerk-js/);
 assert.match(authGateSource, /\/api\/auth\/config/);
