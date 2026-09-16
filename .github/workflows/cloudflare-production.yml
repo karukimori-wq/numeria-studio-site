@@ -17,6 +17,7 @@ env:
   VITE_CLERK_APPLICATION_ID: app_3ImOuQXNBc9Rpqs3XoJEtw2NogR
   VITE_APP_VERSION: 0.3.6-report-template
   VITE_ADMIN_EMAILS: illusionddt@gmail.com
+  AUTH_ENFORCEMENT_MODE: ${{ vars.AUTH_ENFORCEMENT_MODE || 'observe' }}
   VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY || secrets.VITE_CLERK_PUBLISHABLE_KEY }}
   VITE_FEEDBACK_HUB_BASE_URL: ${{ vars.VITE_FEEDBACK_HUB_BASE_URL || secrets.VITE_FEEDBACK_HUB_BASE_URL }}
   VITE_PRICE_FREE_LABEL: ${{ vars.VITE_PRICE_FREE_LABEL || '無料' }}
@@ -59,7 +60,11 @@ jobs:
         run: npx wrangler d1 migrations apply numeria-studio-db --remote
 
       - name: Deploy Worker static assets
-        run: npx wrangler deploy --var VITE_CLERK_PUBLISHABLE_KEY:"$VITE_CLERK_PUBLISHABLE_KEY"
+        run: npx wrangler deploy --var VITE_CLERK_PUBLISHABLE_KEY:"$VITE_CLERK_PUBLISHABLE_KEY" --var AUTH_ENFORCEMENT_MODE:"$AUTH_ENFORCEMENT_MODE"
 
       - name: Verify production
         run: npm run verify:production
+
+      - name: Verify auth enforce rollout
+        if: env.AUTH_ENFORCEMENT_MODE == 'enforce'
+        run: npm run verify:auth-release
