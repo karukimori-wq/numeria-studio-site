@@ -1144,14 +1144,6 @@ function ReportExportPanel({ options, usage, onChange, onExport, onPrint }) {
       <p className="note">
         FreeはPDFの基本鑑定書を出力できます。詳細レポートとロゴ非表示はProで利用できます。
       </p>
-      <div className="mobile-report-primary-actions no-print" aria-label="鑑定書の主要操作">
-        <button className="button primary" onClick={onExport}>
-          PDF出力
-        </button>
-        <button className="button secondary" onClick={onPrint}>
-          日本語PDF
-        </button>
-      </div>
       <div className="segmented-control" aria-label="レポート種別">
         <button
           className={options.reportType === "basic" ? "active" : ""}

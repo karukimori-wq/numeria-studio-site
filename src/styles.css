@@ -809,10 +809,6 @@ h2 {
   gap: 14px;
 }
 
-.mobile-report-primary-actions {
-  display: none;
-}
-
 .delivery-settings {
   display: grid;
   gap: 12px;
@@ -1693,27 +1689,4 @@ textarea {
     padding-bottom: calc(172px + env(safe-area-inset-bottom));
   }
 
-  .mobile-report-primary-actions {
-    position: sticky;
-    top: 104px;
-    z-index: 35;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin: -2px 0 4px;
-    border: 1px solid #e1d3b6;
-    border-radius: 16px;
-    padding: 10px;
-    background: rgba(255, 253, 248, 0.96);
-    box-shadow: 0 14px 34px rgba(36, 26, 61, 0.14);
-    backdrop-filter: blur(16px);
-  }
-
-  .mobile-report-primary-actions .button {
-    min-height: 48px;
-    border-radius: 12px;
-    padding: 10px 8px;
-    font-size: 0.92rem;
-    font-weight: 900;
-  }
 }
