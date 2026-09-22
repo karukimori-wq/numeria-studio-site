@@ -21,6 +21,8 @@ env:
   VITE_ADMIN_EMAILS: illusionddt@gmail.com
   AUTH_ENFORCEMENT_MODE: enforce
   VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY || secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+  CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+  NUMERIA_ADMIN_USER_IDS: ${{ vars.NUMERIA_ADMIN_USER_IDS || secrets.NUMERIA_ADMIN_USER_IDS }}
   VITE_FEEDBACK_HUB_BASE_URL: ${{ vars.VITE_FEEDBACK_HUB_BASE_URL || secrets.VITE_FEEDBACK_HUB_BASE_URL }}
   VITE_PRICE_FREE_LABEL: ${{ vars.VITE_PRICE_FREE_LABEL || '無料' }}
   VITE_PRICE_PRO_LABEL: ${{ vars.VITE_PRICE_PRO_LABEL || '価格未設定' }}
@@ -56,6 +58,17 @@ jobs:
           if [ "$missing" -ne 0 ]; then
             echo "Add the missing secrets at: https://github.com/karukimori-wq/numeria-studio-site/settings/secrets/actions"
             exit 1
+          fi
+
+      - name: Sync secure admin identity secrets
+        if: env.CLERK_SECRET_KEY != '' || env.NUMERIA_ADMIN_USER_IDS != ''
+        shell: bash
+        run: |
+          if [ -n "$CLERK_SECRET_KEY" ]; then
+            printf '%s' "$CLERK_SECRET_KEY" | npx wrangler secret put CLERK_SECRET_KEY
+          fi
+          if [ -n "$NUMERIA_ADMIN_USER_IDS" ]; then
+            printf '%s' "$NUMERIA_ADMIN_USER_IDS" | npx wrangler secret put NUMERIA_ADMIN_USER_IDS
           fi
 
       - name: Apply D1 migrations
