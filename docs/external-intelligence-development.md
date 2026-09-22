@@ -6,6 +6,7 @@ Numeria Studio uses External Intelligence System (EIS) only as development intel
 
 At the start of a development task, a connected development agent should call EIS `development_start` through HTTP or MCP with:
 
+- `workspaceId`: `professional-platform-dev`
 - `appId`: `numeria-studio`
 - `componentId`: `site`
 - `projectId`: `numeria-studio-site`
@@ -21,12 +22,12 @@ If EIS communication does not succeed, report `External Intelligence: NOT CONNEC
 
 `.github/workflows/cloudflare-production.yml` records a non-blocking development result after the configured Cloudflare Production workflow succeeds.
 
-Repository configuration required to enable recording:
+GitHub Actions authenticates to EIS with GitHub OIDC. No long-lived EIS repository secret or repository variables are required. The workflow grants only `id-token: write`, and EIS verifies the GitHub issuer, EIS audience, repository owner identity, and source repository before accepting `POST /api/development/results`.
 
-- Repository Variable `EXTERNAL_INTELLIGENCE_ENABLED=true`
-- Repository Variable `EXTERNAL_INTELLIGENCE_BASE_URL`
-- Repository Variable `EXTERNAL_INTELLIGENCE_WORKSPACE_ID`
-- Repository Secret `EXTERNAL_INTELLIGENCE_TOKEN`
+The reusable EIS workflow defaults to:
+
+- EIS Production: `https://external-intelligence-system.vercel.app`
+- workspace: `professional-platform-dev`
 
 Recording uses `strict=false`; EIS availability must not block the Numeria release.
 
