@@ -23,8 +23,8 @@ patched = replaceExactly(
   "legacy Supabase workspace load",
 );
 
-const legacyWorkspaceSave = "let{error:n}=await X.from(`numeria_workspaces`).upsert({user_id:t,appraisal_profiles:d,saved_presets:An,feedback_items:Wn,app_settings:e,updated_at:new Date().toISOString()},{onConflict:`user_id`});";
-const d1WorkspaceSave = "let{error:n}=await window.NumeriaD1WorkspaceSave({appraisal_profiles:d,saved_presets:An,feedback_items:Wn,app_settings:e,updated_at:new Date().toISOString()});";
+const legacyWorkspaceSave = "{error:n}=await X.from(`numeria_workspaces`).upsert({user_id:t,appraisal_profiles:d,saved_presets:An,feedback_items:Wn,app_settings:e,updated_at:new Date().toISOString()},{onConflict:`user_id`});";
+const d1WorkspaceSave = "{error:n}=await window.NumeriaD1WorkspaceSave({appraisal_profiles:d,saved_presets:An,feedback_items:Wn,app_settings:e,updated_at:new Date().toISOString()});";
 patched = replaceExactly(
   patched,
   legacyWorkspaceSave,
