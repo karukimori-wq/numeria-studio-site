@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -72,11 +73,9 @@ jobs:
   record-external-intelligence:
     name: Record External Intelligence
     needs: deploy
-    if: ${{ needs.deploy.result == 'success' && vars.EXTERNAL_INTELLIGENCE_ENABLED == 'true' && vars.EXTERNAL_INTELLIGENCE_BASE_URL != '' && vars.EXTERNAL_INTELLIGENCE_WORKSPACE_ID != '' }}
+    if: ${{ needs.deploy.result == 'success' }}
     uses: karukimori-wq/External-Intelligence-System/.github/workflows/record-development-result.yml@main
     with:
-      eis_base_url: ${{ vars.EXTERNAL_INTELLIGENCE_BASE_URL }}
-      workspace_id: ${{ vars.EXTERNAL_INTELLIGENCE_WORKSPACE_ID }}
       project_id: numeria-studio-site
       app_id: numeria-studio
       component_id: site
@@ -104,5 +103,3 @@ jobs:
       contract_version: professional-platform-contracts@abf17744
       node_version: '22'
       strict: false
-    secrets:
-      EXTERNAL_INTELLIGENCE_TOKEN: ${{ secrets.EXTERNAL_INTELLIGENCE_TOKEN }}
