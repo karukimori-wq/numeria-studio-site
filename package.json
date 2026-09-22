@@ -1,11 +1,11 @@
 {
   "type": "module",
   "scripts": {
-    "test": "node scripts/verify-static-site-with-entrypoint.mjs && node scripts/verify-admin-developer-preview.mjs && node scripts/verify-free-plan-ui-limits.mjs && node scripts/verify-workspace-state-d1.mjs && node scripts/verify-d1-persistence.mjs && node scripts/verify-growth-handoff.mjs",
-    "build": "vite build && node scripts/restore-original-site.mjs && node scripts/patch-d1-workspace-state.mjs",
+    "test": "node scripts/verify-static-site-with-entrypoint.mjs && node scripts/verify-admin-developer-preview.mjs && node scripts/verify-free-plan-ui-limits.mjs && node scripts/verify-workspace-state-d1.mjs && node scripts/verify-user-preferences-d1.mjs && node scripts/verify-d1-persistence.mjs && node scripts/verify-growth-handoff.mjs",
+    "build": "vite build && node scripts/restore-original-site.mjs && node scripts/patch-d1-workspace-state.mjs && node scripts/patch-profile-sources.mjs",
     "dev": "vite --host 0.0.0.0",
     "smoke": "npm test && npm run build",
-    "verify:production": "node scripts/verify-production-readiness.mjs && node scripts/verify-workspace-state-production.mjs",
+    "verify:production": "node scripts/verify-production-readiness.mjs && node scripts/verify-workspace-state-production.mjs && node scripts/verify-user-preferences-production.mjs",
     "verify:auth-release": "REQUIRE_CLERK_ENFORCE_READY=1 REQUIRE_AUTH_ENFORCE_MODE=1 node scripts/verify-production-readiness.mjs"
   },
   "dependencies": {
