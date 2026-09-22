@@ -43,6 +43,50 @@ function workspaceScopeKey(workspaceId, userId) {
   return `${workspaceId || "ws_personal"}:${userId || "anonymous"}`;
 }
 
+async function handleWorkspaceStateStatus(env = {}) {
+  const d1 = getD1Binding(env);
+  if (!d1 || typeof d1.prepare !== "function") {
+    return json({
+      status: "error",
+      storageDriver: "unavailable",
+      durable: false,
+      tableReady: false,
+      sourceOfTruth: "numeria-d1-workspace-state",
+      workspaceStateContractVersion: WORKSPACE_STATE_CONTRACT_VERSION,
+      userDataReturned: false,
+      errorCode: "D1_WORKSPACE_STATE_UNAVAILABLE",
+    }, { status: 503 });
+  }
+
+  try {
+    const row = await d1.prepare(
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'workspace_states' LIMIT 1"
+    ).first();
+    const tableReady = row?.name === "workspace_states";
+    return json({
+      status: tableReady ? "success" : "error",
+      storageDriver: "durable-d1",
+      durable: tableReady,
+      tableReady,
+      sourceOfTruth: "numeria-d1-workspace-state",
+      workspaceStateContractVersion: WORKSPACE_STATE_CONTRACT_VERSION,
+      userDataReturned: false,
+      ...(tableReady ? {} : { errorCode: "WORKSPACE_STATE_TABLE_MISSING" }),
+    }, { status: tableReady ? 200 : 503 });
+  } catch {
+    return json({
+      status: "error",
+      storageDriver: "durable-d1",
+      durable: false,
+      tableReady: false,
+      sourceOfTruth: "numeria-d1-workspace-state",
+      workspaceStateContractVersion: WORKSPACE_STATE_CONTRACT_VERSION,
+      userDataReturned: false,
+      errorCode: "WORKSPACE_STATE_STATUS_FAILED",
+    }, { status: 503 });
+  }
+}
+
 async function resolveAuthenticatedScope(request, env, ctx, requestedWorkspaceId) {
   const usageUrl = new URL(request.url);
   usageUrl.pathname = "/api/usage";
@@ -149,6 +193,9 @@ async function handleWorkspaceState(request, env = {}, ctx = null) {
 export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
+    if (url.pathname === "/workspace-state/status" && request.method === "GET") {
+      return handleWorkspaceStateStatus(env);
+    }
     if (url.pathname === "/api/workspace-state" && ["GET", "PUT"].includes(request.method)) {
       return handleWorkspaceState(request, env, ctx);
     }
