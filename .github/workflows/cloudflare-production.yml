@@ -104,4 +104,5 @@ jobs:
       contract_version: professional-platform-contracts@abf17744
       node_version: '22'
       strict: false
-    secrets: inherit
+    secrets:
+      EXTERNAL_INTELLIGENCE_TOKEN: ${{ secrets.EXTERNAL_INTELLIGENCE_TOKEN }}
