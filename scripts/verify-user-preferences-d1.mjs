@@ -71,6 +71,7 @@ assert.equal(status.body.storageDriver, "durable-d1");
 assert.equal(status.body.tableReady, true);
 assert.equal(status.body.userDataReturned, false);
 assert.equal(status.body.sourceOfTruth, "numeria-d1-user-preferences");
+assert.equal(status.body.userPreferencesContractVersion, "numeria-d1-user-preferences.v1");
 
 const empty = await jsonFetch("/api/user-preferences?workspaceId=ws_preferences", { headers }, env);
 assert.equal(empty.response.status, 200);
