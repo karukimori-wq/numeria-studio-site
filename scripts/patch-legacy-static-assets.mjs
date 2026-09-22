@@ -88,7 +88,7 @@ patched = replaceExactly(
 // Render the PDF first, then reserve/complete the appraisal in D1 before exposing the file to the user.
 // Admin preview bypasses usage limits without changing the real subscription plan.
 const legacyCompletionBridge = "Gi=async(e,t,n=t)=>{try{await fetch(`/contracts/status`,{method:`POST`,headers:{\"content-type\":`application/json`},body:JSON.stringify({workspaceId:`ws_test_001`,userId:`user_test_owner_001`,inputRef:{sessionId:n,reportId:t,reportType:e}})})}catch{}}";
-const guardedCompletionBridge = "Gi=async(e,t,n=t)=>{if(tr===`admin`)return!0;try{let r=await window.NumeriaAuthenticatedFetch(`/api/appraisals/status?workspaceId=ws_personal`,{headers:{\"X-Workspace-Id\":`ws_personal`}}).then(async e=>e.ok?e.json():null).catch(()=>null),i=r?.activeDraft?.id||t,a=await window.NumeriaAuthenticatedFetch(`/api/appraisals/complete`,{method:`POST`,headers:{\"Content-Type\":`application/json`,\"X-Workspace-Id\":`ws_personal`},body:JSON.stringify({workspaceId:`ws_personal`,appraisalId:i,clientName:G?.name||j,birthDate:G?.birthday||M,lifePathNumber:F?.lifePath||null,question:P,notes:lt||dt||Pe||``,resultSummary:Pe||Dr||pt?.overview||``})}),o=await a.json().catch(()=>({message:`鑑定完了を登録できませんでした`}));if(!a.ok){Gt(o.message||`鑑定完了を登録できませんでした`);return!1}return!0}catch{Gt(`鑑定完了を登録できませんでした。通信環境を確認してください。`);return!1}}";
+const guardedCompletionBridge = "Gi=async(e,t,n=t)=>{if(tr===`admin`)return!0;try{let r=await window.NumeriaAuthenticatedFetch(`/api/appraisals/status?workspaceId=ws_personal`,{headers:{\"X-Workspace-Id\":`ws_personal`}}).then(async e=>e.ok?e.json():null).catch(()=>null),i=r?.activeDraft?.id||t,a=await window.NumeriaAuthenticatedFetch(`/api/appraisals/complete`,{method:`POST`,headers:{\"Content-Type\":`application/json`,\"X-Workspace-Id\":`ws_personal`},body:JSON.stringify({workspaceId:`ws_personal`,appraisalId:i,clientName:G?.name||j,birthDate:G?.birthday||M,lifePathNumber:F?.lifePath||null,question:P,notes:lt||dt||Pe||``,resultSummary:Pe||pt?.overview||wr?.reading||``})}),o=await a.json().catch(()=>({message:`鑑定完了を登録できませんでした`}));if(!a.ok){Gt(o.message||`鑑定完了を登録できませんでした`);return!1}return!0}catch{Gt(`鑑定完了を登録できませんでした。通信環境を確認してください。`);return!1}}";
 patched = replaceExactly(
   patched,
   legacyCompletionBridge,
@@ -97,8 +97,9 @@ patched = replaceExactly(
   "report completion bridge",
 );
 
-const legacyNumerologyPdfFinalize = "let o=URL.createObjectURL(a.output(`blob`)),s=Ki();s&&Gi(`numerology`,s),Gt(`PDFを作成しました。開いた画面から保存できます。`),window.location.assign(o)}catch";
-const guardedNumerologyPdfFinalize = "let o=URL.createObjectURL(a.output(`blob`)),s=Dn??`reading-${Date.now()}`;if(!await Gi(`numerology`,s)){URL.revokeObjectURL(o);return}Ki(),Gt(`PDFを作成しました。開いた画面から保存できます。`),window.location.assign(o)}catch";
+// PDF navigation has already been made popup-safe above, so these completion gates target that patched form.
+const legacyNumerologyPdfFinalize = "let o=URL.createObjectURL(a.output(`blob`)),s=Ki();s&&Gi(`numerology`,s),Gt(`PDFを作成しました。開いた画面から保存できます。`),window.open(o,\"_blank\",\"noopener,noreferrer\")||window.location.assign(o)}catch";
+const guardedNumerologyPdfFinalize = "let o=URL.createObjectURL(a.output(`blob`)),s=Dn??`reading-${Date.now()}`;if(!await Gi(`numerology`,s)){URL.revokeObjectURL(o);return}Ki(),Gt(`PDFを作成しました。開いた画面から保存できます。`),window.open(o,\"_blank\",\"noopener,noreferrer\")||window.location.assign(o)}catch";
 patched = replaceExactly(
   patched,
   legacyNumerologyPdfFinalize,
@@ -107,8 +108,8 @@ patched = replaceExactly(
   "numerology PDF completion gate",
 );
 
-const legacyManticPdfFinalize = "let o=URL.createObjectURL(a.output(`blob`));Ci(),Gi(l,`${l}-${Date.now()}`),Gt(`PDFを作成しました。開いた画面から保存できます。`),window.location.assign(o)}catch";
-const guardedManticPdfFinalize = "let o=URL.createObjectURL(a.output(`blob`)),s=Dn??`${l}-${Date.now()}`;if(!await Gi(l,s)){URL.revokeObjectURL(o);return}Ki(),Gt(`PDFを作成しました。開いた画面から保存できます。`),window.location.assign(o)}catch";
+const legacyManticPdfFinalize = "let o=URL.createObjectURL(a.output(`blob`));Ci(),Gi(l,`${l}-${Date.now()}`),Gt(`PDFを作成しました。開いた画面から保存できます。`),window.open(o,\"_blank\",\"noopener,noreferrer\")||window.location.assign(o)}catch";
+const guardedManticPdfFinalize = "let o=URL.createObjectURL(a.output(`blob`)),s=Dn??`${l}-${Date.now()}`;if(!await Gi(l,s)){URL.revokeObjectURL(o);return}Ki(),Gt(`PDFを作成しました。開いた画面から保存できます。`),window.open(o,\"_blank\",\"noopener,noreferrer\")||window.location.assign(o)}catch";
 patched = replaceExactly(
   patched,
   legacyManticPdfFinalize,
