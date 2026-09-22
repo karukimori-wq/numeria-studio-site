@@ -25,8 +25,10 @@ class MockStatement {
   }
 
   async first() {
-    if (this.sql.includes("sqlite_master") && this.sql.includes("workspace_states")) {
-      return { name: "workspace_states" };
+    if (this.sql.includes("sqlite_master")) {
+      const tableName = this.args[0];
+      if (["workspace_states", "user_preferences"].includes(tableName)) return { name: tableName };
+      return null;
     }
     if (this.sql.includes("FROM workspace_states")) {
       return this.db.workspaceStates.get(this.args[0]) || null;
