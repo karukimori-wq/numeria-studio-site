@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import worker from "../src/worker-entry.js";
 
 class MockD1 {
@@ -59,6 +60,12 @@ async function jsonFetch(path, options = {}, env) {
   return { response, body };
 }
 
+const patchSource = readFileSync("scripts/patch-d1-workspace-state.mjs", "utf8");
+assert.doesNotMatch(patchSource, /legacy-supabase-migrated-to-d1/);
+assert.doesNotMatch(patchSource, /migrationRequired&&typeof X/);
+assert.match(patchSource, /source:\\"d1-empty\\"/);
+assert.match(patchSource, /no Supabase data migration is performed/);
+
 const env = { NUMERIA_DB: new MockD1() };
 const headers = {
   "content-type": "application/json",
@@ -78,7 +85,8 @@ const empty = await jsonFetch("/api/workspace-state?workspaceId=ws_d1_state", { 
 assert.equal(empty.response.status, 200);
 assert.equal(empty.body.status, "success");
 assert.equal(empty.body.workspaceState, null);
-assert.equal(empty.body.migrationRequired, true);
+assert.equal(empty.body.initializationRequired, true);
+assert.equal("migrationRequired" in empty.body, false);
 assert.equal(empty.body.sourceOfTruth, "numeria-d1-workspace-state");
 
 const workspaceState = {
@@ -101,7 +109,7 @@ assert.equal(saved.body.workspaceState.saved_presets[0].id, "preset-1");
 
 const reloaded = await jsonFetch("/api/workspace-state?workspaceId=ws_d1_state", { headers }, env);
 assert.equal(reloaded.response.status, 200);
-assert.equal(reloaded.body.migrationRequired, false);
+assert.equal(reloaded.body.initializationRequired, false);
 assert.equal(reloaded.body.workspaceState.appraisal_profiles[0].history[0].id, "h1");
 assert.equal(reloaded.body.workspaceState.app_settings.practitionerName, "Tester");
 
@@ -109,4 +117,4 @@ const health = await jsonFetch("/health", {}, env);
 assert.equal(health.response.status, 200);
 assert.equal(health.body.status, "success");
 
-console.log("D1 workspace state entrypoint verified.");
+console.log("D1 workspace state entrypoint verified with no Supabase data migration fallback.");
