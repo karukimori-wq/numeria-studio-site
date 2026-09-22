@@ -16,6 +16,9 @@ let patched = source;
 const bridge = `window.NumeriaAccessContextLoad=window.NumeriaAccessContextLoad||async function(email){try{let headers={\"X-Workspace-Id\":\"ws_personal\"},adminHeaders={...headers,\"X-Admin-Email\":String(email||\"\").trim().toLowerCase()},responses=await Promise.all([window.NumeriaAuthenticatedFetch(\`/api/billing/subscription?workspaceId=ws_personal\`,{headers}),window.NumeriaAuthenticatedFetch(\`/api/admin/status\`,{headers:adminHeaders})]),subscription=await responses[0].json().catch(()=>({})),admin=await responses[1].json().catch(()=>({}));if(!responses[0].ok)return{data:null,error:{message:subscription.message||\"契約状態を確認できませんでした\"}};return{data:{role:admin&&admin.adminMode?\"admin\":\"user\",plan:subscription&&subscription.subscription&&subscription.subscription.planId||\"free\"},error:null}}catch(error){return{data:null,error:{message:error&&error.message||\"利用権限を確認できませんでした\"}}}};window.NumeriaUserPreferencesLoad=window.NumeriaUserPreferencesLoad||async function(){try{let response=await window.NumeriaAuthenticatedFetch(\`/api/user-preferences?workspaceId=ws_personal\`,{headers:{\"X-Workspace-Id\":\"ws_personal\"}}),body=await response.json().catch(()=>({}));return response.ok?{data:body.preferences||null,error:null}:{data:null,error:{message:body.message||\"占術設定を読み込めませんでした\"}}}catch(error){return{data:null,error:{message:error&&error.message||\"占術設定を読み込めませんでした\"}}}};window.NumeriaUserPreferencesSave=window.NumeriaUserPreferencesSave||async function(preferences){try{let response=await window.NumeriaAuthenticatedFetch(\`/api/user-preferences\`,{method:\"PATCH\",headers:{\"Content-Type\":\"application/json\",\"X-Workspace-Id\":\"ws_personal\"},body:JSON.stringify({workspaceId:\"ws_personal\",preferences})}),body=await response.json().catch(()=>({}));return response.ok?{data:body.preferences||preferences,error:null}:{data:null,error:{message:body.message||\"占術設定を保存できませんでした\"}}}catch(error){return{data:null,error:{message:error&&error.message||\"占術設定を保存できませんでした\"}}}};`;
 patched = bridge + patched;
 
+const residualBridge = `window.NumeriaFeedbackSubmit=window.NumeriaFeedbackSubmit||async function(input){let categoryMap={\"不具合\":\"bug_report\",\"使いにくい\":\"usability_feedback\",\"機能要望\":\"improvement_request\",\"良かった点\":\"positive_feedback\"};try{let payload={sourceApp:\"numeria-studio\",appId:\"numeria-studio\",appName:\"Numeria Studio\",appVersion:\"legacy-desktop-feedback.v1\",planId:\"unknown\",workspaceId:\"ws_personal\",currentScreen:String(input.screen||\"Numeria Studio\"),screenName:String(input.screen||\"desktop-feedback\"),category:categoryMap[input.category]||\"improvement_request\",rating:Number(input.rating||0),initialMessage:String(input.message||\"\"),message:String(input.message||\"\"),occurredAt:input.createdAt||new Date().toISOString(),correlationId:\"num_desktop_\"+Date.now()};let response=await window.NumeriaAuthenticatedFetch(\`/api/feedback/submit\`,{method:\"POST\",headers:{\"Content-Type\":\"application/json\",\"X-Workspace-Id\":\"ws_personal\"},body:JSON.stringify(payload)}),body=await response.json().catch(()=>({}));return response.ok?{data:body,error:null}:{data:null,error:{message:body.message||\"Feedback Hubへ送信できませんでした\"}}}catch(error){return{data:null,error:{message:error&&error.message||\"Feedback Hubへ送信できませんでした\"}}}};window.NumeriaLegacyAdminDataUnavailable=window.NumeriaLegacyAdminDataUnavailable||async function(){return{data:[],error:{message:\"旧Supabase管理機能は廃止しました。管理者メニューの本番状態確認を利用してください。\"}}};window.NumeriaLegacyAdminMutationDisabled=window.NumeriaLegacyAdminMutationDisabled||async function(){return{data:null,error:{message:\"旧Supabaseのユーザー変更・停止・削除は廃止しました。契約・権限は正式なサーバー側管理から変更してください。\"}}};`;
+patched = residualBridge + patched;
+
 const legacyAccessRead = "X.from(`profiles`).select(`role,plan`).eq(`user_id`,t).maybeSingle()";
 const workerAccessRead = "window.NumeriaAccessContextLoad(e.email)";
 patched = replaceExactly(patched, legacyAccessRead, workerAccessRead, 1, "Supabase role/plan read");
@@ -75,5 +78,79 @@ patched = replaceExactly(
   "legacy admin plan/role mutation guard",
 );
 
+// Supabase is no longer the runtime account-status authority. Clerk/Worker auth remains authoritative.
+const legacyAccountStatusRead = "X.from(`profiles`).select(`account_status`).eq(`user_id`,t).maybeSingle()";
+patched = replaceExactly(
+  patched,
+  legacyAccountStatusRead,
+  "Promise.resolve({data:null,error:null})",
+  1,
+  "Supabase account-status read",
+);
+
+// The old Supabase aggregate/admin mutation surface is intentionally retired rather than copied into D1.
+patched = replaceExactly(
+  patched,
+  "X.rpc(`numeria_admin_user_summary`)",
+  "window.NumeriaLegacyAdminDataUnavailable()",
+  1,
+  "Supabase admin summary RPC",
+);
+patched = replaceExactly(
+  patched,
+  "X.from(`beta_feedback`).select(`id,user_id,user_email,category,screen,rating,message,status,created_at`).order(`created_at`,{ascending:!1})",
+  "window.NumeriaLegacyAdminDataUnavailable()",
+  1,
+  "Supabase beta feedback admin read",
+);
+patched = replaceExactly(
+  patched,
+  "X.from(`profiles`).update({...n,updated_at:new Date().toISOString()}).eq(`user_id`,e)",
+  "window.NumeriaLegacyAdminMutationDisabled(n)",
+  1,
+  "Supabase admin user mutation",
+);
+patched = replaceExactly(
+  patched,
+  "X.rpc(`numeria_admin_delete_user`,{p_target_user_id:e.user_id})",
+  "window.NumeriaLegacyAdminMutationDisabled({deleteUserId:e.user_id})",
+  1,
+  "Supabase admin delete RPC",
+);
+patched = replaceExactly(
+  patched,
+  "X.from(`beta_feedback`).update({status:t}).eq(`id`,e)",
+  "window.NumeriaLegacyAdminMutationDisabled({feedbackId:e,status:t})",
+  1,
+  "Supabase beta feedback admin mutation",
+);
+
+const legacyDesktopFeedbackWrite = "X.from(`beta_feedback`).insert({id:n.id,user_id:t,user_email:e.email,category:n.category,screen:n.screen,rating:n.rating,message:n.message,status:n.status,created_at:n.createdAt})";
+const feedbackHubWrite = "void window.NumeriaFeedbackSubmit({category:n.category,screen:n.screen,rating:n.rating,message:n.message,createdAt:n.createdAt})";
+patched = replaceExactly(
+  patched,
+  legacyDesktopFeedbackWrite,
+  feedbackHubWrite,
+  1,
+  "Supabase desktop feedback insert",
+);
+
+patched = patched.replace(
+  "管理データを取得できませんでした。Supabaseの管理用設定を確認してください。",
+  "旧Supabaseのユーザー一覧・停止・削除・フィードバック集計は廃止しました。管理者メニューの本番状態確認を利用してください。",
+);
+
+const forbiddenRuntimePatterns = [
+  "X.from(`profiles`)",
+  "X.from(`beta_feedback`)",
+  "X.rpc(`numeria_admin_user_summary`)",
+  "X.rpc(`numeria_admin_delete_user`)",
+];
+for (const forbidden of forbiddenRuntimePatterns) {
+  if (patched.includes(forbidden)) {
+    throw new Error(`Supabase runtime dependency remains in Production legacy bundle: ${forbidden}`);
+  }
+}
+
 writeFileSync(assetPath, patched);
-console.log("Legacy profile sources patched: plan from Worker subscription, admin role from Worker admin status, divination preferences from D1, display name from Clerk.");
+console.log("Legacy Supabase runtime sources removed from normal UI; plan/admin/prefs use Worker+D1+Clerk, feedback uses Feedback Hub, and old Supabase admin mutations are disabled.");
