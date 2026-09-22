@@ -13,6 +13,7 @@ function replaceExactly(input, legacyValue, replacementValue, expectedCount, lab
 
 let patched = source;
 
+// Expected three legacy PDF navigation calls; replaceExactly enforces this count.
 const legacyPdfNavigation = "window.location.assign(o)";
 const safePdfNavigation = 'window.open(o,"_blank","noopener,noreferrer")||window.location.assign(o)';
 patched = replaceExactly(
