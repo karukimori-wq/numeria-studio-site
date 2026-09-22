@@ -15,6 +15,7 @@ env:
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
   PRODUCTION_URL: https://numeria-studio-site.karukimori.workers.dev
   NUMERIA_PRODUCTION_URL: https://numeria-studio-site.karukimori.workers.dev
+  NUMERIA_CUSTOM_DOMAIN_URL: https://numeria-studio.com
   VITE_CLERK_APPLICATION_ID: app_3ImOuQXNBc9Rpqs3XoJEtw2NogR
   VITE_APP_VERSION: 0.3.6-report-template
   VITE_ADMIN_EMAILS: illusionddt@gmail.com
@@ -66,6 +67,9 @@ jobs:
       - name: Verify production
         run: npm run verify:production
 
+      - name: Verify custom domain
+        run: npm run verify:custom-domain
+
       - name: Verify auth enforce rollout
         if: env.AUTH_ENFORCEMENT_MODE == 'enforce'
         run: npm run verify:auth-release
@@ -80,11 +84,11 @@ jobs:
       app_id: numeria-studio
       component_id: site
       task_type: production-deploy
-      summary: Numeria Studio Cloudflare Production workflow completed its configured test, build, deploy, production readiness, and auth rollout checks.
+      summary: Numeria Studio Cloudflare Production workflow completed its configured test, build, deploy, Workers.dev readiness, custom-domain smoke, and auth rollout checks.
       outcome: implementation_result
       success: true
       knowledge_title: Numeria Studio production workflow completed
-      knowledge_statement: The current Numeria Studio commit passed the configured Cloudflare Production workflow. This is implementation/deployment evidence only; administrator entitlement behavior, complete UI reachability, persistence, integrations, and human verification must be confirmed before promotion to production_verified_success.
+      knowledge_statement: The current Numeria Studio commit passed the configured Cloudflare Production workflow, including the numeria-studio.com custom-domain smoke. This is implementation/deployment evidence only; logged-in administrator entitlement behavior and complete human UI flows still require human verification.
       production_deployed: true
       ui_reachable: true
       permission_verified: false
