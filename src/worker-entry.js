@@ -147,7 +147,7 @@ async function handleWorkspaceState(request, env = {}, ctx = null) {
       updatedAt: row?.updated_at || null,
       sourceOfTruth: "numeria-d1-workspace-state",
       workspaceStateContractVersion: WORKSPACE_STATE_CONTRACT_VERSION,
-      migrationRequired: !row,
+      initializationRequired: !row,
     });
   }
 
