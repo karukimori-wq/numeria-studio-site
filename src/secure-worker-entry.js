@@ -45,6 +45,31 @@ function getClerkApiBase(env = {}) {
   return String(env.CLERK_API_BASE_URL || "https://api.clerk.com").replace(/\/$/, "");
 }
 
+function adminPreviewStatus(env = {}) {
+  const adminEmails = getAdminEmails(env);
+  const adminUserIds = getAdminUserIds(env);
+  const clerkBackendIdentityLookupConfigured = Boolean(getClerkSecretKey(env));
+  const identityProviderReady = clerkBackendIdentityLookupConfigured || adminUserIds.length > 0;
+  return {
+    status: identityProviderReady ? "success" : "warning",
+    appId: "numeria-studio",
+    adminPreviewContractVersion: ADMIN_PREVIEW_CONTRACT_VERSION,
+    identityProviderReady,
+    clerkBackendIdentityLookupConfigured,
+    adminUserIdAllowlistConfigured: adminUserIds.length > 0,
+    adminEmailAllowlistConfigured: adminEmails.length > 0,
+    adminEmailAllowlistCount: adminEmails.length,
+    adminUserIdAllowlistCount: adminUserIds.length,
+    browserAssertedAdminEmailTrusted: false,
+    subscriptionPlanUnaffected: true,
+    businessPurchasable: false,
+    secretValuesReturned: false,
+    message: identityProviderReady
+      ? "Clerk本人性に基づく管理者developerPreview判定を利用できます。"
+      : "管理者developerPreviewにはCLERK_SECRET_KEYまたはNUMERIA_ADMIN_USER_IDSの設定が必要です。",
+  };
+}
+
 function requestedWorkspaceId(request) {
   const url = new URL(request.url);
   return request.headers.get("X-Workspace-Id")
@@ -248,6 +273,9 @@ async function handleSecureAdminRequest(request, env = {}, ctx = null) {
 export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
+    if (url.pathname === "/admin-preview/status" && request.method === "GET") {
+      return json(adminPreviewStatus(env));
+    }
     if (["/api/admin/status", "/api/admin/account"].includes(url.pathname)
       && ["GET", "POST"].includes(request.method)) {
       return handleSecureAdminRequest(request, env, ctx);
