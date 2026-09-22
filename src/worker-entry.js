@@ -75,7 +75,11 @@ function workspaceScopeKey(workspaceId, userId) {
   return `${workspaceId || "ws_personal"}:${userId || "anonymous"}`;
 }
 
-async function tableStatusResponse(env, tableName, contractVersion, sourceOfTruth) {
+async function tableStatusResponse(env, tableName, contractVersion, contractField, sourceOfTruth) {
+  const contractMetadata = {
+    contractVersion,
+    [contractField]: contractVersion,
+  };
   const d1 = getD1Binding(env);
   if (!d1 || typeof d1.prepare !== "function") {
     return json({
@@ -84,7 +88,7 @@ async function tableStatusResponse(env, tableName, contractVersion, sourceOfTrut
       durable: false,
       tableReady: false,
       sourceOfTruth,
-      contractVersion,
+      ...contractMetadata,
       userDataReturned: false,
       errorCode: "D1_UNAVAILABLE",
     }, { status: 503 });
@@ -101,7 +105,7 @@ async function tableStatusResponse(env, tableName, contractVersion, sourceOfTrut
       durable: tableReady,
       tableReady,
       sourceOfTruth,
-      contractVersion,
+      ...contractMetadata,
       userDataReturned: false,
       ...(tableReady ? {} : { errorCode: "D1_TABLE_MISSING" }),
     }, { status: tableReady ? 200 : 503 });
@@ -112,7 +116,7 @@ async function tableStatusResponse(env, tableName, contractVersion, sourceOfTrut
       durable: false,
       tableReady: false,
       sourceOfTruth,
-      contractVersion,
+      ...contractMetadata,
       userDataReturned: false,
       errorCode: "D1_STATUS_FAILED",
     }, { status: 503 });
@@ -124,6 +128,7 @@ async function handleWorkspaceStateStatus(env = {}) {
     env,
     "workspace_states",
     WORKSPACE_STATE_CONTRACT_VERSION,
+    "workspaceStateContractVersion",
     "numeria-d1-workspace-state",
   );
 }
@@ -133,6 +138,7 @@ async function handleUserPreferencesStatus(env = {}) {
     env,
     "user_preferences",
     USER_PREFERENCES_CONTRACT_VERSION,
+    "userPreferencesContractVersion",
     "numeria-d1-user-preferences",
   );
 }
