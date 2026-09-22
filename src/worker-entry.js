@@ -1,6 +1,15 @@
 import coreWorker from "./worker.js";
 
 const WORKSPACE_STATE_CONTRACT_VERSION = "numeria-d1-workspace-state.v1";
+const USER_PREFERENCES_CONTRACT_VERSION = "numeria-d1-user-preferences.v1";
+const ALLOWED_DIVINATIONS = new Set([
+  "numerology",
+  "nine-star-ki",
+  "four-pillars",
+  "western-astrology",
+  "zi-wei-dou-shu",
+  "tarot",
+]);
 
 function json(data, init = {}) {
   return new Response(JSON.stringify(data), {
@@ -39,11 +48,34 @@ function normalizeWorkspaceState(input = {}) {
   };
 }
 
+function normalizeDivination(value, fallback = "numerology") {
+  const normalized = String(value || "").trim();
+  return ALLOWED_DIVINATIONS.has(normalized) ? normalized : fallback;
+}
+
+function normalizeUserPreferences(input = {}, current = {}) {
+  const primaryDivination = normalizeDivination(
+    input.primary_divination ?? input.primaryDivination ?? current.primary_divination,
+    "numerology",
+  );
+  const enabledInput = input.enabled_divinations ?? input.enabledDivinations ?? current.enabled_divinations;
+  const enabledDivinations = Array.from(new Set(
+    (Array.isArray(enabledInput) ? enabledInput : [primaryDivination])
+      .map((value) => normalizeDivination(value, ""))
+      .filter(Boolean),
+  ));
+  if (!enabledDivinations.includes(primaryDivination)) enabledDivinations.unshift(primaryDivination);
+  return {
+    primary_divination: primaryDivination,
+    enabled_divinations: enabledDivinations.length ? enabledDivinations : [primaryDivination],
+  };
+}
+
 function workspaceScopeKey(workspaceId, userId) {
   return `${workspaceId || "ws_personal"}:${userId || "anonymous"}`;
 }
 
-async function handleWorkspaceStateStatus(env = {}) {
+async function tableStatusResponse(env, tableName, contractVersion, sourceOfTruth) {
   const d1 = getD1Binding(env);
   if (!d1 || typeof d1.prepare !== "function") {
     return json({
@@ -51,27 +83,27 @@ async function handleWorkspaceStateStatus(env = {}) {
       storageDriver: "unavailable",
       durable: false,
       tableReady: false,
-      sourceOfTruth: "numeria-d1-workspace-state",
-      workspaceStateContractVersion: WORKSPACE_STATE_CONTRACT_VERSION,
+      sourceOfTruth,
+      contractVersion,
       userDataReturned: false,
-      errorCode: "D1_WORKSPACE_STATE_UNAVAILABLE",
+      errorCode: "D1_UNAVAILABLE",
     }, { status: 503 });
   }
 
   try {
     const row = await d1.prepare(
-      "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'workspace_states' LIMIT 1"
-    ).first();
-    const tableReady = row?.name === "workspace_states";
+      "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ? LIMIT 1"
+    ).bind(tableName).first();
+    const tableReady = row?.name === tableName;
     return json({
       status: tableReady ? "success" : "error",
       storageDriver: "durable-d1",
       durable: tableReady,
       tableReady,
-      sourceOfTruth: "numeria-d1-workspace-state",
-      workspaceStateContractVersion: WORKSPACE_STATE_CONTRACT_VERSION,
+      sourceOfTruth,
+      contractVersion,
       userDataReturned: false,
-      ...(tableReady ? {} : { errorCode: "WORKSPACE_STATE_TABLE_MISSING" }),
+      ...(tableReady ? {} : { errorCode: "D1_TABLE_MISSING" }),
     }, { status: tableReady ? 200 : 503 });
   } catch {
     return json({
@@ -79,12 +111,30 @@ async function handleWorkspaceStateStatus(env = {}) {
       storageDriver: "durable-d1",
       durable: false,
       tableReady: false,
-      sourceOfTruth: "numeria-d1-workspace-state",
-      workspaceStateContractVersion: WORKSPACE_STATE_CONTRACT_VERSION,
+      sourceOfTruth,
+      contractVersion,
       userDataReturned: false,
-      errorCode: "WORKSPACE_STATE_STATUS_FAILED",
+      errorCode: "D1_STATUS_FAILED",
     }, { status: 503 });
   }
+}
+
+async function handleWorkspaceStateStatus(env = {}) {
+  return tableStatusResponse(
+    env,
+    "workspace_states",
+    WORKSPACE_STATE_CONTRACT_VERSION,
+    "numeria-d1-workspace-state",
+  );
+}
+
+async function handleUserPreferencesStatus(env = {}) {
+  return tableStatusResponse(
+    env,
+    "user_preferences",
+    USER_PREFERENCES_CONTRACT_VERSION,
+    "numeria-d1-user-preferences",
+  );
 }
 
 async function resolveAuthenticatedScope(request, env, ctx, requestedWorkspaceId) {
@@ -190,14 +240,113 @@ async function handleWorkspaceState(request, env = {}, ctx = null) {
   return json({ status: "error", errorCode: "METHOD_NOT_ALLOWED" }, { status: 405 });
 }
 
+async function handleUserPreferences(request, env = {}, ctx = null) {
+  const body = await readJson(request);
+  const url = new URL(request.url);
+  const requestedWorkspaceId = body.workspaceId
+    || request.headers.get("X-Workspace-Id")
+    || url.searchParams.get("workspaceId")
+    || "ws_personal";
+  const { response: authResponse, scope } = await resolveAuthenticatedScope(request, env, ctx, requestedWorkspaceId);
+  if (authResponse) return authResponse;
+
+  const d1 = getD1Binding(env);
+  if (!d1 || typeof d1.prepare !== "function") {
+    return json({
+      status: "error",
+      errorCode: "D1_USER_PREFERENCES_UNAVAILABLE",
+      message: "占術設定の保存先を確認できません。",
+      userPreferencesContractVersion: USER_PREFERENCES_CONTRACT_VERSION,
+      sourceOfTruth: "numeria-d1-user-preferences",
+    }, { status: 503 });
+  }
+
+  const key = workspaceScopeKey(scope.workspaceId, scope.userId);
+  const row = await d1.prepare(
+    `SELECT primary_divination, enabled_divinations_json, updated_at
+       FROM user_preferences WHERE scope_key = ? LIMIT 1`
+  ).bind(key).first();
+
+  if (request.method === "GET") {
+    const preferences = row
+      ? normalizeUserPreferences({
+          primary_divination: row.primary_divination,
+          enabled_divinations: (() => {
+            try { return JSON.parse(row.enabled_divinations_json || "[]"); } catch { return []; }
+          })(),
+        })
+      : normalizeUserPreferences({});
+    return json({
+      status: "success",
+      workspaceId: scope.workspaceId,
+      userId: scope.userId,
+      preferences,
+      updatedAt: row?.updated_at || null,
+      sourceOfTruth: "numeria-d1-user-preferences",
+      userPreferencesContractVersion: USER_PREFERENCES_CONTRACT_VERSION,
+      initializationRequired: !row,
+      planStoredHere: false,
+      roleStoredHere: false,
+    });
+  }
+
+  if (["PUT", "PATCH"].includes(request.method)) {
+    const current = row
+      ? {
+          primary_divination: row.primary_divination,
+          enabled_divinations: (() => {
+            try { return JSON.parse(row.enabled_divinations_json || "[]"); } catch { return []; }
+          })(),
+        }
+      : {};
+    const preferences = normalizeUserPreferences(body.preferences || body, current);
+    const now = new Date().toISOString();
+    await d1.prepare(`
+      INSERT INTO user_preferences (
+        scope_key, workspace_id, user_id, primary_divination, enabled_divinations_json, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT(scope_key) DO UPDATE SET
+        primary_divination = excluded.primary_divination,
+        enabled_divinations_json = excluded.enabled_divinations_json,
+        updated_at = excluded.updated_at
+    `).bind(
+      key,
+      scope.workspaceId,
+      scope.userId,
+      preferences.primary_divination,
+      JSON.stringify(preferences.enabled_divinations),
+      now,
+    ).run();
+    return json({
+      status: "success",
+      workspaceId: scope.workspaceId,
+      userId: scope.userId,
+      preferences,
+      updatedAt: now,
+      sourceOfTruth: "numeria-d1-user-preferences",
+      userPreferencesContractVersion: USER_PREFERENCES_CONTRACT_VERSION,
+      planStoredHere: false,
+      roleStoredHere: false,
+    });
+  }
+
+  return json({ status: "error", errorCode: "METHOD_NOT_ALLOWED" }, { status: 405 });
+}
+
 export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
     if (url.pathname === "/workspace-state/status" && request.method === "GET") {
       return handleWorkspaceStateStatus(env);
     }
+    if (url.pathname === "/user-preferences/status" && request.method === "GET") {
+      return handleUserPreferencesStatus(env);
+    }
     if (url.pathname === "/api/workspace-state" && ["GET", "PUT"].includes(request.method)) {
       return handleWorkspaceState(request, env, ctx);
+    }
+    if (url.pathname === "/api/user-preferences" && ["GET", "PUT", "PATCH"].includes(request.method)) {
+      return handleUserPreferences(request, env, ctx);
     }
     return coreWorker.fetch(request, env, ctx);
   },
