@@ -96,6 +96,6 @@ assert.equal(reloaded.body.workspaceState.app_settings.practitionerName, "Tester
 
 const health = await jsonFetch("/health", {}, env);
 assert.equal(health.response.status, 200);
-assert.equal(health.body.status, "ok");
+assert.equal(health.body.status, "success");
 
 console.log("D1 workspace state entrypoint verified.");
