@@ -68,3 +68,41 @@ jobs:
       - name: Verify auth enforce rollout
         if: env.AUTH_ENFORCEMENT_MODE == 'enforce'
         run: npm run verify:auth-release
+
+  record-external-intelligence:
+    name: Record External Intelligence
+    needs: deploy
+    if: ${{ needs.deploy.result == 'success' && vars.EXTERNAL_INTELLIGENCE_ENABLED == 'true' && vars.EXTERNAL_INTELLIGENCE_BASE_URL != '' && vars.EXTERNAL_INTELLIGENCE_WORKSPACE_ID != '' }}
+    uses: karukimori-wq/External-Intelligence-System/.github/workflows/record-development-result.yml@main
+    with:
+      eis_base_url: ${{ vars.EXTERNAL_INTELLIGENCE_BASE_URL }}
+      workspace_id: ${{ vars.EXTERNAL_INTELLIGENCE_WORKSPACE_ID }}
+      project_id: numeria-studio-site
+      app_id: numeria-studio
+      component_id: site
+      task_type: production-deploy
+      summary: Numeria Studio Cloudflare Production workflow completed its configured test, build, deploy, production readiness, and auth rollout checks.
+      outcome: implementation_result
+      success: true
+      knowledge_title: Numeria Studio production workflow completed
+      knowledge_statement: The current Numeria Studio commit passed the configured Cloudflare Production workflow. This is implementation/deployment evidence only; administrator entitlement behavior, complete UI reachability, persistence, integrations, and human verification must be confirmed before promotion to production_verified_success.
+      production_deployed: true
+      ui_reachable: true
+      permission_verified: false
+      requires_persistence: true
+      persistence_verified: false
+      requires_integration: true
+      integration_verified: false
+      human_verified: false
+      runtime: cloudflare-workers
+      framework: react-vite
+      database: cloudflare-d1
+      auth: clerk
+      environment: production
+      plan_model: free-pro
+      app_role: professional-studio
+      contract_version: professional-platform-contracts@abf17744
+      node_version: '22'
+      strict: false
+    secrets:
+      EXTERNAL_INTELLIGENCE_TOKEN: ${{ secrets.EXTERNAL_INTELLIGENCE_TOKEN }}
