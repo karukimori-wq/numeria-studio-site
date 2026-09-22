@@ -24,6 +24,9 @@ class MockStatement {
   }
 
   async first() {
+    if (this.sql.includes("sqlite_master") && this.sql.includes("workspace_states")) {
+      return { name: "workspace_states" };
+    }
     if (this.sql.includes("FROM workspace_states")) {
       return this.db.workspaceStates.get(this.args[0]) || null;
     }
@@ -62,6 +65,14 @@ const headers = {
   "x-workspace-id": "ws_d1_state",
   "x-user-id": "user_d1_state",
 };
+
+const status = await jsonFetch("/workspace-state/status", {}, env);
+assert.equal(status.response.status, 200);
+assert.equal(status.body.status, "success");
+assert.equal(status.body.storageDriver, "durable-d1");
+assert.equal(status.body.tableReady, true);
+assert.equal(status.body.userDataReturned, false);
+assert.equal(status.body.sourceOfTruth, "numeria-d1-workspace-state");
 
 const empty = await jsonFetch("/api/workspace-state?workspaceId=ws_d1_state", { headers }, env);
 assert.equal(empty.response.status, 200);
