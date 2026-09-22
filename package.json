@@ -6,6 +6,7 @@
     "dev": "vite --host 0.0.0.0",
     "smoke": "npm test && npm run build",
     "verify:production": "node scripts/verify-production-readiness.mjs && node scripts/verify-workspace-state-production.mjs && node scripts/verify-user-preferences-production.mjs",
+    "verify:custom-domain": "node scripts/verify-custom-domain.mjs",
     "verify:auth-release": "REQUIRE_CLERK_ENFORCE_READY=1 REQUIRE_AUTH_ENFORCE_MODE=1 node scripts/verify-production-readiness.mjs"
   },
   "dependencies": {
