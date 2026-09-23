@@ -6,6 +6,12 @@
   "vars": {
     "AI_PLATFORM_CORE_BASE_URL": "https://ai-platform-core.karukimori.workers.dev"
   },
+  "services": [
+    {
+      "binding": "AI_PLATFORM_CORE_SERVICE",
+      "service": "ai-platform-core"
+    }
+  ],
   "assets": {
     "binding": "ASSETS",
     "directory": "./dist",
