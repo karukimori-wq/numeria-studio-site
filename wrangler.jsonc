@@ -1,8 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "numeria-studio-site",
-  "main": "src/secure-worker-entry.js",
+  "main": "src/ai-worker-entry.js",
   "compatibility_date": "2026-09-02",
+  "vars": {
+    "AI_PLATFORM_CORE_BASE_URL": "https://ai-platform-core.karukimori.workers.dev"
+  },
   "assets": {
     "binding": "ASSETS",
     "directory": "./dist",
