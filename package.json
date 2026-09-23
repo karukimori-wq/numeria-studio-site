@@ -5,7 +5,7 @@
     "build": "vite build && node scripts/restore-original-site.mjs && node scripts/patch-admin-readiness-auth.mjs && node scripts/patch-d1-workspace-state.mjs && node scripts/patch-profile-sources.mjs && node scripts/patch-plan-feature-gates.mjs && node scripts/patch-ai-assist-ui.mjs && node scripts/patch-mobile-ui-contract.mjs",
     "dev": "vite --host 0.0.0.0",
     "smoke": "npm test && npm run build",
-    "verify:production": "node scripts/verify-production-readiness.mjs && node scripts/verify-workspace-state-production.mjs && node scripts/verify-user-preferences-production.mjs && node scripts/verify-admin-preview-production.mjs",
+    "verify:production": "node scripts/verify-production-readiness.mjs && node scripts/verify-workspace-state-production.mjs && node scripts/verify-user-preferences-production.mjs && node scripts/verify-ai-assist-production.mjs && node scripts/verify-admin-preview-production.mjs",
     "verify:custom-domain": "node scripts/verify-custom-domain.mjs",
     "verify:auth-release": "REQUIRE_CLERK_ENFORCE_READY=1 REQUIRE_AUTH_ENFORCE_MODE=1 node scripts/verify-production-readiness.mjs"
   },
