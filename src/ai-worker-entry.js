@@ -8,6 +8,13 @@ import {
   runBasicAiAssist,
   sanitizeAiAssistInput,
 } from "./ai-assist-proxy.js";
+import {
+  GROWTH_SUBSCRIPTION_CONTRACT,
+  fetchGrowthSubscriptionEntitlement,
+  hasGrowthEngineServiceBinding,
+  hasPlatformSubscriptionSecret,
+  readGrowthSubscriptionStatus,
+} from "./growth-subscription-source.js";
 
 function json(data, init = {}) {
   return new Response(JSON.stringify(data), {
@@ -35,7 +42,7 @@ function authHeaders(request, workspaceId) {
   return headers;
 }
 
-async function resolveAuthenticatedScope(request, env, ctx) {
+async function resolveAuthenticatedIdentity(request, env, ctx) {
   const workspaceId = workspaceIdFrom(request);
   const headers = authHeaders(request, workspaceId);
 
@@ -45,7 +52,7 @@ async function resolveAuthenticatedScope(request, env, ctx) {
   const authResponse = await secureWorker.fetch(new Request(authUrl.toString(), { method: "GET", headers }), env, ctx);
   const authBody = await authResponse.clone().json().catch(() => ({}));
   if (!authResponse.ok || authBody.incomingRequestVerified !== true) {
-    return { ok: false, status: 401, workspaceId, message: "Clerkのログインセッションを確認できませんでした。" };
+    return { ok: false, status: 401, workspaceId, headers, message: "Clerkのログインセッションを確認できませんでした。" };
   }
 
   const usageUrl = new URL(request.url);
@@ -55,23 +62,102 @@ async function resolveAuthenticatedScope(request, env, ctx) {
   const usageBody = await usageResponse.clone().json().catch(() => ({}));
   const userId = String(usageBody.userId || "").trim();
   if (!usageResponse.ok || !userId || userId === "anonymous") {
-    return { ok: false, status: 401, workspaceId, message: "認証済みユーザーIDを確認できませんでした。" };
+    return { ok: false, status: 401, workspaceId, headers, message: "認証済みユーザーIDを確認できませんでした。" };
   }
 
+  return {
+    ok: true,
+    status: 200,
+    workspaceId,
+    userId,
+    localPlanId: String(usageBody.planId || "free").toLowerCase() === "pro" ? "pro" : "free",
+    headers,
+  };
+}
+
+async function resolveEffectiveSubscription(identity, env = {}) {
+  const canonical = await fetchGrowthSubscriptionEntitlement(env, {
+    workspaceId: identity.workspaceId,
+    ownerUserId: identity.userId,
+  });
+  if (canonical.ok && canonical.entitlement) {
+    return {
+      planId: canonical.entitlement.planId,
+      canonicalReady: true,
+      source: "growth-engine",
+      entitlement: canonical.entitlement,
+      fallbackReason: null,
+    };
+  }
+  return {
+    planId: identity.localPlanId,
+    canonicalReady: false,
+    source: "numeria-worker-mvp-fallback",
+    entitlement: null,
+    fallbackReason: canonical.reason || "GROWTH_SUBSCRIPTION_UNAVAILABLE",
+  };
+}
+
+async function readInnerBillingSubscription(request, identity, env, ctx) {
   const billingUrl = new URL(request.url);
   billingUrl.pathname = "/api/billing/subscription";
-  billingUrl.search = `?workspaceId=${encodeURIComponent(workspaceId)}`;
-  const billingResponse = await secureWorker.fetch(new Request(billingUrl.toString(), { method: "GET", headers }), env, ctx);
-  const billingBody = await billingResponse.clone().json().catch(() => ({}));
-  const planId = String(billingBody?.subscription?.planId || usageBody.planId || "free").toLowerCase();
-  if (!billingResponse.ok) {
-    return { ok: false, status: 503, workspaceId, userId, message: "契約状態を確認できませんでした。" };
-  }
-  if (!AI_ASSIST_CONTRACT.plans.includes(planId)) {
-    return { ok: false, status: 403, workspaceId, userId, planId, message: "現在のリリースではFreeまたはProのAI補助を利用してください。" };
-  }
+  billingUrl.search = `?workspaceId=${encodeURIComponent(identity.workspaceId)}`;
+  const response = await secureWorker.fetch(new Request(billingUrl.toString(), { method: "GET", headers: identity.headers }), env, ctx);
+  const body = await response.clone().json().catch(() => ({}));
+  return { response, body };
+}
 
-  return { ok: true, workspaceId, userId, planId };
+async function handleBillingSubscription(request, env, ctx) {
+  const identity = await resolveAuthenticatedIdentity(request, env, ctx);
+  if (!identity.ok) return json({ status: "error", errorCode: "SUBSCRIPTION_AUTH_FAILED", message: identity.message }, { status: identity.status });
+
+  const [inner, effective] = await Promise.all([
+    readInnerBillingSubscription(request, identity, env, ctx),
+    resolveEffectiveSubscription(identity, env),
+  ]);
+  if (!inner.response.ok) return inner.response;
+
+  const subscription = effective.canonicalReady
+    ? {
+        ...(inner.body.subscription || {}),
+        workspaceId: identity.workspaceId,
+        userId: identity.userId,
+        planId: effective.planId,
+        subscriptionStatus: effective.entitlement.subscriptionStatus,
+        entitlementStatus: effective.entitlement.entitlementStatus,
+        validUntil: effective.entitlement.validUntil,
+        entitlementRef: effective.entitlement.entitlementRef,
+        updatedAt: effective.entitlement.updatedAt,
+        source: "growth-engine",
+      }
+    : inner.body.subscription;
+
+  return json({
+    ...inner.body,
+    subscription,
+    effectivePlanId: effective.planId,
+    canonicalSubscription: {
+      requiredForProduction: true,
+      ready: effective.canonicalReady,
+      source: effective.source,
+      fallbackReason: effective.fallbackReason,
+      contract: GROWTH_SUBSCRIPTION_CONTRACT,
+      paymentDetailsReturned: false,
+      rawStripeObjectsReturned: false,
+      secretValuesReturned: false,
+    },
+  });
+}
+
+async function resolveAuthenticatedScope(request, env, ctx) {
+  const identity = await resolveAuthenticatedIdentity(request, env, ctx);
+  if (!identity.ok) return identity;
+  const subscription = await resolveEffectiveSubscription(identity, env);
+  const planId = subscription.planId;
+  if (!AI_ASSIST_CONTRACT.plans.includes(planId)) {
+    return { ok: false, status: 403, workspaceId: identity.workspaceId, userId: identity.userId, planId, message: "現在のリリースではFreeまたはProのAI補助を利用してください。" };
+  }
+  return { ...identity, planId, subscription };
 }
 
 async function handleAiAssist(request, env, ctx) {
@@ -110,6 +196,7 @@ async function handleAiAssist(request, env, ctx) {
     activityId: result.activityId,
     capability: result.capability,
     planId: scope.planId,
+    subscriptionSource: scope.subscription.source,
     output: result.output,
     dataPolicy: AI_ASSIST_CONTRACT.dataPolicy,
   });
@@ -117,9 +204,7 @@ async function handleAiAssist(request, env, ctx) {
 
 async function readApcProviderReadiness(env = {}) {
   try {
-    const response = await fetchAiPlatformCore(env, "/v1/providers/status", {
-      headers: { accept: "application/json" },
-    });
+    const response = await fetchAiPlatformCore(env, "/v1/providers/status", { headers: { accept: "application/json" } });
     const body = await response.json().catch(() => ({}));
     return {
       reachable: response.ok,
@@ -154,9 +239,28 @@ async function aiAssistStatus(env = {}) {
     aiGenerationReady: provider.reachable === true && provider.openaiConfigured === true && provider.secretValuesExposed === false,
     serverProxyOnly: true,
     clerkSessionRequired: true,
-    subscriptionPlanSource: "numeria-worker-billing-subscription",
+    subscriptionPlanSource: "growth-engine-when-ready",
     providerKeysExposedToBrowser: false,
     forbiddenPersonalFields: ["name", "birthName", "birthday", "email", "fullReportBody", "paymentDetails"],
+    secretValuesReturned: false,
+  };
+}
+
+async function subscriptionSourceStatus(env = {}) {
+  const upstream = await readGrowthSubscriptionStatus(env);
+  return {
+    status: upstream.reachable ? "success" : "warning",
+    appId: "numeria-studio",
+    contract: GROWTH_SUBSCRIPTION_CONTRACT,
+    serviceBindingConfigured: hasGrowthEngineServiceBinding(env),
+    localIntegrationSecretConfigured: hasPlatformSubscriptionSecret(env),
+    upstream,
+    canonicalEntitlementReady: upstream.entitlementReadReady && hasPlatformSubscriptionSecret(env),
+    checkoutReady: upstream.checkoutReady,
+    localMvpFallbackEnabledUntilCanonicalReady: true,
+    businessPurchasable: false,
+    paymentDetailsReturned: false,
+    rawStripeObjectsReturned: false,
     secretValuesReturned: false,
   };
 }
@@ -165,6 +269,8 @@ export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
     if (url.pathname === "/ai-assist/status" && request.method === "GET") return json(await aiAssistStatus(env));
+    if (url.pathname === "/subscription-source/status" && request.method === "GET") return json(await subscriptionSourceStatus(env));
+    if (url.pathname === "/api/billing/subscription" && request.method === "GET") return handleBillingSubscription(request, env, ctx);
     if (url.pathname === "/api/ai/assist" && request.method === "POST") return handleAiAssist(request, env, ctx);
     return secureWorker.fetch(request, env, ctx);
   },
