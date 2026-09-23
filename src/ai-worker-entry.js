@@ -10,6 +10,7 @@ import {
 } from "./ai-assist-proxy.js";
 import {
   GROWTH_SUBSCRIPTION_CONTRACT,
+  createGrowthSubscriptionCheckout,
   fetchGrowthSubscriptionEntitlement,
   hasGrowthEngineServiceBinding,
   hasPlatformSubscriptionSecret,
@@ -149,6 +150,45 @@ async function handleBillingSubscription(request, env, ctx) {
   });
 }
 
+async function handleSubscriptionCheckout(request, env, ctx) {
+  const identity = await resolveAuthenticatedIdentity(request, env, ctx);
+  if (!identity.ok) {
+    return json({ status: "error", errorCode: "SUBSCRIPTION_AUTH_FAILED", message: identity.message }, { status: identity.status });
+  }
+
+  const effective = await resolveEffectiveSubscription(identity, env);
+  if (effective.canonicalReady && effective.planId === "pro" && effective.entitlement?.entitlementStatus === "active") {
+    return json({
+      status: "error",
+      errorCode: "SUBSCRIPTION_ALREADY_PRO",
+      message: "このアカウントはすでにProです。",
+      planId: "pro",
+    }, { status: 409 });
+  }
+
+  const result = await createGrowthSubscriptionCheckout(env, {
+    workspaceId: identity.workspaceId,
+    ownerUserId: identity.userId,
+  });
+  if (!result.ok || !result.checkout) {
+    return json({
+      status: "error",
+      errorCode: result.reason || "SUBSCRIPTION_CHECKOUT_UNAVAILABLE",
+      message: "Pro契約の決済画面を開始できませんでした。",
+    }, { status: result.status || 503 });
+  }
+
+  return json({
+    status: "success",
+    checkout: result.checkout,
+    canonicalOwner: "growth-engine",
+    productCode: GROWTH_SUBSCRIPTION_CONTRACT.productCode,
+    paymentDetailsReturned: false,
+    rawStripeObjectsReturned: false,
+    secretValuesReturned: false,
+  }, { status: 201 });
+}
+
 async function resolveAuthenticatedScope(request, env, ctx) {
   const identity = await resolveAuthenticatedIdentity(request, env, ctx);
   if (!identity.ok) return identity;
@@ -256,7 +296,10 @@ async function subscriptionSourceStatus(env = {}) {
     localIntegrationSecretConfigured: hasPlatformSubscriptionSecret(env),
     upstream,
     canonicalEntitlementReady: upstream.entitlementReadReady && hasPlatformSubscriptionSecret(env),
-    checkoutReady: upstream.checkoutReady,
+    checkoutReady: upstream.checkoutReady && hasPlatformSubscriptionSecret(env),
+    checkoutRoute: "/api/billing/checkout",
+    checkoutIdentitySource: "clerk-authenticated-worker-scope",
+    checkoutReturnOrigin: GROWTH_SUBSCRIPTION_CONTRACT.checkoutReturnOrigin,
     localMvpFallbackEnabledUntilCanonicalReady: true,
     businessPurchasable: false,
     paymentDetailsReturned: false,
@@ -271,6 +314,7 @@ export default {
     if (url.pathname === "/ai-assist/status" && request.method === "GET") return json(await aiAssistStatus(env));
     if (url.pathname === "/subscription-source/status" && request.method === "GET") return json(await subscriptionSourceStatus(env));
     if (url.pathname === "/api/billing/subscription" && request.method === "GET") return handleBillingSubscription(request, env, ctx);
+    if (url.pathname === "/api/billing/checkout" && request.method === "POST") return handleSubscriptionCheckout(request, env, ctx);
     if (url.pathname === "/api/ai/assist" && request.method === "POST") return handleAiAssist(request, env, ctx);
     return secureWorker.fetch(request, env, ctx);
   },
