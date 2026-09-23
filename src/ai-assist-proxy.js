@@ -64,6 +64,17 @@ export function aiPlatformCoreBaseUrl(env = {}) {
   ).replace(/\/$/, "");
 }
 
+export function hasAiPlatformCoreServiceBinding(env = {}) {
+  return Boolean(env.AI_PLATFORM_CORE_SERVICE && typeof env.AI_PLATFORM_CORE_SERVICE.fetch === "function");
+}
+
+export async function fetchAiPlatformCore(env = {}, path, init = {}) {
+  if (hasAiPlatformCoreServiceBinding(env)) {
+    return env.AI_PLATFORM_CORE_SERVICE.fetch(`https://ai-platform-core.internal${path}`, init);
+  }
+  return fetch(`${aiPlatformCoreBaseUrl(env)}${path}`, init);
+}
+
 function readGatewayOutput(body = {}) {
   const candidates = [body.output, body.value?.output, body.data?.output, body.result?.output];
   const value = candidates.find((candidate) => candidate !== undefined && candidate !== null);
@@ -107,7 +118,7 @@ export async function runBasicAiAssist({ env = {}, workspaceId, userId, planId, 
     ],
   };
 
-  const response = await fetch(`${aiPlatformCoreBaseUrl(env)}/v1/gateway/run`, {
+  const response = await fetchAiPlatformCore(env, "/v1/gateway/run", {
     method: "POST",
     headers: {
       "Content-Type": "application/json; charset=utf-8",
