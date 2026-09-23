@@ -16,6 +16,10 @@ async function readStatus(attempts = 12) {
       && body.contract.plans.includes("free")
       && body.contract.plans.includes("pro")
       && body.apcBaseUrlConfigured === true
+      && body.apcProvider?.reachable === true
+      && body.apcProvider?.openaiConfigured === true
+      && body.apcProvider?.secretValuesExposed === false
+      && body.aiGenerationReady === true
       && body.serverProxyOnly === true
       && body.clerkSessionRequired === true
       && body.providerKeysExposedToBrowser === false
@@ -33,6 +37,10 @@ assert.equal(result.body.contract.capability, "studio.report.ai_assist");
 assert.deepEqual(result.body.contract.plans, ["free", "pro"]);
 assert.equal(result.body.contract.businessAvailable, false);
 assert.equal(result.body.apcBaseUrlConfigured, true);
+assert.equal(result.body.apcProvider.reachable, true);
+assert.equal(result.body.apcProvider.openaiConfigured, true);
+assert.equal(result.body.apcProvider.secretValuesExposed, false);
+assert.equal(result.body.aiGenerationReady, true);
 assert.equal(result.body.serverProxyOnly, true);
 assert.equal(result.body.clerkSessionRequired, true);
 assert.equal(result.body.subscriptionPlanSource, "numeria-worker-billing-subscription");
@@ -43,4 +51,4 @@ assert.ok(result.body.forbiddenPersonalFields.includes("birthName"));
 assert.ok(result.body.forbiddenPersonalFields.includes("birthday"));
 assert.ok(result.body.forbiddenPersonalFields.includes("fullReportBody"));
 
-console.log("Production Numeria AI assist proxy status verified: APC capability available through authenticated server proxy with Free/Pro contract and personal-data boundary.");
+console.log("Production Numeria AI assist verified end-to-end to APC provider readiness: OpenAI configured through server proxy, Free/Pro contract active, and personal-data boundary intact.");
