@@ -113,12 +113,38 @@ async function handleAiAssist(request, env, ctx) {
   });
 }
 
-function aiAssistStatus(env = {}) {
+async function readApcProviderReadiness(env = {}) {
+  const baseUrl = aiPlatformCoreBaseUrl(env);
+  try {
+    const response = await fetch(`${baseUrl}/v1/providers/status`, {
+      headers: { accept: "application/json" },
+    });
+    const body = await response.json().catch(() => ({}));
+    return {
+      reachable: response.ok,
+      status: body.status || null,
+      openaiConfigured: body?.providers?.openai?.configured === true,
+      secretValuesExposed: body.secretValuesExposed === true,
+    };
+  } catch {
+    return {
+      reachable: false,
+      status: "unreachable",
+      openaiConfigured: false,
+      secretValuesExposed: false,
+    };
+  }
+}
+
+async function aiAssistStatus(env = {}) {
+  const provider = await readApcProviderReadiness(env);
   return {
     status: "success",
     appId: "numeria-studio",
     contract: AI_ASSIST_CONTRACT,
     apcBaseUrlConfigured: Boolean(aiPlatformCoreBaseUrl(env)),
+    apcProvider: provider,
+    aiGenerationReady: provider.reachable === true && provider.openaiConfigured === true && provider.secretValuesExposed === false,
     serverProxyOnly: true,
     clerkSessionRequired: true,
     subscriptionPlanSource: "numeria-worker-billing-subscription",
@@ -131,7 +157,7 @@ function aiAssistStatus(env = {}) {
 export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
-    if (url.pathname === "/ai-assist/status" && request.method === "GET") return json(aiAssistStatus(env));
+    if (url.pathname === "/ai-assist/status" && request.method === "GET") return json(await aiAssistStatus(env));
     if (url.pathname === "/api/ai/assist" && request.method === "POST") return handleAiAssist(request, env, ctx);
     return secureWorker.fetch(request, env, ctx);
   },
