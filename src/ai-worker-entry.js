@@ -2,6 +2,8 @@ import secureWorker from "./secure-worker-entry.js";
 import {
   AI_ASSIST_CONTRACT,
   aiPlatformCoreBaseUrl,
+  fetchAiPlatformCore,
+  hasAiPlatformCoreServiceBinding,
   hasForbiddenAiAssistPayload,
   runBasicAiAssist,
   sanitizeAiAssistInput,
@@ -114,24 +116,28 @@ async function handleAiAssist(request, env, ctx) {
 }
 
 async function readApcProviderReadiness(env = {}) {
-  const baseUrl = aiPlatformCoreBaseUrl(env);
   try {
-    const response = await fetch(`${baseUrl}/v1/providers/status`, {
+    const response = await fetchAiPlatformCore(env, "/v1/providers/status", {
       headers: { accept: "application/json" },
     });
     const body = await response.json().catch(() => ({}));
     return {
       reachable: response.ok,
+      transport: hasAiPlatformCoreServiceBinding(env) ? "cloudflare-service-binding" : "https-fallback",
+      httpStatus: response.status,
       status: body.status || null,
       openaiConfigured: body?.providers?.openai?.configured === true,
       secretValuesExposed: body.secretValuesExposed === true,
     };
-  } catch {
+  } catch (error) {
     return {
       reachable: false,
+      transport: hasAiPlatformCoreServiceBinding(env) ? "cloudflare-service-binding" : "https-fallback",
+      httpStatus: null,
       status: "unreachable",
       openaiConfigured: false,
       secretValuesExposed: false,
+      errorCode: String(error?.name || "FETCH_FAILED").slice(0, 80),
     };
   }
 }
@@ -143,6 +149,7 @@ async function aiAssistStatus(env = {}) {
     appId: "numeria-studio",
     contract: AI_ASSIST_CONTRACT,
     apcBaseUrlConfigured: Boolean(aiPlatformCoreBaseUrl(env)),
+    apcServiceBindingConfigured: hasAiPlatformCoreServiceBinding(env),
     apcProvider: provider,
     aiGenerationReady: provider.reachable === true && provider.openaiConfigured === true && provider.secretValuesExposed === false,
     serverProxyOnly: true,
