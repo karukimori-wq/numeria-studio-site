@@ -65,12 +65,7 @@ export function aiPlatformCoreBaseUrl(env = {}) {
 }
 
 function readGatewayOutput(body = {}) {
-  const candidates = [
-    body.output,
-    body.value?.output,
-    body.data?.output,
-    body.result?.output,
-  ];
+  const candidates = [body.output, body.value?.output, body.data?.output, body.result?.output];
   const value = candidates.find((candidate) => candidate !== undefined && candidate !== null);
   if (typeof value === "string") return value;
   if (value && typeof value === "object") return JSON.stringify(value);
@@ -81,10 +76,7 @@ export async function runBasicAiAssist({ env = {}, workspaceId, userId, planId, 
   const activityId = `num_ai_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
   const traceId = correlationId || `trace_${activityId}`;
   const gatewayBody = {
-    auth: {
-      clientId: APP_ID,
-      permissions: [BASIC_AI_CAPABILITY],
-    },
+    auth: { clientId: APP_ID, permissions: [BASIC_AI_CAPABILITY] },
     activity: {
       client: APP_ID,
       workspaceId,
@@ -92,7 +84,7 @@ export async function runBasicAiAssist({ env = {}, workspaceId, userId, planId, 
       ownerUserId: userId,
       capability: BASIC_AI_CAPABILITY,
       workflow: input.divinationType,
-      goal: "Create a concise report-writing draft from non-sensitive calculated divination data.",
+      goal: "Create editable Japanese report-writing draft fields from non-sensitive calculated divination data.",
       context: {
         app: "Numeria Studio",
         divinationType: input.divinationType,
@@ -106,11 +98,11 @@ export async function runBasicAiAssist({ env = {}, workspaceId, userId, planId, 
     messages: [
       {
         role: "system",
-        content: "You support a professional fortune teller. Draft gentle Japanese report text using only the supplied calculated values and consultation theme. Do not invent personal facts or deterministic predictions.",
+        content: "You support a professional fortune teller. Use only supplied calculated values and consultation theme. Never invent personal facts or deterministic predictions. Return JSON only with string keys: intro, overview, gifts, work, relationships, growth, yearly, advice. Keep each field concise, gentle, and editable by the practitioner.",
       },
       {
         role: "user",
-        content: "Create a concise draft that the practitioner can review and edit before using it in the report.",
+        content: "Create the eight requested Japanese draft fields as a single JSON object. Do not include markdown fences or commentary outside JSON.",
       },
     ],
   };
