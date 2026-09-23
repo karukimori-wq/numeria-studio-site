@@ -1,8 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "test": "node scripts/verify-static-site-with-entrypoint.mjs && node scripts/verify-admin-developer-preview.mjs && node scripts/verify-admin-preview-security.mjs && node scripts/verify-free-plan-ui-limits.mjs && node scripts/verify-workspace-state-d1.mjs && node scripts/verify-user-preferences-d1.mjs && node scripts/verify-mobile-ui-contract.mjs && node scripts/verify-d1-persistence.mjs && node scripts/verify-growth-handoff.mjs",
-    "build": "vite build && node scripts/restore-original-site.mjs && node scripts/patch-admin-readiness-auth.mjs && node scripts/patch-d1-workspace-state.mjs && node scripts/patch-profile-sources.mjs && node scripts/patch-mobile-ui-contract.mjs",
+    "test": "node scripts/verify-static-site-with-entrypoint.mjs && node scripts/verify-admin-developer-preview.mjs && node scripts/verify-admin-preview-security.mjs && node scripts/verify-free-plan-ui-limits.mjs && node scripts/verify-plan-feature-gates.mjs && node scripts/verify-workspace-state-d1.mjs && node scripts/verify-user-preferences-d1.mjs && node scripts/verify-mobile-ui-contract.mjs && node scripts/verify-d1-persistence.mjs && node scripts/verify-growth-handoff.mjs",
+    "build": "vite build && node scripts/restore-original-site.mjs && node scripts/patch-admin-readiness-auth.mjs && node scripts/patch-d1-workspace-state.mjs && node scripts/patch-profile-sources.mjs && node scripts/patch-plan-feature-gates.mjs && node scripts/patch-mobile-ui-contract.mjs",
     "dev": "vite --host 0.0.0.0",
     "smoke": "npm test && npm run build",
     "verify:production": "node scripts/verify-production-readiness.mjs && node scripts/verify-workspace-state-production.mjs && node scripts/verify-user-preferences-production.mjs && node scripts/verify-admin-preview-production.mjs",
