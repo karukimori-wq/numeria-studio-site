@@ -16,6 +16,8 @@ async function readStatus(attempts = 12) {
       && body.contract.plans.includes("free")
       && body.contract.plans.includes("pro")
       && body.apcBaseUrlConfigured === true
+      && body.apcServiceBindingConfigured === true
+      && body.apcProvider?.transport === "cloudflare-service-binding"
       && body.apcProvider?.reachable === true
       && body.apcProvider?.openaiConfigured === true
       && body.apcProvider?.secretValuesExposed === false
@@ -26,6 +28,7 @@ async function readStatus(attempts = 12) {
     ) return last;
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
+  console.error("AI assist Production readiness diagnostics:", JSON.stringify(last?.body || {}, null, 2));
   return last;
 }
 
@@ -37,6 +40,8 @@ assert.equal(result.body.contract.capability, "studio.report.ai_assist");
 assert.deepEqual(result.body.contract.plans, ["free", "pro"]);
 assert.equal(result.body.contract.businessAvailable, false);
 assert.equal(result.body.apcBaseUrlConfigured, true);
+assert.equal(result.body.apcServiceBindingConfigured, true);
+assert.equal(result.body.apcProvider.transport, "cloudflare-service-binding");
 assert.equal(result.body.apcProvider.reachable, true);
 assert.equal(result.body.apcProvider.openaiConfigured, true);
 assert.equal(result.body.apcProvider.secretValuesExposed, false);
@@ -51,4 +56,4 @@ assert.ok(result.body.forbiddenPersonalFields.includes("birthName"));
 assert.ok(result.body.forbiddenPersonalFields.includes("birthday"));
 assert.ok(result.body.forbiddenPersonalFields.includes("fullReportBody"));
 
-console.log("Production Numeria AI assist verified end-to-end to APC provider readiness: OpenAI configured through server proxy, Free/Pro contract active, and personal-data boundary intact.");
+console.log("Production Numeria AI assist verified end-to-end to APC provider readiness through Cloudflare Service Binding: OpenAI configured, Free/Pro contract active, and personal-data boundary intact.");
