@@ -23,6 +23,7 @@ env:
   VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY || secrets.VITE_CLERK_PUBLISHABLE_KEY }}
   CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
   NUMERIA_ADMIN_USER_IDS: ${{ vars.NUMERIA_ADMIN_USER_IDS || secrets.NUMERIA_ADMIN_USER_IDS }}
+  PLATFORM_SUBSCRIPTION_INTEGRATION_SECRET: ${{ secrets.PLATFORM_SUBSCRIPTION_INTEGRATION_SECRET }}
   VITE_FEEDBACK_HUB_BASE_URL: ${{ vars.VITE_FEEDBACK_HUB_BASE_URL || secrets.VITE_FEEDBACK_HUB_BASE_URL }}
   VITE_PRICE_FREE_LABEL: ${{ vars.VITE_PRICE_FREE_LABEL || '無料' }}
   VITE_PRICE_PRO_LABEL: ${{ vars.VITE_PRICE_PRO_LABEL || '価格未設定' }}
@@ -70,6 +71,11 @@ jobs:
           if [ -n "$NUMERIA_ADMIN_USER_IDS" ]; then
             printf '%s' "$NUMERIA_ADMIN_USER_IDS" | npx wrangler secret put NUMERIA_ADMIN_USER_IDS
           fi
+
+      - name: Sync platform subscription integration secret
+        if: env.PLATFORM_SUBSCRIPTION_INTEGRATION_SECRET != ''
+        shell: bash
+        run: printf '%s' "$PLATFORM_SUBSCRIPTION_INTEGRATION_SECRET" | npx wrangler secret put PLATFORM_SUBSCRIPTION_INTEGRATION_SECRET
 
       - name: Apply D1 migrations
         run: npx wrangler d1 migrations apply numeria-studio-db --remote
