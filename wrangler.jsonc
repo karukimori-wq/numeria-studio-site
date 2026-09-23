@@ -4,12 +4,17 @@
   "main": "src/ai-worker-entry.js",
   "compatibility_date": "2026-09-02",
   "vars": {
-    "AI_PLATFORM_CORE_BASE_URL": "https://ai-platform-core.karukimori.workers.dev"
+    "AI_PLATFORM_CORE_BASE_URL": "https://ai-platform-core.karukimori.workers.dev",
+    "GROWTH_ENGINE_BASE_URL": "https://growth-engine.karukimori.workers.dev"
   },
   "services": [
     {
       "binding": "AI_PLATFORM_CORE_SERVICE",
       "service": "ai-platform-core"
+    },
+    {
+      "binding": "GROWTH_ENGINE_SERVICE",
+      "service": "growth-engine"
     }
   ],
   "assets": {
