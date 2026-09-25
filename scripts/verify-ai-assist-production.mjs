@@ -24,6 +24,7 @@ async function readStatus(attempts = 12) {
       && body.aiGenerationReady === true
       && body.serverProxyOnly === true
       && body.clerkSessionRequired === true
+      && body.subscriptionPlanSource === "growth-engine-when-ready"
       && body.providerKeysExposedToBrowser === false
     ) return last;
     await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -48,7 +49,7 @@ assert.equal(result.body.apcProvider.secretValuesExposed, false);
 assert.equal(result.body.aiGenerationReady, true);
 assert.equal(result.body.serverProxyOnly, true);
 assert.equal(result.body.clerkSessionRequired, true);
-assert.equal(result.body.subscriptionPlanSource, "numeria-worker-billing-subscription");
+assert.equal(result.body.subscriptionPlanSource, "growth-engine-when-ready");
 assert.equal(result.body.providerKeysExposedToBrowser, false);
 assert.equal(result.body.secretValuesReturned, false);
 assert.ok(result.body.forbiddenPersonalFields.includes("name"));
@@ -56,4 +57,4 @@ assert.ok(result.body.forbiddenPersonalFields.includes("birthName"));
 assert.ok(result.body.forbiddenPersonalFields.includes("birthday"));
 assert.ok(result.body.forbiddenPersonalFields.includes("fullReportBody"));
 
-console.log("Production Numeria AI assist verified end-to-end to APC provider readiness through Cloudflare Service Binding: OpenAI configured, Free/Pro contract active, and personal-data boundary intact.");
+console.log("Production Numeria AI assist verified end-to-end to APC provider readiness through Cloudflare Service Binding: OpenAI configured, Free/Pro contract active, Growth Engine subscription source expected, and personal-data boundary intact.");
