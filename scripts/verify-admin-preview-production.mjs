@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 const baseUrl = String(process.env.NUMERIA_PRODUCTION_URL || process.env.PRODUCTION_URL || "https://numeria-studio-site.karukimori.workers.dev").replace(/\/$/, "");
+const expectedContract = "numeria-admin-developer-preview.v3";
 
 let response;
 let body = {};
@@ -12,18 +13,20 @@ for (let attempt = 1; attempt <= 10; attempt += 1) {
   body = /application\/json/.test(contentType) ? await response.json().catch(() => ({})) : {};
   if (
     response.status === 200
-    && body.adminPreviewContractVersion === "numeria-admin-developer-preview.v2"
+    && body.adminPreviewContractVersion === expectedContract
     && body.browserAssertedAdminEmailTrusted === false
     && body.identityProviderReady === true
+    && body.businessUiPreviewAvailable === true
     && body.status === "success"
   ) break;
   await new Promise((resolve) => setTimeout(resolve, 1200 * attempt));
 }
 
 assert.equal(response?.status, 200, `Admin preview status endpoint failed with HTTP ${response?.status}`);
-assert.equal(body.adminPreviewContractVersion, "numeria-admin-developer-preview.v2");
+assert.equal(body.adminPreviewContractVersion, expectedContract);
 assert.equal(body.browserAssertedAdminEmailTrusted, false);
 assert.equal(body.subscriptionPlanUnaffected, true);
+assert.equal(body.businessUiPreviewAvailable, true);
 assert.equal(body.businessPurchasable, false);
 assert.equal(body.secretValuesReturned, false);
 assert.equal(
@@ -33,4 +36,4 @@ assert.equal(
 );
 assert.equal(body.status, "success");
 
-console.log("Production admin developerPreview identity readiness verified.");
+console.log("Production admin developerPreview + Business UI preview identity readiness verified.");
