@@ -25,6 +25,10 @@ assert.match(secureEntry, /businessPurchasable: false/);
 assert.match(secureEntry, /serverUsageBypassEnabled: false/);
 
 assert.match(profilePatch, /NumeriaAuthenticatedFetch\(\\`\/api\/admin\/status\\`/);
+assert.match(profilePatch, /NumeriaAdminPreviewRender/);
+assert.match(profilePatch, /ADMIN PREVIEW · BUSINESS UI/);
+assert.match(profilePatch, /ADMIN未認識 · USER UI/);
+assert.match(profilePatch, /NumeriaAdminPreviewState/);
 assert.match(profilePatch, /actualPlan=subscription&&subscription\.subscription&&subscription\.subscription\.planId\|\|\\"free\\"/);
 assert.match(profilePatch, /businessUiPreviewEnabled\?\\"business\\":actualPlan/);
 assert.match(profilePatch, /developerPreview:preview/);
@@ -39,4 +43,4 @@ assert.match(adminPreviewPatch, /ar!==`free`\|\|tr===`admin`/);
 assert.doesNotMatch(adminPreviewPatch, /ar\s*=\s*`(?:pro|business)`/);
 assert.doesNotMatch(adminPreviewPatch, /plan\s*:\s*`business`/);
 
-console.log("Secure admin Business UI preview contract verified behind the AI outer Worker entrypoint.");
+console.log("Secure admin Business UI preview contract verified behind the AI outer Worker entrypoint, including visible admin recognition diagnostics.");
