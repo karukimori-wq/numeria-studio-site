@@ -19,17 +19,24 @@ assert.match(secureEntry, /headers\.delete\("X-Admin-Email"\)/);
 assert.match(secureEntry, /identitySource: "clerk-user-id-allowlist"/);
 assert.match(secureEntry, /identitySource: "clerk-backend-email-allowlist"/);
 assert.match(secureEntry, /subscriptionPlanUnaffected: true/);
+assert.match(secureEntry, /businessUiPreviewEnabled: enabled/);
+assert.match(secureEntry, /previewPlanId: enabled \? "business" : null/);
 assert.match(secureEntry, /businessPurchasable: false/);
 assert.match(secureEntry, /serverUsageBypassEnabled: false/);
 
 assert.match(profilePatch, /NumeriaAuthenticatedFetch\(\\`\/api\/admin\/status\\`/);
+assert.match(profilePatch, /actualPlan=subscription&&subscription\.subscription&&subscription\.subscription\.planId\|\|\\"free\\"/);
+assert.match(profilePatch, /businessUiPreviewEnabled\?\\"business\\":actualPlan/);
+assert.match(profilePatch, /developerPreview:preview/);
 assert.match(readinessPatch, /headers\.Authorization="Bearer "\+token/);
 assert.match(readinessPatch, /Admin readiness panel still trusts the browser-provided admin email header/);
 assert.doesNotMatch(readinessPatch, /const secureHeaders = '[^']*X-Admin-Email/);
 
 // Developer preview remains an entitlement layered over the real plan.
+// The legacy UI may receive plan="business" only as a verified admin UI projection;
+// billing/usage state remains under actualPlan and /api/billing/subscription.
 assert.match(adminPreviewPatch, /ar!==`free`\|\|tr===`admin`/);
 assert.doesNotMatch(adminPreviewPatch, /ar\s*=\s*`(?:pro|business)`/);
 assert.doesNotMatch(adminPreviewPatch, /plan\s*:\s*`business`/);
 
-console.log("Secure admin developer preview contract verified behind the AI outer Worker entrypoint.");
+console.log("Secure admin Business UI preview contract verified behind the AI outer Worker entrypoint.");

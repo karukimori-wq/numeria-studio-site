@@ -1,6 +1,6 @@
 import appWorker from "./worker-entry.js";
 
-const ADMIN_PREVIEW_CONTRACT_VERSION = "numeria-admin-developer-preview.v2";
+const ADMIN_PREVIEW_CONTRACT_VERSION = "numeria-admin-developer-preview.v3";
 
 function json(data, init = {}) {
   return new Response(JSON.stringify(data), {
@@ -62,10 +62,11 @@ function adminPreviewStatus(env = {}) {
     adminUserIdAllowlistCount: adminUserIds.length,
     browserAssertedAdminEmailTrusted: false,
     subscriptionPlanUnaffected: true,
+    businessUiPreviewAvailable: true,
     businessPurchasable: false,
     secretValuesReturned: false,
     message: identityProviderReady
-      ? "Clerk本人性に基づく管理者developerPreview判定を利用できます。"
+      ? "Clerk本人性に基づく管理者developerPreview判定を利用できます。管理者のみBusiness UIプレビューを確認できます。"
       : "管理者developerPreviewにはCLERK_SECRET_KEYまたはNUMERIA_ADMIN_USER_IDSの設定が必要です。",
   };
 }
@@ -223,18 +224,27 @@ async function resolveSecureAdminAccess(request, env = {}, ctx = null) {
 }
 
 function developerPreviewMetadata(access) {
+  const enabled = Boolean(access.adminMode && access.verified);
   return {
-    enabled: Boolean(access.adminMode && access.verified),
+    enabled,
     entitlement: "developerPreview",
     identityVerified: Boolean(access.verified),
     identitySource: access.identitySource,
     authenticatedUserId: access.userId || null,
     subscriptionPlanUnaffected: true,
     previewPlans: ["free", "pro", "business"],
+    businessUiPreviewEnabled: enabled,
+    previewPlanId: enabled ? "business" : null,
+    previewFeatures: enabled ? [
+      "business-ui-preview",
+      "divination-switch-preview",
+      "developer-only-menu-preview",
+      "tarot-release-prep-preview",
+    ] : [],
     businessPurchasable: false,
     usageLimitMode: "isolated-ui-preview",
     serverUsageBypassEnabled: false,
-    message: "実契約プランを変更せず、管理者だけが開発中を含む機能表示を確認できます。利用量の正本は実契約のまま保持します。",
+    message: "実契約プランを変更せず、管理者だけがBusiness表示・開発中機能・占術変更を確認できます。利用量の正本は実契約のまま保持します。",
   };
 }
 
