@@ -23,7 +23,11 @@ for (const label of ["占術の設定・変更", "鑑定書テンプレート", 
 assert.ok(menuPatch.includes('htmlPath = "dist/original.html"'), "Rebuilt menu must patch the HTML actually used by the mobile app.");
 assert.ok(menuPatch.includes("single source of truth"), "Menu must keep one explicit source of truth.");
 assert.ok(menuPatch.includes("window.NumeriaNavigation"), "Menu must navigate through the stable Navigation API.");
+assert.ok(menuPatch.includes("installGlobalItemEvents"), "Menu items must be handled from a stable global event listener for mobile Safari.");
+assert.ok(menuPatch.includes('"pointerup"'), "Menu items must handle pointerup, not only click.");
+assert.ok(menuPatch.includes('"touchend"'), "Menu items must handle touchend, not only click.");
+assert.ok(menuPatch.includes("activateButton(button,event)"), "Menu item activation must target the real menu button.");
 assert.ok(!menuPatch.includes("clickLabel("), "Rebuilt menu must not proxy navigation by searching labels.");
 assert.ok(!menuPatch.includes("rgba(196,166,93,.001)"), "Rebuilt menu must not use transparent tap overlays.");
 
-console.log("Rebuilt mobile side menu contract verified: direct Navigation API, single config, no transparent/text-click hacks.");
+console.log("Rebuilt mobile side menu contract verified: direct Navigation API, single config, real item tap events, no transparent/text-click hacks.");
