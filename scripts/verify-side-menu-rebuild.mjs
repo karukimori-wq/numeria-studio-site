@@ -30,6 +30,9 @@ for (const token of [
   '占術変更はProプラン以上で利用できます。',
   'class="numeria-menu-badge">PRO</span>',
   'if(access==="hidden")return""',
+  'window.NumeriaAdminPreviewState&&window.NumeriaAdminPreviewState.adminMode',
+  'var admin=role==="admin"||previewAdmin',
+  'state.page+"|"+String(state.admin)',
 ]) {
   assert.ok(menuPatch.includes(token), `Side menu access matrix is missing ${token}`);
 }
