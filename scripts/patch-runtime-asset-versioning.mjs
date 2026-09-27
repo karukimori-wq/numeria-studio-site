@@ -5,6 +5,7 @@ const assetsDir = "dist/assets";
 const htmlPaths = ["dist/original.html", "dist/index.html"].filter(existsSync);
 const marker = "NumeriaRuntimeAssetVersioning.v1";
 const navigationBridgeVersion = "NumeriaNavigationBridge.v2";
+const recoveryRuntimeVersion = "NumeriaIOSRuntimeRecovery.v1";
 
 function digest(content) {
   return createHash("sha256").update(content).digest("hex").slice(0, 12);
@@ -25,7 +26,10 @@ if (!appName) {
   throw new Error(`Patched Numeria application bundle with ${navigationBridgeVersion} was not found.`);
 }
 
-const appSource = readFileSync(`${assetsDir}/${appName}`, "utf8");
+const originalAppSource = readFileSync(`${assetsDir}/${appName}`, "utf8");
+// Deliberately change the runtime bytes during recovery so iOS Safari cannot reuse
+// a previously cached application module after a reverted deployment.
+const appSource = `${originalAppSource}\n/* ${recoveryRuntimeVersion} */\n`;
 const versionedAppName = `numeria-app-runtime-${digest(appSource)}.js`;
 writeFileSync(`${assetsDir}/${versionedAppName}`, appSource);
 
@@ -55,7 +59,7 @@ for (const htmlPath of htmlPaths) {
   }
   if (html !== before) {
     if (htmlPath === "dist/original.html") {
-      const comment = `<!-- ${marker} app=${versionedAppName} index=${indexReplacements.map((item) => item.to).join(",")} -->`;
+      const comment = `<!-- ${marker} ${recoveryRuntimeVersion} app=${versionedAppName} index=${indexReplacements.map((item) => item.to).join(",")} -->`;
       if (!html.includes(marker)) html = html.replace("</head>", `${comment}</head>`);
       originalHtmlUpdated = true;
     }
@@ -68,6 +72,12 @@ if (!originalHtmlUpdated) {
 }
 
 const originalHtml = readFileSync("dist/original.html", "utf8");
+if (!originalHtml.includes(recoveryRuntimeVersion)) {
+  throw new Error("Production HTML does not include the iOS runtime recovery marker.");
+}
+if (!readFileSync(`${assetsDir}/${versionedAppName}`, "utf8").includes(recoveryRuntimeVersion)) {
+  throw new Error("Versioned Numeria application bundle does not include the iOS runtime recovery marker.");
+}
 if (!originalHtml.includes(versionedAppName)) {
   throw new Error("Production HTML does not reference the versioned Numeria application bundle.");
 }
