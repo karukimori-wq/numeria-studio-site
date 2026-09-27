@@ -7,18 +7,19 @@ const patch = readFileSync("scripts/patch-hide-mobile-top-chrome.mjs", "utf8");
 
 assert.match(build, /patch-hide-mobile-top-chrome\.mjs/, "Production build must hide legacy mobile top chrome.");
 for (const token of [
-  "NumeriaHideMobileTopChrome.v2",
+  "NumeriaHideMobileTopChrome.v3",
   ".mobile-appbar",
   "#numeria-mobile-appbar",
   ".mobile-menu-panel",
   "display:none!important",
   "pointer-events:none!important",
+  "padding-top:72px!important",
 ]) {
   assert.ok(patch.includes(token), `Hide top chrome patch is missing ${token}`);
 }
 
 assert.ok(!patch.includes("#numeria-rebuilt-side-menu,"), "Legacy chrome hide patch must not hide the rebuilt side menu.");
 assert.ok(!patch.includes("#numeria-rebuilt-menu-backdrop,"), "Legacy chrome hide patch must not hide the rebuilt menu backdrop.");
-assert.ok(patch.includes("rebuilt menu remains visible"), "Patch must document that the rebuilt menu remains visible.");
+assert.ok(patch.includes("reserved top space"), "Patch must document that the standalone menu trigger has reserved top space.");
 
-console.log("Legacy mobile top chrome hide contract verified: old chrome hidden, rebuilt menu remains visible.");
+console.log("Legacy mobile top chrome hide contract verified: old chrome hidden and standalone menu space reserved.");
