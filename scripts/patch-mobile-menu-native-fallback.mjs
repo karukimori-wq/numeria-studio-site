@@ -1,0 +1,59 @@
+import { readFileSync, writeFileSync } from "node:fs";
+
+const htmlPath = "dist/original.html";
+let html = readFileSync(htmlPath, "utf8");
+const marker = "NumeriaMobileMenuNativeFallback.v1";
+
+if (html.includes(marker)) {
+  throw new Error("Mobile menu native fallback patch was applied more than once.");
+}
+
+const oldNav = 'function nav(){return window.NumeriaNavigation||null}';
+const newNav = 'let nativeFallbackPage="";function normalizedNativeText(node){return String(node&&node.textContent||"").replace(/\\s+/g," ").trim()}function nativeSidebarButton(label){return Array.from(document.querySelectorAll("aside.sidebar button")).find(function(button){return normalizedNativeText(button).indexOf(label)!==-1})||null}function clickNativeSidebarButton(label){var button=nativeSidebarButton(label);if(!button)return false;button.click();return true}function nativeRouteLabel(page){return{dashboard:"ダッシュボード",appraisalProfiles:"鑑定カルテ",settings:"鑑定書テンプレート",account:"アカウント管理",admin:"サイト管理"}[page]||""}function pageFromNativeButton(button){var text=normalizedNativeText(button);if(text.indexOf("ダッシュボード")!==-1)return"dashboard";if(text.indexOf("鑑定カルテ")!==-1)return"appraisalProfiles";if(text.indexOf("新しい鑑定")!==-1)return"reading";if(text.indexOf("鑑定書テンプレート")!==-1)return"settings";if(text.indexOf("アカウント管理")!==-1)return"account";if(text.indexOf("サイト管理")!==-1)return"admin";return""}function nativeFallbackApi(){if(!document.querySelector("aside.sidebar"))return null;return{version:"NumeriaNativeNavigationFallback.v1",go:function(page){var label=nativeRouteLabel(page);if(!label)return false;var ok=clickNativeSidebarButton(label);if(ok)nativeFallbackPage=page;return ok},newReading:function(){var ok=clickNativeSidebarButton("新しい鑑定");if(ok)nativeFallbackPage="reading";return ok},openFeedback:function(){return clickNativeSidebarButton("βフィードバック")},getPage:function(){var active=document.querySelector("aside.sidebar button.active");return pageFromNativeButton(active)||nativeFallbackPage},getRole:function(){return window.NumeriaAdminPreviewState&&window.NumeriaAdminPreviewState.adminMode?"admin":""},getPlan:function(){var state=window.NumeriaAdminPreviewState||{};return String(state.uiPlan||state.actualPlan||"free").toLowerCase()}}}function nav(){return window.NumeriaNavigation||nativeFallbackApi()}';
+
+if (!html.includes(oldNav)) {
+  throw new Error("Expected mobile menu nav() implementation was not found.");
+}
+html = html.replace(oldNav, newNav);
+
+const oldEvents = 'function installGlobalItemEvents(){if(window.__numeriaMenuItemEventsInstalled)return;window.__numeriaMenuItemEventsInstalled=true;["click","pointerup","touchend"].forEach(function(type){document.addEventListener(type,function(event){var button=event.target&&event.target.closest&&event.target.closest("#"+MENU_ID+" .numeria-menu-item");if(!button)return;activateButton(button,event)}, {capture:true,passive:false})})}';
+const newEvents = 'let menuPointerGesture=null;let suppressMenuClickUntil=0;const MENU_TAP_MOVE_PX=12;function menuItemFromTarget(target){return target&&target.closest&&target.closest("#"+MENU_ID+" .numeria-menu-item")}function beginMenuPointer(event){var button=menuItemFromTarget(event.target);if(!button||event.isPrimary===false)return;menuPointerGesture={button:button,pointerId:event.pointerId,x:event.clientX,y:event.clientY,moved:false}}function moveMenuPointer(event){var gesture=menuPointerGesture;if(!gesture||gesture.pointerId!==event.pointerId)return;var dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;if(Math.sqrt(dx*dx+dy*dy)>MENU_TAP_MOVE_PX)gesture.moved=true}function endMenuPointer(event){var gesture=menuPointerGesture;if(!gesture||gesture.pointerId!==event.pointerId)return;menuPointerGesture=null;var button=menuItemFromTarget(event.target);if(gesture.moved||button!==gesture.button){suppressMenuClickUntil=Date.now()+700;return}suppressMenuClickUntil=Date.now()+700;activateButton(button,event)}function cancelMenuPointer(){if(menuPointerGesture)suppressMenuClickUntil=Date.now()+700;menuPointerGesture=null}function installGlobalItemEvents(){if(window.__numeriaMenuItemEventsInstalled)return;window.__numeriaMenuItemEventsInstalled=true;document.addEventListener("pointerdown",beginMenuPointer,{capture:true,passive:true});document.addEventListener("pointermove",moveMenuPointer,{capture:true,passive:true});document.addEventListener("pointerup",endMenuPointer,{capture:true,passive:false});document.addEventListener("pointercancel",cancelMenuPointer,{capture:true,passive:true});document.addEventListener("click",function(event){var button=menuItemFromTarget(event.target);if(!button)return;if(Date.now()<suppressMenuClickUntil){event.preventDefault();event.stopPropagation();if(typeof event.stopImmediatePropagation==="function")event.stopImmediatePropagation();return}activateButton(button,event)},{capture:true,passive:false})}';
+
+if (!html.includes(oldEvents)) {
+  throw new Error("Expected mobile menu global item event implementation was not found.");
+}
+html = html.replace(oldEvents, newEvents);
+
+if (!html.includes("</head>")) {
+  throw new Error("Expected closing head tag was not found.");
+}
+const scrollStyle = `<style id="numeria-menu-scroll-safe">/* ${marker} */#numeria-rebuilt-side-menu .numeria-menu-item{touch-action:pan-y!important}</style>`;
+html = html.replace("</head>", `${scrollStyle}</head>`);
+
+for (const token of [
+  "NumeriaNativeNavigationFallback.v1",
+  'document.querySelectorAll("aside.sidebar button")',
+  'dashboard:"ダッシュボード"',
+  'appraisalProfiles:"鑑定カルテ"',
+  'settings:"鑑定書テンプレート"',
+  'account:"アカウント管理"',
+  'admin:"サイト管理"',
+  'clickNativeSidebarButton("新しい鑑定")',
+  'clickNativeSidebarButton("βフィードバック")',
+  "MENU_TAP_MOVE_PX=12",
+  'document.addEventListener("pointerdown"',
+  'document.addEventListener("pointermove"',
+  'document.addEventListener("pointercancel"',
+  "touch-action:pan-y",
+]) {
+  if (!html.includes(token)) {
+    throw new Error(`Mobile menu fallback output is missing ${token}`);
+  }
+}
+
+if (html.includes('["click","pointerup","touchend"]')) {
+  throw new Error("Legacy swipe-sensitive menu event fan-out remains in Production HTML.");
+}
+
+writeFileSync(htmlPath, html);
+console.log("Mobile menu native navigation fallback and scroll-safe tap recognition patched.");
