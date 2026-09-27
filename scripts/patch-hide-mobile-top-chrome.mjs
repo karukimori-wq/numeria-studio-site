@@ -2,13 +2,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const htmlPath = "dist/original.html";
 let html = readFileSync(htmlPath, "utf8");
-const marker = "NumeriaHideMobileTopChrome.v2";
+const marker = "NumeriaHideMobileTopChrome.v3";
 if (html.includes(marker)) {
   throw new Error("Mobile top chrome hide patch was applied more than once.");
 }
 
 const style = `<style id="numeria-hide-mobile-top-chrome">
-/* ${marker}: hide the legacy top chrome only. The rebuilt menu trigger and panel stay visible. */
+/* ${marker}: hide the legacy top chrome only. The rebuilt menu remains visible and gets its own clear top space. */
 @media (width <= 760px){
   .mobile-appbar,
   #numeria-mobile-appbar,
@@ -22,7 +22,7 @@ const style = `<style id="numeria-hide-mobile-top-chrome">
     pointer-events:none!important;
   }
   .page{
-    padding-top:24px!important;
+    padding-top:72px!important;
   }
   .main-area{
     padding-top:0!important;
@@ -35,4 +35,4 @@ if (!html.includes("</head>")) {
 }
 html = html.replace("</head>", `${style}</head>`);
 writeFileSync(htmlPath, html);
-console.log("Legacy mobile top chrome hidden while rebuilt menu remains visible.");
+console.log("Legacy mobile top chrome hidden; standalone menu trigger has reserved top space.");
