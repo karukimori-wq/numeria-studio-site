@@ -20,6 +20,7 @@ assert.ok(existsSync(indexPath), `Versioned index bundle is missing: ${indexPath
 const appSource = readFileSync(appPath, "utf8");
 const indexSource = readFileSync(indexPath, "utf8");
 assert.ok(appSource.includes("NumeriaNavigationBridge.v2"), "Versioned Numeria app bundle must contain navigation bridge v2.");
+assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v1"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("numeria-navigation-ready"), "Versioned Numeria app bundle must signal navigation readiness.");
 assert.ok(indexSource.includes(appMatch[1]), "Versioned index bundle must import the versioned Numeria app bundle.");
 
