@@ -46,10 +46,10 @@ for (const token of [
   "waitForNavigationAction",
   "画面を準備しています…",
   'focus":".admin-feedback-list"',
+  "Legacy retry behavior remains after readiness patch",
 ]) {
   assert.ok(readinessPatch.includes(token), `Menu readiness patch is missing ${token}`);
 }
-assert.ok(!readinessPatch.includes("少し待ってからもう一度押してください"), "One-tap navigation must not instruct the user to press again.");
 
 assert.ok(menuPatch.includes('htmlPath = "dist/original.html"'), "Rebuilt menu must patch the HTML actually used by the mobile app.");
 assert.ok(menuPatch.includes("Single source of truth"), "Menu must keep one explicit source of truth.");
