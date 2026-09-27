@@ -4,6 +4,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 const assetsDir = "dist/assets";
 const htmlPaths = ["dist/original.html", "dist/index.html"].filter(existsSync);
 const marker = "NumeriaRuntimeAssetVersioning.v1";
+const navigationBridgeVersion = "NumeriaNavigationBridge.v2";
 
 function digest(content) {
   return createHash("sha256").update(content).digest("hex").slice(0, 12);
@@ -17,11 +18,11 @@ const assetNames = readdirSync(assetsDir);
 const appCandidates = assetNames.filter((name) => /^numeria-app-.*\.js$/.test(name) && !/^numeria-app-runtime-/.test(name));
 const appName = appCandidates.find((name) => {
   const source = readFileSync(`${assetsDir}/${name}`, "utf8");
-  return source.includes("NumeriaNavigationBridge.v1");
+  return source.includes(navigationBridgeVersion);
 });
 
 if (!appName) {
-  throw new Error("Patched Numeria application bundle with NumeriaNavigationBridge.v1 was not found.");
+  throw new Error(`Patched Numeria application bundle with ${navigationBridgeVersion} was not found.`);
 }
 
 const appSource = readFileSync(`${assetsDir}/${appName}`, "utf8");
@@ -76,4 +77,4 @@ for (const replacement of indexReplacements) {
   }
 }
 
-console.log(`Runtime assets cache-busted: ${appName} -> ${versionedAppName}; ${indexReplacements.map((item) => `${item.from} -> ${item.to}`).join("; ")}`);
+console.log(`Runtime assets cache-busted with ${navigationBridgeVersion}: ${appName} -> ${versionedAppName}; ${indexReplacements.map((item) => `${item.from} -> ${item.to}`).join("; ")}`);
