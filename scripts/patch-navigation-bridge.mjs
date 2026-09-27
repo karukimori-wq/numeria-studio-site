@@ -8,7 +8,7 @@ if (!assetName) {
 
 const assetPath = `${assetsDir}/${assetName}`;
 let source = readFileSync(assetPath, "utf8");
-const marker = "NumeriaNavigationBridge.v1";
+const marker = "NumeriaNavigationBridge.v2";
 if (source.includes(marker)) {
   throw new Error("Numeria navigation bridge was applied more than once.");
 }
@@ -18,8 +18,8 @@ if (!source.includes(anchor)) {
   throw new Error("Expected Numeria app-shell render anchor was not found in the restored bundle.");
 }
 
-const bridge = `window.NumeriaNavigation={version:"${marker}",go:function(page){k(page)},newReading:function(){di()},openGuide:function(){Fn(!0)},openFeedback:function(){Vn(!0)},signOut:function(){return n()},getPage:function(){return O},getRole:function(){return tr},getPlan:function(){return ar}};`;
+const bridge = `window.NumeriaNavigation={version:"${marker}",go:function(page){k(page)},newReading:function(){di()},openGuide:function(){Fn(!0)},openFeedback:function(){Vn(!0)},signOut:function(){return n()},getPage:function(){return O},getRole:function(){return tr},getPlan:function(){return ar}};if(!window.__numeriaNavigationReadyDispatched){window.__numeriaNavigationReadyDispatched=!0;queueMicrotask(function(){window.dispatchEvent(new CustomEvent("numeria-navigation-ready",{detail:{version:"${marker}"}}))})};`;
 source = source.replace(anchor, bridge + anchor);
 
 writeFileSync(assetPath, source);
-console.log(`Stable Numeria navigation API exposed in ${assetName}.`);
+console.log(`Stable Numeria navigation API ${marker} exposed in ${assetName}.`);
