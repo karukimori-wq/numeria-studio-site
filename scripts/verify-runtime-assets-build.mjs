@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 
 const html = readFileSync("dist/original.html", "utf8");
+const extensionlessHtml = readFileSync("dist/original", "utf8");
 assert.match(html, /NumeriaStaleRouteRecovery\.v1/, "Production HTML must clear stale dedicated-page routes before app startup.");
 assert.match(html, /NumeriaRuntimeAssetVersioning\.v1/, "Production HTML must include runtime asset versioning marker.");
 assert.match(html, /NumeriaRuntimeBootDiagnostics\.v2/, "Production HTML must include browser runtime boot diagnostics.");
@@ -24,6 +25,10 @@ assert.ok(appSource.includes("NumeriaNavigationBridge.v2"), "Versioned Numeria a
 assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v1"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("numeria-navigation-ready"), "Versioned Numeria app bundle must signal navigation readiness.");
 assert.ok(indexSource.includes(appMatch[1]), "Versioned index bundle must import the versioned Numeria app bundle.");
+assert.ok(extensionlessHtml.includes(appMatch[1]), "Extensionless Production HTML must reference the versioned Numeria app bundle.");
+assert.ok(extensionlessHtml.includes(indexMatch[1]), "Extensionless Production HTML must reference the versioned index bundle.");
+assert.ok(!extensionlessHtml.includes("assets/index-CYZnnbch.js"), "Extensionless Production HTML must not boot the stale index bundle.");
+assert.ok(!extensionlessHtml.includes("assets/numeria-app-Cckhajir.js"), "Extensionless Production HTML must not preload the stale Numeria app bundle.");
 
 assert.ok(html.includes('startsWith(prefix)'), "Production recovery must detect stale support/plan hashes.");
 assert.ok(html.includes('history.replaceState(null,"",location.pathname+location.search)'), "Production recovery must remove stale dedicated-page route state.");
@@ -36,5 +41,8 @@ assert.ok(html.includes('document.addEventListener("pointermove"'), "Production 
 assert.ok(html.includes("touch-action:pan-y"), "Production menu items must allow vertical touch scrolling.");
 assert.ok(!html.includes('["click","pointerup","touchend"]'), "Production menu must not activate every touchend/pointerup without movement checks.");
 assert.ok(!html.includes("少し待ってからもう一度押してください"), "Production menu must not ask the user to tap the same item again.");
+assert.ok(!extensionlessHtml.includes("function ensureMobileReportQuickbar(){"), "Extensionless Production HTML must remove the unused PDF quickbar generator.");
+assert.ok(!extensionlessHtml.includes("ensureMobileReportQuickbar()"), "Extensionless Production HTML must remove the unused PDF quickbar tick hook.");
+assert.ok(!extensionlessHtml.includes("途中保存は画面上部または下部"), "Extensionless Production HTML must not inject the removed draft-save instruction.");
 
 console.log(`Versioned runtime assets, stale-route recovery, native navigation fallback, and scroll-safe mobile menu verified: ${indexMatch[1]} -> ${appMatch[1]}`);

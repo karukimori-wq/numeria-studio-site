@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const assetsDir = "dist/assets";
-const htmlPaths = ["dist/original.html", "dist/index.html"].filter(existsSync);
+const htmlPaths = ["dist/original.html", "dist/original", "dist/index.html"].filter(existsSync);
 const marker = "NumeriaRuntimeAssetVersioning.v1";
 const navigationBridgeVersion = "NumeriaNavigationBridge.v2";
 const recoveryRuntimeVersion = "NumeriaIOSRuntimeRecovery.v1";
@@ -58,9 +58,11 @@ for (const htmlPath of htmlPaths) {
     html = replaceAll(html, replacement.from, replacement.to);
   }
   if (html !== before) {
-    if (htmlPath === "dist/original.html") {
+    if (htmlPath === "dist/original.html" || htmlPath === "dist/original") {
       const comment = `<!-- ${marker} ${recoveryRuntimeVersion} app=${versionedAppName} index=${indexReplacements.map((item) => item.to).join(",")} -->`;
       if (!html.includes(marker)) html = html.replace("</head>", `${comment}</head>`);
+    }
+    if (htmlPath === "dist/original.html") {
       originalHtmlUpdated = true;
     }
     writeFileSync(htmlPath, html);
