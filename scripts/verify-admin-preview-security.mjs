@@ -35,6 +35,8 @@ assert.match(profilePatch, /developerPreview:preview/);
 assert.match(readinessPatch, /headers\.Authorization="Bearer "\+token/);
 assert.match(readinessPatch, /Admin readiness panel still trusts the browser-provided admin email header/);
 assert.doesNotMatch(readinessPatch, /const secureHeaders = '[^']*X-Admin-Email/);
+assert.match(adminPreviewPatch, /NumeriaWaitForClerkToken/);
+assert.match(adminPreviewPatch, /for\(let i=0;i<20;i\+\+\)/);
 
 // Developer preview remains an entitlement layered over the real plan.
 // The legacy UI may receive plan="business" only as a verified admin UI projection;
