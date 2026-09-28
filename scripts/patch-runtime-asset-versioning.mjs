@@ -5,7 +5,7 @@ const assetsDir = "dist/assets";
 const htmlPaths = ["dist/original.html", "dist/original", "dist/index.html"].filter(existsSync);
 const marker = "NumeriaRuntimeAssetVersioning.v1";
 const navigationBridgeVersion = "NumeriaNavigationBridge.v2";
-const recoveryRuntimeVersion = "NumeriaIOSRuntimeRecovery.v1";
+const recoveryRuntimeVersion = "NumeriaIOSRuntimeRecovery.v2";
 
 function digest(content) {
   return createHash("sha256").update(content).digest("hex").slice(0, 12);
