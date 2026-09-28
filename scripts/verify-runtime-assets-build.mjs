@@ -5,7 +5,7 @@ function assertBundleSyntax(source, label) {
   const parseableSource = source
     .replace(/\bimport\{[^;]+;\s*/g, "")
     .replace(/import\.meta\.url/g, "\"\"")
-    .replace(/;?export\{[^}]+\};?\s*$/, "");
+    .replace(/;?export\{[^}]+\};?/g, "");
   assert.doesNotThrow(() => new Function(parseableSource), `${label} must be syntactically valid JavaScript.`);
 }
 
@@ -13,10 +13,12 @@ const html = readFileSync("dist/original.html", "utf8");
 const extensionlessHtml = readFileSync("dist/original", "utf8");
 assert.match(html, /NumeriaStaleRouteRecovery\.v1/, "Production HTML must clear stale dedicated-page routes before app startup.");
 assert.match(html, /NumeriaRuntimeAssetVersioning\.v1/, "Production HTML must include runtime asset versioning marker.");
-assert.match(html, /NumeriaRuntimeBootDiagnostics\.v3/, "Production HTML must include browser runtime boot diagnostics.");
-assert.match(html, /numeria-recovery=NumeriaRuntimeBootDiagnostics\.v3/, "Production HTML must retry the cached legacy index with a recovery URL.");
-assert.match(extensionlessHtml, /NumeriaRuntimeBootDiagnostics\.v3/, "Extensionless Production HTML must include browser runtime boot diagnostics.");
-assert.match(extensionlessHtml, /numeria-recovery=NumeriaRuntimeBootDiagnostics\.v3/, "Extensionless Production HTML must retry the cached legacy index with a recovery URL.");
+assert.match(html, /NumeriaRuntimeBootDiagnostics\.v4/, "Production HTML must include browser runtime boot diagnostics.");
+assert.match(html, /numeria-recovery=NumeriaRuntimeBootDiagnostics\.v4/, "Production HTML must retry the cached legacy index with a recovery URL.");
+assert.match(html, /numeria-direct=NumeriaRuntimeBootDiagnostics\.v4/, "Production HTML must include direct React mount recovery.");
+assert.match(extensionlessHtml, /NumeriaRuntimeBootDiagnostics\.v4/, "Extensionless Production HTML must include browser runtime boot diagnostics.");
+assert.match(extensionlessHtml, /numeria-recovery=NumeriaRuntimeBootDiagnostics\.v4/, "Extensionless Production HTML must retry the cached legacy index with a recovery URL.");
+assert.match(extensionlessHtml, /numeria-direct=NumeriaRuntimeBootDiagnostics\.v4/, "Extensionless Production HTML must include direct React mount recovery.");
 assert.match(html, /NumeriaMenuNavigationReadiness\.v1/, "Production HTML must include one-tap menu navigation readiness.");
 assert.match(html, /NumeriaMobileMenuNativeFallback\.v1/, "Production HTML must include native app navigation fallback and scroll-safe taps.");
 const rscDonePosition = html.indexOf("self.__VINEXT_RSC_DONE__=true");
@@ -39,12 +41,16 @@ const appSource = readFileSync(appPath, "utf8");
 const indexSource = readFileSync(indexPath, "utf8");
 assert.ok(appSource.includes("NumeriaNavigationBridge.v2"), "Versioned Numeria app bundle must contain navigation bridge v2.");
 assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
+assert.ok(appSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Versioned Numeria app bundle must contain syntax guard repairs.");
 assert.ok(appSource.includes("numeria-navigation-ready"), "Versioned Numeria app bundle must signal navigation readiness.");
+assertBundleSyntax(appSource, "Versioned Numeria app bundle");
 assert.ok(indexSource.includes(appMatch[1]), "Versioned index bundle must import the versioned Numeria app bundle.");
 assert.ok(indexSource.includes("NumeriaRscBootstrapOrder.v2"), "Versioned index bundle must wait for inline RSC payload before bootstrapping.");
 assertBundleSyntax(indexSource, "Versioned index bundle");
 assert.ok(extensionlessHtml.includes(appMatch[1]), "Extensionless Production HTML must reference the versioned Numeria app bundle.");
 assert.ok(extensionlessHtml.includes(indexMatch[1]), "Extensionless Production HTML must reference the versioned index bundle.");
+assert.ok(html.includes("data-numeria-direct-root"), "Production recovery must create a dedicated direct-mount root.");
+assert.ok(html.includes("client.hydrateRoot(root,React.createElement(Component))"), "Production recovery must directly mount the Numeria app component when RSC leaves the page blank.");
 assert.ok(!extensionlessHtml.includes("assets/index-CYZnnbch.js"), "Extensionless Production HTML must not boot the stale index bundle.");
 assert.ok(!extensionlessHtml.includes('import("/assets/index-CYZnnbch.js")'), "Extensionless Production HTML must not import the stale index bundle.");
 assert.ok(!extensionlessHtml.includes("assets/numeria-app-Cckhajir.js"), "Extensionless Production HTML must not preload the stale Numeria app bundle.");
@@ -56,6 +62,8 @@ assert.ok(legacyIndexSource.includes("NumeriaRscBootstrapOrder.v2"), "Legacy ind
 assertBundleSyntax(legacyIndexSource, "Legacy index bundle");
 assert.ok(legacyAppSource.includes("NumeriaNavigationBridge.v2"), "Legacy Numeria app bundle must contain navigation bridge v2.");
 assert.ok(legacyAppSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Legacy Numeria app bundle must contain the iOS runtime recovery marker.");
+assert.ok(legacyAppSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Legacy Numeria app bundle must contain syntax guard repairs.");
+assertBundleSyntax(legacyAppSource, "Legacy Numeria app bundle");
 
 assert.ok(html.includes('startsWith(prefix)'), "Production recovery must detect stale support/plan hashes.");
 assert.ok(html.includes('history.replaceState(null,"",location.pathname+location.search)'), "Production recovery must remove stale dedicated-page route state.");
