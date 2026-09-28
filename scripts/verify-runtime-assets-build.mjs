@@ -22,13 +22,19 @@ assert.ok(existsSync(indexPath), `Versioned index bundle is missing: ${indexPath
 const appSource = readFileSync(appPath, "utf8");
 const indexSource = readFileSync(indexPath, "utf8");
 assert.ok(appSource.includes("NumeriaNavigationBridge.v2"), "Versioned Numeria app bundle must contain navigation bridge v2.");
-assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v1"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
+assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("numeria-navigation-ready"), "Versioned Numeria app bundle must signal navigation readiness.");
 assert.ok(indexSource.includes(appMatch[1]), "Versioned index bundle must import the versioned Numeria app bundle.");
 assert.ok(extensionlessHtml.includes(appMatch[1]), "Extensionless Production HTML must reference the versioned Numeria app bundle.");
 assert.ok(extensionlessHtml.includes(indexMatch[1]), "Extensionless Production HTML must reference the versioned index bundle.");
 assert.ok(!extensionlessHtml.includes("assets/index-CYZnnbch.js"), "Extensionless Production HTML must not boot the stale index bundle.");
 assert.ok(!extensionlessHtml.includes("assets/numeria-app-Cckhajir.js"), "Extensionless Production HTML must not preload the stale Numeria app bundle.");
+
+const legacyIndexSource = readFileSync("dist/assets/index-CYZnnbch.js", "utf8");
+const legacyAppSource = readFileSync("dist/assets/numeria-app-Cckhajir.js", "utf8");
+assert.ok(legacyIndexSource.includes(appMatch[1]), "Legacy index bundle must import the recovered Numeria app bundle.");
+assert.ok(legacyAppSource.includes("NumeriaNavigationBridge.v2"), "Legacy Numeria app bundle must contain navigation bridge v2.");
+assert.ok(legacyAppSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Legacy Numeria app bundle must contain the iOS runtime recovery marker.");
 
 assert.ok(html.includes('startsWith(prefix)'), "Production recovery must detect stale support/plan hashes.");
 assert.ok(html.includes('history.replaceState(null,"",location.pathname+location.search)'), "Production recovery must remove stale dedicated-page route state.");
