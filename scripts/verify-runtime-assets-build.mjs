@@ -8,6 +8,11 @@ assert.match(html, /NumeriaRuntimeAssetVersioning\.v1/, "Production HTML must in
 assert.match(html, /NumeriaRuntimeBootDiagnostics\.v2/, "Production HTML must include browser runtime boot diagnostics.");
 assert.match(html, /NumeriaMenuNavigationReadiness\.v1/, "Production HTML must include one-tap menu navigation readiness.");
 assert.match(html, /NumeriaMobileMenuNativeFallback\.v1/, "Production HTML must include native app navigation fallback and scroll-safe taps.");
+const rscDonePosition = html.indexOf("self.__VINEXT_RSC_DONE__=true");
+const bootstrapPosition = html.indexOf('<script id="_R_">import(');
+assert.ok(rscDonePosition >= 0, "Production HTML must include inline RSC completion payload.");
+assert.ok(bootstrapPosition >= 0, "Production HTML must include the Vinext index bootstrap.");
+assert.ok(rscDonePosition < bootstrapPosition, "Production HTML must load inline RSC payload before the Vinext index bootstrap.");
 
 const appMatch = html.match(/assets\/(numeria-app-runtime-[a-f0-9]{12}\.js)/);
 const indexMatch = html.match(/assets\/(index-runtime-[a-f0-9]{12}\.js)/);
@@ -25,6 +30,7 @@ assert.ok(appSource.includes("NumeriaNavigationBridge.v2"), "Versioned Numeria a
 assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("numeria-navigation-ready"), "Versioned Numeria app bundle must signal navigation readiness.");
 assert.ok(indexSource.includes(appMatch[1]), "Versioned index bundle must import the versioned Numeria app bundle.");
+assert.ok(indexSource.includes("NumeriaRscBootstrapOrder.v1"), "Versioned index bundle must wait for inline RSC payload before bootstrapping.");
 assert.ok(extensionlessHtml.includes(appMatch[1]), "Extensionless Production HTML must reference the versioned Numeria app bundle.");
 assert.ok(extensionlessHtml.includes(indexMatch[1]), "Extensionless Production HTML must reference the versioned index bundle.");
 assert.ok(!extensionlessHtml.includes("assets/index-CYZnnbch.js"), "Extensionless Production HTML must not boot the stale index bundle.");
@@ -33,6 +39,7 @@ assert.ok(!extensionlessHtml.includes("assets/numeria-app-Cckhajir.js"), "Extens
 const legacyIndexSource = readFileSync("dist/assets/index-CYZnnbch.js", "utf8");
 const legacyAppSource = readFileSync("dist/assets/numeria-app-Cckhajir.js", "utf8");
 assert.ok(legacyIndexSource.includes(appMatch[1]), "Legacy index bundle must import the recovered Numeria app bundle.");
+assert.ok(legacyIndexSource.includes("NumeriaRscBootstrapOrder.v1"), "Legacy index bundle must wait for inline RSC payload before bootstrapping.");
 assert.ok(legacyAppSource.includes("NumeriaNavigationBridge.v2"), "Legacy Numeria app bundle must contain navigation bridge v2.");
 assert.ok(legacyAppSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Legacy Numeria app bundle must contain the iOS runtime recovery marker.");
 
