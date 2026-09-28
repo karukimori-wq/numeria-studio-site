@@ -32,6 +32,9 @@ const originalAppSource = readFileSync(`${assetsDir}/${appName}`, "utf8");
 const appSource = `${originalAppSource}\n/* ${recoveryRuntimeVersion} */\n`;
 const versionedAppName = `numeria-app-runtime-${digest(appSource)}.js`;
 writeFileSync(`${assetsDir}/${versionedAppName}`, appSource);
+// Keep the legacy filename fresh as well. Some mobile browsers can retain an
+// older HTML document that still imports numeria-app-Cckhajir.js directly.
+writeFileSync(`${assetsDir}/${appName}`, appSource);
 
 const indexCandidates = assetNames.filter((name) => /^index-.*\.js$/.test(name) && !/^index-runtime-/.test(name));
 const indexReplacements = [];
@@ -42,6 +45,9 @@ for (const indexName of indexCandidates) {
   const patchedIndex = replaceAll(indexSource, appName, versionedAppName);
   const versionedIndexName = `index-runtime-${digest(patchedIndex)}.js`;
   writeFileSync(`${assetsDir}/${versionedIndexName}`, patchedIndex);
+  // Update the legacy entrypoint so stale HTML that imports index-CYZnnbch.js
+  // still loads the recovered application bundle.
+  writeFileSync(indexPath, patchedIndex);
   indexReplacements.push({ from: indexName, to: versionedIndexName });
 }
 
@@ -80,10 +86,17 @@ if (!originalHtml.includes(recoveryRuntimeVersion)) {
 if (!readFileSync(`${assetsDir}/${versionedAppName}`, "utf8").includes(recoveryRuntimeVersion)) {
   throw new Error("Versioned Numeria application bundle does not include the iOS runtime recovery marker.");
 }
+if (!readFileSync(`${assetsDir}/${appName}`, "utf8").includes(recoveryRuntimeVersion)) {
+  throw new Error("Legacy Numeria application bundle does not include the iOS runtime recovery marker.");
+}
 if (!originalHtml.includes(versionedAppName)) {
   throw new Error("Production HTML does not reference the versioned Numeria application bundle.");
 }
 for (const replacement of indexReplacements) {
+  const legacyIndexSource = readFileSync(`${assetsDir}/${replacement.from}`, "utf8");
+  if (!legacyIndexSource.includes(versionedAppName)) {
+    throw new Error(`Legacy index bundle ${replacement.from} does not import the recovered app bundle.`);
+  }
   if (!originalHtml.includes(replacement.to)) {
     throw new Error(`Production HTML does not reference versioned index bundle ${replacement.to}.`);
   }
