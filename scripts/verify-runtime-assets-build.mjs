@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 const html = readFileSync("dist/original.html", "utf8");
 assert.match(html, /NumeriaStaleRouteRecovery\.v1/, "Production HTML must clear stale dedicated-page routes before app startup.");
 assert.match(html, /NumeriaRuntimeAssetVersioning\.v1/, "Production HTML must include runtime asset versioning marker.");
+assert.match(html, /NumeriaRuntimeBootDiagnostics\.v1/, "Production HTML must include browser runtime boot diagnostics.");
 assert.match(html, /NumeriaMenuNavigationReadiness\.v1/, "Production HTML must include one-tap menu navigation readiness.");
 assert.match(html, /NumeriaMobileMenuNativeFallback\.v1/, "Production HTML must include native app navigation fallback and scroll-safe taps.");
 
