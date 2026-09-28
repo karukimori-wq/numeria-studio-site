@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const htmlPath = "dist/original.html";
 let html = readFileSync(htmlPath, "utf8");
-const marker = "NumeriaRuntimeBootDiagnostics.v1";
+const marker = "NumeriaRuntimeBootDiagnostics.v2";
 
 if (html.includes(marker)) throw new Error("Runtime boot diagnostics patch was applied more than once.");
 if (!html.includes("<head>")) throw new Error("Expected <head> in Production HTML.");
@@ -26,7 +26,13 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
     let el=document.getElementById("numeria-runtime-boot-failure");
     if(!el){el=document.createElement("section");el.id="numeria-runtime-boot-failure";(document.body||document.documentElement).appendChild(el)}
     const last=state.errors[state.errors.length-1];
-    const detail=last?(last.kind+": "+last.message+(last.source?" @ "+last.source:"")):"JavaScriptエラーを取得できませんでした";
+    const resources=performance.getEntriesByType("resource").map(entry=>entry.name).filter(name=>/index-|numeria-app-|framework-|rolldown-runtime-/.test(name));
+    const nodes=[".app-shell","aside.sidebar",".page",".main-area",".auth-loading"].map(selector=>selector+"="+document.querySelectorAll(selector).length).join(" / ");
+    const rsc="RSC done="+String(!!window.__VINEXT_RSC_DONE__)+" chunks="+String((window.__VINEXT_RSC_CHUNKS__||[]).length);
+    const nav="Navigation="+String(!!window.NumeriaNavigation);
+    const loaded="runtime resources="+String(resources.length)+" "+resources.slice(-3).map(url=>url.split("/").pop()).join(", ");
+    const lastError=last?(last.kind+": "+last.message+(last.source?" @ "+last.source:"")):"error=none";
+    const detail=[lastError,nav,rsc,nodes,loaded].join("\\n");
     el.style.cssText="position:fixed;left:16px;right:16px;top:120px;z-index:2147483646;padding:16px;border:1px solid #d7d0c4;border-radius:16px;background:#fffdf8;color:#241b3a;font:13px/1.6 system-ui,-apple-system,sans-serif;box-shadow:0 12px 36px rgba(36,27,58,.14);word-break:break-word";
     el.innerHTML="<strong style='display:block;font-size:15px;margin-bottom:6px'>Numeria本体の起動を確認できません</strong><span style='display:block;margin-bottom:8px'>起動診断: ${marker}</span><code style='display:block;white-space:pre-wrap'>"+detail.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))+"</code>";
   }
