@@ -6,7 +6,7 @@ const htmlPaths = ["dist/original.html", "dist/original", "dist/index.html"].fil
 const marker = "NumeriaRuntimeAssetVersioning.v1";
 const navigationBridgeVersion = "NumeriaNavigationBridge.v2";
 const recoveryRuntimeVersion = "NumeriaIOSRuntimeRecovery.v2";
-const rscBootstrapGuardVersion = "NumeriaRscBootstrapOrder.v1";
+const rscBootstrapGuardVersion = "NumeriaRscBootstrapOrder.v2";
 
 function digest(content) {
   return createHash("sha256").update(content).digest("hex").slice(0, 12);
@@ -39,7 +39,7 @@ function guardIndexBootstrapUntilRscReady(source, indexName) {
   if (!source.includes(bootstrapCall)) {
     throw new Error(`${indexName} does not contain the expected Vinext bootstrap call.`);
   }
-  const guardedCall = `(globalThis.__NumeriaRscBootstrapOrder="${rscBootstrapGuardVersion}",(()=>{const e=Date.now(),t=()=>{globalThis.__VINEXT_RSC_DONE__||Date.now()-e>5000?ca():setTimeout(t,10)};t()})()),window.__VINEXT_LINK_PREFETCH_ROUTES__`;
+  const guardedCall = `(globalThis.__NumeriaRscBootstrapOrder="${rscBootstrapGuardVersion}",function(){var e=Date.now();function t(){globalThis.__VINEXT_RSC_DONE__||Date.now()-e>5000?ca():setTimeout(t,10)}t()}())),window.__VINEXT_LINK_PREFETCH_ROUTES__`;
   return replaceAll(source, bootstrapCall, guardedCall);
 }
 
