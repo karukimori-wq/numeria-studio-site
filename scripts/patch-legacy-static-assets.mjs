@@ -15,7 +15,7 @@ let patched = source;
 
 // Keep legacy same-origin API calls compatible with Clerk enforce mode.
 // The wrapper resolves a fresh Clerk token per request and leaves external requests untouched.
-const authenticatedFetchPrelude = 'window.NumeriaAuthenticatedFetch=window.NumeriaAuthenticatedFetch||async function(input,init={}){let options={...init,headers:new Headers(init.headers||{})};try{if(window.Clerk&&window.Clerk.session&&typeof window.Clerk.session.getToken===`function`){let token=await window.Clerk.session.getToken();if(token)options.headers.set(`Authorization`,`Bearer `+token)}}catch{}return fetch(input,options)};';
+const authenticatedFetchPrelude = 'window.NumeriaWaitForClerkToken=window.NumeriaWaitForClerkToken||async function(){for(let i=0;i<20;i++){try{if(window.Clerk&&window.Clerk.session&&typeof window.Clerk.session.getToken===`function`){let token=await window.Clerk.session.getToken().catch(()=>``);if(token)return token}}catch{}await new Promise(e=>setTimeout(e,500))}return``};window.NumeriaAuthenticatedFetch=window.NumeriaAuthenticatedFetch||async function(input,init={}){let options={...init,headers:new Headers(init.headers||{})};try{let token=await window.NumeriaWaitForClerkToken();if(token)options.headers.set(`Authorization`,`Bearer `+token)}catch{}return fetch(input,options)};';
 patched = authenticatedFetchPrelude + patched;
 
 // Expected three legacy PDF navigation calls; replaceExactly enforces this count.
