@@ -15,6 +15,8 @@ assert.match(html, /NumeriaStaleRouteRecovery\.v1/, "Production HTML must clear 
 assert.match(html, /NumeriaRuntimeAssetVersioning\.v1/, "Production HTML must include runtime asset versioning marker.");
 assert.match(html, /NumeriaRuntimeBootDiagnostics\.v3/, "Production HTML must include browser runtime boot diagnostics.");
 assert.match(html, /numeria-recovery=NumeriaRuntimeBootDiagnostics\.v3/, "Production HTML must retry the cached legacy index with a recovery URL.");
+assert.match(extensionlessHtml, /NumeriaRuntimeBootDiagnostics\.v3/, "Extensionless Production HTML must include browser runtime boot diagnostics.");
+assert.match(extensionlessHtml, /numeria-recovery=NumeriaRuntimeBootDiagnostics\.v3/, "Extensionless Production HTML must retry the cached legacy index with a recovery URL.");
 assert.match(html, /NumeriaMenuNavigationReadiness\.v1/, "Production HTML must include one-tap menu navigation readiness.");
 assert.match(html, /NumeriaMobileMenuNativeFallback\.v1/, "Production HTML must include native app navigation fallback and scroll-safe taps.");
 const rscDonePosition = html.indexOf("self.__VINEXT_RSC_DONE__=true");
@@ -44,6 +46,7 @@ assertBundleSyntax(indexSource, "Versioned index bundle");
 assert.ok(extensionlessHtml.includes(appMatch[1]), "Extensionless Production HTML must reference the versioned Numeria app bundle.");
 assert.ok(extensionlessHtml.includes(indexMatch[1]), "Extensionless Production HTML must reference the versioned index bundle.");
 assert.ok(!extensionlessHtml.includes("assets/index-CYZnnbch.js"), "Extensionless Production HTML must not boot the stale index bundle.");
+assert.ok(!extensionlessHtml.includes('import("/assets/index-CYZnnbch.js")'), "Extensionless Production HTML must not import the stale index bundle.");
 assert.ok(!extensionlessHtml.includes("assets/numeria-app-Cckhajir.js"), "Extensionless Production HTML must not preload the stale Numeria app bundle.");
 
 const legacyIndexSource = readFileSync("dist/assets/index-CYZnnbch.js", "utf8");
