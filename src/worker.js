@@ -1969,6 +1969,25 @@ function isAppRouteFallback(request, url) {
   return !url.pathname.split("/").pop().includes(".");
 }
 
+function noStoreHtml(response) {
+  const headers = new Headers(response.headers);
+  const type = headers.get("Content-Type") || "";
+  if (type.includes("text/html")) {
+    headers.set("Cache-Control", "no-store, max-age=0");
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+async function originalHtmlResponse(request, env) {
+  const fallbackUrl = new URL("/original.html", request.url);
+  const response = await env.ASSETS.fetch(new Request(fallbackUrl.toString(), request));
+  return noStoreHtml(response);
+}
+
 async function clerkBrowserScriptResponse(request, env = {}) {
   const publishableKey = getClerkPublishableKey(request, env);
   const frontendOrigin = getClerkFrontendOrigin(publishableKey);
@@ -2579,17 +2598,22 @@ export default {
     if (url.pathname.startsWith("/api/")) {
       return handleApi(request, env, ctx);
     }
+    if (
+      request.method === "GET"
+      && acceptsHtml(request)
+      && ["/", "/original", "/original.html"].includes(url.pathname)
+    ) {
+      return originalHtmlResponse(request, env);
+    }
     if (isAppRouteFallback(request, url)) {
-      const fallbackUrl = new URL("/original.html", request.url);
-      return env.ASSETS.fetch(new Request(fallbackUrl.toString(), request));
+      return originalHtmlResponse(request, env);
     }
 
     const response = await env.ASSETS.fetch(request);
     if (response.status !== 404 || request.method !== "GET" || !acceptsHtml(request)) {
-      return response;
+      return noStoreHtml(response);
     }
 
-    const fallbackUrl = new URL("/original.html", request.url);
-    return env.ASSETS.fetch(new Request(fallbackUrl.toString(), request));
+    return originalHtmlResponse(request, env);
   },
 };
