@@ -111,11 +111,13 @@ async function resolveVerifiedClerkIdentity(request, env = {}, ctx = null) {
   }
 
   const verifiedUserId = String(authBody.incomingRequestUserId || "").trim();
+  const verifiedEmail = String(authBody.incomingRequestEmail || "").trim().toLowerCase();
   if (verifiedUserId) {
     return {
       verified: true,
       workspaceId,
       userId: verifiedUserId,
+      email: verifiedEmail,
       reason: "clerk-session-verified",
     };
   }
@@ -143,6 +145,7 @@ async function resolveVerifiedClerkIdentity(request, env = {}, ctx = null) {
     verified: true,
     workspaceId,
     userId,
+    email: verifiedEmail,
     reason: "clerk-session-verified",
   };
 }
@@ -204,6 +207,7 @@ async function resolveSecureAdminAccess(request, env = {}, ctx = null) {
 
   const adminEmails = getAdminEmails(env);
   const adminUserIds = getAdminUserIds(env);
+  const verifiedEmail = String(identity.email || "").trim().toLowerCase();
 
   if (adminUserIds.includes(identity.userId)) {
     return {
@@ -211,6 +215,15 @@ async function resolveSecureAdminAccess(request, env = {}, ctx = null) {
       adminMode: true,
       adminEmail: adminEmails[0] || "illusionddt@gmail.com",
       identitySource: "clerk-user-id-allowlist",
+    };
+  }
+
+  if (verifiedEmail && adminEmails.includes(verifiedEmail)) {
+    return {
+      ...identity,
+      adminMode: true,
+      adminEmail: verifiedEmail,
+      identitySource: "clerk-jwt-email-allowlist",
     };
   }
 
@@ -241,6 +254,7 @@ function developerPreviewMetadata(access) {
     identityVerified: Boolean(access.verified),
     identitySource: access.identitySource,
     authenticatedUserId: access.userId || null,
+    authenticatedEmailMatched: Boolean(access.adminEmail),
     subscriptionPlanUnaffected: true,
     previewPlans: ["free", "pro", "business"],
     businessUiPreviewEnabled: enabled,
