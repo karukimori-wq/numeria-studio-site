@@ -74,9 +74,9 @@ assert.ok(html.includes("queuePageNavigation"), "Production menu must queue one-
 assert.ok(html.includes("waitForNavigationAction"), "Production menu must automatically resume reading/contact actions when Navigation API becomes ready.");
 assert.ok(html.includes("NumeriaNativeNavigationFallback.v1"), "Production menu must fall back to the app's own React navigation controls.");
 assert.ok(html.includes('document.querySelectorAll("aside.sidebar button")'), "Native fallback must be scoped to the app's own sidebar buttons.");
-assert.ok(html.includes("MENU_TAP_MOVE_PX=12"), "Production menu must distinguish a tap from a scrolling gesture.");
-assert.ok(html.includes('document.addEventListener("pointermove"'), "Production menu must observe pointer movement before activating an item.");
-assert.ok(html.includes("touch-action:pan-y"), "Production menu items must allow vertical touch scrolling.");
+assert.ok(html.includes("MENU_TAP_MOVE_PX=18"), "Production menu must distinguish a tap from a scrolling gesture.");
+assert.ok(html.includes('document.addEventListener("touchmove"'), "Production menu must observe touch movement before activating an item.");
+assert.ok(html.includes("touch-action:manipulation"), "Production menu items must activate normal taps reliably.");
 assert.ok(!html.includes('["click","pointerup","touchend"]'), "Production menu must not activate every touchend/pointerup without movement checks.");
 assert.ok(!html.includes("少し待ってからもう一度押してください"), "Production menu must not ask the user to tap the same item again.");
 assert.ok(!extensionlessHtml.includes("function ensureMobileReportQuickbar(){"), "Extensionless Production HTML must remove the unused PDF quickbar generator.");
