@@ -17,6 +17,7 @@ assert.match(workerSource, /incomingRequestEmail: verification\.verified && veri
 assert.match(secureEntry, /incomingRequestVerified !== true/);
 assert.match(secureEntry, /authBody\.incomingRequestUserId/);
 assert.match(secureEntry, /authBody\.incomingRequestEmail/);
+assert.match(secureEntry, /X-Numeria-Clerk-Client-Email/);
 assert.match(secureEntry, /reason: "clerk-session-verified"/);
 assert.match(secureEntry, /ADMIN_USER_IDS/);
 assert.match(secureEntry, /CLERK_SECRET_KEY/);
@@ -24,6 +25,7 @@ assert.match(secureEntry, /\/v1\/users\//);
 assert.match(secureEntry, /headers\.delete\("X-Admin-Email"\)/);
 assert.match(secureEntry, /identitySource: "clerk-user-id-allowlist"/);
 assert.match(secureEntry, /identitySource: "clerk-jwt-email-allowlist"/);
+assert.match(secureEntry, /identitySource: "clerk-client-email-allowlist"/);
 assert.match(secureEntry, /identitySource: "clerk-backend-email-allowlist"/);
 assert.match(secureEntry, /subscriptionPlanUnaffected: true/);
 assert.match(secureEntry, /businessUiPreviewEnabled: enabled/);
@@ -44,6 +46,7 @@ assert.match(readinessPatch, /Admin readiness panel still trusts the browser-pro
 assert.doesNotMatch(readinessPatch, /const secureHeaders = '[^']*X-Admin-Email/);
 assert.match(adminPreviewPatch, /NumeriaWaitForClerkToken/);
 assert.match(adminPreviewPatch, /for\(let i=0;i<20;i\+\+\)/);
+assert.match(readFileSync("scripts/patch-admin-preview-boot-diagnostics.mjs", "utf8"), /X-Numeria-Clerk-Client-Email/);
 
 // Developer preview remains an entitlement layered over the real plan.
 // The legacy UI may receive plan="business" only as a verified admin UI projection;
