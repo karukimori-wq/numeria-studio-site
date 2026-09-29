@@ -1761,6 +1761,20 @@ function getExpectedClerkIssuer(env = {}) {
     || "";
 }
 
+function extractClerkEmail(payload = {}) {
+  const candidates = [
+    payload.email,
+    payload.email_address,
+    payload.primary_email_address,
+    payload.primaryEmailAddress,
+    payload["https://clerk.com/email"],
+  ];
+  const email = candidates
+    .map((value) => String(value || "").trim().toLowerCase())
+    .find((value) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value));
+  return email || "";
+}
+
 async function fetchClerkJwks(jwksUrl) {
   const response = await fetch(jwksUrl, {
     headers: { Accept: "application/json" },
@@ -1832,6 +1846,7 @@ async function verifyClerkSessionToken(request, env = {}) {
       reason: verified ? "verified" : "signature-invalid",
       userId: verified ? String(payload.sub || "") : "",
       sessionId: verified ? String(payload.sid || "") : "",
+      email: verified ? extractClerkEmail(payload) : "",
       method: "jwks-rs256",
     };
   } catch (error) {
@@ -1912,6 +1927,7 @@ async function authStatusResponse(request, env = {}) {
     incomingRequestVerificationReason: verification.reason,
     incomingRequestUserId: verification.verified ? verification.userId : null,
     incomingRequestSessionId: verification.verified ? verification.sessionId : null,
+    incomingRequestEmail: verification.verified && verification.email ? verification.email : null,
     identityMode: "workspaceId+userId",
     secretValuesReturned: false,
     message: verification.verified
