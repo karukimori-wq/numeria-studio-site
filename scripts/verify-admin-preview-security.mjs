@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const wrangler = readFileSync("wrangler.jsonc", "utf8");
+const workerSource = readFileSync("src/worker.js", "utf8");
 const aiEntry = readFileSync("src/ai-worker-entry.js", "utf8");
 const secureEntry = readFileSync("src/secure-worker-entry.js", "utf8");
 const profilePatch = readFileSync("scripts/patch-profile-sources.mjs", "utf8");
@@ -11,7 +12,10 @@ const adminPreviewPatch = readFileSync("scripts/patch-legacy-static-assets.mjs",
 assert.match(wrangler, /"main": "src\/ai-worker-entry\.js"/);
 assert.match(aiEntry, /import secureWorker from "\.\/secure-worker-entry\.js"/);
 assert.match(aiEntry, /return secureWorker\.fetch\(request, env, ctx\)/);
+assert.match(workerSource, /incomingRequestUserId: verification\.verified \? verification\.userId : null/);
 assert.match(secureEntry, /incomingRequestVerified !== true/);
+assert.match(secureEntry, /authBody\.incomingRequestUserId/);
+assert.match(secureEntry, /reason: "clerk-session-verified"/);
 assert.match(secureEntry, /ADMIN_USER_IDS/);
 assert.match(secureEntry, /CLERK_SECRET_KEY/);
 assert.match(secureEntry, /\/v1\/users\//);
