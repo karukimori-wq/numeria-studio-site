@@ -65,11 +65,11 @@ for (const token of [
   'admin:"サイト管理"',
   'clickNativeSidebarButton("新しい鑑定")',
   'clickNativeSidebarButton("βフィードバック")',
-  "MENU_TAP_MOVE_PX=12",
-  'document.addEventListener("pointerdown"',
-  'document.addEventListener("pointermove"',
-  'document.addEventListener("pointercancel"',
-  "touch-action:pan-y",
+  "MENU_TAP_MOVE_PX=18",
+  'document.addEventListener("touchstart"',
+  'document.addEventListener("touchmove"',
+  'document.addEventListener("touchcancel"',
+  "touch-action:manipulation",
   "Legacy swipe-sensitive menu event fan-out remains",
 ]) {
   assert.ok(nativeFallbackPatch.includes(token), `Native mobile menu fallback is missing ${token}`);
