@@ -1910,6 +1910,8 @@ async function authStatusResponse(request, env = {}) {
     incomingRequestHasBearerToken: Boolean(getBearerToken(request)),
     incomingRequestVerified: verification.verified,
     incomingRequestVerificationReason: verification.reason,
+    incomingRequestUserId: verification.verified ? verification.userId : null,
+    incomingRequestSessionId: verification.verified ? verification.sessionId : null,
     identityMode: "workspaceId+userId",
     secretValuesReturned: false,
     message: verification.verified
