@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 
 const htmlPath = "dist/original.html";
 let html = readFileSync(htmlPath, "utf8");
-const marker = "NumeriaRuntimeBootDiagnostics.v4";
+const marker = "NumeriaRuntimeBootDiagnostics.v5";
 
 if (html.includes(marker)) throw new Error("Runtime boot diagnostics patch was applied more than once.");
 if (!html.includes("<head>")) throw new Error("Expected <head> in Production HTML.");
@@ -16,8 +16,14 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
   }
   window.addEventListener("error",event=>record("error",event.message||event.error&&event.error.message,event.filename,event.lineno,event.colno),true);
   window.addEventListener("unhandledrejection",event=>record("unhandledrejection",event.reason&&event.reason.message||event.reason||"Promise rejected","",null,null),true);
+  function authMounted(){
+    const bodyText=(document.body&&document.body.innerText||"");
+    return /はじめての方はこちら|新規登録|パスワードを忘れた方|メールアドレス|ログイン/.test(bodyText) &&
+      !!document.querySelector("input,button,a");
+  }
   function appMounted(){
     const bodyText=(document.body&&document.body.innerText||"");
+    if(authMounted())return true;
     return !!document.querySelector(".app-shell,.dashboard,.page,.main-area,[data-numeria-app]") &&
       !(/^\\s*☰\\s*メニュー\\s*$/.test(bodyText.trim()));
   }
@@ -31,7 +37,7 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
     if(!el){el=document.createElement("section");el.id="numeria-runtime-boot-failure";(document.body||document.documentElement).appendChild(el)}
     const last=state.errors[state.errors.length-1];
     const resources=performance.getEntriesByType("resource").map(entry=>entry.name).filter(name=>/index-|numeria-app-|framework-|rolldown-runtime-/.test(name));
-    const nodes=[".app-shell","aside.sidebar",".page",".main-area",".auth-loading"].map(selector=>selector+"="+document.querySelectorAll(selector).length).join(" / ");
+    const nodes=[".app-shell","aside.sidebar",".page",".main-area",".auth-loading","input","button"].map(selector=>selector+"="+document.querySelectorAll(selector).length).join(" / ");
     const rsc="RSC done="+String(!!window.__VINEXT_RSC_DONE__)+" chunks="+String((window.__VINEXT_RSC_CHUNKS__||[]).length);
     const nav="Navigation="+String(!!window.NumeriaNavigation);
     const recovery="recovery="+String(state.recovery||"pending");
@@ -70,11 +76,16 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
       const React=framework.i&&framework.i();
       const client=framework.t&&framework.t();
       const Component=app.default||app;
-      if(!React||!client||typeof client.hydrateRoot!=="function"||!Component)throw new Error("direct mount dependencies unavailable");
+      if(!React||!client||(!client.createRoot&&!client.hydrateRoot)||!Component)throw new Error("direct mount dependencies unavailable");
       const root=ensureDirectRoot();
       root.innerHTML="";
       window.__NUMERIA_DIRECT_MOUNT_STARTED__=Date.now();
-      window.__NUMERIA_DIRECT_ROOT__=client.hydrateRoot(root,React.createElement(Component));
+      if(typeof client.createRoot==="function"){
+        window.__NUMERIA_DIRECT_ROOT__=client.createRoot(root);
+        window.__NUMERIA_DIRECT_ROOT__.render(React.createElement(Component));
+      }else{
+        window.__NUMERIA_DIRECT_ROOT__=client.hydrateRoot(root,React.createElement(Component));
+      }
       state.directMount="done";
       setTimeout(()=>{if(appMounted()){window.__NUMERIA_DIRECT_MOUNT_DONE__=Date.now();hide()}else show()},1200);
     }).catch(error=>{state.directMount="failed";record("direct-mount",error&&error.message||error,"/assets/numeria-app-Cckhajir.js",null,null);show()});
