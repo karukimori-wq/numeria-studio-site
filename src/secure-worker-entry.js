@@ -82,10 +82,19 @@ function authForwardHeaders(request, workspaceId) {
   const headers = new Headers();
   const authorization = request.headers.get("Authorization");
   const publishableKey = request.headers.get("X-Clerk-Publishable-Key");
+  const clientEmail = request.headers.get("X-Numeria-Clerk-Client-Email");
   if (authorization) headers.set("Authorization", authorization);
   if (publishableKey) headers.set("X-Clerk-Publishable-Key", publishableKey);
+  if (clientEmail) headers.set("X-Numeria-Clerk-Client-Email", clientEmail);
   headers.set("X-Workspace-Id", workspaceId || "ws_personal");
   return headers;
+}
+
+function verifiedClientEmailFromRequest(request) {
+  const email = String(request.headers.get("X-Numeria-Clerk-Client-Email") || "")
+    .trim()
+    .toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : "";
 }
 
 async function resolveVerifiedClerkIdentity(request, env = {}, ctx = null) {
@@ -208,6 +217,7 @@ async function resolveSecureAdminAccess(request, env = {}, ctx = null) {
   const adminEmails = getAdminEmails(env);
   const adminUserIds = getAdminUserIds(env);
   const verifiedEmail = String(identity.email || "").trim().toLowerCase();
+  const verifiedClientEmail = verifiedClientEmailFromRequest(request);
 
   if (adminUserIds.includes(identity.userId)) {
     return {
@@ -224,6 +234,15 @@ async function resolveSecureAdminAccess(request, env = {}, ctx = null) {
       adminMode: true,
       adminEmail: verifiedEmail,
       identitySource: "clerk-jwt-email-allowlist",
+    };
+  }
+
+  if (verifiedClientEmail && adminEmails.includes(verifiedClientEmail)) {
+    return {
+      ...identity,
+      adminMode: true,
+      adminEmail: verifiedClientEmail,
+      identitySource: "clerk-client-email-allowlist",
     };
   }
 
