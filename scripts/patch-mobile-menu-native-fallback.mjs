@@ -4,6 +4,7 @@ const htmlPath = "dist/original.html";
 let html = readFileSync(htmlPath, "utf8");
 const marker = "NumeriaMobileMenuNativeFallback.v1";
 
+// Keep mobile menu taps reliable on iOS Safari while still ignoring real scroll gestures.
 if (html.includes(marker)) {
   throw new Error("Mobile menu native fallback patch was applied more than once.");
 }
