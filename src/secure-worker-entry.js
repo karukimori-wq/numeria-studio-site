@@ -110,6 +110,16 @@ async function resolveVerifiedClerkIdentity(request, env = {}, ctx = null) {
     };
   }
 
+  const verifiedUserId = String(authBody.incomingRequestUserId || "").trim();
+  if (verifiedUserId) {
+    return {
+      verified: true,
+      workspaceId,
+      userId: verifiedUserId,
+      reason: "clerk-session-verified",
+    };
+  }
+
   const usageUrl = new URL(request.url);
   usageUrl.pathname = "/api/usage";
   usageUrl.search = `?workspaceId=${encodeURIComponent(workspaceId)}`;
