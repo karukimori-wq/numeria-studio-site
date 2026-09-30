@@ -41,6 +41,8 @@ assert.match(profilePatch, /NumeriaAdminPreviewState/);
 assert.match(profilePatch, /actualPlan=subscription&&subscription\.subscription&&subscription\.subscription\.planId\|\|\\"free\\"/);
 assert.match(profilePatch, /businessUiPreviewEnabled\?\\"business\\":actualPlan/);
 assert.match(profilePatch, /developerPreview:preview/);
+assert.match(profilePatch, /initializationRequired:!!body\.initializationRequired/);
+assert.match(profilePatch, /h=!!\(r&&r\.primary_divination&&!r\.initializationRequired\)/);
 assert.match(readinessPatch, /headers\.Authorization="Bearer "\+token/);
 assert.match(readinessPatch, /Admin readiness panel still trusts the browser-provided admin email header/);
 assert.doesNotMatch(readinessPatch, /const secureHeaders = '[^']*X-Admin-Email/);
