@@ -31,6 +31,15 @@ assert.equal(
   ),
   1,
 );
+assert.equal(
+  count(
+    legacyBundle,
+    "category:`卜術`,adminOnly:!0,defaultMenuName:`タロット3枚引き`,defaultPrice:5500,statusNote:`現在は管理者だけが確認できます。`",
+  ),
+  1,
+);
+assert.equal(count(legacyBundle, "xr=l===`tarot`&&tr===`admin`"), 1);
+assert.equal(count(legacyBundle, "na.filter(e=>e.category===`命術`).map(e=>"), 1);
 
 // Admin preview must bypass only feature-preview gates. The real subscription
 // plan (ar) remains the source for CURRENT PLAN and is never rewritten to Pro/Business.
@@ -43,7 +52,19 @@ assert.match(
 );
 assert.match(
   patchSource,
-  /タロットは現在リリース準備中です。管理者プレビューでのみ確認できます。/,
+  /タロットを選んだFreeユーザーはタロットを利用できます。Proでは数秘術など他の占術と併用できます。/,
+);
+assert.match(
+  patchSource,
+  /category:`卜術`,defaultMenuName:`タロット3枚引き`,defaultPrice:5500,statusNote:`タロット鑑定、スプレッド、カード意味辞典、鑑定書プレビューに対応しました。`/,
+);
+assert.match(
+  patchSource,
+  /xr=l===`tarot`/,
+);
+assert.match(
+  patchSource,
+  /na\.filter\(e=>e\.category===`命術`\|\|e\.id===`tarot`\)\.map\(e=>/,
 );
 assert.doesNotMatch(patchSource, /ar\s*=\s*`(?:pro|business)`/);
 assert.doesNotMatch(patchSource, /plan\s*:\s*`business`/);
