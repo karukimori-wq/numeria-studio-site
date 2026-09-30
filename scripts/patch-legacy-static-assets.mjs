@@ -202,24 +202,57 @@ patched = replaceExactly(
   "divination count label",
 );
 
+// Tarot is no longer an administrator-only preview. The editor, spread templates,
+// 78-card dictionary, and PDF preview already exist in the legacy app bundle.
+// These replacements connect that prepared surface to normal Free/Pro users.
+const legacyTarotAdminOnlyDefinition = "category:`卜術`,adminOnly:!0,defaultMenuName:`タロット3枚引き`,defaultPrice:5500,statusNote:`現在は管理者だけが確認できます。`";
+const releasedTarotDefinition = "category:`卜術`,defaultMenuName:`タロット3枚引き`,defaultPrice:5500,statusNote:`タロット鑑定、スプレッド、カード意味辞典、鑑定書プレビューに対応しました。`";
+patched = replaceExactly(
+  patched,
+  legacyTarotAdminOnlyDefinition,
+  releasedTarotDefinition,
+  1,
+  "tarot admin-only definition",
+);
+
+const legacyTarotScreenGate = "xr=l===`tarot`&&tr===`admin`";
+const releasedTarotScreenGate = "xr=l===`tarot`";
+patched = replaceExactly(
+  patched,
+  legacyTarotScreenGate,
+  releasedTarotScreenGate,
+  1,
+  "tarot screen gate",
+);
+
+const legacySignupDivinationFilter = "na.filter(e=>e.category===`命術`).map(e=>";
+const releasedSignupDivinationFilter = "na.filter(e=>e.category===`命術`||e.id===`tarot`).map(e=>";
+patched = replaceExactly(
+  patched,
+  legacySignupDivinationFilter,
+  releasedSignupDivinationFilter,
+  1,
+  "signup divination choices",
+);
+
 const legacyTarotFreeCopy = "タロットを選んだFreeユーザーはタロットを利用できます。";
-const currentTarotReleaseCopy = "タロットは現在リリース準備中です。管理者プレビューでのみ確認できます。";
+const currentTarotReleaseCopy = "タロットを選んだFreeユーザーはタロットを利用できます。Proでは数秘術など他の占術と併用できます。";
 patched = replaceExactly(
   patched,
   legacyTarotFreeCopy,
   currentTarotReleaseCopy,
   1,
-  "stale Free tarot copy",
+  "released Free tarot copy",
 );
 
 const legacyOnboardingTarotCopy = "無料版では最初に使う占術を1つ選びます。タロットを選ぶとタロットを利用できます。";
-const currentOnboardingTarotCopy = "無料版では最初に使う命術を1つ選びます。選択後は固定され、変更はProで利用できます。";
+const currentOnboardingTarotCopy = "無料版では最初に使う占術を1つ選びます。数秘術やタロットを選択できます。";
 patched = replaceExactly(
   patched,
   legacyOnboardingTarotCopy,
   currentOnboardingTarotCopy,
   1,
-  "stale onboarding tarot copy",
+  "released onboarding tarot copy",
 );
 
 writeFileSync(legacyAssetPath, patched);
