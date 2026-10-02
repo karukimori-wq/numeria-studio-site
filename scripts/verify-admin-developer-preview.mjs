@@ -39,6 +39,13 @@ assert.equal(
   1,
 );
 assert.equal(count(legacyBundle, "xr=l===`tarot`&&tr===`admin`"), 1);
+assert.equal(
+  count(
+    legacyBundle,
+    "di=()=>{if(l===`tarot`&&tr!==`admin`){u(`numerology`),k(`account`),B(`タロットは現在、管理者確認用です。命術を選択してください。`);return}Ce(W.defaultMenuName),Te(W.defaultPrice),k(`reading`),re(`edit`)}",
+  ),
+  1,
+);
 assert.equal(count(legacyBundle, "na.filter(e=>e.category===`命術`).map(e=>"), 1);
 
 // Admin preview must bypass only feature-preview gates. The real subscription
@@ -61,6 +68,10 @@ assert.match(
 assert.match(
   patchSource,
   /xr=l===`tarot`/,
+);
+assert.match(
+  patchSource,
+  /tarot new reading redirect/,
 );
 assert.match(
   patchSource,
