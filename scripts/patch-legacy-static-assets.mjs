@@ -225,6 +225,16 @@ patched = replaceExactly(
   "tarot screen gate",
 );
 
+const legacyTarotNewReadingRedirect = "di=()=>{if(l===`tarot`&&tr!==`admin`){u(`numerology`),k(`account`),B(`タロットは現在、管理者確認用です。命術を選択してください。`);return}Ce(W.defaultMenuName),Te(W.defaultPrice),k(`reading`),re(`edit`)}";
+const releasedTarotNewReading = "di=()=>{Ce(W.defaultMenuName),Te(W.defaultPrice),k(`reading`),re(`edit`)}";
+patched = replaceExactly(
+  patched,
+  legacyTarotNewReadingRedirect,
+  releasedTarotNewReading,
+  1,
+  "tarot new reading redirect",
+);
+
 const legacySignupDivinationFilter = "na.filter(e=>e.category===`命術`).map(e=>";
 const releasedSignupDivinationFilter = "na.filter(e=>e.category===`命術`||e.id===`tarot`).map(e=>";
 patched = replaceExactly(
