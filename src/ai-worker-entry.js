@@ -9,6 +9,16 @@ import {
   sanitizeAiAssistInput,
 } from "./ai-assist-proxy.js";
 import {
+  AI_REPORT_GENERATION_CONTRACT,
+  createStudioAiReportRequest,
+  evaluateAiReportPlanGate,
+  hasForbiddenAiReportPayload,
+  normalizeStructuredReportDraft,
+  requestAiReportGeneration,
+  validateStructuredReportDraft,
+  validateStudioAiReportRequest,
+} from "./ai-report-generation-contract.js";
+import {
   GROWTH_SUBSCRIPTION_CONTRACT,
   fetchGrowthSubscriptionEntitlement,
   hasGrowthEngineServiceBinding,
@@ -202,6 +212,83 @@ async function handleAiAssist(request, env, ctx) {
   });
 }
 
+async function handleAiReportGeneration(request, env, ctx) {
+  const scope = await resolveAuthenticatedScope(request, env, ctx);
+  if (!scope.ok) return json({ status: "error", errorCode: "AI_REPORT_AUTH_OR_PLAN_FAILED", message: scope.message }, { status: scope.status });
+
+  const body = await request.json().catch(() => ({}));
+  if (hasForbiddenAiReportPayload(body)) {
+    return json({
+      status: "error",
+      errorCode: "AI_REPORT_FORBIDDEN_PAYLOAD",
+      message: "AI鑑定書生成には支払い・売上・Stripe・秘密情報・Growth Engine顧客正本・会話全文を送信できません。",
+    }, { status: 400 });
+  }
+
+  const payload = createStudioAiReportRequest({
+    scope,
+    body,
+    appVersion: AI_ASSIST_CONTRACT.appVersion,
+  });
+  const validation = validateStudioAiReportRequest(payload);
+  if (!validation.ok) {
+    return json({
+      status: "error",
+      errorCode: validation.errorCode,
+      message: "AI鑑定書生成には、Numeria側で確定済みの依頼内容・占術・鑑定結果・出力形式が必要です。",
+      missing: validation.missing,
+    }, { status: 400 });
+  }
+
+  const planGate = evaluateAiReportPlanGate(payload);
+  if (!planGate.allowed) {
+    return json({
+      status: "error",
+      errorCode: planGate.errorCode,
+      message: planGate.message,
+      featureKey: AI_REPORT_GENERATION_CONTRACT.featureKey,
+      finalDefense: "AI Platform Core also enforces featureKey entitlement.",
+    }, { status: 403 });
+  }
+
+  const generation = await requestAiReportGeneration({ fetchAiPlatformCore, env, payload });
+  if (!generation.response.ok) {
+    const error = generation.body?.error || {};
+    return json({
+      status: "error",
+      errorCode: error.code || generation.body?.errorCode || "APC_AI_REPORT_GENERATION_FAILED",
+      message: error.message || generation.body?.message || "AI Platform CoreでAI鑑定書を生成できませんでした。",
+      retryable: error.retryable === true,
+      correlationId: payload.correlationId,
+      generationId: generation.body?.generationId || null,
+    }, { status: generation.response.status || 502 });
+  }
+
+  const aiDraft = normalizeStructuredReportDraft(generation.body, payload);
+  const draftValidation = validateStructuredReportDraft(aiDraft);
+  if (!draftValidation.ok) {
+    return json({
+      status: "error",
+      errorCode: "APC_STRUCTURED_REPORT_INVALID",
+      message: "AI Platform CoreのStructured ReportがNumeriaのAI Draft要件を満たしていません。",
+      missing: draftValidation.missing,
+      correlationId: payload.correlationId,
+    }, { status: 502 });
+  }
+
+  return json({
+    status: "success",
+    aiDraft,
+    planId: scope.planId,
+    subscriptionSource: scope.subscription.source,
+    featureKey: AI_REPORT_GENERATION_CONTRACT.featureKey,
+    formalReportCreated: false,
+    reportSnapshotSaved: false,
+    eventEmitted: false,
+    nextStep: "fortune_teller_review_edit_finalize",
+  });
+}
+
 async function readApcProviderReadiness(env = {}) {
   try {
     const response = await fetchAiPlatformCore(env, "/v1/providers/status", { headers: { accept: "application/json" } });
@@ -246,6 +333,24 @@ async function aiAssistStatus(env = {}) {
   };
 }
 
+async function aiReportStatus(env = {}) {
+  const provider = await readApcProviderReadiness(env);
+  return {
+    status: "success",
+    appId: "numeria-studio",
+    contract: AI_REPORT_GENERATION_CONTRACT,
+    apcBaseUrlConfigured: Boolean(aiPlatformCoreBaseUrl(env)),
+    apcServiceBindingConfigured: hasAiPlatformCoreServiceBinding(env),
+    apcProvider: provider,
+    aiReportGenerationReady: provider.reachable === true && provider.openaiConfigured === true && provider.secretValuesExposed === false,
+    serverProxyOnly: true,
+    clerkSessionRequired: true,
+    formalReportCreatedByApc: false,
+    reportGeneratedEventTiming: "after_numeria_formal_report_snapshot_save",
+    secretValuesReturned: false,
+  };
+}
+
 async function subscriptionSourceStatus(env = {}) {
   const upstream = await readGrowthSubscriptionStatus(env);
   return {
@@ -269,9 +374,11 @@ export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
     if (url.pathname === "/ai-assist/status" && request.method === "GET") return json(await aiAssistStatus(env));
+    if (url.pathname === "/ai-report/status" && request.method === "GET") return json(await aiReportStatus(env));
     if (url.pathname === "/subscription-source/status" && request.method === "GET") return json(await subscriptionSourceStatus(env));
     if (url.pathname === "/api/billing/subscription" && request.method === "GET") return handleBillingSubscription(request, env, ctx);
     if (url.pathname === "/api/ai/assist" && request.method === "POST") return handleAiAssist(request, env, ctx);
+    if (url.pathname === "/api/ai/reports/generate" && request.method === "POST") return handleAiReportGeneration(request, env, ctx);
     return secureWorker.fetch(request, env, ctx);
   },
 };
