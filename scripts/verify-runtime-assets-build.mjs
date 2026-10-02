@@ -45,6 +45,8 @@ assert.ok(appSource.includes("NumeriaNavigationBridge.v2"), "Versioned Numeria a
 assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Versioned Numeria app bundle must contain syntax guard repairs.");
 assert.ok(appSource.includes("numeria-navigation-ready"), "Versioned Numeria app bundle must signal navigation readiness.");
+assert.ok(!appSource.includes("タロットは現在、管理者確認用です。命術を選択してください。"), "Released tarot users must not be redirected back to numerology when starting a reading.");
+assert.ok(!appSource.includes("if(l===`tarot`&&tr!==`admin`){u(`numerology`)"), "Released tarot reading start must not force numerology for non-admin users.");
 assertBundleSyntax(appSource, "Versioned Numeria app bundle");
 assert.ok(indexSource.includes(appMatch[1]), "Versioned index bundle must import the versioned Numeria app bundle.");
 assert.ok(indexSource.includes("NumeriaRscBootstrapOrder.v2"), "Versioned index bundle must wait for inline RSC payload before bootstrapping.");
@@ -66,6 +68,8 @@ assertBundleSyntax(legacyIndexSource, "Legacy index bundle");
 assert.ok(legacyAppSource.includes("NumeriaNavigationBridge.v2"), "Legacy Numeria app bundle must contain navigation bridge v2.");
 assert.ok(legacyAppSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Legacy Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(legacyAppSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Legacy Numeria app bundle must contain syntax guard repairs.");
+assert.ok(!legacyAppSource.includes("タロットは現在、管理者確認用です。命術を選択してください。"), "Legacy app bundle must remove the stale tarot-to-numerology redirect.");
+assert.ok(!legacyAppSource.includes("if(l===`tarot`&&tr!==`admin`){u(`numerology`)"), "Legacy app bundle must not force numerology for released tarot readings.");
 assertBundleSyntax(legacyAppSource, "Legacy Numeria app bundle");
 
 assert.ok(html.includes('startsWith(prefix)'), "Production recovery must detect stale support/plan hashes.");
