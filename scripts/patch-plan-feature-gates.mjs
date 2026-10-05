@@ -22,23 +22,14 @@ patched = replaceExactly(
   "saved preset plan cap",
 );
 
-// Free exposes only the single basic report design in the settings screen.
-patched = replaceExactly(
-  patched,
-  "className:`template-grid template-grid-20`,children:Q.map(e=>",
-  "className:`template-grid template-grid-20`,children:(ar===`free`&&tr!==`admin`?Q.slice(0,1):Q).map(e=>",
-  1,
-  "settings template plan gate",
-);
-
-// The reading screen must not re-expose designs that the settings screen hid.
-patched = replaceExactly(
-  patched,
-  "className:`template-grid`,children:$r.map(e=>",
-  "className:`template-grid`,children:(ar===`free`&&tr!==`admin`?$r.slice(0,1):$r).map(e=>",
-  1,
-  "reading template plan gate",
-);
+// Report design choices remain selectable on every plan. Older builds briefly
+// limited the visible template arrays, so normalize that back during patching.
+patched = patched
+  .split("className:`template-grid template-grid-20`,children:(ar===`free`&&tr!==`admin`?Q.slice(0,1):Q).map(e=>")
+  .join("className:`template-grid template-grid-20`,children:Q.map(e=>");
+patched = patched
+  .split("className:`template-grid`,children:(ar===`free`&&tr!==`admin`?$r.slice(0,1):$r).map(e=>")
+  .join("className:`template-grid`,children:$r.map(e=>");
 
 // Branding/logo customization is Pro+. Free retains the standard report branding.
 patched = replaceExactly(
@@ -82,8 +73,8 @@ patched = replaceExactly(
 
 const requiredMarkers = [
   "無料版で保存できるプリセットは1件までです。Proでは最大20件保存できます。",
-  "ar===`free`&&tr!==`admin`?Q.slice(0,1):Q",
-  "ar===`free`&&tr!==`admin`?$r.slice(0,1):$r",
+  "className:`template-grid template-grid-20`,children:Q.map(e=>",
+  "className:`template-grid`,children:$r.map(e=>",
   "(ar!==`free`||tr===`admin`)&&(0,Z.jsxs)(`label`,{className:`image-upload`",
   "showDetailedReading:ar===`free`&&tr!==`admin`?!1:Ft",
 ];
@@ -92,4 +83,4 @@ for (const marker of requiredMarkers) {
 }
 
 writeFileSync(assetPath, patched);
-console.log("Free/Pro report feature gates applied: Free basic template + 1 preset, Pro max 20 presets, Pro branding and detailed reading, with restore normalization.");
+console.log("Free/Pro report feature gates applied: Free 1 saved preset, Pro max 20 saved presets, Pro branding and detailed reading, with restore normalization.");
