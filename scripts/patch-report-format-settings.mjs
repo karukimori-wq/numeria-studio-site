@@ -26,12 +26,18 @@ const styleBundles = [
 const mobilePresetGridRule =
   "@media (width<=760px){.preset-library-card .template-grid-20{max-height:none;overflow:visible}.preset-library-card .template-grid-20 .template-thumb{height:74px}}";
 
+const reportTemplateDecorationRule =
+  ".report-cover-page .paper-theme{display:none!important}.template-cosmic-guide.report-cover-page:before,.template-cosmic-guide.report-cover-page:after,.template-cosmic-guide.report-cover-page .template-index,.template-cosmic-guide.report-cover-page .cover-index,.template-cosmic-guide.report-cover-page .format-index,.template-cosmic-guide.report-cover-page .paper-index,.template-cosmic-guide.report-cover-page .design-number{display:none!important}";
+
 for (const file of styleBundles) {
   let source = fs.readFileSync(file, "utf8");
-  if (!source.includes(mobilePresetGridRule)) {
-    source += mobilePresetGridRule;
-    fs.writeFileSync(file, source);
+  const additions = [mobilePresetGridRule, reportTemplateDecorationRule];
+  for (const rule of additions) {
+    if (!source.includes(rule)) {
+      source += rule;
+    }
   }
+  fs.writeFileSync(file, source);
 }
 
 console.log("Patched report format settings UI.");
