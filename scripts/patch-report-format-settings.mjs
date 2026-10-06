@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { coverEditorRuntime } from "./report-cover-editor-runtime.mjs";
 
 const appBundles = [
   "assets/numeria-app-Cckhajir.js",
@@ -45,7 +46,8 @@ for (const file of appBundles) {
     /;\(\(\)=>\{if\(window\.__NumeriaCoverControlRepairV2\)[\s\S]*?setTimeout\(run,1200\)\}\)\(\);/g,
     "",
   );
-  source += settingsRuntime + basicLayoutRuntime + coverControlRepairRuntime;
+  source = source.replace(/;\(\(\)=>\{if\(window\.__NumeriaCoverEditorV3\)[\s\S]*?\/\* cover-editor-end \*\/\}\)\(\);/g, "");
+  source += settingsRuntime.replace('q(basic,".format-display-options")','q(basic,".format-display-options,.format-cover-panel")') + coverEditorRuntime;
   fs.writeFileSync(file, source);
 }
 
