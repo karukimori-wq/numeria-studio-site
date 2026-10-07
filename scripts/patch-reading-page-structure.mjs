@@ -1,31 +1,139 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 
-const bundlePath = "dist/assets/numeria-app-Cckhajir.js";
-const cssPath = "dist/assets/index-CEGe-9Xe.css";
+const htmlPath = "dist/original.html";
+let html = readFileSync(htmlPath, "utf8");
+const marker = "NumeriaReadingPageStructure.v6";
 
-if (!existsSync(bundlePath)) {
-  throw new Error(`${bundlePath} was not found. Run vite build first.`);
-}
-if (!existsSync(cssPath)) {
-  throw new Error(`${cssPath} was not found. Run vite build first.`);
+if (html.includes(marker)) {
+  throw new Error("Reading page structure patch was applied more than once.");
 }
 
-let bundle = readFileSync(bundlePath, "utf8");
-let css = readFileSync(cssPath, "utf8");
-
-const runtimePatch = `;(()=>{if(window.__NumeriaReadingPageStructurePatch)return;window.__NumeriaReadingPageStructurePatch=true;const q=(r,s)=>r&&r.querySelector?r.querySelector(s):null,qa=(r,s)=>r&&r.querySelectorAll?Array.from(r.querySelectorAll(s)):[],txt=e=>String(e&&e.textContent||"").replace(/\\s+/g," ").trim();const meta={client:["1","相談者を選ぶ","カルテから呼び出しか新規登録、基本情報を入力します"],question:["2","相談内容","今回の相談テーマと相手がいる相談内容を入力します"],preset:["3","鑑定書選択","鑑定書フォーマットと掲載項目を選びます"],calculation:["4","鑑定計算結果の確認","システムが計算した結果を確認します"],result:["5","鑑定結果入力","AI補助と鑑定本文の入力を行います"]};function stepHead(key){let m=meta[key],h=document.createElement("div");h.className="reading-unified-step-head";h.innerHTML='<span class="reading-unified-step-no">'+m[0]+'</span><span class="reading-unified-step-copy"><strong>'+m[1]+'</strong><small>'+m[2]+'</small></span><button type="button" class="reading-unified-toggle" aria-expanded="true">閉じる</button>';return h}function ensureHead(card,key){if(!card||card.dataset.readingStepKey===key)return;card.dataset.readingStepKey=key;card.classList.add("reading-unified-step-card","reading-step-"+key);let old=q(card,".reading-unified-step-head");if(old)old.remove();let head=stepHead(key);card.insertBefore(head,card.firstChild);let btn=q(head,"button");btn.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();let closed=card.classList.toggle("reading-step-collapsed");btn.textContent=closed?"開く":"閉じる";btn.setAttribute("aria-expanded",String(!closed))})}function ensureInsertedHeader(host,before,key){if(!host||!before)return null;let existing=q(host,'[data-reading-inserted-step="'+key+'"]');if(existing)return existing;let card=document.createElement("div");card.className="reading-unified-step-card reading-inserted-step reading-step-"+key;card.dataset.readingInsertedStep=key;card.appendChild(stepHead(key));host.insertBefore(card,before);let btn=q(card,"button");btn.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();let closed=card.classList.toggle("reading-step-collapsed");btn.textContent=closed?"開く":"閉じる";btn.setAttribute("aria-expanded",String(!closed));let nodes=qa(host,'[data-reading-group="'+key+'"]');nodes.forEach(n=>n.classList.toggle("reading-group-collapsed",closed))});return card}function closestBlock(el){let n=el;while(n&&n.parentElement&&!["LABEL","SECTION","ARTICLE","DETAILS","DIV"].includes(n.tagName))n=n.parentElement;return n||el}function groupUntil(host,start,end,key){if(!host||!start)return;let on=false;Array.from(host.children).forEach(child=>{if(child===start)on=true;if(child===end)on=false;if(on&&child!==start){child.dataset.readingGroup=key}})}function replaceFlow(root){let guide=q(root,".reading-flow-guide");if(!guide)return;guide.classList.add("reading-flow-guide-unified");let items=[["client","相談者を選ぶ"],["question","相談内容"],["preset","鑑定書選択"],["calculation","鑑定計算結果の確認"],["result","鑑定結果入力"]];guide.innerHTML=items.map(([key,label])=>'<article><b>'+meta[key][0]+'</b><span>'+label+'</span></article>').join("")}function enhanceNumerology(){let root=q(document,".reading-workspace:not(.tarot-reading-workspace)");if(!root)return;replaceFlow(root);let panel=q(root,".editor-panel");if(panel){panel.classList.add("reading-unified-editor-panel");let title=q(panel,".editor-title h2");if(title)title.textContent="鑑定入力";let subtitle=q(panel,".editor-title p");if(subtitle)subtitle.textContent="相談者、相談内容、鑑定書、計算結果、鑑定本文の順に作成します。";let clientStart=q(panel,".customer-picker")||q(panel,".form-grid");if(clientStart){let clientHead=ensureInsertedHeader(panel,clientStart,"client");let questionLabel=qa(panel,"label").find(l=>txt(l).includes("今回の相談テーマ"));let questionBlock=questionLabel&&closestBlock(questionLabel);if(questionBlock){ensureInsertedHeader(panel,questionBlock,"question");groupUntil(panel,clientStart,q(panel,'[data-reading-inserted-step="question"]'),"client");groupUntil(panel,questionBlock,q(root,".compatibility-section")||q(root,".ai-assist-editor")||q(root,".report-composer-materials")||q(root,".design-section"),"question")}else{groupUntil(panel,clientStart,null,"client")}let nameLabel=qa(panel,"label").find(l=>txt(l).includes("お名前"));if(nameLabel)nameLabel.dataset.readingField="name";let birthLabel=qa(panel,"label").find(l=>txt(l).includes("生年月日"));if(birthLabel)birthLabel.dataset.readingField="birthdate";let romanLabel=qa(panel,"label").find(l=>txt(l).includes("ローマ字"));if(romanLabel)romanLabel.dataset.readingField="roman";let sexLabel=qa(panel,"label").find(l=>/性別/.test(txt(l)));if(sexLabel)sexLabel.dataset.readingField="gender";let placeLabel=qa(panel,"label").find(l=>/出生地/.test(txt(l)));if(placeLabel)placeLabel.dataset.readingField="birthplace";let clientCopy=q(clientHead,".reading-unified-step-copy small");if(clientCopy)clientCopy.textContent="カルテから呼び出しか新規登録を選び、必要な占術だけ追加項目を表示します"}}let compatibility=qa(root,"section,article,div").find(e=>txt(e).includes("特定の相手との相性を追加"));if(compatibility){compatibility.classList.add("reading-question-related");compatibility.dataset.readingGroup="question"}let preset=q(root,".design-section");if(preset){ensureHead(preset,"preset");preset.classList.add("reading-step-order-3");let heading=q(preset,"h2,h3");if(heading)heading.textContent="鑑定書選択";let eyebrow=q(preset,".eyebrow");if(eyebrow)eyebrow.textContent="REPORT PRESET";if(!q(preset,".reading-report-items-summary")){let note=document.createElement("div");note.className="reading-report-items-summary";note.innerHTML='<strong>フォーマットに入れる項目</strong><p>選択中の鑑定書フォーマットに保存されている掲載項目を使用します。項目の追加・削除は「設定で編集」から変更できます。</p>';let target=q(preset,"p:last-child")||preset.lastElementChild;preset.insertBefore(note,target?target.nextSibling:null)}}let calc=q(root,".report-composer-materials");if(calc){ensureHead(calc,"calculation");calc.classList.add("reading-step-order-4");let h=q(calc,"h2,h3");if(h)h.textContent="鑑定計算結果の確認";let p=q(calc,"p");if(p)p.textContent="各占術でシステムが計算した結果を確認します。ここで表示する内容はローカル編集用で、外部連携payloadには含めません。"}let result=q(root,".deep-reading-editor");if(result){ensureHead(result,"result");result.classList.add("reading-step-order-5");let h=q(result,"h2,h3");if(h)h.textContent="鑑定結果入力";let p=q(result,"p");if(p)p.textContent="鑑定書選択で有効にした項目の本文を入力します。プレビューでも文章を直接編集できます。"}let assist=q(root,".ai-assist-editor");if(assist){assist.classList.add("reading-step-order-5","reading-ai-assist-block");let sum=q(assist,"summary");if(sum){let label=q(sum,"span")||sum;label.textContent="AI 鑑定補助"}}qa(root,".writing-section").forEach(s=>s.classList.add("reading-step-order-5","reading-preview-edit-section"));let preview=q(root,".mini-preview");if(preview)preview.classList.add("reading-step-order-5","reading-editable-preview")}function enhanceTarot(){let root=q(document,".tarot-reading-workspace");if(!root)return;replaceFlow(root);let cards=qa(root,".tarot-editor-card");if(!cards.length)return;cards.forEach((card,i)=>{let key=i===0?"client":i===1?"preset":i===2?"calculation":"result";ensureHead(card,key);card.classList.add("reading-step-order-"+(i===0?1:i===1?3:i===2?4:5));let h=q(card,"h2,h3");if(h)h.textContent=meta[key][1];let p=q(card,"p");if(p)p.textContent=meta[key][2]});let first=cards[0];if(first&&!q(first,".reading-question-note")){let note=document.createElement("div");note.className="reading-question-note";note.innerHTML='<strong>2 相談内容</strong><p>今回の質問・相談テーマ、特定の相手との相談内容もこのセッションで入力します。</p>';let field=qa(first,"label").find(l=>txt(l).includes("質問")||txt(l).includes("相談テーマ"));let before=field?closestBlock(field):q(first,".form-grid");if(before)first.insertBefore(note,before)}let result=cards[cards.length-1];if(result){let sum=q(result,"summary");if(sum)sum.textContent="AI 鑑定補助";let h=q(result,"h2,h3");if(h)h.textContent="鑑定結果入力"}}function run(){enhanceNumerology();enhanceTarot()}let scheduled=false;function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;run()})}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run);else run();new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});})();`;
-
-const cssPatch = `
-.reading-flow-guide-unified{grid-template-columns:repeat(5,minmax(0,1fr))!important}.reading-flow-guide-unified article{min-height:72px}.reading-flow-guide-unified b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#211c3b;color:#d6b25f;margin:0 0 8px}.reading-flow-guide-unified span{font-weight:800;color:#3e3849}.reading-unified-step-card{position:relative}.reading-unified-step-head{display:flex;align-items:center;gap:14px;margin:0 0 18px;padding:12px 14px;border:1px solid #e7e1ea;border-radius:14px;background:#fffdfb}.reading-unified-step-no{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:50%;background:#211c3b;color:#d6b25f;font-weight:900}.reading-unified-step-copy{display:grid;gap:3px;min-width:0}.reading-unified-step-copy strong{font-family:Georgia,Yu Mincho,serif;font-size:22px;font-weight:500;line-height:1.3;color:#201a33}.reading-unified-step-copy small{font-size:12px;line-height:1.5;color:#8c8792}.reading-unified-toggle{margin-left:auto;border:1px solid #ded7e4;border-radius:999px;background:#fff;color:#675f72;font-size:12px;font-weight:800;min-height:36px;padding:0 14px;white-space:nowrap}.reading-step-collapsed>*:not(.reading-unified-step-head){display:none!important}.reading-group-collapsed{display:none!important}.reading-step-order-3{order:3}.reading-step-order-4{order:4}.reading-step-order-5{order:5}.reading-unified-editor-panel{order:1;display:flex;flex-direction:column}.reading-report-items-summary{margin:16px 0 0;padding:13px 14px;border:1px dashed #d6ccdc;border-radius:14px;background:#faf8fd;color:#62596c}.reading-report-items-summary strong{display:block;margin-bottom:4px;font-weight:900}.reading-report-items-summary p{margin:0!important;font-size:12px!important;line-height:1.7!important}.reading-ai-assist-block summary{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;border:2px solid #c9a75a!important;border-radius:14px!important;background:#fff8e8!important;color:#8e6e34!important;font-weight:900!important;min-height:52px!important;padding:12px 16px!important}.reading-preview-edit-section textarea,.reading-editable-preview textarea{border:1px solid #d9d4df;border-radius:14px;background:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.75)}.tarot-reading-workspace .tarot-editor-panel{display:flex;flex-direction:column}.tarot-reading-workspace .reading-question-note{margin:4px 0 16px;padding:13px 14px;border:1px solid #e7e1ea;border-radius:14px;background:#fbf8f2}.tarot-reading-workspace .reading-question-note strong{display:block;font-weight:900;color:#211c3b}.tarot-reading-workspace .reading-question-note p{margin:4px 0 0;color:#807887;font-size:12px;line-height:1.7}@media (width<=760px){.reading-flow-guide-unified{display:grid!important;grid-auto-flow:column!important;grid-auto-columns:minmax(132px,46vw)!important;grid-template-columns:none!important;overflow-x:auto!important;overscroll-behavior-x:contain!important;padding-bottom:6px!important}.reading-flow-guide-unified article{min-width:132px}.reading-unified-step-head{align-items:flex-start;margin-bottom:14px;padding:11px 12px}.reading-unified-step-copy strong{font-size:19px}.reading-unified-step-copy small{font-size:11px}.reading-unified-toggle{min-height:34px;padding-inline:11px}.reading-report-items-summary{font-size:12px}.reading-ai-assist-block summary{min-height:50px}}
-`;
-
-if (!bundle.includes("__NumeriaReadingPageStructurePatch")) {
-  bundle += runtimePatch;
-}
-if (!css.includes(".reading-flow-guide-unified")) {
-  css += cssPatch;
+if (!html.includes("</head>") || !html.includes("</body>")) {
+  throw new Error("Expected closing head/body tags were not found.");
 }
 
-writeFileSync(bundlePath, bundle);
-writeFileSync(cssPath, css);
-console.log("Reading page unified 5-step structure, collapsible sections, AI assist label, and editable preview affordances patched.");
+const style = `<style id="numeria-reading-page-structure-style">/* ${marker} */
+.reading-flow-guide-unified,.reading-flow-guide{display:none!important}
+.reading-unified-step-card{border:1px solid #e4dfe8;border-radius:18px;background:#fffdfd;margin:0 0 14px;box-shadow:0 10px 28px rgba(35,28,52,.04);overflow:hidden}
+.reading-unified-step-card.is-open{border-color:#d2b15f;box-shadow:0 12px 32px rgba(166,133,62,.1)}
+.reading-unified-step-head{width:100%;min-height:64px;border:0;background:#fff;display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 18px;text-align:left;color:#1d1830;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:rgba(166,133,62,.16)}
+.reading-unified-step-number{width:38px;height:38px;border-radius:999px;background:#1f1839;color:#d9bd70;display:grid;place-items:center;font:800 15px/1 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.reading-unified-step-title{display:block;font:700 18px/1.35 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;letter-spacing:.01em}
+.reading-unified-step-subtitle{display:block;margin-top:4px;color:#8e8792;font-size:12px;line-height:1.45;font-weight:600}
+.reading-unified-step-toggle{color:#8e6e34;font-size:12px;font-weight:900;white-space:nowrap}
+.reading-unified-step-body{padding:0 18px 18px}
+.reading-step-collapsed>.reading-unified-step-body{display:none!important}
+.reading-step-collapsed>.reading-unified-step-head .reading-unified-step-toggle::before{content:"開く"}
+.reading-unified-step-card.is-open>.reading-unified-step-head .reading-unified-step-toggle::before{content:"閉じる"}
+.reading-unified-step-body>.reading-unified-step-head,.reading-unified-step-card .reading-unified-step-card{margin-top:12px}
+.reading-question-note{border:1px dashed #d8d1de;border-radius:14px;background:#fbfafc;color:#756e7d;font-size:12px;line-height:1.65;padding:12px 14px;margin:0 0 14px}
+.reading-ai-assist-button{border:0!important;background:transparent!important;padding:0!important;margin:0 0 14px!important}
+.reading-ai-assist-button summary{list-style:none;width:100%;min-height:52px;border:0;border-radius:15px;background:linear-gradient(135deg,#b99042,#dfc472);color:#171326;display:flex;align-items:center;justify-content:center;gap:8px;font:900 15px/1.25 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-shadow:0 12px 28px rgba(166,133,62,.18);cursor:pointer;touch-action:manipulation}
+.reading-ai-assist-button summary::-webkit-details-marker{display:none}
+.reading-ai-assist-button summary::after{content:"→";font-size:16px}
+.reading-ai-assist-button[open] summary{border-radius:15px 15px 0 0}
+.reading-ai-assist-button>div,.reading-ai-assist-button>section,.reading-ai-assist-button>article{border:1px solid #e6dfd1;border-top:0;border-radius:0 0 15px 15px;background:#fffdf8;padding:14px}
+.reading-report-items-summary{border:1px solid #e6dfd1;border-radius:14px;background:#fbfaf6;padding:12px 14px;margin:12px 0;color:#655e69;font-size:12px;line-height:1.65}
+@media (width <= 760px){
+  .reading-workspace .editor-panel{gap:0!important}
+  .reading-unified-step-card{border-radius:16px;margin-bottom:10px}
+  .reading-unified-step-head{min-height:56px;grid-template-columns:38px minmax(0,1fr) auto;padding:12px 13px;gap:10px}
+  .reading-unified-step-number{width:32px;height:32px;font-size:13px}
+  .reading-unified-step-title{font-size:16px}
+  .reading-unified-step-subtitle{font-size:11px}
+  .reading-unified-step-body{padding:0 13px 14px}
+}
+</style>`;
+
+const runtime = `<script id="numeria-reading-page-structure-runtime">/* ${marker} */(()=>{
+const STEPS=[
+  {key:"client",number:"1",title:"相談者を選ぶ",subtitle:"カルテから呼び出しか新規登録、基本情報を入力します"},
+  {key:"question",number:"2",title:"相談内容",subtitle:"相談テーマ、相手がいる相談、Session情報を入力します"},
+  {key:"format",number:"3",title:"鑑定書選択",subtitle:"鑑定書フォーマットと掲載項目を選びます"},
+  {key:"results",number:"4",title:"鑑定計算結果の確認",subtitle:"占術ごとの計算結果と構成素材を確認します"},
+  {key:"writing",number:"5",title:"鑑定結果入力",subtitle:"AI補助と鑑定本文の入力を行います"},
+];
+const STEP_BY_KEY=STEPS.reduce(function(map,step){map[step.key]=step;return map},{});
+function q(root,selector){return root&&root.querySelector?root.querySelector(selector):null}
+function qa(root,selector){return root&&root.querySelectorAll?Array.from(root.querySelectorAll(selector)):[]}
+function topChild(container,node){if(!container||!node)return null;var current=node;while(current&&current.parentElement!==container)current=current.parentElement;return current&&current.parentElement===container?current:null}
+function indexOfChild(node){return node&&node.parentElement?Array.prototype.indexOf.call(node.parentElement.children,node):-1}
+function firstTop(container,selectors){var found=[];selectors.forEach(function(selector){var node=q(container,selector);var child=topChild(container,node);if(child)found.push(child)});found.sort(function(a,b){return indexOfChild(a)-indexOfChild(b)});return found[0]||null}
+function blockByText(container,text){var nodes=qa(container,"section,details,article,div,label,fieldset");var best=null;for(var i=0;i<nodes.length;i++){var node=nodes[i];if(node.closest(".reading-unified-step-card"))continue;if(!String(node.textContent||"").includes(text))continue;var child=topChild(container,node);if(!child)continue;if(!best||String(child.textContent||"").length<String(best.textContent||"").length)best=child}return best}
+function escapeHtml(value){return String(value).replace(/[&<>\"]/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;"}[ch]})}
+function headHtml(step){return '<button type="button" class="reading-unified-step-head" aria-expanded="true"><span class="reading-unified-step-number">'+escapeHtml(step.number)+'</span><span><span class="reading-unified-step-title">'+escapeHtml(step.title)+'</span><span class="reading-unified-step-subtitle">'+escapeHtml(step.subtitle)+'</span></span><span class="reading-unified-step-toggle" aria-hidden="true"></span></button>'}
+function createCard(key){var step=STEP_BY_KEY[key];var card=document.createElement("section");card.className="reading-unified-step-card reading-step-"+key+" is-open";card.dataset.readingStep=key;card.innerHTML=headHtml(step)+'<div class="reading-unified-step-body"></div>';return card}
+function ensureHeader(card,key){if(!card||card.dataset.readingStep)return null;var step=STEP_BY_KEY[key];card.classList.add("reading-unified-step-card","reading-step-"+key,"is-open");card.dataset.readingStep=key;var body=document.createElement("div");body.className="reading-unified-step-body";var nodes=Array.from(card.childNodes);card.insertAdjacentHTML("afterbegin",headHtml(step));nodes.forEach(function(node){body.appendChild(node)});card.appendChild(body);return card}
+function setCollapsed(card,collapsed){if(!card)return;card.classList.toggle("reading-step-collapsed",!!collapsed);card.classList.toggle("is-open",!collapsed);var head=q(card,":scope>.reading-unified-step-head");if(head)head.setAttribute("aria-expanded",collapsed?"false":"true")}
+function bindCollapse(root){qa(root,".reading-unified-step-card").forEach(function(card){if(card.dataset.readingCollapseBound)return;card.dataset.readingCollapseBound="1";var head=q(card,":scope>.reading-unified-step-head");if(!head)return;head.addEventListener("click",function(event){event.preventDefault();setCollapsed(card,!card.classList.contains("reading-step-collapsed"))})})}
+function wrapRange(container,start,end,key){if(!container||!start||start.closest(".reading-unified-step-card"))return null;var card=createCard(key);container.insertBefore(card,start);var body=q(card,":scope>.reading-unified-step-body");var node=start;var guard=0;while(node&&node!==end&&guard<80){var next=node.nextSibling;body.appendChild(node);node=next;guard++}return card}
+function normalizeGuide(root){qa(root,".reading-flow-guide,.reading-flow-guide-unified").forEach(function(node){node.classList.add("reading-flow-guide-unified");node.setAttribute("aria-hidden","true")})}
+function buttonizeAiAssist(root){qa(root,".ai-assist-editor").forEach(function(node){node.classList.add("reading-ai-assist-button");var summary=q(node,"summary");if(summary){summary.innerHTML="<span>AI 鑑定補助</span>";summary.setAttribute("role","button");summary.setAttribute("aria-label","AI 鑑定補助を開く")}else{var button=q(node,"button");if(button&&String(button.textContent||"").includes("AI")){button.textContent="AI 鑑定補助";button.classList.add("reading-ai-assist-button-control")}}})}
+function addReportItemsSummary(root){var format=q(root,'.reading-step-format .reading-unified-step-body');if(!format||q(format,".reading-report-items-summary"))return;var note=document.createElement("div");note.className="reading-report-items-summary";note.textContent="鑑定書フォーマットを選び、フォーマットに入れる項目をここで確認します。プレビューでも文章を直接編集できます。";format.appendChild(note)}
+function prepareNumerology(){var root=q(document,".reading-workspace:not(.tarot-reading-workspace)");if(!root)return;var panel=q(root,".editor-panel")||root;if(panel.dataset.readingUnifiedReady==="1"){buttonizeAiAssist(panel);bindCollapse(panel);return}
+normalizeGuide(panel);
+var title=q(root,"h2");if(title&&String(title.textContent||"").match(/相談者情報|鑑定素材/))title.textContent="鑑定入力";
+var lead=q(root,".page-lead,.editor-panel>p");if(lead&&String(lead.textContent||"").includes("生年月日"))lead.textContent="相談者、相談内容、鑑定書、計算結果、鑑定本文の順に作成します。";
+var step2Start=blockByText(panel,"今回の相談テーマ")||blockByText(panel,"相談テーマ");
+var step1Start=firstTop(panel,[".customer-picker",".client-profile-card",".form-grid"])||blockByText(panel,"鑑定カルテから呼び出す");
+var clientCard=wrapRange(panel,step1Start,step2Start,"client");
+var hardStops=qa(panel,".design-section,.report-composer-materials,.deep-reading-editor,.ai-assist-editor").map(function(node){return topChild(panel,node)}).filter(Boolean).sort(function(a,b){return indexOfChild(a)-indexOfChild(b)});
+var step2End=hardStops.find(function(node){return !step2Start||indexOfChild(node)>indexOfChild(step2Start)})||null;
+var questionCard=wrapRange(panel,step2Start,step2End,"question");
+if(questionCard){var body=q(questionCard,":scope>.reading-unified-step-body");var compatibility=blockByText(panel,"特定の相手との相性を追加");if(body&&compatibility&&!questionCard.contains(compatibility)){body.appendChild(compatibility)}var note=document.createElement("div");note.className="reading-question-note";note.textContent="特定の相手との相談内容もこのセクションで入力します。";body.insertBefore(note,body.firstChild)}
+var design=q(panel,".design-section");if(design)ensureHeader(design,"format");
+var materials=q(panel,".report-composer-materials");if(materials)ensureHeader(materials,"results");
+var writing=q(panel,".deep-reading-editor")||q(panel,".ai-assist-editor");if(writing){var writingCard=ensureHeader(topChild(panel,writing)||writing,"writing")||q(panel,'.reading-step-writing');var body=q(writingCard,":scope>.reading-unified-step-body");qa(panel,".ai-assist-editor,.writing-section,.report-writing-section").forEach(function(node){var child=topChild(panel,node)||node;if(body&&child!==writingCard&&!writingCard.contains(child))body.appendChild(child)})}
+buttonizeAiAssist(panel);
+addReportItemsSummary(panel);
+qa(panel,".reading-unified-step-card").forEach(function(card,index){setCollapsed(card,index>0)});
+panel.dataset.readingUnifiedReady="1";
+bindCollapse(panel)}
+function prepareTarot(){var root=q(document,".tarot-reading-workspace");if(!root)return;var panel=q(root,".editor-panel")||root;if(panel.dataset.readingUnifiedReady==="1"){buttonizeAiAssist(panel);bindCollapse(panel);return}
+normalizeGuide(panel);
+var cards=qa(panel,".tarot-editor-card").filter(function(card){return !card.closest(".reading-unified-step-card")});
+if(cards[0])ensureHeader(cards[0],"client");
+if(cards[1])ensureHeader(cards[1],"format");
+if(cards[2])ensureHeader(cards[2],"results");
+if(cards[3])ensureHeader(cards[3],"writing");
+var clientBody=cards[0]&&q(cards[0],":scope>.reading-unified-step-body");if(clientBody&&!q(clientBody,".reading-question-note")){var note=document.createElement("div");note.className="reading-question-note";note.innerHTML="<strong>2 相談内容</strong><br>相談テーマと、特定の相手がいる場合の内容をここで入力します。";clientBody.appendChild(note)}
+buttonizeAiAssist(panel);
+qa(panel,".reading-unified-step-card").forEach(function(card,index){setCollapsed(card,index>0)});
+panel.dataset.readingUnifiedReady="1";
+bindCollapse(panel)}
+function run(){prepareNumerology();prepareTarot()}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run);else run();
+var observer=new MutationObserver(function(){run()});
+if(document.body)observer.observe(document.body,{childList:true,subtree:true});
+setInterval(run,900);
+})();</script>`;
+
+html = html.replace("</head>", `${style}</head>`);
+html = html.replace("</body>", `${runtime}</body>`);
+
+for (const token of [
+  marker,
+  "相談者を選ぶ",
+  "相談内容",
+  "鑑定書選択",
+  "鑑定計算結果の確認",
+  "鑑定結果入力",
+  "AI 鑑定補助",
+  "特定の相手との相談内容",
+  "プレビューでも文章を直接編集できます",
+  ".reading-flow-guide-unified",
+  ".reading-unified-step-head",
+  ".reading-step-collapsed",
+  ".reading-report-items-summary",
+  ".tarot-reading-workspace",
+  ".deep-reading-editor",
+  ".report-composer-materials",
+  ".design-section",
+]) {
+  if (!html.includes(token)) {
+    throw new Error(`Reading page structure output is missing ${token}`);
+  }
+}
+
+writeFileSync(htmlPath, html);
+console.log("Reading page structure patched with real 5-step accordion sections and AI assist button styling.");
