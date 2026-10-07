@@ -26,6 +26,7 @@ const MENU_SECTIONS = [
     label: "設定・サポート",
     items: [
       { id: "divination", label: "占術変更", action: "page", page: "account", focus: ".account-divination-manager", access: "proLocked", lockedMessage: "占術変更はProプラン以上で利用できます。" },
+      { id: "aiSettings", label: "AI設定", action: "aiSettings" },
       { id: "notice", label: "お知らせ", action: "notice" },
       { id: "feedback", label: "問い合わせ", action: "feedback" },
       { id: "plan", label: "プラン・契約", action: "page", page: "account", focus: ".account-plan-summary" },
@@ -84,8 +85,17 @@ const style = `<style id="numeria-rebuilt-side-menu-style">
   #numeria-menu-notice-panel h2{margin:0 0 8px;font-size:18px}
   #numeria-menu-notice-panel p{margin:0 0 14px;color:#706777;font-size:14px;line-height:1.7}
   #numeria-menu-notice-panel button{border:1px solid #e3dccf;border-radius:999px;background:#fff;padding:8px 14px;font-weight:800;color:#201b2e}
+  #numeria-ai-settings-page{position:fixed;inset:0;z-index:246;background:linear-gradient(180deg,#fbfaf6 0,#f7f5f0 100%);color:#171326;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #numeria-ai-settings-page .numeria-ai-settings-header{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;padding:calc(12px + env(safe-area-inset-top)) 18px 12px;background:rgba(251,250,246,.94);backdrop-filter:blur(18px);border-bottom:1px solid #e8e1d4}
+  #numeria-ai-settings-page .numeria-ai-settings-back{width:42px;height:42px;flex:0 0 42px;border:1px solid #e2dacd;border-radius:14px;background:#fffdf8;color:#211a31;font-size:25px;line-height:1}
+  #numeria-ai-settings-page small{display:block;color:#a1844c;font-size:10px;font-weight:900;letter-spacing:.16em;margin-bottom:3px}
+  #numeria-ai-settings-page h1{font-family:Georgia,'Yu Mincho',serif;font-size:24px;font-weight:500;line-height:1.2;margin:0}
+  #numeria-ai-settings-page .numeria-ai-settings-body{padding:22px 18px calc(42px + env(safe-area-inset-bottom))}
+  #numeria-ai-settings-page .numeria-ai-settings-card{border:1px solid #e6dfd1;border-radius:22px;background:#fffdf8;padding:20px;box-shadow:0 12px 28px rgba(35,28,52,.06)}
+  #numeria-ai-settings-page .numeria-ai-settings-card strong{display:block;font-size:19px;margin-bottom:7px}
+  #numeria-ai-settings-page .numeria-ai-settings-card p{margin:0;color:#6f6876;font-size:14px;line-height:1.8}
 }
-@media (width > 760px){#numeria-mobile-menu-button,#numeria-rebuilt-side-menu,#numeria-rebuilt-menu-backdrop,#numeria-menu-notice-panel{display:none!important}}
+@media (width > 760px){#numeria-mobile-menu-button,#numeria-rebuilt-side-menu,#numeria-rebuilt-menu-backdrop,#numeria-menu-notice-panel,#numeria-ai-settings-page{display:none!important}}
 </style>`;
 
 const runtime = String.raw`(()=>{
@@ -95,6 +105,7 @@ const MENU_ID="numeria-rebuilt-side-menu";
 const BACKDROP_ID="numeria-rebuilt-menu-backdrop";
 const TOGGLE_ID="numeria-mobile-menu-button";
 const NOTICE_ID="numeria-menu-notice-panel";
+const AI_PAGE_ID="numeria-ai-settings-page";
 let lastActivation=0;
 let lastRenderSignature="";
 function nav(){return window.NumeriaNavigation||null}
@@ -104,13 +115,15 @@ function accessFor(item,state){if(item.access==="adminOnly")return state.admin?"
 function flattenItems(){var result=[];MENU_SECTIONS.forEach(function(section){section.items.forEach(function(item){result.push(item)})});return result}
 function findItem(id){return flattenItems().find(function(item){return item.id===id})||null}
 function removeNotice(){var panel=document.getElementById(NOTICE_ID);if(panel)panel.remove()}
+function closeAiSettings(){var page=document.getElementById(AI_PAGE_ID);if(page)page.remove();document.documentElement.classList.remove("numeria-ai-settings-open")}
 function closeMenu(){var menu=document.getElementById(MENU_ID);var backdrop=document.getElementById(BACKDROP_ID);if(menu)menu.classList.remove("open");if(backdrop)backdrop.classList.remove("open");document.documentElement.classList.remove("numeria-side-menu-open")}
 function openMenu(){removeNotice();removeLegacyMenu();renderMenu();refreshState(true);var menu=document.getElementById(MENU_ID);var backdrop=document.getElementById(BACKDROP_ID);if(menu)menu.classList.add("open");if(backdrop)backdrop.classList.add("open");document.documentElement.classList.add("numeria-side-menu-open")}
 function waitForElement(selector,attempt){if(!selector)return;var el=document.querySelector(selector);if(el){el.scrollIntoView({behavior:"smooth",block:"start"});return}if((attempt||0)<24)setTimeout(function(){waitForElement(selector,(attempt||0)+1)},80)}
 function setStatus(message){var el=document.querySelector("#"+MENU_ID+" .numeria-menu-status");if(el)el.textContent=message||""}
 function navigatePage(item){var api=nav();if(!api||typeof api.go!=="function"){setStatus("画面遷移の準備中です。少し待ってからもう一度押してください。");return}closeMenu();api.go(item.page);if(item.focus)setTimeout(function(){waitForElement(item.focus,0)},30)}
 function showNotice(){closeMenu();removeNotice();var panel=document.createElement("section");panel.id=NOTICE_ID;panel.className="no-print";panel.setAttribute("role","dialog");panel.setAttribute("aria-label","お知らせ");panel.innerHTML='<h2>お知らせ</h2><p>現在、新しいお知らせはありません。</p><button type="button">閉じる</button>';document.body.appendChild(panel);panel.querySelector("button").addEventListener("click",removeNotice)}
-function perform(item){if(!item)return;var state=currentState();var access=accessFor(item,state);if(access==="hidden")return;if(access==="locked"){setStatus(item.lockedMessage||"この機能は現在のプランでは利用できません。");return}var api=nav();setStatus("");if(item.action==="page"){navigatePage(item);return}if(item.action==="newReading"){closeMenu();if(api&&typeof api.newReading==="function")api.newReading();else if(api&&typeof api.go==="function")api.go("reading");else setStatus("鑑定画面の準備中です。");return}if(item.action==="notice"){showNotice();return}if(item.action==="feedback"){closeMenu();if(api&&typeof api.openFeedback==="function")api.openFeedback();else setStatus("問い合わせ画面の準備中です。");return}if(item.action==="growth"){closeMenu();window.location.assign("https://growth-engine.karukimori.workers.dev/");return}if(item.action==="logout"){closeMenu();if(api&&typeof api.signOut==="function")Promise.resolve(api.signOut()).catch(function(){});else if(window.Clerk&&typeof window.Clerk.signOut==="function")window.Clerk.signOut();return}}
+function showAiSettings(){closeMenu();removeNotice();closeAiSettings();var page=document.createElement("section");page.id=AI_PAGE_ID;page.className="no-print";page.setAttribute("role","dialog");page.setAttribute("aria-label","AI設定");page.innerHTML='<header class="numeria-ai-settings-header"><button type="button" class="numeria-ai-settings-back" aria-label="戻る">‹</button><div><small>AI SETTINGS</small><h1>AI設定</h1></div></header><main class="numeria-ai-settings-body"><section class="numeria-ai-settings-card"><strong>AI設定ページ</strong><p>AI鑑定補助の文体、生成方針、利用条件をここで設定できるようにします。ページ内容は次の指定に合わせて追加します。</p></section></main>';document.body.appendChild(page);document.documentElement.classList.add("numeria-ai-settings-open");page.querySelector(".numeria-ai-settings-back").addEventListener("click",closeAiSettings)}
+function perform(item){if(!item)return;var state=currentState();var access=accessFor(item,state);if(access==="hidden")return;if(access==="locked"){setStatus(item.lockedMessage||"この機能は現在のプランでは利用できません。");return}var api=nav();setStatus("");if(item.action==="aiSettings"){showAiSettings();return}if(item.action==="page"){navigatePage(item);return}if(item.action==="newReading"){closeMenu();if(api&&typeof api.newReading==="function")api.newReading();else if(api&&typeof api.go==="function")api.go("reading");else setStatus("鑑定画面の準備中です。");return}if(item.action==="notice"){showNotice();return}if(item.action==="feedback"){closeMenu();if(api&&typeof api.openFeedback==="function")api.openFeedback();else setStatus("問い合わせ画面の準備中です。");return}if(item.action==="growth"){closeMenu();window.location.assign("https://growth-engine.karukimori.workers.dev/");return}if(item.action==="logout"){closeMenu();if(api&&typeof api.signOut==="function")Promise.resolve(api.signOut()).catch(function(){});else if(window.Clerk&&typeof window.Clerk.signOut==="function")window.Clerk.signOut();return}}
 function activateButton(button,event){if(!button)return;if(event){event.preventDefault();event.stopPropagation();if(typeof event.stopImmediatePropagation==="function")event.stopImmediatePropagation()}var now=Date.now();if(now-lastActivation<260)return;lastActivation=now;var item=findItem(button.dataset.menuId);if(!item)return;var access=accessFor(item,currentState());if(access==="enabled"){button.classList.add("active");setTimeout(function(){button.classList.remove("active")},180)}perform(item)}
 function itemHtml(item,state){var access=accessFor(item,state);if(access==="hidden")return"";var locked=access==="locked";var badge=locked?'<span class="numeria-menu-badge">PRO</span>':"";return '<button type="button" class="numeria-menu-item'+(locked?' is-locked':'')+'" data-menu-id="'+escapeHtml(item.id)+'"'+(locked?' aria-disabled="true"':'')+'><span>'+escapeHtml(item.label)+'</span>'+badge+'</button>'}
 function sectionHtml(section,state){var items=section.items.map(function(item){return itemHtml(item,state)}).filter(Boolean).join("");if(!items)return"";var title=section.label?'<div class="numeria-menu-section-title">'+escapeHtml(section.label)+'</div>':"";return '<section class="numeria-menu-section" data-section-id="'+escapeHtml(section.id)+'">'+title+items+'</section>'}
