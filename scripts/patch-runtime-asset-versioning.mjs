@@ -34,6 +34,11 @@ function moveRscPayloadBeforeBootstrap(html, htmlPath) {
 }
 
 function guardIndexBootstrapUntilRscReady(source, indexName) {
+  if (!source.includes("NumeriaSingleAppRoot.v1")) {
+    const anchor = "async function ca(){sa();let e=await oa();e!==null&&la(e)}";
+    if (!source.includes(anchor)) throw new Error(`${indexName}: bootstrap ownership anchor missing`);
+    source = source.replace(anchor, `async function ca(){/* NumeriaSingleAppRoot.v1 */if(window.__NUMERIA_BOOT_PROMISE__)return window.__NUMERIA_BOOT_PROMISE__;return window.__NUMERIA_BOOT_PROMISE__=(async()=>{sa();let e=await oa();if(e!==null&&!window.__NUMERIA_DIRECT_MOUNT_STARTED__)la(e)})()}`);
+  }
   if (source.includes(rscBootstrapGuardVersion)) return source;
   const bootstrapCall = "ca()),window.__VINEXT_LINK_PREFETCH_ROUTES__";
   if (!source.includes(bootstrapCall)) {

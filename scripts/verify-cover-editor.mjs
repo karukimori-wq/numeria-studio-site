@@ -91,4 +91,3 @@ assert.match(html, /border:1px solid #bcb5c6/);
 assert.match(html, /<select/);
 assert.match(html, /min-height:48px/);
 console.log("Cover editor state and React markup verified: title/practitioner inputs, customer visibility without customer input, font, custom logo, Free gate, persistence, and divination isolation. Browser layout is not covered by this test.");
-

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
+import "./verify-layout-regressions.mjs";
 
 function assertBundleSyntax(source, label) {
   const parseableSource = source

@@ -60,6 +60,8 @@ export function patchCoverEditor(source) {
   const presetEnd = ']},e.id))]}),(0,Z.jsxs)(`div`,{className:`preset-count`';
   once(presetEnd, ']},e.id))]}),(0,Z.jsx)(NumeriaCoverEditor,{' + standardProps + '},l),(0,Z.jsxs)(`div`,{className:`preset-count`', 'standard editor');
   once('children:[W.name,`で保存したプリセット`]', 'children:[W.name,`で保存したプリセット　`,Ir.length,` / `,tr===`admin`?`制限なし`:ar===`free`?1:20]', 'preset count');
+  once('Ir.map(e=>(0,Z.jsxs)(`article`,{children:[(0,Z.jsxs)(`button`,{onClick:()=>Ei(e),children:[(0,Z.jsx)(`strong`,{children:e.name}),(0,Z.jsx)(`span`,{children:Q.find(t=>t.id===e.template)?.name||e.template})]}),(0,Z.jsx)(`button`,{onClick:()=>Di(e),children:`複製`}),(0,Z.jsx)(`button`,{onClick:()=>Oi(e),children:`削除`})]},e.id))',
+    '(0,Z.jsx)(`div`,{className:`saved-preset-rail`,children:Ir.map(e=>(0,Z.jsxs)(`article`,{children:[(0,Z.jsxs)(`button`,{onClick:()=>Ei(e),"aria-label":e.name+`を選択`,children:[(0,Z.jsx)(`strong`,{children:e.name}),(0,Z.jsx)(`span`,{children:Q.find(t=>t.id===e.template)?.name||e.template})]}),(0,Z.jsx)(`button`,{onClick:()=>Di(e),children:`複製`}),(0,Z.jsx)(`button`,{onClick:()=>Oi(e),children:`削除`})]},e.id))})', 'preset scroll container');
   const tarotControls = 'className:`tarot-settings-controls no-print`,children:[';
   once(tarotControls, tarotControls + '(0,Z.jsxs)(`div`,{className:`setting-card tarot-basic-card format-basic-card`,children:[(0,Z.jsxs)(`div`,{className:`setting-card-title`,children:[(0,Z.jsx)(`span`,{children:`1`}),(0,Z.jsx)(`h2`,{children:`基本情報`})]}),(0,Z.jsx)(NumeriaCoverEditor,{' + tarotProps + '},`tarot`)]}),', 'tarot editor');
   const title = '(0,Z.jsxs)(`label`,{children:[`表紙タイトル`,(0,Z.jsx)(`input`,{value:wt,onChange:e=>Tt(e.target.value)})]})';
@@ -79,4 +81,3 @@ export function patchCoverEditor(source) {
   once('Fi=e=>({id:e,divination:l,', 'Fi=e=>({id:e,coverOptions:window.NumeriaCoverSettings.read(l),logoImage:Vt,divination:l,', 'snapshot save');
   return source;
 }
-

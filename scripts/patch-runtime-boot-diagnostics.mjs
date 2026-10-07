@@ -73,13 +73,19 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
       import("/assets/framework-CXnKph_e.js?numeria-direct=${marker}-"+Date.now()),
       import("/assets/numeria-app-Cckhajir.js?numeria-direct=${marker}-"+Date.now())
     ]).then(([framework,app])=>{
+      // The normal bootstrap may finish while the fallback dependencies load.
+      if(appMounted()){state.directMount="skipped";hide();return;}
       const React=framework.i&&framework.i();
       const client=framework.t&&framework.t();
       const Component=app.default||app;
       if(!React||!client||(!client.createRoot&&!client.hydrateRoot)||!Component)throw new Error("direct mount dependencies unavailable");
+      window.__NUMERIA_DIRECT_MOUNT_STARTED__=Date.now();
+      if(window.__VINEXT_RSC_ROOT__){
+        window.__VINEXT_RSC_ROOT__.unmount();
+        window.__VINEXT_RSC_ROOT__=null;
+      }
       const root=ensureDirectRoot();
       root.innerHTML="";
-      window.__NUMERIA_DIRECT_MOUNT_STARTED__=Date.now();
       if(typeof client.createRoot==="function"){
         window.__NUMERIA_DIRECT_ROOT__=client.createRoot(root);
         window.__NUMERIA_DIRECT_ROOT__.render(React.createElement(Component));

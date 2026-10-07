@@ -65,7 +65,19 @@ const mobilePresetGridRule =
 
 
 const presetListRepairRule =
-  ".format-basic-card .saved-preset-list{display:grid!important;grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);grid-template-rows:auto auto;gap:10px;overflow-x:auto;padding:14px!important;scroll-snap-type:x proximity}.format-basic-card .saved-preset-list>small{grid-row:1;grid-column:1/-1;min-width:0!important;flex-basis:auto!important;display:flex;align-items:center;gap:8px}.format-basic-card .saved-preset-list article{grid-row:2;min-width:0!important;scroll-snap-align:start}.format-basic-card .saved-preset-list article button:first-child{min-width:0;text-align:left}.format-basic-card .saved-preset-list article button{touch-action:manipulation}@media (width<=760px){.format-basic-card .saved-preset-list{grid-auto-columns:minmax(240px,82vw)}.format-basic-card .saved-preset-list article{min-width:0!important}}";
+  `/* NumeriaPresetContainment.v1 */
+  .settings-page,.settings-layout,.settings-controls,.format-settings-reordered,.format-basic-card{min-width:0!important;max-width:100%;box-sizing:border-box}
+  .format-basic-card{width:100%}
+  .format-basic-card .saved-preset-list{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-auto-flow:row!important;grid-auto-columns:auto!important;grid-template-rows:auto!important;width:100%;max-width:100%;min-width:0!important;box-sizing:border-box;gap:10px;overflow-x:auto;padding:14px!important;scroll-snap-type:x proximity}
+  .format-basic-card .saved-preset-list>small{grid-row:auto!important;grid-column:1!important;min-width:0!important;display:block!important;font-size:12px;overflow-wrap:anywhere}
+  .format-basic-card .saved-preset-list article{grid-row:2!important;grid-column:auto!important;width:260px;min-width:0!important;max-width:100%;box-sizing:border-box;display:grid!important;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;scroll-snap-align:start;border:1px solid #ded8e3;border-radius:8px;padding:12px;background:#fff}
+  .format-basic-card .saved-preset-list article button:first-child{min-width:0;text-align:left;overflow-wrap:anywhere;white-space:normal}
+  .format-basic-card .saved-preset-list article button{touch-action:manipulation;min-height:44px}
+  .format-basic-card .saved-preset-rail{display:flex;gap:10px;min-width:0;max-width:100%;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 0 6px}
+  .format-basic-card .saved-preset-rail article{flex:0 0 min(280px,100%);grid-template-columns:minmax(0,1fr) auto auto;width:auto}
+  .format-basic-card .numeria-cover-editor{max-width:100%;box-sizing:border-box}
+  @media (width<=760px){.settings-page .settings-layout{grid-template-columns:minmax(0,1fr)!important}.format-basic-card{padding:16px!important}.format-basic-card .saved-preset-list article{width:260px}.format-basic-card .saved-preset-list{contain:inline-size}.format-basic-card .numeria-cover-editor{padding:0!important;border:0!important}.format-basic-card .numeria-cover-editor h3{font-size:18px!important}}
+  `;
 
 const reportTemplateDecorationRule =
   ".report-cover-page .paper-theme{display:none!important}.template-cosmic-guide.report-cover-page:before,.template-cosmic-guide.report-cover-page:after,.template-cosmic-guide.report-cover-page .template-index,.template-cosmic-guide.report-cover-page .cover-index,.template-cosmic-guide.report-cover-page .format-index,.template-cosmic-guide.report-cover-page .paper-index,.template-cosmic-guide.report-cover-page .design-number{display:none!important}";
@@ -96,8 +108,10 @@ for (const file of styleBundles) {
   source += basicLayoutRule;
   source = source.replace(/\.format-cover-panel\[data-cover-layout='repair-v1'\][\s\S]*?pointer-events:auto!important\}/g, "");
   if (!source.includes("[data-cover-layout='repair-v2']")) source += coverRepairRule;
+  // These constraints must follow the legacy layout rules.
+  source = source.replaceAll(presetListRepairRule, "");
+  source += presetListRepairRule;
   fs.writeFileSync(file, source);
 }
 
 console.log("Patched report format settings UI.");
-
