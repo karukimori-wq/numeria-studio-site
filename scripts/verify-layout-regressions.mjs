@@ -27,6 +27,7 @@ await pending;
 assert.equal(hydrateCount, 1, "late RSC payload cannot mount after direct fallback takes ownership");
 
 const callback = html.split(']).then(([framework,app])=>{')[1].split('}).catch(error=>{state.directMount=')[0];
+assert.match(html, /import\("\/assets\/framework-[^"]+\.js"\)/, "fallback must share the app bootstrap React module instance");
 let hidden = false;
 new Function("appMounted", "state", "hide", "framework", "app", callback)(() => true, {}, () => { hidden = true; }, {}, {});
 assert.equal(hidden, true, "fallback rechecks the app after awaiting imports");
