@@ -63,6 +63,10 @@ const styleBundles = [
 const mobilePresetGridRule =
   "@media (width<=760px){.preset-library-card .template-grid-20{max-height:none;overflow:visible}.preset-library-card .template-grid-20 .template-thumb{height:74px}}";
 
+
+const presetListRepairRule =
+  ".format-basic-card .saved-preset-list{display:grid!important;grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);grid-template-rows:auto auto;gap:10px;overflow-x:auto;padding:14px!important;scroll-snap-type:x proximity}.format-basic-card .saved-preset-list>small{grid-row:1;grid-column:1/-1;min-width:0!important;flex-basis:auto!important;display:flex;align-items:center;gap:8px}.format-basic-card .saved-preset-list article{grid-row:2;min-width:0!important;scroll-snap-align:start}.format-basic-card .saved-preset-list article button:first-child{min-width:0;text-align:left}.format-basic-card .saved-preset-list article button{touch-action:manipulation}@media (width<=760px){.format-basic-card .saved-preset-list{grid-auto-columns:minmax(240px,82vw)}.format-basic-card .saved-preset-list article{min-width:0!important}}";
+
 const reportTemplateDecorationRule =
   ".report-cover-page .paper-theme{display:none!important}.template-cosmic-guide.report-cover-page:before,.template-cosmic-guide.report-cover-page:after,.template-cosmic-guide.report-cover-page .template-index,.template-cosmic-guide.report-cover-page .cover-index,.template-cosmic-guide.report-cover-page .format-index,.template-cosmic-guide.report-cover-page .paper-index,.template-cosmic-guide.report-cover-page .design-number{display:none!important}";
 
@@ -80,7 +84,7 @@ const coverRepairRule =
 
 for (const file of styleBundles) {
   let source = fs.readFileSync(file, "utf8");
-  const additions = [mobilePresetGridRule, reportTemplateDecorationRule];
+  const additions = [mobilePresetGridRule, presetListRepairRule, reportTemplateDecorationRule];
   for (const rule of additions) {
     if (!source.includes(rule)) {
       source += rule;
@@ -96,3 +100,4 @@ for (const file of styleBundles) {
 }
 
 console.log("Patched report format settings UI.");
+

@@ -13,7 +13,7 @@ globalThis.i = {
   useState: initializer => { state ??= initializer(); return [state, next => { state = typeof next === "function" ? next(state) : next; }]; },
   useEffect: callback => effects.push(callback)
 };
-const props = { scope: "numerology", title: "数秘術 鑑定書", practitioner: "星乃みづき", font: "classic", logo: null, canUpload: true, accent: "#b49349", background: "#fff" };
+const props = { scope: "numerology", title: "数秘術 鑑定書", practitioner: "星乃みづき", clientName: "高橋 美月", font: "classic", logo: null, canUpload: true, accent: "#b49349", background: "#fff" };
 props.onTitle = value => { props.title = value; };
 props.onPractitioner = value => { props.practitioner = value; };
 props.onFont = value => { props.font = value; };
@@ -36,7 +36,7 @@ function text(element) {
 }
 function control(label, type) {
   const wrapper = nodes().find(node => node.type === "label" && text(node).startsWith(label) && nodes(node).some(child => child.type === type));
-  return nodes(wrapper).find(node => node.type === type);
+  return wrapper ? nodes(wrapper).find(node => node.type === type) : undefined;
 }
 function change(label, type, value) {
   const input = control(label, type);
@@ -49,14 +49,14 @@ function previewText() { return text(nodes().find(node => node.props.className =
 render();
 change("表紙タイトル", "input", "私の鑑定書");
 change("占い師名", "input", "星乃 みづき");
-change("お客様名", "input", "山田 花子");
-assert.match(previewText(), /私の鑑定書.*山田 花子.*星乃 みづき/);
+assert.equal(control("お客様名", "input"), undefined, "customer name field is not rendered in format settings");
+assert.match(previewText(), /私の鑑定書.*高橋 美月.*星乃 みづき/);
 change("占い師の名前を表示", "input", false);
 assert.ok(!previewText().includes("星乃 みづき"));
 change("占い師の名前を表示", "input", true);
 assert.ok(previewText().includes("星乃 みづき"));
 change("お客様の名前を表示", "input", false);
-assert.ok(!previewText().includes("山田 花子"));
+assert.ok(!previewText().includes("高橋 美月"));
 change("ロゴを表示", "input", false);
 assert.equal(control("ロゴ", "select").props.disabled, true);
 change("ロゴを表示", "input", true);
@@ -70,7 +70,6 @@ assert.match(nodes().find(node => node.props.className === "numeria-cover-previe
 const saved = JSON.parse(storage.get("numeria.reportFormat.cover.numerology.v1"));
 state = undefined;
 render();
-assert.equal(state.clientName, saved.clientName);
 assert.equal(state.client, false);
 change("ロゴ", "select", "standard");
 assert.equal(props.logo, null);
@@ -87,7 +86,9 @@ assert.equal(control("書体", "select").type, "select");
 globalThis.i = React;
 const html = renderToStaticMarkup(React.createElement(NumeriaCoverEditor, props));
 assert.match(html, /type="text"/);
+assert.doesNotMatch(html, /placeholder="お客様名"/);
 assert.match(html, /border:1px solid #bcb5c6/);
 assert.match(html, /<select/);
-assert.match(html, /min-height:52px/);
-console.log("Cover editor state and React markup verified: text inputs, visibility, font, custom logo, Free gate, persistence, and divination isolation. Browser layout is not covered by this test.");
+assert.match(html, /min-height:48px/);
+console.log("Cover editor state and React markup verified: title/practitioner inputs, customer visibility without customer input, font, custom logo, Free gate, persistence, and divination isolation. Browser layout is not covered by this test.");
+
