@@ -70,7 +70,7 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
     if(!window.__VINEXT_RSC_DONE__)return;
     state.directMount="started";
     Promise.all([
-      import("/assets/framework-CXnKph_e.js?numeria-direct=${marker}-"+Date.now()),
+      import("/assets/framework-CXnKph_e.js"),
       import("/assets/numeria-app-Cckhajir.js?numeria-direct=${marker}-"+Date.now())
     ]).then(([framework,app])=>{
       // The normal bootstrap may finish while the fallback dependencies load.
