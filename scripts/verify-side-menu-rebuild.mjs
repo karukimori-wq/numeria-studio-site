@@ -21,7 +21,7 @@ for (const token of ["NumeriaNavigationBridge.v2", "go:function(page){k(page)}",
   assert.ok(navPatch.includes(token), `Navigation bridge is missing ${token}`);
 }
 
-for (const label of ["ダッシュボード", "鑑定", "カルテ", "鑑定書", "テンプレート", "占術変更", "お知らせ", "問い合わせ", "プラン・契約", "アカウント", "集客・顧客管理", "Feedback Hub管理", "管理者メニュー", "ログアウト"]) {
+for (const label of ["ダッシュボード", "鑑定", "カルテ", "鑑定書", "テンプレート", "占術変更", "AI設定", "お知らせ", "問い合わせ", "プラン・契約", "アカウント", "集客・顧客管理", "Feedback Hub管理", "管理者メニュー", "ログアウト"]) {
   assert.ok(menuPatch.includes(label), `Side menu config is missing ${label}`);
 }
 
@@ -83,6 +83,8 @@ assert.ok(menuPatch.includes("window.NumeriaNavigation"), "Menu must prefer the 
 assert.ok(menuPatch.includes("installGlobalItemEvents"), "Menu items must be handled from a stable global event listener for mobile Safari.");
 assert.ok(menuPatch.includes("activateButton(button,event)"), "Menu item activation must target the real menu button.");
 assert.ok(menuPatch.includes("showNotice()"), "Notice menu item must open an in-app notice panel instead of doing nothing.");
+assert.ok(menuPatch.includes("showAiSettings()"), "AI settings menu item must open its dedicated page.");
+assert.ok(menuPatch.includes("numeria-ai-settings-page"), "AI settings page must have a dedicated mobile page container.");
 assert.ok(menuPatch.includes("https://growth-engine.karukimori.workers.dev/"), "Business customer-management navigation must point to Growth Engine Production.");
 assert.ok(!menuPatch.includes("clickLabel("), "Rebuilt menu must not use the retired generic label proxy.");
 assert.ok(!menuPatch.includes("rgba(196,166,93,.001)"), "Rebuilt menu must not use transparent tap overlays.");
