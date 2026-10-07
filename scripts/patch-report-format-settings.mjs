@@ -46,7 +46,12 @@ for (const file of appBundles) {
   );
   source = source.replace(/;\(\(\)=>\{if\(window\.__NumeriaCoverEditorV3\)[\s\S]*?\/\* cover-editor-end \*\/\}\)\(\);/g, "");
   source = patchCoverEditor(source);
-  source += coverEditorRuntime + settingsRuntime.replace('q(basic,".format-display-options")','q(basic,".format-display-options,.numeria-cover-editor")');
+  const stableSettingsRuntime = settingsRuntime
+    .replace('q(basic,".format-display-options")', 'q(basic,".format-display-options,.numeria-cover-editor")')
+    .replace('b&&(b.textContent=n);t&&(t.textContent=h);d&&p&&(d.textContent=p)', 'b&&b.textContent!==n&&(b.textContent=n);t&&t.textContent!==h&&(t.textContent=h);d&&p&&d.textContent!==p&&(d.textContent=p)')
+    .replace('if(el.dataset.numeriaFooterText)el.textContent=el.dataset.numeriaFooterText', 'if(el.dataset.numeriaFooterText&&el.textContent!==el.dataset.numeriaFooterText)el.textContent=el.dataset.numeriaFooterText')
+    .replace('else if(text.includes("Created with care by"))el.textContent=text.split("　Created with care by")[0]||text.split(" Created with care by")[0]||text', 'else if(text.includes("Created with care by")){let next=text.split("　Created with care by")[0]||text.split(" Created with care by")[0]||text;if(el.textContent!==next)el.textContent=next}');
+  source += coverEditorRuntime + stableSettingsRuntime;
   fs.writeFileSync(file, source);
 }
 
