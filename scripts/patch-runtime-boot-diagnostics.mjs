@@ -97,6 +97,9 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
     }).catch(error=>{state.directMount="failed";record("direct-mount",error&&error.message||error,"/assets/numeria-app-Cckhajir.js",null,null);show()});
   }
   window.addEventListener("numeria-navigation-ready",()=>{state.navigationReady=true;hide()});
+  // The auth shell can be rendered by the server before the client app finishes mounting.
+  // Remove any stale diagnostic overlay as soon as the login form becomes usable.
+  const authRecoveryTimer=setInterval(()=>{if(authMounted()){hide();clearInterval(authRecoveryTimer)}},250);
   setTimeout(recoverFromCachedLegacyIndex,1800);
   setTimeout(recoverFromCachedLegacyIndex,3600);
   setTimeout(directMountApp,5200);
