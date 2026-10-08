@@ -93,10 +93,16 @@ function prepareTarot(){var root=q(document,".tarot-reading-workspace");if(!root
 normalizeGuide(panel);
 var cards=qa(panel,".tarot-editor-card").filter(function(card){return !card.closest(".reading-unified-step-card")});
 if(cards[0])ensureHeader(cards[0],"client");
+var clientBody=cards[0]&&q(cards[0],":scope>.reading-unified-step-body");
+var questionField=clientBody&&qa(clientBody,"label").find(function(label){return String(label.textContent||"").includes("今回の質問・相談テーマ")});
+var questionCard=createCard("question");
+if(cards[0])cards[0].insertAdjacentElement("afterend",questionCard);else panel.prepend(questionCard);
+var questionBody=q(questionCard,":scope>.reading-unified-step-body");
+if(questionField)questionBody.appendChild(questionField);
+var note=document.createElement("div");note.className="reading-question-note";note.textContent="相談テーマ、具体的な相談内容、補足、特定の相手がいる場合の情報をここにまとめます。";questionBody.insertBefore(note,questionBody.firstChild);
 if(cards[1])ensureHeader(cards[1],"format");
 if(cards[2])ensureHeader(cards[2],"results");
 if(cards[3])ensureHeader(cards[3],"writing");
-var clientBody=cards[0]&&q(cards[0],":scope>.reading-unified-step-body");if(clientBody&&!q(clientBody,".reading-question-note")){var note=document.createElement("div");note.className="reading-question-note";note.innerHTML="<strong>2 相談内容</strong><br>相談テーマと、特定の相手がいる場合の内容をここで入力します。";clientBody.appendChild(note)}
 buttonizeAiAssist(panel);
 qa(panel,".reading-unified-step-card").forEach(function(card,index){setCollapsed(card,index>0)});
 panel.dataset.readingUnifiedReady="1";

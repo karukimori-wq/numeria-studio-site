@@ -42,3 +42,6 @@ const observerResult = check(patch);
 assert.equal(observerResult.pending, 0, "AI assist normalization must settle instead of starving input and timers");
 assert.ok(observerResult.calls <= 1, "Unchanged AI assist markup must not trigger further mutations");
 console.log("AI assist observer settles after one callback.");
+
+assert.match(patch, /createCard\("question"\)/, "tarot receives an independent consultation section");
+assert.match(patch, /今回の質問・相談テーマ/, "tarot consultation field moves into step 2");
