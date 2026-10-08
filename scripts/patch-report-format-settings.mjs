@@ -2,7 +2,6 @@ import fs from "node:fs";
 import { coverEditorRuntime, patchCoverEditor } from "./report-cover-editor-component.mjs";
 
 const appBundles = [
-  "assets/numeria-app-Cckhajir.js",
   "dist/assets/numeria-app-Cckhajir.js",
 ];
 
@@ -56,7 +55,6 @@ for (const file of appBundles) {
 }
 
 const styleBundles = [
-  "assets/index-CEGe-9Xe.css",
   "dist/assets/index-CEGe-9Xe.css",
 ];
 

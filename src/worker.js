@@ -2335,10 +2335,14 @@ async function handleApi(request, env = {}, ctx = null) {
       id: appraisalId,
       clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
       birthDate: String(body.birthDate || currentDraft?.birthDate || "").trim(),
+      divination: String(body.divination || currentDraft?.divination || "numerology").trim(),
       lifePathNumber: body.lifePathNumber || currentDraft?.lifePathNumber || null,
       question: String(body.question || currentDraft?.question || "").trim(),
       notes: String(body.notes || currentDraft?.notes || "").trim(),
       resultSummary: String(body.resultSummary || currentDraft?.resultSummary || "").trim(),
+      snapshot: body.snapshot && typeof body.snapshot === "object"
+        ? body.snapshot
+        : currentDraft?.snapshot || null,
       externalReferences: normalizeGrowthEngineExternalReferences(body) || currentDraft?.externalReferences || null,
       updatedAt: new Date().toISOString(),
     };
@@ -2375,10 +2379,14 @@ async function handleApi(request, env = {}, ctx = null) {
       id: appraisalId,
       clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
       birthDate: String(body.birthDate || currentDraft?.birthDate || "").trim(),
+      divination: String(body.divination || currentDraft?.divination || "numerology").trim(),
       lifePathNumber: body.lifePathNumber || currentDraft?.lifePathNumber || null,
       question: String(body.question || currentDraft?.question || "").trim(),
       notes: String(body.notes || currentDraft?.notes || "").trim(),
       resultSummary: String(body.resultSummary || currentDraft?.resultSummary || "").trim(),
+      snapshot: body.snapshot && typeof body.snapshot === "object"
+        ? body.snapshot
+        : currentDraft?.snapshot || null,
       externalReferences: normalizeGrowthEngineExternalReferences(body) || currentDraft?.externalReferences || null,
       completedAt,
     };
