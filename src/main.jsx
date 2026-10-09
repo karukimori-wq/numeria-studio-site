@@ -15,6 +15,7 @@ import {
   Database,
   Download,
   FileText,
+  LayoutTemplate,
   LifeBuoy,
   Lock,
   MessageSquare,
@@ -47,6 +48,49 @@ const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "illusionddt@gmail.com
   .split(",")
   .map((email) => email.trim().toLowerCase())
   .filter(Boolean);
+
+const FORMAT_STORAGE_PREFIX = "numeria:report-format:v1:";
+const COMMON_BLOCKS = [
+  { type: "page-title", label: "ページタイトル", hint: "ページ一覧と連動する主タイトル" },
+  { type: "heading", label: "見出し", hint: "文章セクションの見出し" },
+  { type: "body", label: "本文", hint: "占い師が直接書く文章" },
+  { type: "ai-text", label: "AI鑑定文章", hint: "AI下書き・手動編集用の文章" },
+  { type: "divider", label: "区切り線", hint: "内容を区切る線" },
+];
+
+function createId(prefix) {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+}
+
+function createBlock(type, overrides = {}) {
+  const label = COMMON_BLOCKS.find((block) => block.type === type)?.label || "本文";
+  return {
+    id: createId("block"),
+    type,
+    content: type === "page-title" ? "新しい鑑定書" : type === "heading" ? "見出し" : "",
+    aiPurpose: type === "ai-text" ? "auto" : null,
+    ...overrides,
+    label,
+  };
+}
+
+function createFormatPage(title = "新しいページ") {
+  const titleBlock = createBlock("page-title", { content: title });
+  return {
+    id: createId("page"),
+    title,
+    sections: [{ id: createId("section"), columns: 1, ratio: "100", content: [[titleBlock]] }],
+  };
+}
+
+function createDefaultReportFormat() {
+  const cover = createFormatPage("鑑定書");
+  cover.sections[0].content[0].push(
+    createBlock("heading", { content: "あなたへのメッセージ" }),
+    createBlock("ai-text", { content: "ここに鑑定文章を入力します。", aiPurpose: "summary" })
+  );
+  return { id: createId("format"), version: 1, name: "基本鑑定書", pages: [cover], updatedAt: new Date().toISOString() };
+}
 
 function getDeviceLabel() {
   const width = window.innerWidth;
@@ -208,6 +252,8 @@ function SignedInWorkspace() {
     deliveryDueDate: "",
   });
   const [clientProfileName, setClientProfileName] = useState("");
+  const [reportFormat, setReportFormat] = useState(createDefaultReportFormat);
+  const [formatSaveStatus, setFormatSaveStatus] = useState("未保存");
 
   function createEmptyCase({ includeGrowthHandoff = true } = {}) {
     return {
@@ -255,6 +301,37 @@ function SignedInWorkspace() {
   useEffect(() => {
     refreshUsage();
   }, [scope]);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(`${FORMAT_STORAGE_PREFIX}${workspaceId}`);
+      if (!saved) {
+        setReportFormat(createDefaultReportFormat());
+        setFormatSaveStatus("未保存");
+        return;
+      }
+      const parsed = JSON.parse(saved);
+      if (!parsed?.pages?.length) throw new Error("invalid format");
+      setReportFormat(parsed);
+      setFormatSaveStatus("保存済み");
+    } catch {
+      setReportFormat(createDefaultReportFormat());
+      setFormatSaveStatus("保存を開始できます");
+    }
+  }, [workspaceId]);
+
+  function saveReportFormat() {
+    try {
+      const next = { ...reportFormat, updatedAt: new Date().toISOString(), version: reportFormat.version || 1 };
+      window.localStorage.setItem(`${FORMAT_STORAGE_PREFIX}${workspaceId}`, JSON.stringify(next));
+      setReportFormat(next);
+      setFormatSaveStatus(`保存済み（${new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })}）`);
+      setNotice({ type: "success", title: "鑑定書フォーマットを保存しました", body: "このブラウザのワークスペースに保存しました。クラウド同期は保存APIの追加後に有効化します。" });
+    } catch {
+      setFormatSaveStatus("保存に失敗しました");
+      setNotice({ type: "warning", title: "フォーマットを保存できませんでした", body: "ブラウザの保存領域を確認してから、もう一度お試しください。" });
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -754,6 +831,16 @@ function SignedInWorkspace() {
           onChange={setReportOptions}
           onExport={exportReport}
           onPrint={printJapaneseReport}
+        />
+
+        <ReportFormatBuilder
+          format={reportFormat}
+          saveStatus={formatSaveStatus}
+          onChange={(next) => {
+            setReportFormat(next);
+            setFormatSaveStatus("変更あり");
+          }}
+          onSave={saveReportFormat}
         />
 
         <PlanComparison
@@ -1352,6 +1439,220 @@ function NumerologyPreviewPanel({ currentCase }) {
         </div>
       </div>
     </section>
+  );
+}
+
+function ReportFormatBuilder({ format, saveStatus, onChange, onSave }) {
+  const [selectedPageId, setSelectedPageId] = useState(format.pages[0]?.id);
+  const selectedPage = format.pages.find((page) => page.id === selectedPageId) || format.pages[0];
+
+  useEffect(() => {
+    if (!format.pages.some((page) => page.id === selectedPageId)) setSelectedPageId(format.pages[0]?.id);
+  }, [format.pages, selectedPageId]);
+
+  function updatePage(pageId, updater) {
+    onChange({ ...format, pages: format.pages.map((page) => (page.id === pageId ? updater(page) : page)) });
+  }
+
+  function addPage(afterIndex = format.pages.length - 1) {
+    const page = createFormatPage(`ページ ${format.pages.length + 1}`);
+    const pages = [...format.pages];
+    pages.splice(afterIndex + 1, 0, page);
+    onChange({ ...format, pages });
+    setSelectedPageId(page.id);
+  }
+
+  function duplicatePage(page) {
+    const copyTitle = `${page.title}（コピー）`;
+    const copy = {
+      ...structuredClone(page),
+      id: createId("page"),
+      title: copyTitle,
+      sections: page.sections.map((section) => ({
+        ...section,
+        id: createId("section"),
+        content: section.content.map((column) => column.map((block) => ({
+          ...block,
+          id: createId("block"),
+          content: block.type === "page-title" ? copyTitle : block.content,
+        })),
+      })),
+    };
+    const index = format.pages.findIndex((item) => item.id === page.id);
+    const pages = [...format.pages];
+    pages.splice(index + 1, 0, copy);
+    onChange({ ...format, pages });
+    setSelectedPageId(copy.id);
+  }
+
+  function movePage(pageId, direction) {
+    const index = format.pages.findIndex((page) => page.id === pageId);
+    const destination = index + direction;
+    if (destination < 0 || destination >= format.pages.length) return;
+    const pages = [...format.pages];
+    [pages[index], pages[destination]] = [pages[destination], pages[index]];
+    onChange({ ...format, pages });
+  }
+
+  function deletePage(pageId) {
+    if (format.pages.length === 1) return;
+    const pages = format.pages.filter((page) => page.id !== pageId);
+    onChange({ ...format, pages });
+    setSelectedPageId(pages[0].id);
+  }
+
+  function addSection(columns) {
+    updatePage(selectedPage.id, (page) => ({
+      ...page,
+      sections: [
+        ...page.sections,
+        { id: createId("section"), columns, ratio: columns === 2 ? "50:50" : "100", content: Array.from({ length: columns }, () => []) },
+      ],
+    }));
+  }
+
+  function addBlock(sectionId, columnIndex, type) {
+    updatePage(selectedPage.id, (page) => ({
+      ...page,
+      sections: page.sections.map((section) =>
+        section.id !== sectionId
+          ? section
+          : { ...section, content: section.content.map((column, index) => (index === columnIndex ? [...column, createBlock(type)] : column)) }
+      ),
+    }));
+  }
+
+  function updateBlock(sectionId, columnIndex, blockId, patch) {
+    updatePage(selectedPage.id, (page) => ({
+      ...page,
+      title:
+        patch.content !== undefined && page.sections.some((section) => section.id === sectionId && section.content[columnIndex]?.some((block) => block.id === blockId && block.type === "page-title"))
+          ? patch.content || "無題のページ"
+          : page.title,
+      sections: page.sections.map((section) =>
+        section.id !== sectionId
+          ? section
+          : {
+              ...section,
+              content: section.content.map((column, index) =>
+                index !== columnIndex ? column : column.map((block) => (block.id === blockId ? { ...block, ...patch } : block))
+              ),
+            }
+      ),
+    }));
+  }
+
+  function moveBlock(sectionId, columnIndex, blockId, direction) {
+    updatePage(selectedPage.id, (page) => ({
+      ...page,
+      sections: page.sections.map((section) => {
+        if (section.id !== sectionId) return section;
+        const column = section.content[columnIndex];
+        const index = column.findIndex((block) => block.id === blockId);
+        const destination = index + direction;
+        if (destination < 0 || destination >= column.length) return section;
+        const nextColumn = [...column];
+        [nextColumn[index], nextColumn[destination]] = [nextColumn[destination], nextColumn[index]];
+        return { ...section, content: section.content.map((item, itemIndex) => (itemIndex === columnIndex ? nextColumn : item)) };
+      }),
+    }));
+  }
+
+  function deleteBlock(sectionId, columnIndex, blockId) {
+    updatePage(selectedPage.id, (page) => ({
+      ...page,
+      sections: page.sections.map((section) =>
+        section.id !== sectionId
+          ? section
+          : { ...section, content: section.content.map((column, index) => (index === columnIndex ? column.filter((block) => block.id !== blockId) : column)) }
+      ),
+    }));
+  }
+
+  return (
+    <section className="work-panel format-builder" aria-label="鑑定書フォーマットブロックエディタ">
+      <div className="panel-heading">
+        <LayoutTemplate size={20} />
+        <div>
+          <p className="eyebrow">Settings / Report format</p>
+          <h2>鑑定書フォーマット</h2>
+        </div>
+        <span className="format-save-status">{saveStatus}</span>
+      </div>
+      <p className="panel-copy">A4完成プレビューを直接編集するフォーマットビルダーです。現在は共通ブロックとページ構成を保存できます。</p>
+      <div className="format-builder-grid">
+        <aside className="format-sidebar" aria-label="ページとブロックの操作">
+          <div className="format-sidebar-heading"><strong>ページ</strong><button className="icon-button" onClick={() => addPage()} aria-label="ページを追加">＋</button></div>
+          <div className="format-page-list">
+            {format.pages.map((page, index) => (
+              <div className={page.id === selectedPage.id ? "format-page-item selected" : "format-page-item"} key={page.id}>
+                <button onClick={() => setSelectedPageId(page.id)}>{index + 1}. {page.title}</button>
+                <span className="page-item-actions">
+                  <button onClick={() => movePage(page.id, -1)} disabled={index === 0} aria-label="ページを前へ">↑</button>
+                  <button onClick={() => movePage(page.id, 1)} disabled={index === format.pages.length - 1} aria-label="ページを後へ">↓</button>
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="format-page-actions">
+            <button className="button ghost" onClick={() => duplicatePage(selectedPage)}>複製</button>
+            <button className="button ghost danger" onClick={() => deletePage(selectedPage.id)} disabled={format.pages.length === 1}>削除</button>
+          </div>
+          <div className="format-block-library">
+            <strong>共通ブロック</strong>
+            <p>追加先の列を選んでからブロックを追加します。</p>
+            {COMMON_BLOCKS.map((block) => <div className="block-library-item" key={block.type}><b>{block.label}</b><span>{block.hint}</span></div>)}
+          </div>
+        </aside>
+
+        <div className="format-preview-wrap">
+          <div className="format-preview-toolbar">
+            <span>A4 縦 · 210 × 297mm</span>
+            <button className="button secondary" onClick={() => addPage(format.pages.findIndex((page) => page.id === selectedPage.id))}>このページの後へ追加</button>
+          </div>
+          <article className="a4-preview" aria-label={`${selectedPage.title} の完成プレビュー`}>
+            {selectedPage.sections.map((section) => (
+              <div className={`format-section columns-${section.columns} ratio-${section.ratio.replace(":", "-")}`} key={section.id}>
+                {section.content.map((column, columnIndex) => (
+                  <div className="format-column" key={`${section.id}-${columnIndex}`}>
+                    {column.map((block, blockIndex) => (
+                      <FormatBlock
+                        key={block.id}
+                        block={block}
+                        onChange={(patch) => updateBlock(section.id, columnIndex, block.id, patch)}
+                        onMove={(direction) => moveBlock(section.id, columnIndex, block.id, direction)}
+                        onDelete={() => deleteBlock(section.id, columnIndex, block.id)}
+                        first={blockIndex === 0}
+                        last={blockIndex === column.length - 1}
+                      />
+                    ))}
+                    <div className="add-block-row">
+                      {COMMON_BLOCKS.map((block) => <button key={block.type} onClick={() => addBlock(section.id, columnIndex, block.type)}>＋ {block.label}</button>)}
+                    </div>
+                  </div>
+                ))}
+                {section.columns === 2 && <select className="column-ratio" value={section.ratio} onChange={(event) => updatePage(selectedPage.id, (page) => ({ ...page, sections: page.sections.map((item) => item.id === section.id ? { ...item, ratio: event.target.value } : item) }))} aria-label="2列の幅">
+                  <option value="50:50">50 : 50</option><option value="40:60">40 : 60</option><option value="60:40">60 : 40</option>
+                </select>}
+              </div>
+            ))}
+            <div className="layout-actions"><button onClick={() => addSection(1)}>＋ 1列を追加</button><button onClick={() => addSection(2)}>＋ 2列にする</button></div>
+          </article>
+        </div>
+      </div>
+      <div className="action-row"><button className="button primary" onClick={onSave}>フォーマットを保存</button><span className="note">保存先: このブラウザ（クラウド保存・AI生成・PDF連携は次フェーズ）</span></div>
+    </section>
+  );
+}
+
+function FormatBlock({ block, onChange, onMove, onDelete, first, last }) {
+  const label = COMMON_BLOCKS.find((item) => item.type === block.type)?.label || block.label;
+  return (
+    <div className={`format-block format-block-${block.type}`}>
+      <div className="format-block-tools"><span>{label}</span><button onClick={() => onMove(-1)} disabled={first} aria-label="上へ移動">↑</button><button onClick={() => onMove(1)} disabled={last} aria-label="下へ移動">↓</button><button onClick={onDelete} aria-label="ブロックを削除">×</button></div>
+      {block.type === "divider" ? <hr /> : block.type === "page-title" ? <input value={block.content} onChange={(event) => onChange({ content: event.target.value })} aria-label="ページタイトル" /> : block.type === "heading" ? <input value={block.content} onChange={(event) => onChange({ content: event.target.value })} aria-label="見出し" /> : <textarea value={block.content} onChange={(event) => onChange({ content: event.target.value })} placeholder={block.type === "ai-text" ? "AI鑑定文章を入力、または生成します" : "本文を入力"} rows={block.type === "ai-text" ? 5 : 4} />}
+      {block.type === "ai-text" && <select value={block.aiPurpose || "auto"} onChange={(event) => onChange({ aiPurpose: event.target.value })} aria-label="AI文章の目的"><option value="auto">目的を自動判定</option><option value="introduction">導入</option><option value="explanation">結果の説明</option><option value="advice">アドバイス</option><option value="summary">まとめ</option></select>}
+    </div>
   );
 }
 
