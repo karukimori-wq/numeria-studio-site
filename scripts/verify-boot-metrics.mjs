@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { runInNewContext } from 'node:vm';
+const source = readFileSync('src/boot-metrics.js', 'utf8').replace('__BOOT_VERSION__', 'test-version');
+function setup(previous = [], storageFails = false) {
+  let time = 0, screen = null, role = 'user', appended = 0;
+  const stored = new Map([['numeria-boot-history-v1', JSON.stringify(previous)]]), timers = [], intervals = [], calls = [];
+  const storage = { getItem(key) { if(storageFails) throw Error('blocked'); return stored.get(key) || null; }, setItem(key, value) { if(storageFails) throw Error('blocked'); stored.set(key, value); }, removeItem(key) { stored.delete(key); } };
+  const listeners = new Map();
+  const window = { fetch(input, init) { calls.push({input, init}); return Promise.resolve({ok:true,status:200}); }, addEventListener(name, fn) { listeners.set(name, fn); }, NumeriaNavigation: { getRole() { return role; } } };
+  const document = { documentElement: {}, querySelectorAll(selector) { return selector === '.app-shell,.auth-page' && screen ? [screen] : []; }, querySelector() { return null; }, getElementById() { return null; }, addEventListener() {}, createElement() { return { style: {}, setAttribute() {}, appendChild() {}, append() {}, addEventListener() {} }; }, body: { appendChild() { appended++; } } };
+  const performance = {timeOrigin:1000000,now:()=>time,getEntriesByType(type) { return type === 'resource' ? [{name:'https://app.test/assets/app.js?token=SECRET',startTime:10,duration:20,responseEnd:30,transferSize:100},{name:'https://app.test/api/customer?email=PRIVATE',startTime:0,duration:50}] : []; }};
+  runInNewContext(source, {window,document,performance,localStorage:storage,sessionStorage:storage,URL,Headers,location:{href:'https://app.test/original.html',origin:'https://app.test'},Date,Blob, getComputedStyle:()=>({display:'block',visibility:'visible'}),setTimeout(fn,ms){timers.push({fn,ms});return timers.length;},setInterval(fn){intervals.push(fn);return 1;},clearInterval(){},MutationObserver:class{observe(){}disconnect(){}},console});
+  return { window, stored, timers, calls, listeners, advance(ms){time=ms;}, mount(kind, direct) {screen={isConnected:true,getBoundingClientRect:()=>({width:100,height:100}),classList:{contains:()=>kind==='home'},closest:()=>direct?{}:null};intervals[0]();}, admin() {role='admin';}, appended:()=>appended };
+}
+const env=setup(Array.from({length:25},(_,i)=>({id:'old-'+i})));
+assert.equal(JSON.parse(env.stored.get('numeria-boot-history-v1')).length,20);
+env.advance(5200);env.window.NumeriaBootMetrics.event('direct-start');
+assert.equal(env.window.NumeriaBootMetrics.snapshot().route,'unknown','Starting fallback is not proof of success');
+env.advance(6100);env.mount('login',true);
+let row=env.window.NumeriaBootMetrics.snapshot();assert.equal(row.route,'direct');assert.equal(row.readyMs,6100);assert.equal(row.loginReadyMs,6100);
+env.advance(7000);env.mount('home',true);row=env.window.NumeriaBootMetrics.snapshot();assert.equal(row.homeReadyMs,7000);
+env.window.NumeriaWaitForClerkToken=async()=> 'SECRET_TOKEN';
+assert.equal(await env.window.NumeriaWaitForClerkToken(),'SECRET_TOKEN');
+const options={headers:{Authorization:'Bearer SECRET_TOKEN'}};
+await env.window.fetch('/api/workspace-state?user=PRIVATE',options);
+assert.equal(env.calls[0].init, options, 'Telemetry must preserve original request');
+await assert.rejects(env.window.NumeriaBootMetrics.measure('workspace',()=>Promise.reject(Error('PRIVATE error'))));
+row=env.window.NumeriaBootMetrics.snapshot();
+assert.doesNotMatch(JSON.stringify(row), /SECRET|PRIVATE|https:/);
+assert.ok(row.events.some(e=>e.name==='workspace-end'&&e.result==='failed'));
+env.window.NumeriaBootMetrics.open();assert.equal(env.appended(),0,'Non-admin cannot open history');
+env.admin();env.window.NumeriaBootMetrics.open();assert.equal(env.appended(),1);
+const normal=setup();normal.advance(800);normal.mount('home',false);assert.equal(normal.window.NumeriaBootMetrics.snapshot().route,'normal');
+const blocked=setup([],true);assert.equal(await blocked.window.NumeriaBootMetrics.measure('workspace',async()=>42),42);
+console.log('Boot metrics verified: bounded history, actual rendered owner, login/home timing, admin gate, privacy, unchanged requests and unavailable storage.');
