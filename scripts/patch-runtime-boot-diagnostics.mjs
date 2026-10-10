@@ -8,7 +8,7 @@ if (html.includes(marker)) throw new Error("Runtime boot diagnostics patch was a
 if (!html.includes("<head>")) throw new Error("Expected <head> in Production HTML.");
 
 const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()=>{
-  const state=window.NumeriaRuntimeBootDiagnostics={marker:"${marker}",startedAt:new Date().toISOString(),errors:[]};
+  const state=window.NumeriaRuntimeBootDiagnostics={marker:"${marker}",startedAt:new Date().toISOString(),startedAtMs:Date.now(),errors:[]};
   function clean(value){return String(value==null?"":value).replace(/\\s+/g," ").slice(0,500)}
   function record(kind,message,source,line,column){
     state.errors.push({kind,message:clean(message),source:clean(source),line:line||null,column:column||null,at:new Date().toISOString()});
@@ -32,9 +32,18 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
     if(el)el.remove();
   }
   function show(){
-    if(appMounted())return;
+    if(appMounted()){hide();return;}
+    const failed=state.recovery==="failed"&&state.directMount==="failed";
+    const timedOut=Date.now()-state.startedAtMs>=30000;
     let el=document.getElementById("numeria-runtime-boot-failure");
     if(!el){el=document.createElement("section");el.id="numeria-runtime-boot-failure";(document.body||document.documentElement).appendChild(el)}
+    el.style.cssText="position:fixed;left:16px;right:16px;top:120px;z-index:2147483646;padding:16px;border:1px solid #d7d0c4;border-radius:16px;background:#fffdf8;color:#241b3a;font:14px/1.6 system-ui,-apple-system,sans-serif;box-shadow:0 12px 36px rgba(36,27,58,.14);word-break:break-word";
+    el.setAttribute("role","status");
+    el.setAttribute("aria-live","polite");
+    if(!failed&&!timedOut){
+      el.innerHTML="<strong>読み込み中です…</strong><p style='margin:6px 0 0'>画面を準備しています。しばらくお待ちください。</p>";
+      return;
+    }
     const last=state.errors[state.errors.length-1];
     const resources=performance.getEntriesByType("resource").map(entry=>entry.name).filter(name=>/index-|numeria-app-|framework-|rolldown-runtime-/.test(name));
     const nodes=[".app-shell","aside.sidebar",".page",".main-area",".auth-loading","input","button"].map(selector=>selector+"="+document.querySelectorAll(selector).length).join(" / ");
@@ -45,8 +54,10 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
     const loaded="runtime resources="+String(resources.length)+" "+resources.slice(-3).map(url=>url.split("/").pop()).join(", ");
     const lastError=last?(last.kind+": "+last.message+(last.source?" @ "+last.source:"")):"error=none";
     const detail=[lastError,nav,rsc,recovery,directMount,nodes,loaded].join("\\n");
-    el.style.cssText="position:fixed;left:16px;right:16px;top:120px;z-index:2147483646;padding:16px;border:1px solid #d7d0c4;border-radius:16px;background:#fffdf8;color:#241b3a;font:13px/1.6 system-ui,-apple-system,sans-serif;box-shadow:0 12px 36px rgba(36,27,58,.14);word-break:break-word";
-    el.innerHTML="<strong style='display:block;font-size:15px;margin-bottom:6px'>Numeria本体の起動を確認できません</strong><span style='display:block;margin-bottom:8px'>起動診断: ${marker}</span><code style='display:block;white-space:pre-wrap'>"+detail.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))+"</code>";
+    const title=failed?"アプリを読み込めませんでした":"読み込みに時間がかかっています";
+    el.innerHTML="<strong style='display:block;font-size:15px;margin-bottom:6px'>"+title+"</strong><p>通信環境を確認して、もう一度お試しください。</p><button type='button' id='numeria-runtime-boot-retry'>再読み込み</button><details style='margin-top:12px'><summary>詳しい情報</summary><code style='display:block;white-space:pre-wrap'>"+detail.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))+"</code></details>";
+    const retry=document.getElementById("numeria-runtime-boot-retry");
+    if(retry)retry.addEventListener("click",()=>window.location.reload());
   }
   function recoverFromCachedLegacyIndex(){
     if(appMounted()||state.recovery==="started"||state.recovery==="done")return;
@@ -99,14 +110,16 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
   window.addEventListener("numeria-navigation-ready",()=>{state.navigationReady=true;hide()});
   // The auth shell can be rendered by the server before the client app finishes mounting.
   // Remove any stale diagnostic overlay as soon as the login form becomes usable.
-  const authRecoveryTimer=setInterval(()=>{if(authMounted()){hide();clearInterval(authRecoveryTimer)}},250);
+  const authRecoveryTimer=setInterval(()=>{if(appMounted()){hide();clearInterval(authRecoveryTimer)}},250);
   setTimeout(recoverFromCachedLegacyIndex,1800);
   setTimeout(recoverFromCachedLegacyIndex,3600);
   setTimeout(directMountApp,5200);
+  setTimeout(show,1200);
   setTimeout(show,5000);
   setTimeout(recoverFromCachedLegacyIndex,6500);
   setTimeout(directMountApp,7600);
   setTimeout(show,10000);
+  setTimeout(show,30000);
 })();</script>`;
 
 html = html.replace("<head>", `<head>${script}`);
