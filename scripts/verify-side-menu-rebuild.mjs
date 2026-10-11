@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { runInNewContext } from "node:vm";
 
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 const build = pkg.scripts?.build || "";
@@ -88,5 +89,18 @@ assert.ok(menuPatch.includes("numeria-ai-settings-page"), "AI settings page must
 assert.ok(menuPatch.includes("https://growth-engine.karukimori.workers.dev/"), "Business customer-management navigation must point to Growth Engine Production.");
 assert.ok(!menuPatch.includes("clickLabel("), "Rebuilt menu must not use the retired generic label proxy.");
 assert.ok(!menuPatch.includes("rgba(196,166,93,.001)"), "Rebuilt menu must not use transparent tap overlays.");
+
+// Verify the settings entry is a filtered view of the same plan-aware menu,
+// not a second bottom navigation or a shortcut to the old support sheet.
+const config = menuPatch.match(/const MENU_SECTIONS = ([\s\S]*?);\n\nconst style/)[1];
+const render = menuPatch.match(/function renderNavigation\(state\)\{[\s\S]*?\nfunction renderMenu/)[0].replace(/\nfunction renderMenu$/, "");
+const nav = { innerHTML: "", querySelectorAll: () => [] }, heading = { textContent: "" };
+const menu = { querySelector: selector => selector === "nav" ? nav : selector === "header h2" ? heading : null };
+const context = { document: { getElementById: () => menu }, result: null };
+runInNewContext(`const MENU_SECTIONS=${config};const MENU_ID="menu";let lastRenderSignature="",menuMode="settings";function sectionHtml(section,state){return section.id;} ${render};renderNavigation({role:"",plan:"free",page:"dashboard",admin:false});`, context);
+assert.equal(heading.textContent,"設定");
+assert.equal(nav.innerHTML,"supportadminsession", "Settings uses only settings/admin/session sections; visibility remains in sectionHtml/accessFor");
+assert.ok(menuPatch.includes('openSettings:openSettings'), "Expose the retained settings button action");
+assert.ok(menuPatch.includes('id: "formatSettings", label: "鑑定書フォーマット"'), "Provide an explicit format editing entry separate from reports");
 
 console.log("Rebuilt mobile side menu verified: Navigation API + native fallback, one-tap auto-resume, and scroll-safe pointer gestures.");
