@@ -80,6 +80,7 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
     if(appMounted()||state.directMount==="started"||state.directMount==="done")return;
     if(!window.__VINEXT_RSC_DONE__)return;
     state.directMount="started";
+    window.__NUMERIA_DIRECT_MOUNT_STARTED__=Date.now();
     Promise.all([
       import("/assets/framework-CXnKph_e.js"),
       import("/assets/numeria-app-Cckhajir.js?numeria-direct=${marker}")
