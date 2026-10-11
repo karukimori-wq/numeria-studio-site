@@ -23,7 +23,9 @@ try {
     assert.ok(result.includes('window.originalMenu=true;'), "Retain unrelated runtime");
     assert.ok(result.includes('(orientation:portrait)') && result.includes('(orientation:landscape)'), "Handle portrait and landscape separately");
     assert.ok(result.includes('grid-template-columns:repeat(5,minmax(0,1fr))'), "Use five equal columns");
-    assert.ok(result.includes('content:"7"'), "Central 7 must be independent of the selected divination symbol");
+    assert.ok(!result.includes('content:"7"') && !result.includes('.nav-icon{font-size:0'), "Do not replace the native divination symbol with a fixed 7");
+    assert.ok(result.includes('class="numeria-settings-icon"') && result.includes('stroke="currentColor"'), "Settings uses palette-matching SVG line art");
+    assert.ok(!result.includes('>⚙</span>'), "Do not use platform-dependent gear emoji");
     assert.ok(result.includes('openSettings()'), "Settings must not open the old support sheet");
     assert.ok(!result.includes('numeria-mobile-bottom-navigation-runtime'), "Do not recreate the removed overlay");
     execFileSync(process.execPath, [patchPath], { cwd: directory });
@@ -46,7 +48,7 @@ try {
     // A toolbar resize without an active input must not be mistaken for a keyboard.
     portrait.matches=true;document.activeElement=null;view.height=480;listeners.viewport();assert.ok(!classes.has('numeria-input-keyboard'));
   }
-  console.log("Bottom navigation verified: single retained menu, portrait/landscape, central 7, settings entry and keyboard clearance.");
+  console.log("Bottom navigation verified: single retained menu, portrait/landscape, native divination symbol, line-art settings and keyboard clearance.");
 } finally {
   rmSync(directory, { recursive: true, force: true });
 }

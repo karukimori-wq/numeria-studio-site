@@ -15,7 +15,7 @@ const supportStart = 'function ensureSupportNav(){';
 const supportEnd = 'function ensureChrome(){';
 const start = cleaned.indexOf(supportStart), end = cleaned.indexOf(supportEnd, start);
 if (start < 0 || end < start) throw new Error("Original support navigation generator was not found.");
-cleaned = cleaned.slice(0, start) + `function ensureSupportNav(){var nav=document.querySelector(".sidebar nav");if(!nav||nav.querySelector("[data-mobile-support-nav]"))return;var button=document.createElement("button");button.type="button";button.setAttribute("data-mobile-support-nav","true");button.setAttribute("aria-label","設定を開く");button.innerHTML='<span class="nav-icon" aria-hidden="true">⚙</span>設定';button.addEventListener("click",function(){if(window.NumeriaMobileSideMenu)window.NumeriaMobileSideMenu.openSettings()});nav.appendChild(button)}` + cleaned.slice(end);
+cleaned = cleaned.slice(0, start) + `function ensureSupportNav(){var nav=document.querySelector(".sidebar nav");if(!nav||nav.querySelector("[data-mobile-support-nav]"))return;var button=document.createElement("button");button.type="button";button.setAttribute("data-mobile-support-nav","true");button.setAttribute("aria-label","設定を開く");button.innerHTML='<span class="nav-icon" aria-hidden="true"><svg class="numeria-settings-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M4 7h5m4 0h7M4 17h9m4 0h3"/><circle cx="11" cy="7" r="2"/><circle cx="15" cy="17" r="2"/></svg></span>設定';button.addEventListener("click",function(){if(window.NumeriaMobileSideMenu)window.NumeriaMobileSideMenu.openSettings()});nav.appendChild(button)}` + cleaned.slice(end);
 
 const marker = "NumeriaRetainedMobileNavigation.v2";
 if (!cleaned.includes(marker)) {
@@ -25,8 +25,7 @@ if (!cleaned.includes(marker)) {
   aside.sidebar nav{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:0!important;width:100%}
   aside.sidebar nav button{width:100%!important;min-width:0;justify-content:center;box-sizing:border-box}
   aside.sidebar nav button:nth-of-type(3){width:64px!important;height:64px!important;justify-self:center;margin-top:-16px!important;flex:none!important}
-  aside.sidebar nav button:nth-of-type(3) .nav-icon{font-size:0!important}
-  aside.sidebar nav button:nth-of-type(3) .nav-icon:after{content:"7";font:32px/1 Georgia,serif}
+  .numeria-settings-icon{display:block;margin:auto;color:inherit}
   .main-area,.page,.editor-layout,.report-panel,.settings-page{padding-bottom:var(--numeria-navigation-clearance,136px)!important}
   html{scroll-padding-bottom:var(--numeria-navigation-clearance,136px)}
   .save-draft-button,.report-actions button,.action-row button,input,textarea,select{scroll-margin-bottom:var(--numeria-navigation-clearance,136px)}
@@ -46,4 +45,4 @@ window.addEventListener("resize",update);if(portrait.addEventListener)portrait.a
 }
 
 writeFileSync(htmlPath, cleaned);
-console.log("Original navigation retained: settings entry, central 7, portrait-only layout and keyboard-safe clearance.");
+console.log("Original navigation retained: divination icon, line-art settings entry, portrait-only layout and keyboard-safe clearance.");
