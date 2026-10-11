@@ -37,12 +37,19 @@ if (!cleaned.includes(marker)) {
 </style>`;
   const runtime = `<script id="numeria-retained-navigation-runtime">(()=>{
 const root=document.documentElement,portrait=window.matchMedia("(max-width:760px) and (orientation:portrait)");let observed=null,lastClearance="";
+let lastReportActivation=0;
 function update(){var input=document.activeElement;var editing=!!(input&&input.matches&&input.matches('input:not([type="button"]):not([type="checkbox"]):not([type="radio"]),textarea,select,[contenteditable="true"]'));var view=window.visualViewport;var keyboard=portrait.matches&&editing&&view&&window.innerHeight-view.height>150;root.classList.toggle("numeria-input-keyboard",!!keyboard);var sidebar=document.querySelector("aside.sidebar");if(sidebar&&sidebar!==observed&&observer){if(observed)observer.unobserve(observed);observed=sidebar;observer.observe(sidebar)}var clearance="0px";if(portrait.matches&&!keyboard){var rect=sidebar&&sidebar.getBoundingClientRect();clearance=Math.ceil(rect&&rect.height?Math.max(136,window.innerHeight-rect.top+24):136)+"px"}if(clearance!==lastClearance){lastClearance=clearance;root.style.setProperty("--numeria-navigation-clearance",clearance)}}
+function focusReports(attempt){var target=document.querySelector(".history-panel,.client-history,.client-history-heading");if(target&&target.scrollIntoView){target.scrollIntoView({behavior:"smooth",block:"start"});return}if((attempt||0)<24)setTimeout(function(){focusReports((attempt||0)+1)},80)}
+function routeReports(){var api=window.NumeriaNavigation;if(api&&typeof api.go==="function"){api.go("appraisalProfiles");setTimeout(function(){focusReports(0)},60);return true}return false}
+function queueReports(){var started=Date.now(),timer=setInterval(function(){if(routeReports()||Date.now()-started>8000)clearInterval(timer)},120)}
+function isReportsButton(button){if(!button||button.matches('[data-mobile-support-nav]'))return false;var items=Array.from(document.querySelectorAll("aside.sidebar nav button"));return items.indexOf(button)===3&&String(button.textContent||"").replace(/\\s+/g,"").indexOf("鑑定書")!==-1}
+function activateReports(event){if(!portrait.matches)return;var button=event.target&&event.target.closest&&event.target.closest("aside.sidebar nav button");if(!isReportsButton(button))return;event.preventDefault();event.stopPropagation();if(typeof event.stopImmediatePropagation==="function")event.stopImmediatePropagation();if(Date.now()-lastReportActivation<500)return;lastReportActivation=Date.now();if(!routeReports())queueReports()}
 var observer=typeof ResizeObserver==="function"?new ResizeObserver(update):null;
 window.addEventListener("resize",update);if(portrait.addEventListener)portrait.addEventListener("change",update);if(window.visualViewport)window.visualViewport.addEventListener("resize",update);document.addEventListener("focusin",update);document.addEventListener("focusout",function(){setTimeout(update,0)});document.addEventListener("numeria-navigation-ready",update);if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",update);else update();if(typeof MutationObserver==="function")new MutationObserver(update).observe(document.body,{childList:true,subtree:true});
+document.addEventListener("click",activateReports,{capture:true,passive:false});document.addEventListener("touchend",activateReports,{capture:true,passive:false});
 })();</script>`;
   cleaned = cleaned.replace("</head>",style+"</head>").replace("</body>",runtime+"</body>");
 }
 
 writeFileSync(htmlPath, cleaned);
-console.log("Original navigation retained: divination icon, line-art settings entry, portrait-only layout and keyboard-safe clearance.");
+console.log("Original navigation retained: divination icon, line-art settings entry, report list route, portrait-only layout and keyboard-safe clearance.");
