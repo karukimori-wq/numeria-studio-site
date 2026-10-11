@@ -4,14 +4,14 @@ import { runInNewContext } from 'node:vm';
 const source = readFileSync('src/boot-metrics.js', 'utf8').replace('__BOOT_VERSION__', 'test-version');
 function setup(previous = [], storageFails = false) {
   let time = 0, screen = null, role = 'user', appended = 0;
-  const stored = new Map([['numeria-boot-history-v1', JSON.stringify(previous)]]), timers = [], intervals = [], calls = [];
+  const stored = new Map([['numeria-boot-history-v1', JSON.stringify(previous)]]), timers = [], intervals = [], calls = [], elements = [];
   const storage = { getItem(key) { if(storageFails) throw Error('blocked'); return stored.get(key) || null; }, setItem(key, value) { if(storageFails) throw Error('blocked'); stored.set(key, value); }, removeItem(key) { stored.delete(key); } };
   const listeners = new Map();
   const window = { fetch(input, init) { calls.push({input, init}); return Promise.resolve({ok:true,status:200}); }, addEventListener(name, fn) { listeners.set(name, fn); }, NumeriaNavigation: { getRole() { return role; } } };
-  const document = { documentElement: {}, querySelectorAll(selector) { return selector === '.app-shell,.auth-page' && screen ? [screen] : []; }, querySelector() { return null; }, getElementById() { return null; }, addEventListener() {}, createElement() { return { style: {}, setAttribute() {}, appendChild() {}, append() {}, addEventListener() {} }; }, body: { appendChild() { appended++; } } };
+  const document = { documentElement: {}, querySelectorAll(selector) { return selector === '.app-shell,.auth-page' && screen ? [screen] : []; }, querySelector() { return null; }, getElementById() { return null; }, addEventListener() {}, createElement(tag) { const el = { tag, style: {}, children: [], listeners: {}, remove() {}, setAttribute() {}, appendChild(child) { this.children.push(child); }, append(...children) { this.children.push(...children); }, addEventListener(name, fn) { this.listeners[name] = fn; } }; elements.push(el); return el; }, body: { appendChild() { appended++; } } };
   const performance = {timeOrigin:1000000,now:()=>time,getEntriesByType(type) { return type === 'resource' ? [{name:'https://app.test/assets/app.js?token=SECRET',startTime:10,duration:20,responseEnd:30,transferSize:100},{name:'https://app.test/api/customer?email=PRIVATE',startTime:0,duration:50}] : []; }};
   runInNewContext(source, {window,document,performance,localStorage:storage,sessionStorage:storage,URL,Headers,location:{href:'https://app.test/original.html',origin:'https://app.test'},Date,Blob, getComputedStyle:()=>({display:'block',visibility:'visible'}),setTimeout(fn,ms){timers.push({fn,ms});return timers.length;},setInterval(fn){intervals.push(fn);return 1;},clearInterval(){},MutationObserver:class{observe(){}disconnect(){}},console});
-  return { window, stored, timers, calls, listeners, advance(ms){time=ms;}, mount(kind, direct) {screen={isConnected:true,getBoundingClientRect:()=>({width:100,height:100}),classList:{contains:()=>kind==='home'},closest:()=>direct?{}:null};intervals[0]();}, admin() {role='admin';}, appended:()=>appended };
+  return { window, stored, timers, calls, listeners, elements, advance(ms){time=ms;}, mount(kind, direct) {screen={isConnected:true,getBoundingClientRect:()=>({width:100,height:100}),classList:{contains:()=>kind==='home'},closest:()=>direct?{}:null};intervals[0]();}, admin() {role='admin';}, appended:()=>appended };
 }
 const env=setup(Array.from({length:25},(_,i)=>({id:'old-'+i})));
 assert.equal(JSON.parse(env.stored.get('numeria-boot-history-v1')).length,20);
@@ -29,8 +29,14 @@ await assert.rejects(env.window.NumeriaBootMetrics.measure('workspace',()=>Promi
 row=env.window.NumeriaBootMetrics.snapshot();
 assert.doesNotMatch(JSON.stringify(row), /SECRET|PRIVATE|https:/);
 assert.ok(row.events.some(e=>e.name==='workspace-end'&&e.result==='failed'));
-env.window.NumeriaBootMetrics.open();assert.equal(env.appended(),0,'Non-admin cannot open history');
-env.admin();env.window.NumeriaBootMetrics.open();assert.equal(env.appended(),1);
+env.window.NumeriaBootMetrics.openAdmin();env.window.NumeriaBootMetrics.open();assert.equal(env.appended(),0,'Non-admin cannot open history');
+env.admin();env.window.NumeriaBootMetrics.open();assert.equal(env.appended(),1);env.window.NumeriaBootMetrics.openAdmin();assert.equal(env.appended(),2);
+const toolsPanel = env.elements.find(el => el.id === 'numeria-admin-tools');
+assert.ok(toolsPanel.children.some(el => el.textContent === '管理者メニュー'));
+const historyButton = toolsPanel.children.find(el => el.textContent === '起動履歴');
+assert.ok(historyButton, 'Admin destination must visibly contain history entry');
+historyButton.listeners.click();assert.equal(env.appended(),3,'History button opens recorded timings');
+const preview=setup();preview.window.NumeriaAdminPreviewState={adminMode:true};preview.window.NumeriaBootMetrics.openAdmin();assert.equal(preview.appended(),1,'Verified preview admin can open tools even before role state is synchronized');
 const normal=setup();normal.advance(800);normal.mount('home',false);assert.equal(normal.window.NumeriaBootMetrics.snapshot().route,'normal');
 const blocked=setup([],true);assert.equal(await blocked.window.NumeriaBootMetrics.measure('workspace',async()=>42),42);
 console.log('Boot metrics verified: bounded history, actual rendered owner, login/home timing, admin gate, privacy, unchanged requests and unavailable storage.');

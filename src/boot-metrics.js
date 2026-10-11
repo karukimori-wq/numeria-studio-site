@@ -84,10 +84,23 @@
   }
   function ensureEntry() {
     if (!admin()) { document.querySelectorAll('[data-numeria-boot-entry]').forEach(node => node.remove()); return; }
-    const actions = document.querySelector('#numeria-admin-panel .admin-actions');
+    const actions = document.querySelector('.admin-page .admin-header') || document.querySelector('#numeria-admin-panel .admin-actions');
     if (actions && !actions.querySelector('[data-numeria-boot-entry]')) {
       const button = document.createElement('button'); button.type = 'button'; button.dataset.numeriaBootEntry = 'true'; button.textContent = '起動履歴'; button.addEventListener('click', open); actions.appendChild(button);
     }
+  }
+  function openAdmin() {
+    if (!admin()) return;
+    document.getElementById('numeria-admin-tools')?.remove();
+    const panel = document.createElement('section'); panel.id = 'numeria-admin-tools'; panel.className = 'no-print';
+    panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true'); panel.setAttribute('aria-label', '管理者メニュー');
+    panel.style.cssText = 'position:fixed;inset:0;z-index:2147483646;background:#fffdf8;color:#241b3a;padding:24px 16px;overflow:auto;font:16px/1.6 system-ui';
+    const heading = document.createElement('h2'); heading.textContent = '管理者メニュー'; panel.appendChild(heading);
+    const note = document.createElement('p'); note.textContent = '起動履歴から、この端末の起動時間を確認・書き出せます。'; panel.appendChild(note);
+    for (const [title, action] of [['起動履歴', () => { panel.remove(); open(); }], ['サイト管理', () => { if (window.NumeriaNavigation?.go) { panel.remove(); window.NumeriaNavigation.go('admin'); } else { note.textContent = 'サイト管理の準備中です。起動履歴は利用できます。'; } }], ['閉じる', () => panel.remove()]]) {
+      const button = document.createElement('button'); button.type = 'button'; button.textContent = title; button.style.cssText = 'display:block;width:100%;padding:16px;margin:12px 0;border:1px solid #ded6c6;border-radius:12px;background:#fff;color:#241b3a;font:inherit'; button.addEventListener('click', action); panel.appendChild(button);
+    }
+    document.body.appendChild(panel);
   }
   function open() {
     if (!admin()) return;
@@ -129,7 +142,7 @@
       break;
     }
   }
-  window.NumeriaBootMetrics = { event, measure, open, snapshot() { collect(); return JSON.parse(JSON.stringify(run)); } };
+  window.NumeriaBootMetrics = { event, measure, open, openAdmin, snapshot() { collect(); return JSON.parse(JSON.stringify(run)); } };
   event('measurement-start'); save();
   const timer = setInterval(check, 250);
   try { observer = new MutationObserver(check); observer.observe(document.documentElement, { childList: true, subtree: true }); } catch {}
