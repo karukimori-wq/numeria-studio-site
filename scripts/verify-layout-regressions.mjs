@@ -48,3 +48,12 @@ const css = readFileSync("dist/assets/index-CEGe-9Xe.css", "utf8");
 assert.match(css, /\.saved-preset-rail\{display:flex;gap:10px;min-width:0;max-width:100%;overflow-x:auto/);
 assert.match(css, /\.settings-controls,\.format-settings-reordered,\.format-basic-card\{min-width:0!important/);
 console.log("Layout regressions verified: shared bootstrap, late fallback ownership, bounded preset rail, and preserved selection/duplicate/delete handlers. Real browser layout remains unverified.");
+
+const frameworkName=html.match(/assets\/(framework-client-[a-f0-9]+\.js)/)[1];
+const framework=readFileSync("dist/assets/"+frameworkName,"utf8");
+assert.match(framework,/NumeriaClientRoot\.v1/);assert.match(framework,/e\.createRoot=function/);
+assert.ok(app.includes(frameworkName)&&index.includes(frameworkName),"Client and legacy entrypoints must share the same React instance");
+const factory=framework.slice(framework.indexOf('e.createRoot=function'),framework.indexOf(';e.hydrateRoot=function'));
+let args,events=0;const exports={};const container={};
+new Function('e','s','a','ep','yt','Sd','Fp','Qs','$s','ec','Pp',factory)(exports,()=>true,n=>n,(...values)=>{args=values;return{current:'fiber'}},'root',()=>{events++},function(root){this.root=root},()=>{},()=>{},()=>{},()=>{});
+const root=exports.createRoot(container);assert.equal(args[2],false,"Client root must disable hydration");assert.equal(container.root,'fiber');assert.equal(events,1);assert.ok(root.root);

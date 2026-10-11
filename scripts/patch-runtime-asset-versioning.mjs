@@ -48,6 +48,22 @@ function guardIndexBootstrapUntilRscReady(source, indexName) {
   return replaceAll(source, bootstrapCall, guardedCall);
 }
 
+// The exported framework was tree-shaken for hydration only. Restore the standard
+// ReactDOM client root using its retained React 19.2.6 internals (same React instance).
+const frameworkName = "framework-CXnKph_e.js";
+let frameworkSource = readFileSync(`${assetsDir}/${frameworkName}`, "utf8");
+const rootAnchor = "e.hydrateRoot=function(e,t,n)";
+if (!frameworkSource.includes(rootAnchor) || !frameworkSource.includes("function Fp(e){this._internalRoot=e}")) throw new Error("React client root anchors missing");
+frameworkSource = frameworkSource.replace(rootAnchor, '/* NumeriaClientRoot.v1 */e.createRoot=function(e,t){if(!s(e))throw Error(a(299));var n=ep(e,1,!1,null,null,!!(t&&t.unstable_strictMode),t&&t.identifierPrefix||``,null,t&&t.onUncaughtError||Qs,t&&t.onCaughtError||$s,t&&t.onRecoverableError||ec,Pp);e[yt]=n.current;Sd(e);return new Fp(n)};'+rootAnchor);
+const clientFrameworkName = `framework-client-${digest(frameworkSource)}.js`;
+writeFileSync(`${assetsDir}/${clientFrameworkName}`, frameworkSource);
+// Rewrite every importer before hashing so all components share this React instance.
+for (const file of readdirSync(assetsDir).filter(name => name.endsWith(".js") && name !== clientFrameworkName && name !== frameworkName)) {
+  const path = `${assetsDir}/${file}`; const source = readFileSync(path,"utf8");
+  writeFileSync(path, replaceAll(source, frameworkName, clientFrameworkName));
+}
+for (const path of htmlPaths) writeFileSync(path, replaceAll(readFileSync(path,"utf8"),frameworkName,clientFrameworkName));
+
 const assetNames = readdirSync(assetsDir);
 const appCandidates = assetNames.filter((name) => /^numeria-app-.*\.js$/.test(name) && !/^numeria-app-runtime-/.test(name));
 const appName = appCandidates.find((name) => {
