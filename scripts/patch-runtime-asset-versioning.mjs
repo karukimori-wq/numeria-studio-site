@@ -37,7 +37,7 @@ function guardIndexBootstrapUntilRscReady(source, indexName) {
   if (!source.includes("NumeriaSingleAppRoot.v1")) {
     const anchor = "async function ca(){sa();let e=await oa();e!==null&&la(e)}";
     if (!source.includes(anchor)) throw new Error(`${indexName}: bootstrap ownership anchor missing`);
-    source = source.replace(anchor, `async function ca(){/* NumeriaSingleAppRoot.v1 */if(window.__NUMERIA_BOOT_PROMISE__)return window.__NUMERIA_BOOT_PROMISE__;return window.__NUMERIA_BOOT_PROMISE__=(async()=>{sa();let e=await oa();if(e!==null&&!window.__NUMERIA_DIRECT_MOUNT_STARTED__)la(e)})()}`);
+    source = source.replace(anchor, `async function ca(){/* NumeriaSingleAppRoot.v1 */if(window.NumeriaRuntimeBootDiagnostics&&window.NumeriaRuntimeBootDiagnostics.bootMode==="client")return;if(window.__NUMERIA_BOOT_PROMISE__)return window.__NUMERIA_BOOT_PROMISE__;return window.__NUMERIA_BOOT_PROMISE__=(async()=>{sa();let e=await oa();if(e!==null&&!window.__NUMERIA_DIRECT_MOUNT_STARTED__)la(e)})()}`);
   }
   if (source.includes(rscBootstrapGuardVersion)) return source;
   const bootstrapCall = "ca()),window.__VINEXT_LINK_PREFETCH_ROUTES__";
@@ -145,3 +145,9 @@ for (const replacement of indexReplacements) {
 }
 
 console.log(`Runtime assets cache-busted with ${navigationBridgeVersion}: ${appName} -> ${versionedAppName}; ${indexReplacements.map((item) => `${item.from} -> ${item.to}`).join("; ")}`);
+
+// Static deployment: one client root owns the app, without hydrating the exported document.
+let clientHtml = readFileSync("dist/original.html", "utf8");
+clientHtml = clientHtml.replace(/<script id="_R_">import\(("[^"\n]+")\)<\/script>/, (_match, url) => `<script id="_R_">/* NumeriaClientBoot.v1; legacy index retained for diagnostics only */if(false)import(${url});window.NumeriaStartApp();</script>`);
+if (!clientHtml.includes("NumeriaClientBoot.v1")) throw new Error("Client bootstrap anchor missing");
+writeFileSync("dist/original.html", clientHtml);

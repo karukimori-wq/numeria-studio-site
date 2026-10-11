@@ -82,7 +82,7 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
     state.directMount="started";
     Promise.all([
       import("/assets/framework-CXnKph_e.js"),
-      import("/assets/numeria-app-Cckhajir.js?numeria-direct=${marker}-"+Date.now())
+      import("/assets/numeria-app-Cckhajir.js?numeria-direct=${marker}")
     ]).then(([framework,app])=>{
       // The normal bootstrap may finish while the fallback dependencies load.
       if(appMounted()){state.directMount="skipped";hide();return;}
@@ -111,13 +111,11 @@ const script = `<script id="numeria-runtime-boot-diagnostics">/* ${marker} */(()
   // The auth shell can be rendered by the server before the client app finishes mounting.
   // Remove any stale diagnostic overlay as soon as the login form becomes usable.
   const authRecoveryTimer=setInterval(()=>{if(appMounted()){hide();clearInterval(authRecoveryTimer)}},250);
-  setTimeout(recoverFromCachedLegacyIndex,1800);
-  setTimeout(recoverFromCachedLegacyIndex,3600);
-  setTimeout(directMountApp,5200);
+  // Static export has no live RSC server. Start its client app directly.
+  window.NumeriaStartApp=function(){state.bootMode="client";directMountApp()};
   setTimeout(show,1200);
   setTimeout(show,5000);
-  setTimeout(recoverFromCachedLegacyIndex,6500);
-  setTimeout(directMountApp,7600);
+
   setTimeout(show,10000);
   setTimeout(show,30000);
 })();</script>`;

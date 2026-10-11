@@ -25,9 +25,11 @@ assert.ok(html.includes("はじめての方はこちら|新規登録|パスワ�
 assert.match(html, /NumeriaMenuNavigationReadiness\.v1/, "Production HTML must include one-tap menu navigation readiness.");
 assert.match(html, /NumeriaMobileMenuNativeFallback\.v1/, "Production HTML must include native app navigation fallback and scroll-safe taps.");
 const rscDonePosition = html.indexOf("self.__VINEXT_RSC_DONE__=true");
-const bootstrapPosition = html.indexOf('<script id="_R_">import(');
+const bootstrapPosition = html.indexOf('<script id="_R_">');
 assert.ok(rscDonePosition >= 0, "Production HTML must include inline RSC completion payload.");
-assert.ok(bootstrapPosition >= 0, "Production HTML must include the Vinext index bootstrap.");
+assert.ok(bootstrapPosition >= 0, "Production HTML must include the app bootstrap.");
+assert.match(html, /if\(false\)import\([^;]+;window\.NumeriaStartApp\(\);/, "Static deployment must start one client root without executing RSC hydration");
+assert.ok(!html.includes("setTimeout(directMountApp,5200)"), "No five-second startup delay");
 assert.ok(rscDonePosition < bootstrapPosition, "Production HTML must load inline RSC payload before the Vinext index bootstrap.");
 
 const appMatch = html.match(/assets\/(numeria-app-runtime-[a-f0-9]{12}\.js)/);

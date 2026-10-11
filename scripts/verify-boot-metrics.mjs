@@ -40,3 +40,6 @@ const preview=setup();preview.window.NumeriaAdminPreviewState={adminMode:true};p
 const normal=setup();normal.advance(800);normal.mount('home',false);assert.equal(normal.window.NumeriaBootMetrics.snapshot().route,'normal');
 const blocked=setup([],true);assert.equal(await blocked.window.NumeriaBootMetrics.measure('workspace',async()=>42),42);
 console.log('Boot metrics verified: bounded history, actual rendered owner, login/home timing, admin gate, privacy, unchanged requests and unavailable storage.');
+
+const one=setup();one.window.NumeriaWaitForClerkToken=async()=> 'token';one.window.NumeriaWaitForClerkToken=one.window.NumeriaWaitForClerkToken;await one.window.NumeriaWaitForClerkToken();assert.equal(one.window.NumeriaBootMetrics.snapshot().events.filter(e=>e.name==='token-wait-start').length,1,'Reassignment must not double-wrap timing');
+const client=setup();client.window.NumeriaRuntimeBootDiagnostics={bootMode:'client'};client.mount('home',true);assert.equal(client.window.NumeriaBootMetrics.snapshot().route,'client');

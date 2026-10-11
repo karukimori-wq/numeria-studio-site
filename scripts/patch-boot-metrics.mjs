@@ -14,6 +14,7 @@ function replace(source, anchor, value, label) {
 const hook = name => 'typeof window!=="undefined"&&window.NumeriaBootMetrics&&window.NumeriaBootMetrics.event("' + name + '");';
 for (const [state, name] of [['state.recovery="started";', 'recovery-start'], ['state.recovery="done";', 'recovery-end'], ['state.recovery="failed";', 'recovery-failed'], ['state.directMount="started";', 'direct-start'], ['state.directMount="skipped";', 'direct-skipped'], ['state.directMount="done";', 'direct-render-submitted'], ['state.directMount="failed";', 'direct-failed']]) html = replace(html, state, state + hook(name), name);
 html = replace(html, 'await window.Clerk.load();', 'await (window.NumeriaBootMetrics?window.NumeriaBootMetrics.measure("auth-session",()=>window.Clerk.load()):window.Clerk.load());', 'Clerk session');
+html = replace(html, 'var scriptSources=["https://cdn.jsdelivr.net/npm/@clerk/clerk-js@6/dist/clerk.browser.js","https://unpkg.com/@clerk/clerk-js@6/dist/clerk.browser.js","/clerk.browser.js"]', 'var scriptSources=["/clerk.browser.js","https://cdn.jsdelivr.net/npm/@clerk/clerk-js@6/dist/clerk.browser.js","https://unpkg.com/@clerk/clerk-js@6/dist/clerk.browser.js"]', 'same-origin auth loader');
 html = html.replace('<head>', '<head><script id="numeria-boot-metrics">' + runtime + '</script>');
 writeFileSync('dist/original.html', html);
 let index = readFileSync('dist/index.html', 'utf8');

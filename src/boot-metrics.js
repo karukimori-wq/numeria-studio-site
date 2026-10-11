@@ -57,10 +57,12 @@
       return response;
     }, error => { event(name + '-end', { durationMs: rounded(performance.now() - at), result: 'failed' }); throw error; });
   };
+  const wrappedFunctions = new WeakSet();
   for (const [property, phase] of Object.entries({ NumeriaWaitForClerkToken: 'token-wait', NumeriaAccessContextLoad: 'access-context', NumeriaUserPreferencesLoad: 'preferences', NumeriaD1WorkspaceLoad: 'workspace' })) {
     let value;
     Object.defineProperty(window, property, { configurable: true, get() { return value; }, set(fn) {
-      value = typeof fn === 'function' ? function(...args) { return measure(phase, () => fn.apply(this, args)); } : fn;
+      if (typeof fn !== 'function' || wrappedFunctions.has(fn)) { value = fn; return; }
+      value = function(...args) { return measure(phase, () => fn.apply(this, args)); }; wrappedFunctions.add(value);
     } });
   }
   window.addEventListener('error', error => event('error', { code: /#418/.test(String(error.message || '')) ? 'react-418' : error.target && error.target.tagName === 'SCRIPT' ? 'script-load' : 'runtime' }), true);
@@ -118,7 +120,7 @@
     });
     for (const row of history()) {
       const box = document.createElement('article'); box.style.cssText = 'border:1px solid #ded6c6;border-radius:12px;padding:14px;margin:12px 0';
-      const title = document.createElement('strong'); const route = { normal: '通常起動', direct: '別の起動方法', unknown: '未判定' }[row.route] || '未判定';
+      const title = document.createElement('strong'); const route = { client: '標準起動', normal: '通常起動', direct: '別の起動方法', unknown: '未判定' }[row.route] || '未判定';
       title.textContent = new Date(row.startedAt).toLocaleString('ja-JP') + ' ／ ' + route + ' ／ ' + (row.readyMs == null ? '表示未確認' : ((row.screen === 'home' ? row.homeReadyMs : row.readyMs) / 1000).toFixed(2) + '秒') + ' ／ ' + (row.screen === 'home' ? 'ホーム' : row.screen === 'login' ? 'ログイン画面' : '準備中'); box.appendChild(title);
       const version = document.createElement('p'); version.textContent = '版：' + row.version + (row.entryMs == null ? '' : ' ／ 最初の入口：約' + row.entryMs + 'ms'); box.appendChild(version);
       const details = document.createElement('details'), summary = document.createElement('summary'), pre = document.createElement('pre'); summary.textContent = '処理ごとの時間を見る'; pre.style.cssText = 'white-space:pre-wrap;overflow-wrap:anywhere';
@@ -135,7 +137,7 @@
     for (const screen of candidates) {
       if (!screen.isConnected || !screen.getBoundingClientRect().width || !screen.getBoundingClientRect().height || getComputedStyle(screen).visibility === 'hidden' || getComputedStyle(screen).display === 'none') continue;
       const kind = screen.classList.contains('app-shell') ? 'home' : 'login';
-      const route = screen.closest('#numeria-direct-root') ? 'direct' : 'normal';
+      const route = screen.closest('#numeria-direct-root') ? (window.NumeriaRuntimeBootDiagnostics?.bootMode === 'client' ? 'client' : 'direct') : 'normal';
       if (kind === 'login' && run.loginReadyMs === null) { run.loginReadyMs = rounded(performance.now()); event('login-ready'); }
       if (run.readyMs === null) { run.readyMs = rounded(performance.now()); run.route = route; run.screen = kind; event('screen-ready'); collect(); }
       if (kind === 'home' && !run.events.some(item => item.name === 'home-ready')) { run.screen = 'home'; run.homeReadyMs = rounded(performance.now()); run.route = route; event('home-ready'); collect(); }

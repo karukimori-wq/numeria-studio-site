@@ -26,6 +26,11 @@ resolvePayload({});
 await pending;
 assert.equal(hydrateCount, 1, "late RSC payload cannot mount after direct fallback takes ownership");
 
+context.window={NumeriaRuntimeBootDiagnostics:{bootMode:"client"}};
+const loadsBefore=loadCount;await context.ca();assert.equal(loadCount,loadsBefore,"Client boot must not execute RSC payload hydration through app dependencies");
+assert.match(html,/window.NumeriaStartApp=function\(\)\{state.bootMode="client";directMountApp\(\)\}/);
+assert.ok(!html.includes("setTimeout(directMountApp,5200)"));
+
 const callback = html.split(']).then(([framework,app])=>{')[1].split('}).catch(error=>{state.directMount=')[0];
 assert.match(html, /import\("\/assets\/framework-[^"]+\.js"\)/, "fallback must share the app bootstrap React module instance");
 let hidden = false;
