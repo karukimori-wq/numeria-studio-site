@@ -13,6 +13,22 @@ const settingsRuntime = `;(()=>{if(window.__NumeriaFormatSettingsOrderPatch)retu
 
 
 
+
+// This is a transient UI cue, not a saved or authoritative preset identifier.
+// It resets if the operator edits fields, duplicates/deletes, or saves a preset.
+const presetSelectionRuntime = `;(()=>{if(window.__NumeriaPresetSelectionV1)return;window.__NumeriaPresetSelectionV1=true;
+let selectedIndex=-1,selectedName="",scheduled=false;
+const root=()=>document.querySelector(".settings-page .saved-preset-list");
+function apply(){const rail=root();if(!rail)return;const cards=Array.from(rail.querySelectorAll("article"));if(selectedIndex>=cards.length||selectedIndex>=0&&cards[selectedIndex]?.querySelector("button:first-child strong")?.textContent!==selectedName){selectedIndex=-1;selectedName=""}cards.forEach((card,index)=>{const active=index===selectedIndex;card.classList.toggle("numeria-preset-loaded",active);const button=card.querySelector("button:first-child");if(button&&button.getAttribute("aria-pressed")!==String(active))button.setAttribute("aria-pressed",String(active));});}
+function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;apply()});}
+function clear(){if(selectedIndex<0)return;selectedIndex=-1;selectedName="";schedule()}
+document.addEventListener("click",event=>{const rail=root(),target=event.target;if(!rail||!target?.closest)return;const article=target.closest(".saved-preset-list article");if(article&&rail.contains(article)){const button=target.closest("button");if(!button)return;if(button===article.querySelector("button:first-child")){selectedIndex=Array.from(rail.querySelectorAll("article")).indexOf(article);selectedName=button.querySelector("strong")?.textContent||"";schedule()}else clear();return}if(target.closest(".settings-page .settings-header button"))clear()},true);
+document.addEventListener("input",event=>{if(event.target?.closest?.(".settings-page .settings-controls"))clear()},true);
+document.addEventListener("change",event=>{if(event.target?.closest?.(".settings-page .settings-controls"))clear()},true);
+new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});
+document.addEventListener("DOMContentLoaded",schedule);schedule();
+})();`;
+
 for (const file of appBundles) {
   let source = fs.readFileSync(file, "utf8");
   if (!source.includes(oldTarotCopy) && !source.includes(newTarotCopy)) {
@@ -50,7 +66,7 @@ for (const file of appBundles) {
     .replace('b&&b.textContent!==n&&(b.textContent=n);t&&t.textContent!==h&&(t.textContent=h);d&&p&&d.textContent!==p&&(d.textContent=p)', 'b&&b.textContent!==n&&(b.textContent=n);t&&t.textContent!==h&&(t.textContent=h);d&&p&&d.textContent!==p&&(d.textContent=p)')
     .replace('if(el.dataset.numeriaFooterText&&el.textContent!==el.dataset.numeriaFooterText)el.textContent=el.dataset.numeriaFooterText', 'if(el.dataset.numeriaFooterText&&el.textContent!==el.dataset.numeriaFooterText)el.textContent=el.dataset.numeriaFooterText')
     .replace('else if(text.includes("Created with care by")){let next=text.split("　Created with care by")[0]||text.split(" Created with care by")[0]||text;if(el.textContent!==next)el.textContent=next}', 'else if(text.includes("Created with care by")){let next=text.split("　Created with care by")[0]||text.split(" Created with care by")[0]||text;if(el.textContent!==next)el.textContent=next}');
-  source += coverEditorRuntime + stableSettingsRuntime;
+  source += coverEditorRuntime + stableSettingsRuntime + presetSelectionRuntime;
   fs.writeFileSync(file, source);
 }
 
@@ -90,6 +106,12 @@ const presetRailV2Rule = `/* NumeriaPresetRail.v2 */
 @media(width<=760px){.format-basic-card{min-width:0;max-width:100%;overflow:hidden}.format-basic-card .saved-preset-list article{flex-basis:min(240px,78vw)!important;width:min(240px,78vw)!important;max-width:min(240px,78vw)!important}}
 `;
 
+const presetSelectionStyle = `/* NumeriaPresetSelection.v1 */
+.format-basic-card .saved-preset-list article.numeria-preset-loaded{background:#fcf7e9!important;border-color:#b99a5d!important;box-shadow:inset 0 0 0 2px #d0b476!important}
+.format-basic-card .saved-preset-list article.numeria-preset-loaded button:first-child:after{content:"読み込み中の設定";display:block;color:#735a29;font-size:11px;font-weight:700;margin-top:4px}
+.format-basic-card .saved-preset-list article button:first-child:focus-visible{outline:2px solid #ad8a4b;outline-offset:2px}
+`;
+
 const reportTemplateDecorationRule =
   ".report-cover-page .paper-theme{display:none!important}.template-cosmic-guide.report-cover-page:before,.template-cosmic-guide.report-cover-page:after,.template-cosmic-guide.report-cover-page .template-index,.template-cosmic-guide.report-cover-page .cover-index,.template-cosmic-guide.report-cover-page .format-index,.template-cosmic-guide.report-cover-page .paper-index,.template-cosmic-guide.report-cover-page .design-number{display:none!important}";
 
@@ -123,6 +145,7 @@ for (const file of styleBundles) {
   source = source.replaceAll(presetListRepairRule, "");
   source += presetListRepairRule;
   if (!source.includes('NumeriaPresetRail.v2')) source += presetRailV2Rule;
+  if (!source.includes('NumeriaPresetSelection.v1')) source += presetSelectionStyle;
   fs.writeFileSync(file, source);
 }
 
