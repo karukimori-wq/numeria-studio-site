@@ -28,7 +28,10 @@ try {
     assert.ok(!result.includes('>⚙</span>'), "Do not use platform-dependent gear emoji");
     assert.ok(result.includes('openSettings()'), "Settings must not open the old support sheet");
     assert.ok(result.includes('api.go("appraisalProfiles")'), "The bottom 鑑定書 entry must route to the report history list, not format settings");
-    assert.ok(result.includes('.history-panel,.client-history,.client-history-heading'), "Report navigation must focus an existing history target");
+    assert.ok(result.includes('.customers-page .history-heading') && result.includes('document.querySelector(".customers-page .customer-record-layout")'), "Report navigation must target the history heading before the fallback profile container");
+    assert.ok(result.includes('grid-template-columns:repeat(4,minmax(0,1fr))'), "Profile status filters must fit four horizontal cells on a phone");
+    assert.ok(result.includes('writing-mode:horizontal-tb!important') && result.includes('white-space:nowrap'), "Status buttons must not become vertical text");
+    assert.ok(result.includes('numeria-report-tab-active'), "Report tab must have its own selection state");
     assert.ok(!result.includes('numeria-mobile-bottom-navigation-runtime'), "Do not recreate the removed overlay");
     execFileSync(process.execPath, [patchPath], { cwd: directory });
     assert.equal(readFileSync(htmlPath, "utf8"), result, "Repeated builds must not add another menu");
@@ -47,7 +50,7 @@ try {
       readyState:'complete',
       body:{},
       querySelector(selector) {
-        if (selector === '.history-panel,.client-history,.client-history-heading') return reportTarget;
+        if (selector === '.history-panel,.client-history,.client-history-heading,.customers-page .history-heading') return reportTarget;
         return {getBoundingClientRect(){return {top:700,height:72}}};
       },
       querySelectorAll(selector) { return selector === 'aside.sidebar nav button' ? buttons : []; },
@@ -71,6 +74,9 @@ try {
     });
     assert.deepEqual(calls.slice(0, 4), ['prevent','stop','stop-immediate','appraisalProfiles'], 'Bottom 鑑定書 opens appraisal history without triggering the native settings button');
     assert.ok(calls.includes('focus-history'), 'Report navigation scrolls to the history panel when it exists');
+    assert.ok(classes.has('numeria-report-tab-active'), 'Report is selected after tapping the fourth tab');
+    listeners.click({target:{closest:selector=>selector==='aside.sidebar nav button'?buttons[1]:null}});
+    assert.ok(!classes.has('numeria-report-tab-active'), 'Returning to カルテ clears the report selection state');
   }
   console.log("Bottom navigation verified: single retained menu, portrait/landscape, native divination symbol, line-art settings, report route and keyboard clearance.");
 } finally {
