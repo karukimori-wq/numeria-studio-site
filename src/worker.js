@@ -1230,6 +1230,9 @@ function createReportDeliveryStatus({ reportExport = {}, externalPaymentStatus =
 
 function createReportSnapshot({ exportId, reportType, branding, body = {} }) {
   const deliverySettings = normalizeReportDeliverySettings(body);
+  const reportFormatSnapshot = body.reportFormatSnapshot && typeof body.reportFormatSnapshot === "object"
+    ? body.reportFormatSnapshot
+    : null;
   return {
     exportId,
     reportType,
@@ -1242,6 +1245,7 @@ function createReportSnapshot({ exportId, reportType, branding, body = {} }) {
     question: String(body.question || "").trim(),
     resultSummary: String(body.resultSummary || "").trim(),
     notes: reportType === "detailed" ? String(body.notes || "").trim() : "",
+    reportFormatSnapshot,
   };
 }
 

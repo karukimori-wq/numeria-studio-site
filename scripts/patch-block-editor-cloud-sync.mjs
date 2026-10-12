@@ -1,0 +1,10 @@
+import { readFileSync, readdirSync, writeFileSync } from "node:fs";
+
+const directory = "dist/assets";
+const asset = readdirSync(directory).find((file) => /^numeria-app-runtime-.*\.js$/.test(file)) || "numeria-app-Cckhajir.js";
+const target = `${directory}/${asset}`;
+let source = readFileSync(target, "utf8");
+source = source.replace(/;\(\(\)=>\{if\(window\.__NumeriaBlockEditorCloudSyncV1\)[\s\S]*?\/\* block-editor-cloud-sync-end \*\/\}\)\(\);/g, "");
+const runtime = String.raw`;(()=>{if(window.__NumeriaBlockEditorCloudSyncV1)return;window.__NumeriaBlockEditorCloudSyncV1=1;const key="numeria.report-format.blocks.v2",setting="report_format_blocks_v2",local=()=>{try{return JSON.parse(localStorage.getItem(key)||"null")}catch{return null}},notice=t=>document.querySelector(".numeria-block-editor header small")?.append(" · "+t),auth=async()=>window.Clerk?.session?.getToken?await window.Clerk.session.getToken().catch(()=>""):"",call=async(method,body)=>{let headers={"Content-Type":"application/json"},token=await auth();if(token)headers.Authorization="Bearer "+token;let response=await fetch("/api/workspace-state",{method,headers,body:body?JSON.stringify(body):undefined});if(!response.ok)throw new Error("workspace state unavailable");return response.json()},sync=async()=>{let format=local();if(!format?.pages?.length)return;try{let response=await call("GET"),state=response.workspaceState||{},settings=state.app_settings||{};settings[setting]={version:2,savedAt:new Date().toISOString(),format};await call("PUT",{workspaceState:{...state,app_settings:settings}});notice("クラウド保存済み")}catch{notice("この端末に保存済み")}},restore=async()=>{try{let response=await call("GET"),format=response.workspaceState?.app_settings?.[setting]?.format;if(format?.pages?.length&&!local())localStorage.setItem(key,JSON.stringify(format))}catch{}};document.addEventListener("click",event=>{if(event.target.closest(".numeria-block-editor [data-save]"))setTimeout(sync,0)});restore()/* block-editor-cloud-sync-end */})();`;
+writeFileSync(target, source + runtime);
+console.log(`Block editor cloud sync patched into ${target}.`);
