@@ -77,6 +77,19 @@ const presetListRepairRule =
   @media (width<=760px){.settings-page .settings-layout{grid-template-columns:minmax(0,1fr)!important}.format-basic-card{padding:16px!important}.format-basic-card .saved-preset-list article{width:260px}.format-basic-card .saved-preset-list{contain:inline-size}.format-basic-card .numeria-cover-editor{padding:0!important;border:0!important}.format-basic-card .numeria-cover-editor h3{font-size:18px!important}}
   `;
 
+// A contained, horizontally scrollable preset rail. Older grid rules forced every
+// card into the same grid row and let duplication enlarge the entire page.
+const presetRailV2Rule = `/* NumeriaPresetRail.v2 */
+.settings-page,.settings-layout,.settings-controls,.format-settings-reordered,.format-basic-card{min-width:0;max-width:100%}
+.format-basic-card .saved-preset-list{position:relative;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch;gap:10px;box-sizing:border-box;width:100%;max-width:100%;min-width:0;overflow-x:auto!important;overflow-y:hidden!important;padding:38px 12px 12px!important;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.format-basic-card .saved-preset-list>small{position:absolute!important;top:9px;left:12px;display:block!important;min-width:0!important;width:calc(100% - 24px);max-width:calc(100% - 24px);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.format-basic-card .saved-preset-list article{flex:0 0 min(260px,80vw)!important;grid-column:auto!important;grid-row:auto!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto auto!important;gap:6px;width:min(260px,80vw)!important;min-width:0!important;max-width:min(260px,80vw)!important;box-sizing:border-box;scroll-snap-align:start;overflow:hidden}
+.format-basic-card .saved-preset-list article button:first-child{min-width:0;overflow-wrap:anywhere;text-align:left;white-space:normal}
+.format-basic-card .saved-preset-list article button:not(:first-child){white-space:nowrap;min-height:44px;max-width:56px;padding-inline:5px}
+.format-basic-card .saved-preset-list article button{touch-action:manipulation;min-height:44px}
+@media(width<=760px){.format-basic-card{min-width:0;max-width:100%;overflow:hidden}.format-basic-card .saved-preset-list article{flex-basis:min(240px,78vw)!important;width:min(240px,78vw)!important;max-width:min(240px,78vw)!important}}
+`;
+
 const reportTemplateDecorationRule =
   ".report-cover-page .paper-theme{display:none!important}.template-cosmic-guide.report-cover-page:before,.template-cosmic-guide.report-cover-page:after,.template-cosmic-guide.report-cover-page .template-index,.template-cosmic-guide.report-cover-page .cover-index,.template-cosmic-guide.report-cover-page .format-index,.template-cosmic-guide.report-cover-page .paper-index,.template-cosmic-guide.report-cover-page .design-number{display:none!important}";
 
@@ -109,6 +122,7 @@ for (const file of styleBundles) {
   // These constraints must follow the legacy layout rules.
   source = source.replaceAll(presetListRepairRule, "");
   source += presetListRepairRule;
+  if (!source.includes('NumeriaPresetRail.v2')) source += presetRailV2Rule;
   fs.writeFileSync(file, source);
 }
 
