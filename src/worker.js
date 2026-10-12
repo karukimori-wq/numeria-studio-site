@@ -2502,6 +2502,7 @@ async function handleApi(request, env = {}, ctx = null) {
       branding,
       format,
       deliverySettings: reportSnapshot.deliverySettings,
+      reportFormatSnapshot: reportSnapshot.reportFormatSnapshot,
       generatedAt,
     };
     record.reportExports = [

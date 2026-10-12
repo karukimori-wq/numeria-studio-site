@@ -602,6 +602,7 @@ const report = await jsonFetch("/api/reports/export", {
     expectedAmount: 5000,
     deliveryDueDays: 7,
     deliveryDueDate: "2026-09-22",
+    reportFormatSnapshot: { version: 2, blockEditorFormat: { pages: [{ id: "page_1" }] } },
   }),
 }, env);
 assert.equal(report.response.status, 201);
@@ -616,10 +617,12 @@ assert.equal(report.body.reportSnapshot.deliverySettings.paidAmount, 1000);
 assert.equal(report.body.reportSnapshot.deliverySettings.expectedAmount, 5000);
 assert.equal(report.body.reportSnapshot.deliverySettings.deliveryDueDate, "2026-09-22");
 assert.equal(report.body.reportSnapshot.deliverySettings.externalPaymentSourceOfTruth, "growth-engine-or-stripe");
+assert.equal(report.body.reportSnapshot.reportFormatSnapshot.version, 2);
 assert.equal(report.body.deliverySettings.paymentModeLabel, "後払い（一部だけ見せる）");
 assert.equal(report.body.reportTemplateVersion, "numeria-report-template.v1");
 assert.equal(report.body.usage.reportExports.length, 1);
 assert.equal(report.body.usage.reportExports[0].deliverySettings.paymentStatus, "partial");
+assert.equal(report.body.usage.reportExports[0].reportFormatSnapshot.version, 2);
 assert.equal(db.reportEvents.size, 1);
 assert.equal(report.body.aiUsageEvent.eventName, "studio.report.generated.v1");
 assert.equal(report.body.aiUsageEvent.recorded, true);

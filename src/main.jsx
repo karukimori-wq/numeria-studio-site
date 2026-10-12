@@ -632,6 +632,18 @@ function SignedInWorkspace() {
 
   async function exportReport() {
     const numerologyPreview = calculateLifePathNumber(currentCase.birthDate);
+    let blockEditorFormat = null;
+    try {
+      blockEditorFormat = JSON.parse(window.localStorage.getItem("numeria.report-format.blocks.v2") || "null");
+    } catch {
+      blockEditorFormat = null;
+    }
+    const reportFormatSnapshot = {
+      version: 2,
+      capturedAt: new Date().toISOString(),
+      selectedReportFormat: reportFormat,
+      blockEditorFormat: blockEditorFormat?.pages?.length ? blockEditorFormat : null,
+    };
     try {
       const response = await authedApiRequest("/api/reports/export", {
         method: "POST",
@@ -651,6 +663,7 @@ function SignedInWorkspace() {
           question: currentCase.question,
           notes: currentCase.notes,
           resultSummary: currentCase.resultSummary,
+          reportFormatSnapshot,
         },
       });
       if (response.downloadUrl) {
