@@ -28,7 +28,7 @@ try {
     assert.ok(!result.includes('>⚙</span>'), "Do not use platform-dependent gear emoji");
     assert.ok(result.includes('openSettings()'), "Settings must not open the old support sheet");
     assert.ok(result.includes('api.go("appraisalProfiles")'), "The bottom 鑑定書 entry must route to the report history list, not format settings");
-    assert.ok(result.includes('.customers-page .history-heading,.customers-page .customer-record-layout'), "Report navigation must target the real profile history DOM");
+    assert.ok(result.includes('.customers-page .history-heading') && result.includes('document.querySelector(".customers-page .customer-record-layout")'), "Report navigation must target the history heading before the fallback profile container");
     assert.ok(result.includes('grid-template-columns:repeat(4,minmax(0,1fr))'), "Profile status filters must fit four horizontal cells on a phone");
     assert.ok(result.includes('writing-mode:horizontal-tb!important') && result.includes('white-space:nowrap'), "Status buttons must not become vertical text");
     assert.ok(result.includes('numeria-report-tab-active'), "Report tab must have its own selection state");
