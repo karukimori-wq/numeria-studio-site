@@ -54,7 +54,7 @@ const request = createStudioAiReportRequest({
     outputFormat: {
       formatKey: "standard-report",
       length: "standard",
-      sections: [{ key: "overview", heading: "全体の流れ" }],
+      sections: [{ key: "overview", blockId: "block_overview", heading: "全体の流れ" }],
     },
   },
 });
@@ -64,6 +64,7 @@ assert.equal(request.appName, "numeria-studio");
 assert.equal(request.featureKey, "numeria.report.ai_generate");
 assert.equal(request.characterSnapshot.characterVersion, "3");
 assert.equal(request.confirmedResult.results[0].data.cards[0].orientation, "upright");
+assert.equal(request.outputFormat.sections[0].blockId, "block_overview");
 assert.equal(validateStudioAiReportRequest(request).ok, true);
 assert.equal(evaluateAiReportPlanGate(request).allowed, true);
 assert.equal(evaluateAiReportPlanGate({ ...request, planId: "free" }).allowed, false);
@@ -75,7 +76,7 @@ const draft = normalizeStructuredReportDraft({
   draftType: "ai_draft",
   title: "鑑定書",
   lead: "まずは深呼吸しましょう。",
-  sections: [{ key: "overview", heading: "全体の流れ", body: "変化の前触れです。" }],
+  sections: [{ key: "overview", blockId: "block_overview", heading: "全体の流れ", body: "変化の前触れです。" }],
   closing: "応援しています。",
   promptKey: "numeria.report.standard",
   promptVersion: "1",
@@ -91,6 +92,7 @@ assert.equal(draft.formalReport, false);
 assert.equal(draft.reportSnapshotSaved, false);
 assert.equal(draft.eventToEmitOnFinalize, "studio.report.generated.v1");
 assert.equal(draft.characterSnapshot.characterId, "char_1");
+assert.equal(draft.sections[0].blockId, "block_overview");
 assert.equal(validateStructuredReportDraft(draft).ok, true);
 
 const entry = readFileSync("src/ai-worker-entry.js", "utf8");

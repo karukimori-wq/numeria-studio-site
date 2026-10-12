@@ -67,6 +67,7 @@ function normalizeConfirmedResult(value = {}) {
 function normalizeOutputFormat(value = {}) {
   const sections = asArray(value.sections).map((section) => ({
     key: text(section.key, 80),
+    blockId: text(section.blockId, 160),
     heading: text(section.heading, 160),
     required: section.required !== false,
   })).filter((section) => section.key && section.heading);
@@ -155,6 +156,7 @@ export function evaluateAiReportPlanGate(request) {
 export function normalizeStructuredReportDraft(responseBody = {}, requestPayload = {}) {
   const sections = asArray(responseBody.sections).map((section) => ({
     key: text(section.key, 80),
+    blockId: text(section.blockId, 160),
     heading: text(section.heading, 160),
     body: text(section.body, 6000),
     warnings: asArray(section.warnings).map((warning) => text(warning, 400)).filter(Boolean),
