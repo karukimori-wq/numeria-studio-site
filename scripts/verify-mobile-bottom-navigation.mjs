@@ -50,7 +50,7 @@ try {
       readyState:'complete',
       body:{},
       querySelector(selector) {
-        if (selector === '.history-panel,.client-history,.client-history-heading,.customers-page .history-heading,.customers-page .customer-record-layout') return reportTarget;
+        if (selector === '.history-panel,.client-history,.client-history-heading,.customers-page .history-heading') return reportTarget;
         return {getBoundingClientRect(){return {top:700,height:72}}};
       },
       querySelectorAll(selector) { return selector === 'aside.sidebar nav button' ? buttons : []; },
