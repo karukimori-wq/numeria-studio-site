@@ -9,6 +9,7 @@ assert.match(patch, /AIで下書きを作成/);
 assert.match(patch, /手動プロンプト/);
 assert.match(patch, /氏名・出生名・生年月日は送信しません/);
 assert.match(patch, /coreNumbers:\{lifePath:F\.lifePath/);
+assert.match(patch, /numeria:ai-draft-ready/);
 assert.doesNotMatch(patch, /clientName:/);
 assert.doesNotMatch(patch, /birthName:/);
 assert.doesNotMatch(patch, /birthday:M/);

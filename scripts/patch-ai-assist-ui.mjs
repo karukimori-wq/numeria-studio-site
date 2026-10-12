@@ -19,6 +19,14 @@ patched = replaceExactly(patched, legacyButtons, aiButtons, 1, "AI assist contro
 
 patched = replaceExactly(
   patched,
+  "wn(e.output),Tn(`AI下書きを受け取りました。内容を確認してから一括反映してください`)",
+  "wn(e.output),window.dispatchEvent(new CustomEvent(`numeria:ai-draft-ready`,{detail:{output:e.output}})),Tn(`AI下書きを受け取りました。内容を確認してから一括反映してください`)",
+  1,
+  "AI draft handoff event",
+);
+
+patched = replaceExactly(
+  patched,
   "AIで鑑定内容を補助",
   "AIで鑑定内容を補助（Free / Pro）",
   1,
