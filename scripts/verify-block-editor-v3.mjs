@@ -13,6 +13,8 @@ assert.match(runtime, /expectedRevision/);
 assert.match(runtime, /競合 · 再読み込みが必要/);
 assert.match(runtime, /サーバー保存済み/);
 assert.match(runtime, /保存失敗 · 再試行/);
+assert.match(runtime, /beforeunload/);
+assert.match(runtime, /未保存の鑑定書フォーマットがあります/);
 assert.match(runtime, /X-Workspace-Id/);
 assert.match(runtime, /crypto\.randomUUID/);
 assert.match(runtime, /cols-2/);

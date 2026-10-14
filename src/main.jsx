@@ -634,12 +634,16 @@ function SignedInWorkspace() {
     const numerologyPreview = calculateLifePathNumber(currentCase.birthDate);
     let blockEditorFormat = null;
     try {
-      blockEditorFormat = JSON.parse(window.localStorage.getItem("numeria.report-format.blocks.v2") || "null");
+      blockEditorFormat = JSON.parse(
+        window.localStorage.getItem("numeria.report-format.blocks.v3")
+        || window.localStorage.getItem("numeria.report-format.blocks.v2")
+        || "null",
+      );
     } catch {
       blockEditorFormat = null;
     }
     const reportFormatSnapshot = {
-      version: 2,
+      version: blockEditorFormat?.schemaVersion === 3 ? 3 : 2,
       capturedAt: new Date().toISOString(),
       selectedReportFormat: reportFormat,
       blockEditorFormat: blockEditorFormat?.pages?.length ? blockEditorFormat : null,
