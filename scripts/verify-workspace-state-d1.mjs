@@ -116,6 +116,35 @@ assert.equal(reloaded.body.initializationRequired, false);
 assert.equal(reloaded.body.workspaceState.appraisal_profiles[0].history[0].id, "h1");
 assert.equal(reloaded.body.workspaceState.app_settings.practitionerName, "Tester");
 
+const reportFormat = {
+  schemaVersion: 3,
+  pages: [{
+    pageId: "page_v3",
+    layoutRegions: [{
+      regionId: "region_v3",
+      columns: 1,
+      ratio: "100",
+      columnBlocks: [[{ blockId: "block_v3", type: "page-title", content: "テスト鑑定書" }]],
+    }],
+  }],
+};
+const savedFormat = await jsonFetch("/api/report-formats/default", {
+  method: "PUT",
+  headers,
+  body: JSON.stringify({ format: reportFormat, expectedRevision: 0 }),
+}, env);
+assert.equal(savedFormat.response.status, 200);
+assert.equal(savedFormat.body.revision, 1);
+assert.equal(savedFormat.body.format.pages[0].pageId, "page_v3");
+
+const staleFormat = await jsonFetch("/api/report-formats/default", {
+  method: "PUT",
+  headers,
+  body: JSON.stringify({ format: reportFormat, expectedRevision: 0 }),
+}, env);
+assert.equal(staleFormat.response.status, 409);
+assert.equal(staleFormat.body.errorCode, "REPORT_FORMAT_CONFLICT");
+
 const health = await jsonFetch("/health", {}, env);
 assert.equal(health.response.status, 200);
 assert.equal(health.body.status, "success");

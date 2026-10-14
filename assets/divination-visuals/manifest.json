@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "usage": "Decorative report visual only. Never infer or fabricate divination results from these assets.",
+  "visuals": {
+    "nine-star-ki": {
+      "file": "nine-star-ki-mandala-v1.png",
+      "resultShape": "nine-star directional board",
+      "status": "awaiting-confirmed-result-schema"
+    },
+    "four-pillars": {
+      "file": "four-pillars-ornament-v1.png",
+      "resultShape": "year-month-day-hour pillars with heavenly-stem and earthly-branch layers",
+      "status": "awaiting-confirmed-result-schema"
+    },
+    "western-astrology": {
+      "file": "western-astrology-wheel-v1.png",
+      "resultShape": "twelve-house natal-chart wheel",
+      "status": "awaiting-confirmed-result-schema"
+    },
+    "zi-wei-dou-shu": {
+      "file": "zi-wei-dou-shu-palaces-v1.png",
+      "resultShape": "twelve-palace destiny chart",
+      "status": "awaiting-confirmed-result-schema"
+    }
+  }
+}

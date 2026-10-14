@@ -2,6 +2,7 @@ import coreWorker from "./worker.js";
 
 const WORKSPACE_STATE_CONTRACT_VERSION = "numeria-d1-workspace-state.v1";
 const USER_PREFERENCES_CONTRACT_VERSION = "numeria-d1-user-preferences.v1";
+const REPORT_FORMAT_CONTRACT_VERSION = "numeria-report-format.v3";
 const ALLOWED_DIVINATIONS = new Set([
   "numerology",
   "nine-star-ki",
@@ -164,8 +165,46 @@ async function resolveAuthenticatedScope(request, env, ctx, requestedWorkspaceId
     scope: {
       workspaceId: usageBody.workspaceId || requestedWorkspaceId || "ws_personal",
       userId: usageBody.userId || "anonymous",
+      planId: usageBody.planId || "free",
     },
   };
+}
+
+function validReportFormat(value) {
+  if (!value || typeof value !== "object" || value.schemaVersion !== 3 || !Array.isArray(value.pages) || !value.pages.length) return false;
+  const types = new Set(["page-title", "heading", "body", "ai-text", "divider", "numerology-result", "tarot-cards"]);
+  return value.pages.every((page) =>
+    page && typeof page.pageId === "string" && Array.isArray(page.layoutRegions) && page.layoutRegions.every((region) =>
+      region && [1, 2].includes(region.columns) && Array.isArray(region.columnBlocks)
+      && region.columnBlocks.length === region.columns
+      && region.columnBlocks.every((column) => Array.isArray(column) && column.every((block) =>
+        block && typeof block.blockId === "string" && types.has(block.type) && typeof block.content === "string"
+      ))
+    )
+  );
+}
+
+async function handleReportFormat(request, env = {}, ctx = null) {
+  const body = await readJson(request);
+  const requestedWorkspaceId = request.headers.get("X-Workspace-Id") || "ws_personal";
+  const { response: authResponse, scope } = await resolveAuthenticatedScope(request, env, ctx, requestedWorkspaceId);
+  if (authResponse) return authResponse;
+  const d1 = getD1Binding(env);
+  if (!d1 || typeof d1.prepare !== "function") return json({ status: "error", errorCode: "REPORT_FORMAT_STORE_UNAVAILABLE" }, { status: 503 });
+  const key = workspaceScopeKey(scope.workspaceId, scope.userId);
+  const row = await d1.prepare("SELECT workspace_state_json FROM workspace_states WHERE scope_key = ? LIMIT 1").bind(key).first();
+  let state = {};
+  try { state = row?.workspace_state_json ? JSON.parse(row.workspace_state_json) : {}; } catch { state = {}; }
+  const settings = state.app_settings && typeof state.app_settings === "object" ? state.app_settings : {};
+  const meta = settings.report_format_blocks_v3_meta || { revision: 0 };
+  if (request.method === "GET") return json({ status: "success", format: settings.report_format_blocks_v3 || null, revision: Number(meta.revision || 0), reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
+  if (!validReportFormat(body.format)) return json({ status: "error", errorCode: "REPORT_FORMAT_INVALID", message: "鑑定書フォーマットの構造を確認してください。" }, { status: 400 });
+  const expectedRevision = Number(body.expectedRevision || 0);
+  if (expectedRevision !== Number(meta.revision || 0)) return json({ status: "error", errorCode: "REPORT_FORMAT_CONFLICT", message: "別の編集内容が保存されています。再読み込みしてから保存してください。", revision: Number(meta.revision || 0), format: settings.report_format_blocks_v3 || null }, { status: 409 });
+  const revision = expectedRevision + 1;
+  const workspaceState = normalizeWorkspaceState({ ...state, app_settings: { ...settings, report_format_blocks_v3: body.format, report_format_blocks_v3_meta: { revision, updatedAt: new Date().toISOString(), schemaVersion: 3 } } });
+  await d1.prepare(`INSERT INTO workspace_states (scope_key, workspace_id, user_id, workspace_state_json, updated_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(scope_key) DO UPDATE SET workspace_state_json = excluded.workspace_state_json, updated_at = excluded.updated_at`).bind(key, scope.workspaceId, scope.userId, JSON.stringify(workspaceState), workspaceState.updated_at).run();
+  return json({ status: "success", format: body.format, revision, reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
 }
 
 async function handleWorkspaceState(request, env = {}, ctx = null) {
@@ -350,6 +389,9 @@ export default {
     }
     if (url.pathname === "/api/workspace-state" && ["GET", "PUT"].includes(request.method)) {
       return handleWorkspaceState(request, env, ctx);
+    }
+    if (url.pathname === "/api/report-formats/default" && ["GET", "PUT"].includes(request.method)) {
+      return handleReportFormat(request, env, ctx);
     }
     if (url.pathname === "/api/user-preferences" && ["GET", "PUT", "PATCH"].includes(request.method)) {
       return handleUserPreferences(request, env, ctx);

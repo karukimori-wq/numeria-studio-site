@@ -846,15 +846,16 @@ function SignedInWorkspace() {
           onPrint={printJapaneseReport}
         />
 
-        <ReportFormatBuilder
-          format={reportFormat}
-          saveStatus={formatSaveStatus}
-          onChange={(next) => {
-            setReportFormat(next);
-            setFormatSaveStatus("変更あり");
-          }}
-          onSave={saveReportFormat}
-        />
+        <section className="work-panel format-builder" aria-label="鑑定書フォーマットの案内">
+          <div className="panel-heading">
+            <LayoutTemplate size={20} />
+            <div>
+              <p className="eyebrow">Settings / Report format</p>
+              <h2>鑑定書フォーマット</h2>
+            </div>
+          </div>
+          <p className="panel-copy">編集は公開中の鑑定書ビルダーに一本化されています。このReactプレビューでは別形式の編集・保存を提供しません。</p>
+        </section>
 
         <PlanComparison
           currentPlanId={usage.planId}

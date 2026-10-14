@@ -1,0 +1,44 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+
+const runtime = readFileSync("scripts/block-editor-runtime.js", "utf8");
+const cloudPatch = readFileSync("scripts/patch-block-editor-cloud-sync.mjs", "utf8");
+const printPatch = readFileSync("scripts/patch-block-editor-print.mjs", "utf8");
+const aiPatch = readFileSync("scripts/patch-ai-assist-ui.mjs", "utf8");
+
+assert.match(runtime, /__NumeriaBlockEditorV3/);
+assert.match(runtime, /schemaVersion:3/);
+assert.match(runtime, /\/api\/report-formats\/default/);
+assert.match(runtime, /expectedRevision/);
+assert.match(runtime, /競合 · 再読み込みが必要/);
+assert.match(runtime, /サーバー保存済み/);
+assert.match(runtime, /保存失敗 · 再試行/);
+assert.match(runtime, /X-Workspace-Id/);
+assert.match(runtime, /crypto\.randomUUID/);
+assert.match(runtime, /cols-2/);
+assert.match(runtime, /data-insert/);
+assert.match(runtime, /data-type/);
+assert.match(runtime, /data-v3-page-order/);
+assert.match(runtime, /data-v3-block-move/);
+assert.match(runtime, /data-block-column/);
+assert.match(runtime, /data-block-page/);
+assert.match(runtime, /numerology-result/);
+assert.match(runtime, /tarot-cards/);
+assert.match(runtime, /NumeriaConfirmedDivinationResult/);
+assert.match(runtime, /NumeriaBlockEditorAiTarget/);
+assert.match(runtime, /targetBlockId/);
+assert.match(runtime, /characterSnapshot/);
+assert.match(runtime, /pendingDraft/);
+assert.match(runtime, /data-ai-adopt/);
+assert.match(runtime, /sourceDataKeys/);
+assert.match(runtime, /nine-star-ki/);
+assert.match(runtime, /data-print/);
+assert.match(runtime, /function print\(\)/);
+assert.match(runtime, /@media\(max-width:760px\)/);
+assert.doesNotMatch(runtime, /width:620px/);
+assert.doesNotMatch(runtime, /\.nbe-a4\.two\{display:block/);
+assert.match(cloudPatch, /v3 uses ACK-based persistence/);
+assert.match(printPatch, /v3 owns print rendering/);
+assert.match(aiPatch, /targetBlockId/);
+
+console.log("Block editor v3 runtime contract verified.");

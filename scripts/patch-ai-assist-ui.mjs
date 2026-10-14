@@ -20,9 +20,9 @@ patched = replaceExactly(patched, legacyButtons, aiButtons, 1, "AI assist contro
 patched = replaceExactly(
   patched,
   "wn(e.output),Tn(`AI下書きを受け取りました。内容を確認してから一括反映してください`)",
-  "wn(e.output),window.dispatchEvent(new CustomEvent(`numeria:ai-draft-ready`,{detail:{output:e.output}})),Tn(`AI下書きを受け取りました。内容を確認してから一括反映してください`)",
+  "wn(e.output),window.dispatchEvent(new CustomEvent(`numeria:ai-draft-ready`,{detail:{output:e.output,targetBlockId:window.NumeriaBlockEditorAiTarget&&window.NumeriaBlockEditorAiTarget.blockId||null,formatId:window.NumeriaBlockEditorAiTarget&&window.NumeriaBlockEditorAiTarget.formatId||null,characterSnapshot:window.NumeriaBlockEditorAiTarget&&window.NumeriaBlockEditorAiTarget.characterSnapshot||null}})),Tn(`AI下書きを受け取りました。内容を確認してから一括反映してください`)",
   1,
-  "AI draft handoff event",
+  "AI draft handoff event with selected block identity",
 );
 
 patched = replaceExactly(
@@ -44,6 +44,7 @@ patched = replaceExactly(
 if (!patched.includes("window.NumeriaAiAssistRun")) throw new Error("AI assist bridge missing from Production legacy bundle.");
 if (!patched.includes("AIで下書きを作成")) throw new Error("AI assist button missing from Production legacy bundle.");
 if (!patched.includes("氏名・出生名・生年月日は送信しません")) throw new Error("AI assist data-policy copy missing.");
+if (!patched.includes("targetBlockId")) throw new Error("AI draft handoff must preserve the selected block identity.");
 
 writeFileSync(assetPath, patched);
 console.log("Legacy AI writing assist connected to authenticated Numeria Worker → APC Gateway, with manual prompt fallback retained.");
