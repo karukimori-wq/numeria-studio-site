@@ -8,6 +8,8 @@ const aiPatch = readFileSync("scripts/patch-ai-assist-ui.mjs", "utf8");
 
 assert.match(runtime, /__NumeriaBlockEditorV3/);
 assert.match(runtime, /schemaVersion:3/);
+assert.match(runtime, /numeria:report-format:v1:ws_personal/);
+assert.match(runtime, /x\.version===1/);
 assert.match(runtime, /\/api\/report-formats\/default/);
 assert.match(runtime, /expectedRevision/);
 assert.match(runtime, /競合 · 再読み込みが必要/);

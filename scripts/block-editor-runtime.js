@@ -1,5 +1,5 @@
 ;(()=>{if(window.__NumeriaBlockEditorV3)return;window.__NumeriaBlockEditorV3=1;
-const KEY="numeria.report-format.blocks.v3",OLD="numeria.report-format.blocks.v2",T={"page-title":"ページタイトル",heading:"見出し",body:"本文","ai-text":"AI鑑定文章",divider:"区切り線","numerology-result":"数秘術の結果","tarot-cards":"タロットカード"},R=["50:50","40:60","60:40"],uid=p=>`${p}_${crypto.randomUUID?crypto.randomUUID():Date.now()+Math.random().toString(36).slice(2)}`,esc=x=>String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const KEY="numeria.report-format.blocks.v3",OLD="numeria.report-format.blocks.v2",V1="numeria:report-format:v1:ws_personal",T={"page-title":"ページタイトル",heading:"見出し",body:"本文","ai-text":"AI鑑定文章",divider:"区切り線","numerology-result":"数秘術の結果","tarot-cards":"タロットカード"},R=["50:50","40:60","60:40"],uid=p=>`${p}_${crypto.randomUUID?crypto.randomUUID():Date.now()+Math.random().toString(36).slice(2)}`,esc=x=>String(x??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const DIVINATION={numerology:{label:"数秘術",available:true,blocks:["numerology-result"]},tarot:{label:"タロット",available:true,blocks:["tarot-cards"]},"nine-star-ki":{label:"九星気学",available:false,visual:"/assets/divination-visuals/nine-star-ki-mandala-v1.png"},"four-pillars":{label:"四柱推命",available:false,visual:"/assets/divination-visuals/four-pillars-ornament-v1.png"},"western-astrology":{label:"西洋占星術",available:false,visual:"/assets/divination-visuals/western-astrology-wheel-v1.png"},"zi-wei-dou-shu":{label:"紫微斗数",available:false,visual:"/assets/divination-visuals/zi-wei-dou-shu-palaces-v1.png"}};
 const character=()=>({characterId:"preset-gentle-reader",type:"preset",characterVersion:"1",name:"Numeria Reader",personality:"",speakingStyle:"",writingRules:[],customInstruction:""});
 const makeBlock=(type,content)=>({blockId:uid("block"),type,position:0,style:{},content:content??(type==="page-title"?"新しい鑑定書":type==="heading"?"見出し":""),dataBinding:type==="numerology-result"?{source:"confirmed-result",methodKey:"numerology",resultKey:"core_numbers"}:type==="tarot-cards"?{source:"confirmed-result",methodKey:"tarot",resultKey:"spread"}:null,aiConfig:type==="ai-text"?{commentPurpose:"auto",contextMode:"auto",sourceBlockIds:[],sourceDataKeys:[],customInstruction:"",generationStatus:"idle"}:null});
@@ -21,6 +21,7 @@ function normal(x){
     });
     x.characterSnapshot={...character(),...(x.characterSnapshot||{})};return x.pages.length?x:fresh()
   }
+  if(x.version===1&&Array.isArray(x.pages)){let converted={...x,pages:x.pages.flatMap(p=>(p.sections||[]).map((section,index)=>({id:index?`${p.id||uid("page")}_${index}`:p.id,title:index?`${p.title||"ページ"} ${index+1}`:p.title,layout:section.columns===2?"two":"one",ratio:section.ratio,columns:section.content}))) };return normal({...converted,version:2})}
   let y={schemaVersion:3,formatId:uid("format"),templateId:"legacy-import",templateVersion:1,selectedDivination:"numerology",characterSnapshot:character(),globalStyle:{},allowedFeatures:{},pages:[],updatedAt:new Date().toISOString()};
   (x.pages||[]).forEach((p,i)=>{
     let r=makeRegion(p.layout==="two"?2:1);r.ratio=R.includes(p.ratio)?p.ratio:"50:50";
@@ -34,7 +35,7 @@ function normal(x){
   });
   return y.pages.length?y:fresh()
 }
-function stored(){try{return normal(JSON.parse(localStorage.getItem(KEY)||localStorage.getItem(OLD)||"null"))}catch{return fresh()}}
+function stored(){try{return normal(JSON.parse(localStorage.getItem(KEY)||localStorage.getItem(OLD)||localStorage.getItem(V1)||"null"))}catch{return fresh()}}
 let data=stored(),selected=data.pages[0].pageId,root,dirty=false,history=[],future=[],last=JSON.stringify(data),status="未保存",tab="edit",insertion=null,revision=0;
 const current=()=>data.pages.find(p=>p.pageId===selected)||data.pages[0];
 function remember(){let next=JSON.stringify(data);if(next!==last){history.push(last);history=history.slice(-50);future=[];last=next}dirty=true;status="未保存";try{localStorage.setItem(KEY,JSON.stringify(data))}catch{}}
