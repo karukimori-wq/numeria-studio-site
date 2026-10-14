@@ -22,12 +22,12 @@ ReportSnapshot { snapshotVersion, format, characterSnapshot,
 ## 互換読み込み
 
 - React v1 (`sections` / `id`) と旧ランタイム v2 (`columns` / `id`) は read-only importer で v3 に変換する。
-- importer は元データと source version を backup payload に残す。変換不能な block は削除せず migration error として利用者に示す。
+- importer は元データと source version を backup payload に残す。公開ランタイムでは v1/v2 を初めて v3 へ移す前に `numeria.report-format.blocks.migration-backup.v1` へ元JSONとsource keyを保存する。変換不能な block は削除せず migration error として利用者に示す。
 - v3 を旧形式へ自動で書き戻さない。旧 runtime は v3 が存在すると編集不能な移行案内だけを表示する。
 
 ## ロールバック
 
-サーバーは各 update 前の document と version を保存する。migration 実行中は source record を immutable backup として保管し、ロールバックはその backup を同一 tenant/owner にだけ復元する。クライアント local cache は障害時の下書きであり、クラウド正本を上書きしない。
+サーバーは各 update 前の document と version を保存する。migration 実行中は source record を immutable backup として保管し、ロールバックはその backup を同一 tenant/owner にだけ復元する。現在の公開ランタイムで実装済みなのは、上記の端末内backupから同じ importer を再実行する障害時復帰までである。サーバー側の immutable backup と復元APIは未実装であり、クライアント local cache はクラウド正本を上書きしない。
 
 ## Report Snapshot
 
