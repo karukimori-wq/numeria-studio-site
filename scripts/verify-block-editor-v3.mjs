@@ -32,6 +32,8 @@ assert.match(runtime, /pendingDraft/);
 assert.match(runtime, /data-ai-adopt/);
 assert.match(runtime, /sourceDataKeys/);
 assert.match(runtime, /nine-star-ki/);
+assert.match(runtime, /data-v3-divination-visuals/);
+assert.match(runtime, /assets\/divination-visuals/);
 assert.match(runtime, /data-print/);
 assert.match(runtime, /function print\(\)/);
 assert.match(runtime, /@media\(max-width:760px\)/);

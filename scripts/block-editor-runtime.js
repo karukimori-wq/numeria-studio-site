@@ -64,6 +64,12 @@ function locateBlock(blockId){
 }
 function decorateEditor(){
   if(!root?.classList.contains("open"))return;
+  const settings=root.querySelector(".nbe-settings");
+  if(settings&&!settings.querySelector("[data-v3-divination-visuals]")){
+    const gallery=document.createElement("section");gallery.dataset.v3DivinationVisuals="1";gallery.className="nbe-divination-visuals";
+    gallery.innerHTML=`<h3>対応予定の占術ビジュアル</h3><p>結果スキーマが接続されるまで、鑑定結果の代わりには表示しません。</p>${Object.entries(DIVINATION).filter(([,item])=>item.visual).map(([,item])=>`<figure><img src="${item.visual}" alt="${esc(item.label)}の構成イメージ"><figcaption>${esc(item.label)} · 準備中</figcaption></figure>`).join("")}`;
+    settings.append(gallery);
+  }
   const pagePane=root.querySelector(".nbe-pages");
   if(pagePane&&!pagePane.querySelector("[data-v3-page-order]")){
     const controls=document.createElement("div");controls.dataset.v3PageOrder="1";controls.className="nbe-page-order";controls.innerHTML="<button type=button data-page-up>ページを前へ</button><button type=button data-page-down>ページを後へ</button>";
