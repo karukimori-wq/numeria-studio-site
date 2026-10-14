@@ -14,4 +14,13 @@ editor preview、print preview、正式 PDF は同じ Format v3 と physical-pag
 
 ## 現状
 
-旧 print patch は localStorage の旧 schema から別 HTML を作り、Worker の PDF は `createReportPdfBase64` による別実装である。共有 physical-page plan は未実装なので、D-01〜D-08 を未達として扱う。
+ブラウザ印刷は `src/report-physical-page-plan.js` の physical-page plan を使用する。プレビューで測定した各ブロックの実高を入力にし、計測値が欠ける場合は印刷を開始しない。計画器は次を実装済みである。
+
+- logical page と手動改ページを physical page に展開する
+- 2列領域の初頁は2列を維持し、溢れた続きだけを1列にする
+- 見出し／ページタイトルと直後のブロックを同じ physical page に置く
+- ブロック高がA4本文領域を超えた場合に警告する
+
+この計画器は `scripts/patch-block-editor.mjs` により公開ランタイムへ注入され、`scripts/verify-report-physical-page-plan.mjs` で2列継続、未計測値、見出し孤立防止を検証する。
+
+残りの制約は明示する。本文を行単位で分割する処理、カード／図表の縮小UI、正式PDF（Worker の `createReportPdfBase64`）への同じ plan の適用は未実装である。従って D-01〜D-08 全体を完了とは扱わず、ブラウザ印刷のブロック境界組版までを実装済みとする。
