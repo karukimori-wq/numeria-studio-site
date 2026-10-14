@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 const patch = readFileSync("scripts/patch-plan-feature-gates.mjs", "utf8");
 
 const required = [
-  "Free=1, Pro=20",
+  "Free=3, Pro=30",
   "Report design choices remain selectable on every plan",
   "logo customization plan gate",
   "detailed reading editor plan gate",

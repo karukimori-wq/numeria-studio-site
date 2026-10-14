@@ -6,7 +6,7 @@ let source = readFileSync(appPath, "utf8");
 
 if (source.includes(marker)) throw new Error("App bundle syntax guard patch was applied more than once.");
 
-const beforeStart = "Ti=()=>{let e=ar===`free`?1:ar===`pro`?20:1/0;";
+const beforeStart = "Ti=()=>{let e=ar===`free`?3:ar===`pro`?30:1/0;";
 const duplicate = "return}let e={id:`preset-${Date.now()}`";
 const fixed = "return}let preset={id:`preset-${Date.now()}`";
 const beforeTail = "customReportItems:Lt.map(e=>({...e})),reportTypography:{...Xt}};jn(t=>[e,...t]),R(`「${e.name}」を保存しました`),window.setTimeout(()=>R(``),2500)},Ei=e=>";

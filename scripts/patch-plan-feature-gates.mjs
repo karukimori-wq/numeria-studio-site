@@ -13,11 +13,11 @@ function replaceExactly(input, legacyValue, replacementValue, expectedCount, lab
 
 let patched = source;
 
-// Saved presets: Free=1, Pro=20. Admin developer preview does not inherit the subscription cap.
+// Saved presets: Free=3, Pro=30. Admin developer preview does not inherit the subscription cap.
 patched = replaceExactly(
   patched,
   "Ti=()=>{let e={id:`preset-${Date.now()}`",
-  "Ti=()=>{let e=ar===`free`?1:ar===`pro`?20:1/0;if(tr!==`admin`&&Ir.length>=e){R(ar===`free`?`無料版で保存できるプリセットは1件までです。Proでは最大20件保存できます。`:`Proで保存できるプリセットは最大20件です。`),window.setTimeout(()=>R(``),3200);return}let e={id:`preset-${Date.now()}`",
+  "Ti=()=>{let e=ar===`free`?3:ar===`pro`?30:1/0;if(tr!==`admin`&&Ir.length>=e){R(ar===`free`?`無料版で保存できるプリセットは3件までです。Proでは最大30件保存できます。`:`Proで保存できるプリセットは最大30件です。`),window.setTimeout(()=>R(``),3200);return}let e={id:`preset-${Date.now()}`",
   1,
   "saved preset plan cap",
 );
@@ -72,7 +72,7 @@ patched = replaceExactly(
 );
 
 const requiredMarkers = [
-  "無料版で保存できるプリセットは1件までです。Proでは最大20件保存できます。",
+  "無料版で保存できるプリセットは3件までです。Proでは最大30件保存できます。",
   "className:`template-grid template-grid-20`,children:Q.map(e=>",
   "className:`template-grid`,children:$r.map(e=>",
   "(ar!==`free`||tr===`admin`)&&(0,Z.jsxs)(`label`,{className:`image-upload`",
@@ -83,4 +83,4 @@ for (const marker of requiredMarkers) {
 }
 
 writeFileSync(assetPath, patched);
-console.log("Free/Pro report feature gates applied: Free 1 saved preset, Pro max 20 saved presets, Pro branding and detailed reading, with restore normalization.");
+console.log("Free/Pro report feature gates applied: Free 3 saved presets, Pro max 30 saved presets, Pro branding and detailed reading, with restore normalization.");
