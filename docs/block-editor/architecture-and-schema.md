@@ -27,7 +27,7 @@ ReportSnapshot { snapshotVersion, format, characterSnapshot,
 
 ## ロールバック
 
-サーバーは各 update 前の document と version を保存する。migration 実行中は source record を immutable backup として保管し、ロールバックはその backup を同一 tenant/owner にだけ復元する。現在の公開ランタイムで実装済みなのは、上記の端末内backupから同じ importer を再実行する障害時復帰までである。サーバー側の immutable backup と復元APIは未実装であり、クライアント local cache はクラウド正本を上書きしない。
+サーバーは各 update 前の document と version を保存する。migration 実行中は source record を immutable backup として保管し、ロールバックはその backup を同一 tenant/owner にだけ復元する。`/api/report-formats/default` はD1の同じowner scopeに直近20件の backup を保持し、revisionを照合した `POST` 復元で現行値も新たなbackupに退避する。公開ランタイムには端末内backupから同じ importer を再実行する障害時復帰もある。クライアント local cache はクラウド正本を上書きしない。
 
 ## Report Snapshot
 

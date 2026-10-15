@@ -197,13 +197,32 @@ async function handleReportFormat(request, env = {}, ctx = null) {
   try { state = row?.workspace_state_json ? JSON.parse(row.workspace_state_json) : {}; } catch { state = {}; }
   const settings = state.app_settings && typeof state.app_settings === "object" ? state.app_settings : {};
   const meta = settings.report_format_blocks_v3_meta || { revision: 0 };
-  if (request.method === "GET") return json({ status: "success", format: settings.report_format_blocks_v3 || null, revision: Number(meta.revision || 0), reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
+  const backups = Array.isArray(settings.report_format_blocks_v3_backups) ? settings.report_format_blocks_v3_backups : [];
+  const persist = async (format, revision, nextBackups) => {
+    const updatedAt = new Date().toISOString();
+    const workspaceState = normalizeWorkspaceState({ ...state, app_settings: { ...settings, report_format_blocks_v3: format, report_format_blocks_v3_meta: { revision, updatedAt, schemaVersion: 3 }, report_format_blocks_v3_backups: nextBackups } });
+    await d1.prepare(`INSERT INTO workspace_states (scope_key, workspace_id, user_id, workspace_state_json, updated_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(scope_key) DO UPDATE SET workspace_state_json = excluded.workspace_state_json, updated_at = excluded.updated_at`).bind(key, scope.workspaceId, scope.userId, JSON.stringify(workspaceState), workspaceState.updated_at).run();
+    return updatedAt;
+  };
+  if (request.method === "GET") return json({ status: "success", format: settings.report_format_blocks_v3 || null, revision: Number(meta.revision || 0), backups: backups.map(({ backupId, revision, createdAt }) => ({ backupId, revision, createdAt })), reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
+  if (request.method === "POST") {
+    const target = backups.find((backup) => backup?.backupId === String(body.backupId || ""));
+    if (!target?.format || !validReportFormat(target.format)) return json({ status: "error", errorCode: "REPORT_FORMAT_BACKUP_NOT_FOUND", message: "復元対象のバックアップが見つかりません。" }, { status: 404 });
+    const expectedRevision = Number(body.expectedRevision || 0);
+    if (expectedRevision !== Number(meta.revision || 0)) return json({ status: "error", errorCode: "REPORT_FORMAT_CONFLICT", message: "別の編集内容が保存されています。再読み込みしてから復元してください。", revision: Number(meta.revision || 0) }, { status: 409 });
+    const current = settings.report_format_blocks_v3;
+    const rollbackBackup = current ? [{ backupId: `backup_${Date.now()}_${meta.revision}`, revision: Number(meta.revision || 0), createdAt: new Date().toISOString(), format: current }, ...backups.filter((backup) => backup.backupId !== target.backupId)].slice(0, 20) : backups.filter((backup) => backup.backupId !== target.backupId);
+    const revision = expectedRevision + 1;
+    await persist(target.format, revision, rollbackBackup);
+    return json({ status: "success", format: target.format, revision, restoredFromBackupId: target.backupId, reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
+  }
   if (!validReportFormat(body.format)) return json({ status: "error", errorCode: "REPORT_FORMAT_INVALID", message: "鑑定書フォーマットの構造を確認してください。" }, { status: 400 });
   const expectedRevision = Number(body.expectedRevision || 0);
   if (expectedRevision !== Number(meta.revision || 0)) return json({ status: "error", errorCode: "REPORT_FORMAT_CONFLICT", message: "別の編集内容が保存されています。再読み込みしてから保存してください。", revision: Number(meta.revision || 0), format: settings.report_format_blocks_v3 || null }, { status: 409 });
   const revision = expectedRevision + 1;
-  const workspaceState = normalizeWorkspaceState({ ...state, app_settings: { ...settings, report_format_blocks_v3: body.format, report_format_blocks_v3_meta: { revision, updatedAt: new Date().toISOString(), schemaVersion: 3 } } });
-  await d1.prepare(`INSERT INTO workspace_states (scope_key, workspace_id, user_id, workspace_state_json, updated_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(scope_key) DO UPDATE SET workspace_state_json = excluded.workspace_state_json, updated_at = excluded.updated_at`).bind(key, scope.workspaceId, scope.userId, JSON.stringify(workspaceState), workspaceState.updated_at).run();
+  const current = settings.report_format_blocks_v3;
+  const nextBackups = current ? [{ backupId: `backup_${Date.now()}_${meta.revision}`, revision: Number(meta.revision || 0), createdAt: new Date().toISOString(), format: current }, ...backups].slice(0, 20) : backups;
+  await persist(body.format, revision, nextBackups);
   return json({ status: "success", format: body.format, revision, reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
 }
 
@@ -390,7 +409,7 @@ export default {
     if (url.pathname === "/api/workspace-state" && ["GET", "PUT"].includes(request.method)) {
       return handleWorkspaceState(request, env, ctx);
     }
-    if (url.pathname === "/api/report-formats/default" && ["GET", "PUT"].includes(request.method)) {
+    if (url.pathname === "/api/report-formats/default" && ["GET", "PUT", "POST"].includes(request.method)) {
       return handleReportFormat(request, env, ctx);
     }
     if (url.pathname === "/api/user-preferences" && ["GET", "PUT", "PATCH"].includes(request.method)) {

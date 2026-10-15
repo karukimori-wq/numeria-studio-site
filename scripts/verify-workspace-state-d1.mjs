@@ -137,6 +137,24 @@ assert.equal(savedFormat.response.status, 200);
 assert.equal(savedFormat.body.revision, 1);
 assert.equal(savedFormat.body.format.pages[0].pageId, "page_v3");
 
+const secondFormat = structuredClone(reportFormat);
+secondFormat.pages[0].pageId = "page_v3_revised";
+const revisedFormat = await jsonFetch("/api/report-formats/default", {
+  method: "PUT",
+  headers,
+  body: JSON.stringify({ format: secondFormat, expectedRevision: 1 }),
+}, env);
+assert.equal(revisedFormat.body.revision, 2);
+const formatWithBackup = await jsonFetch("/api/report-formats/default", { headers }, env);
+assert.equal(formatWithBackup.body.backups.length, 1);
+const restoredFormat = await jsonFetch("/api/report-formats/default", {
+  method: "POST",
+  headers,
+  body: JSON.stringify({ backupId: formatWithBackup.body.backups[0].backupId, expectedRevision: 2 }),
+}, env);
+assert.equal(restoredFormat.response.status, 200);
+assert.equal(restoredFormat.body.format.pages[0].pageId, "page_v3");
+
 const staleFormat = await jsonFetch("/api/report-formats/default", {
   method: "PUT",
   headers,
