@@ -648,6 +648,15 @@ function SignedInWorkspace() {
       selectedReportFormat: reportFormat,
       blockEditorFormat: blockEditorFormat?.pages?.length ? blockEditorFormat : null,
     };
+    if (blockEditorFormat?.schemaVersion === 3 && typeof window.NumeriaBlockEditorPrintToPdf === "function") {
+      window.NumeriaBlockEditorPrintToPdf();
+      setNotice({
+        type: "success",
+        title: "印刷ダイアログを開きました",
+        body: "鑑定書ビルダーのA4組版を使用しています。保存先でPDFを選択してください。",
+      });
+      return;
+    }
     try {
       const response = await authedApiRequest("/api/reports/export", {
         method: "POST",

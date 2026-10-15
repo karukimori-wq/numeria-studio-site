@@ -46,6 +46,7 @@ assert.match(runtime, /NumeriaPhysicalPagePlan/);
 assert.match(runtime, /restoreBackup/);
 assert.match(runtime, /data-v3-format-backups/);
 assert.match(runtime, /data-restore-backup/);
+assert.match(runtime, /NumeriaBlockEditorPrintToPdf/);
 assert.match(runtime, /plan\.physicalPages\.map/);
 assert.match(runtime, /data-logical-page/);
 assert.match(runtime, /data-block-id/);
