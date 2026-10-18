@@ -1,4 +1,5 @@
 import coreWorker from "./worker.js";
+import { REPORT_PAGE_DEFINITION_IDS } from "./report-page-definitions.js";
 
 const WORKSPACE_STATE_CONTRACT_VERSION = "numeria-d1-workspace-state.v1";
 const USER_PREFERENCES_CONTRACT_VERSION = "numeria-d1-user-preferences.v1";
@@ -180,7 +181,7 @@ function validReportFormat(value, pageLimit = Infinity) {
       && region.columnBlocks.every((column) => Array.isArray(column) && column.every((block) =>
         block && typeof block.blockId === "string" && types.has(block.type) && typeof block.content === "string"
       ))
-    )
+    ) && (!page.pageDefinitionId || REPORT_PAGE_DEFINITION_IDS.has(page.pageDefinitionId))
   );
 }
 

@@ -151,6 +151,15 @@ const rejectedOverLimit = await jsonFetch("/api/report-formats/default", {
 assert.equal(rejectedOverLimit.response.status, 400);
 assert.equal(rejectedOverLimit.body.errorCode, "REPORT_FORMAT_INVALID");
 
+const invalidDefinition = structuredClone(reportFormat);
+invalidDefinition.pages[0].pageDefinitionId = "UNKNOWN-01";
+const rejectedDefinition = await jsonFetch("/api/report-formats/default", {
+  method: "PUT",
+  headers,
+  body: JSON.stringify({ format: invalidDefinition, expectedRevision: 1 }),
+}, env);
+assert.equal(rejectedDefinition.response.status, 400);
+
 const secondFormat = structuredClone(reportFormat);
 secondFormat.pages[0].pageId = "page_v3_revised";
 const revisedFormat = await jsonFetch("/api/report-formats/default", {
