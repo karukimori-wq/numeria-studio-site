@@ -20,8 +20,17 @@ export function createPhysicalPagePlan(format, measurements = {}, options = {}) 
       return;
     }
     const mustKeepWithNext = (item.type === "heading" || item.type === "page-title") && nextHeight > 0 && nextHeight <= contentHeight;
-    const needsNewPage = !physical || physical.logicalPageId !== logicalPageId || physical.usedHeightPx + height > contentHeight || (mustKeepWithNext && physical.usedHeightPx > 0 && physical.usedHeightPx + height + nextHeight > contentHeight);
+    const paragraphFlow = (item.type === "body" || item.type === "ai-text") && height > contentHeight;
+    const needsNewPage = !physical || physical.logicalPageId !== logicalPageId || (!paragraphFlow && physical.usedHeightPx + height > contentHeight) || (mustKeepWithNext && physical.usedHeightPx > 0 && physical.usedHeightPx + height + nextHeight > contentHeight);
     if (needsNewPage) start(logicalPageId, physical ? "overflow" : "logical-page");
+    if (paragraphFlow) {
+      // Text continues through browser pagination at paragraph boundaries. The
+      // planner reserves the remainder of this A4 page so later blocks start
+      // on a fresh physical page instead of overlapping the flowing paragraph.
+      physical.items.push({ ...item, continuationColumns: item.sourceColumns, heightPx: height, paragraphFlow: true });
+      physical.usedHeightPx = contentHeight;
+      return;
+    }
     if (height > contentHeight) warnings.push({ code: "BLOCK_EXCEEDS_A4_CONTENT", blockId: item.blockId, heightPx: height });
     physical.items.push({
       ...item,

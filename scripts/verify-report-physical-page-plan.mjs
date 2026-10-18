@@ -20,4 +20,13 @@ const headingFormat = { pages: [{ pageId: "logical_2", layoutRegions: [{ regionI
 const headingPlan = createPhysicalPagePlan(headingFormat, { intro: 700, heading: 100, detail: 150 }, { contentHeightPx: 900 });
 assert.equal(headingPlan.physicalPages.length, 2);
 assert.deepEqual(headingPlan.physicalPages[1].items.map((item) => item.blockId), ["heading", "detail"]);
+
+const paragraphFormat = { pages: [{ pageId: "logical_3", layoutRegions: [{ regionId: "region_3", columns: 1, columnBlocks: [[
+  { blockId: "long-text", type: "body" }, { blockId: "after-text", type: "body" },
+]] }] }] };
+const paragraphPlan = createPhysicalPagePlan(paragraphFormat, { "long-text": 1400, "after-text": 120 }, { contentHeightPx: 900 });
+assert.equal(paragraphPlan.warnings.length, 0);
+assert.equal(paragraphPlan.physicalPages.length, 2);
+assert.equal(paragraphPlan.physicalPages[0].items[0].paragraphFlow, true);
+assert.equal(paragraphPlan.physicalPages[1].items[0].blockId, "after-text");
 console.log("Physical A4 page plan contract verified.");
