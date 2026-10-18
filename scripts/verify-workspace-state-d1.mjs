@@ -138,6 +138,15 @@ assert.equal(savedFormat.body.revision, 1);
 assert.equal(savedFormat.body.format.pages[0].pageId, "page_v3");
 assert.equal(savedFormat.body.pageLimit, 3);
 
+const freeDefinitions = await jsonFetch("/api/report-page-definitions?methodKey=numerology", { headers }, env);
+assert.equal(freeDefinitions.response.status, 200);
+assert.equal(freeDefinitions.body.planId, "free");
+assert.equal(freeDefinitions.body.definitions.length, 4);
+assert.equal(freeDefinitions.body.definitions[0].pageDefinitionId, "NUM-01");
+assert.equal(freeDefinitions.body.definitions[0].availabilityCondition, "8結果が全て確定。未算出項目があれば理由付き利用不可");
+const invalidDefinitions = await jsonFetch("/api/report-page-definitions?methodKey=unknown", { headers }, env);
+assert.equal(invalidDefinitions.response.status, 400);
+
 const definedFormat = structuredClone(reportFormat);
 definedFormat.pages[0].pageDefinitionId = "NUM-01";
 const savedDefinedFormat = await jsonFetch("/api/report-formats/default", {

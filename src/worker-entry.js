@@ -1,5 +1,5 @@
 import coreWorker from "./worker.js";
-import { REPORT_PAGE_DEFINITION_IDS } from "./report-page-definitions.js";
+import { REPORT_PAGE_DEFINITION_IDS, reportPageDefinitionsFor } from "./report-page-definitions.js";
 
 const WORKSPACE_STATE_CONTRACT_VERSION = "numeria-d1-workspace-state.v1";
 const USER_PREFERENCES_CONTRACT_VERSION = "numeria-d1-user-preferences.v1";
@@ -228,6 +228,22 @@ async function handleReportFormat(request, env = {}, ctx = null) {
   return json({ status: "success", format: body.format, revision, pageLimit, reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
 }
 
+async function handleReportPageDefinitions(request, env = {}, ctx = null) {
+  const requestedWorkspaceId = request.headers.get("X-Workspace-Id") || "ws_personal";
+  const { response: authResponse, scope } = await resolveAuthenticatedScope(request, env, ctx, requestedWorkspaceId);
+  if (authResponse) return authResponse;
+  const methodKey = normalizeDivination(new URL(request.url).searchParams.get("methodKey"), "");
+  if (!ALLOWED_DIVINATIONS.has(methodKey)) return json({ status: "error", errorCode: "REPORT_PAGE_DEFINITION_METHOD_INVALID" }, { status: 400 });
+  const planId = scope.planId === "pro" ? "pro" : "free";
+  return json({
+    status: "success",
+    methodKey,
+    planId,
+    definitions: reportPageDefinitionsFor(methodKey, planId),
+    sourceOfTruth: "numeria-report-page-catalog",
+  });
+}
+
 async function handleWorkspaceState(request, env = {}, ctx = null) {
   const body = await readJson(request);
   const url = new URL(request.url);
@@ -413,6 +429,9 @@ export default {
     }
     if (url.pathname === "/api/report-formats/default" && ["GET", "PUT", "POST"].includes(request.method)) {
       return handleReportFormat(request, env, ctx);
+    }
+    if (url.pathname === "/api/report-page-definitions" && request.method === "GET") {
+      return handleReportPageDefinitions(request, env, ctx);
     }
     if (url.pathname === "/api/user-preferences" && ["GET", "PUT", "PATCH"].includes(request.method)) {
       return handleUserPreferences(request, env, ctx);
