@@ -51,6 +51,7 @@ assert.match(runtime, /pageLimit=3/);
 assert.match(runtime, /このプランではページは/);
 assert.match(runtime, /data-v3-page-limit/);
 assert.match(runtime, /v3PageLimitBound/);
+assert.match(runtime, /data-block-page][\s\S]*data\.pages\.length>=pageLimit/);
 assert.match(runtime, /\/api\/report-page-definitions/);
 assert.match(runtime, /data-v3-page-definitions/);
 assert.match(runtime, /結果が確定した場合のみ追加できます/);
