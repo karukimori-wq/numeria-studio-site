@@ -138,6 +138,16 @@ assert.equal(savedFormat.body.revision, 1);
 assert.equal(savedFormat.body.format.pages[0].pageId, "page_v3");
 assert.equal(savedFormat.body.pageLimit, 3);
 
+const definedFormat = structuredClone(reportFormat);
+definedFormat.pages[0].pageDefinitionId = "NUM-01";
+const savedDefinedFormat = await jsonFetch("/api/report-formats/default", {
+  method: "PUT",
+  headers,
+  body: JSON.stringify({ format: definedFormat, expectedRevision: 1 }),
+}, env);
+assert.equal(savedDefinedFormat.response.status, 200);
+assert.equal(savedDefinedFormat.body.format.pages[0].pageDefinitionId, "NUM-01");
+
 const overLimitFormat = structuredClone(reportFormat);
 overLimitFormat.pages = Array.from({ length: 4 }, (_, index) => ({
   ...structuredClone(reportFormat.pages[0]),
@@ -146,7 +156,7 @@ overLimitFormat.pages = Array.from({ length: 4 }, (_, index) => ({
 const rejectedOverLimit = await jsonFetch("/api/report-formats/default", {
   method: "PUT",
   headers,
-  body: JSON.stringify({ format: overLimitFormat, expectedRevision: 1 }),
+  body: JSON.stringify({ format: overLimitFormat, expectedRevision: 2 }),
 }, env);
 assert.equal(rejectedOverLimit.response.status, 400);
 assert.equal(rejectedOverLimit.body.errorCode, "REPORT_FORMAT_INVALID");
@@ -156,24 +166,33 @@ invalidDefinition.pages[0].pageDefinitionId = "UNKNOWN-01";
 const rejectedDefinition = await jsonFetch("/api/report-formats/default", {
   method: "PUT",
   headers,
-  body: JSON.stringify({ format: invalidDefinition, expectedRevision: 1 }),
+  body: JSON.stringify({ format: invalidDefinition, expectedRevision: 2 }),
 }, env);
 assert.equal(rejectedDefinition.response.status, 400);
+
+const malformedDefinition = structuredClone(reportFormat);
+malformedDefinition.pages[0].pageDefinitionId = false;
+const rejectedMalformedDefinition = await jsonFetch("/api/report-formats/default", {
+  method: "PUT",
+  headers,
+  body: JSON.stringify({ format: malformedDefinition, expectedRevision: 2 }),
+}, env);
+assert.equal(rejectedMalformedDefinition.response.status, 400);
 
 const secondFormat = structuredClone(reportFormat);
 secondFormat.pages[0].pageId = "page_v3_revised";
 const revisedFormat = await jsonFetch("/api/report-formats/default", {
   method: "PUT",
   headers,
-  body: JSON.stringify({ format: secondFormat, expectedRevision: 1 }),
+  body: JSON.stringify({ format: secondFormat, expectedRevision: 2 }),
 }, env);
-assert.equal(revisedFormat.body.revision, 2);
+assert.equal(revisedFormat.body.revision, 3);
 const formatWithBackup = await jsonFetch("/api/report-formats/default", { headers }, env);
-assert.equal(formatWithBackup.body.backups.length, 1);
+assert.equal(formatWithBackup.body.backups.length, 2);
 const restoredFormat = await jsonFetch("/api/report-formats/default", {
   method: "POST",
   headers,
-  body: JSON.stringify({ backupId: formatWithBackup.body.backups[0].backupId, expectedRevision: 2 }),
+  body: JSON.stringify({ backupId: formatWithBackup.body.backups[0].backupId, expectedRevision: 3 }),
 }, env);
 assert.equal(restoredFormat.response.status, 200);
 assert.equal(restoredFormat.body.format.pages[0].pageId, "page_v3");

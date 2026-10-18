@@ -181,7 +181,7 @@ function validReportFormat(value, pageLimit = Infinity) {
       && region.columnBlocks.every((column) => Array.isArray(column) && column.every((block) =>
         block && typeof block.blockId === "string" && types.has(block.type) && typeof block.content === "string"
       ))
-    ) && (!page.pageDefinitionId || REPORT_PAGE_DEFINITION_IDS.has(page.pageDefinitionId))
+    ) && (page.pageDefinitionId == null || (typeof page.pageDefinitionId === "string" && REPORT_PAGE_DEFINITION_IDS.has(page.pageDefinitionId)))
   );
 }
 
