@@ -52,10 +52,12 @@ export const REPORT_PAGE_DEFINITIONS = Object.entries(groups).flatMap(([methodKe
       pageDefinitionId: `${group.prefix}-${String(ordinal).padStart(2, "0")}`,
       methodKey,
       tier: group.basic.includes(ordinal) ? "basic" : "additional",
+      pageMode: "fixed",
       commentSlots: 1,
       commentDefaultEnabled: true,
       title: metadata?.[0] || null,
       diagramSpecification: metadata?.[1] || null,
+      visualRequired: metadata?.[1] !== "なし・文章中心",
       availabilityCondition: metadata?.[2] || null,
     };
   }),

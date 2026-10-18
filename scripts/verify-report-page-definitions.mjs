@@ -8,6 +8,9 @@ assert.equal(new Set(REPORT_PAGE_DEFINITIONS.map((definition) => definition.page
 assert.equal(reportPageDefinitionsFor("numerology", "free").length, 4);
 assert.equal(reportPageDefinitionsFor("western-astrology", "pro").length, 16);
 assert.equal(REPORT_PAGE_DEFINITIONS.filter((definition) => definition.title && definition.diagramSpecification && definition.availabilityCondition).length, 85);
+assert.equal(REPORT_PAGE_DEFINITIONS.filter((definition) => definition.pageMode === "fixed" && definition.commentSlots === 1 && definition.commentDefaultEnabled).length, 85);
+assert.equal(REPORT_PAGE_DEFINITIONS.filter((definition) => definition.visualRequired).length, 82);
+assert.deepEqual(REPORT_PAGE_DEFINITIONS.filter((definition) => !definition.visualRequired).map((definition) => definition.pageDefinitionId), ["TAR-05", "TAR-06", "AST-08"]);
 assert.equal(REPORT_PAGE_DEFINITIONS.filter((definition) => definition.tier === "basic" && definition.title).length, 25);
 assert.equal(REPORT_PAGE_DEFINITIONS.filter((definition) => definition.tier === "additional" && definition.title).length, 60);
 assert.equal(REPORT_PAGE_DEFINITIONS.find((definition) => definition.pageDefinitionId === "TAR-05").diagramSpecification, "なし・文章中心");
