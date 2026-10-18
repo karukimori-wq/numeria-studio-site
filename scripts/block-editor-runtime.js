@@ -80,6 +80,10 @@ function decorateEditor(){
     panel.querySelectorAll("[data-restore-backup]").forEach(button=>button.onclick=()=>restoreBackup(button.dataset.restoreBackup));settings.append(panel);
   }
   const pagePane=root.querySelector(".nbe-pages");
+  const pageHeading=pagePane?.querySelector("h2");
+  if(pageHeading&&!pageHeading.querySelector("[data-v3-page-limit]")){let limit=document.createElement("small");limit.dataset.v3PageLimit="1";limit.textContent=` ${data.pages.length}/${pageLimit}`;pageHeading.append(limit)}
+  const copyPage=pagePane?.querySelector("[data-copy-page]");
+  if(copyPage&&!copyPage.dataset.v3PageLimitBound){copyPage.dataset.v3PageLimitBound="1";const copy=copyPage.onclick;copyPage.onclick=()=>{if(data.pages.length>=pageLimit){status=`このプランではページは${pageLimit}件までです`;render();return}copy()}}
   if(pagePane&&!pagePane.querySelector("[data-v3-page-order]")){
     const controls=document.createElement("div");controls.dataset.v3PageOrder="1";controls.className="nbe-page-order";controls.innerHTML="<button type=button data-page-up>ページを前へ</button><button type=button data-page-down>ページを後へ</button>";
     controls.querySelector("[data-page-up]").onclick=()=>{let from=data.pages.findIndex(page=>page.pageId===selected);if(from<=0)return;[data.pages[from-1],data.pages[from]]=[data.pages[from],data.pages[from-1]];remember();render()};
