@@ -170,8 +170,8 @@ async function resolveAuthenticatedScope(request, env, ctx, requestedWorkspaceId
   };
 }
 
-function validReportFormat(value) {
-  if (!value || typeof value !== "object" || value.schemaVersion !== 3 || !Array.isArray(value.pages) || !value.pages.length) return false;
+function validReportFormat(value, pageLimit = Infinity) {
+  if (!value || typeof value !== "object" || value.schemaVersion !== 3 || !Array.isArray(value.pages) || !value.pages.length || value.pages.length > pageLimit) return false;
   const types = new Set(["page-title", "heading", "body", "ai-text", "divider", "numerology-result", "tarot-cards"]);
   return value.pages.every((page) =>
     page && typeof page.pageId === "string" && Array.isArray(page.layoutRegions) && page.layoutRegions.every((region) =>
@@ -192,6 +192,7 @@ async function handleReportFormat(request, env = {}, ctx = null) {
   const d1 = getD1Binding(env);
   if (!d1 || typeof d1.prepare !== "function") return json({ status: "error", errorCode: "REPORT_FORMAT_STORE_UNAVAILABLE" }, { status: 503 });
   const key = workspaceScopeKey(scope.workspaceId, scope.userId);
+  const pageLimit = scope.planId === "pro" ? 30 : 3;
   const row = await d1.prepare("SELECT workspace_state_json FROM workspace_states WHERE scope_key = ? LIMIT 1").bind(key).first();
   let state = {};
   try { state = row?.workspace_state_json ? JSON.parse(row.workspace_state_json) : {}; } catch { state = {}; }
@@ -204,7 +205,7 @@ async function handleReportFormat(request, env = {}, ctx = null) {
     await d1.prepare(`INSERT INTO workspace_states (scope_key, workspace_id, user_id, workspace_state_json, updated_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(scope_key) DO UPDATE SET workspace_state_json = excluded.workspace_state_json, updated_at = excluded.updated_at`).bind(key, scope.workspaceId, scope.userId, JSON.stringify(workspaceState), workspaceState.updated_at).run();
     return updatedAt;
   };
-  if (request.method === "GET") return json({ status: "success", format: settings.report_format_blocks_v3 || null, revision: Number(meta.revision || 0), backups: backups.map(({ backupId, revision, createdAt }) => ({ backupId, revision, createdAt })), reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
+  if (request.method === "GET") return json({ status: "success", format: settings.report_format_blocks_v3 || null, revision: Number(meta.revision || 0), pageLimit, backups: backups.map(({ backupId, revision, createdAt }) => ({ backupId, revision, createdAt })), reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
   if (request.method === "POST") {
     const target = backups.find((backup) => backup?.backupId === String(body.backupId || ""));
     if (!target?.format || !validReportFormat(target.format)) return json({ status: "error", errorCode: "REPORT_FORMAT_BACKUP_NOT_FOUND", message: "復元対象のバックアップが見つかりません。" }, { status: 404 });
@@ -216,14 +217,14 @@ async function handleReportFormat(request, env = {}, ctx = null) {
     await persist(target.format, revision, rollbackBackup);
     return json({ status: "success", format: target.format, revision, restoredFromBackupId: target.backupId, reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
   }
-  if (!validReportFormat(body.format)) return json({ status: "error", errorCode: "REPORT_FORMAT_INVALID", message: "鑑定書フォーマットの構造を確認してください。" }, { status: 400 });
+  if (!validReportFormat(body.format, pageLimit)) return json({ status: "error", errorCode: "REPORT_FORMAT_INVALID", message: `鑑定書フォーマットの構造とページ上限（${pageLimit}件）を確認してください。` }, { status: 400 });
   const expectedRevision = Number(body.expectedRevision || 0);
   if (expectedRevision !== Number(meta.revision || 0)) return json({ status: "error", errorCode: "REPORT_FORMAT_CONFLICT", message: "別の編集内容が保存されています。再読み込みしてから保存してください。", revision: Number(meta.revision || 0), format: settings.report_format_blocks_v3 || null }, { status: 409 });
   const revision = expectedRevision + 1;
   const current = settings.report_format_blocks_v3;
   const nextBackups = current ? [{ backupId: `backup_${Date.now()}_${meta.revision}`, revision: Number(meta.revision || 0), createdAt: new Date().toISOString(), format: current }, ...backups].slice(0, 20) : backups;
   await persist(body.format, revision, nextBackups);
-  return json({ status: "success", format: body.format, revision, reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
+  return json({ status: "success", format: body.format, revision, pageLimit, reportFormatContractVersion: REPORT_FORMAT_CONTRACT_VERSION, sourceOfTruth: "numeria-d1-report-format" });
 }
 
 async function handleWorkspaceState(request, env = {}, ctx = null) {

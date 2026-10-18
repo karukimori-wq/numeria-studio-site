@@ -136,6 +136,20 @@ const savedFormat = await jsonFetch("/api/report-formats/default", {
 assert.equal(savedFormat.response.status, 200);
 assert.equal(savedFormat.body.revision, 1);
 assert.equal(savedFormat.body.format.pages[0].pageId, "page_v3");
+assert.equal(savedFormat.body.pageLimit, 3);
+
+const overLimitFormat = structuredClone(reportFormat);
+overLimitFormat.pages = Array.from({ length: 4 }, (_, index) => ({
+  ...structuredClone(reportFormat.pages[0]),
+  pageId: `page_free_${index}`,
+}));
+const rejectedOverLimit = await jsonFetch("/api/report-formats/default", {
+  method: "PUT",
+  headers,
+  body: JSON.stringify({ format: overLimitFormat, expectedRevision: 1 }),
+}, env);
+assert.equal(rejectedOverLimit.response.status, 400);
+assert.equal(rejectedOverLimit.body.errorCode, "REPORT_FORMAT_INVALID");
 
 const secondFormat = structuredClone(reportFormat);
 secondFormat.pages[0].pageId = "page_v3_revised";
