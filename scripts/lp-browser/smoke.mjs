@@ -77,6 +77,8 @@ try{
     assert.equal(await jsTest.getAttribute("open"),"");
     assert.deepEqual(errors,[],"No uncaught JS errors allowed on "+device.name);
     assert.deepEqual(external,[],"LP demo must not call remote services on "+device.name);
+    await page.evaluate(()=>window.scrollTo(0,0));
+    await page.waitForTimeout(150);
     await page.screenshot({path:join(screenshots,device.name+".png"),fullPage:true,animations:"disabled"});
     tested++;console.log("PASS",device.name,JSON.stringify(overflow));
     await ctx.close();
