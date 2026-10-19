@@ -1,0 +1,40 @@
+name: Numeria LP Preview CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'assets/welcome.html'
+      - 'src/worker.js'
+      - 'wrangler.jsonc'
+      - 'scripts/verify-landing-preview.mjs'
+      - 'package.json'
+      - '.github/workflows/lp-preview-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate LP and legacy routes
+        run: npm test
+      - name: Build static assets
+        run: npm run build
+      - name: Verify generated landing asset
+        shell: bash
+        run: |
+          test -s dist/assets/welcome.html
+          grep -q 'noindex,nofollow' dist/assets/welcome.html
+          grep -q 'INTERACTIVE DEMO' dist/assets/welcome.html
+          echo 'LP preview static asset build confirmed.'

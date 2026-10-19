@@ -1,0 +1,51 @@
+name: Numeria LP Browser QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/welcome.html'
+      - 'src/lp-preview-worker.js'
+      - 'scripts/lp-browser/**'
+      - 'scripts/build-lp-preview.mjs'
+      - '.github/workflows/lp-browser-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare isolated LP site
+        run: node scripts/build-lp-preview.mjs
+      - name: Install browser test dependency
+        shell: bash
+        run: |
+          set -e
+          for attempt in 1 2 3; do
+            if npm install --prefix scripts/lp-browser --no-audit --no-fund --fetch-retries=3 --fetch-retry-mintimeout=5000; then
+              exit 0
+            fi
+            echo "::warning::Playwright npm install failed (attempt $attempt); retrying"
+            sleep $((attempt * 5))
+          done
+          exit 1
+      - name: Install Chromium for Playwright
+        run: ./scripts/lp-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Run desktop / mobile interaction checks
+        run: node scripts/lp-browser/smoke.mjs
+      - name: Upload full-page screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: numeria-lp-browser-screenshots
+          path: lp-browser-evidence/*.png
+          if-no-files-found: ignore
+          retention-days: 14
