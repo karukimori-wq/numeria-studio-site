@@ -80,7 +80,7 @@ try{
     await page.locator('[data-step="3"]').click();
     assert.equal(await page.locator('[data-step="3"]').getAttribute("aria-pressed"),"true");
     assert.match(await page.locator("#step-detail-body").textContent(),/確定した結果/);
-    await page.locator('[data-pending]').first().click();
+    await page.locator('.hero [data-pending]').first().click();
     assert.equal(await page.locator("#toast").isVisible(),true);
     await page.keyboard.press("Escape");
     assert.equal(await page.locator("#toast").isVisible(),false);
