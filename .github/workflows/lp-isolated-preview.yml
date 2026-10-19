@@ -1,0 +1,49 @@
+name: Numeria Isolated LP Preview Deploy
+
+on:
+  push:
+    branches:
+      - feature/lp-welcome-preview-20261019
+    paths:
+      - 'assets/welcome.html'
+      - 'src/lp-preview-worker.js'
+      - 'wrangler.lp-preview.jsonc'
+      - 'scripts/build-lp-preview.mjs'
+      - 'scripts/verify-lp-preview-isolation.mjs'
+      - '.github/workflows/lp-isolated-preview.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-isolated-preview:
+    if: github.repository == 'karukimori-wq/numeria-studio-site' && github.ref == 'refs/heads/feature/lp-welcome-preview-20261019'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify preview-only boundaries
+        shell: bash
+        run: |
+          node scripts/verify-lp-preview-isolation.mjs
+          node scripts/build-lp-preview.mjs
+          test -s lp-preview-dist/index.html
+          test -s lp-preview-dist/assets/tarot-decks/cards/celestialcosmos-major-17.webp
+          test -s lp-preview-dist/assets/divination-visuals/western-astrology-wheel-v1.png
+          test ! -f lp-preview-dist/original.html
+          test ! -d lp-preview-dist/api
+      - name: Require Cloudflare deployment credentials
+        shell: bash
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::Missing existing Cloudflare deployment secrets. No deployment attempted."
+            exit 1
+          fi
+      - name: Deploy only the isolated LP Worker
+        run: npx --yes wrangler deploy --config wrangler.lp-preview.jsonc
