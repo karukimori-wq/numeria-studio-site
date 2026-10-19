@@ -77,6 +77,16 @@ try{
     const jsTest=await page.locator("details").first();
     await jsTest.locator("summary").click();
     assert.equal(await jsTest.getAttribute("open"),"");
+    await page.locator('[data-step="3"]').click();
+    assert.equal(await page.locator('[data-step="3"]').getAttribute("aria-pressed"),"true");
+    assert.match(await page.locator("#step-detail-body").textContent(),/確定した結果/);
+    await page.locator('[data-pending]').first().click();
+    assert.equal(await page.locator("#toast").isVisible(),true);
+    await page.keyboard.press("Escape");
+    assert.equal(await page.locator("#toast").isVisible(),false);
+    await page.emulateMedia({reducedMotion:"reduce"});
+    assert.equal(await page.locator(".book-scene").evaluate(e=>getComputedStyle(e).animationName),"none","Reduced motion must stop floating animation");
+    await page.emulateMedia({reducedMotion:"no-preference"});
     assert.deepEqual(errors,[],"No uncaught JS errors allowed on "+device.name);
     assert.deepEqual(external,[],"LP demo must not call remote services on "+device.name);
     await page.evaluate(()=>window.scrollTo(0,0));
@@ -85,5 +95,28 @@ try{
     tested++;console.log("PASS",device.name,JSON.stringify(overflow));
     await ctx.close();
   }
+  // Simulate missing local artwork: content and report preview must remain usable.
+  const noImages=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  const imagePage=await noImages.newPage();
+  const broken=[];
+  imagePage.on("pageerror",e=>broken.push(e.message));
+  await imagePage.route("**/assets/tarot-decks/cards/**",route=>route.abort());
+  await imagePage.route("**/assets/divination-visuals/**",route=>route.abort());
+  await imagePage.goto(base+"/welcome",{waitUntil:"domcontentloaded"});
+  await imagePage.locator('[data-method="tarot"]').click();
+  assert.equal(await imagePage.locator("#demo-tarot-fallback").isVisible(),true,"Missing tarot should show a text fallback");
+  await imagePage.locator("#gallery").scrollIntoViewIfNeeded();
+  assert.equal(await imagePage.locator("#gallery-tarot-fallback").isVisible(),true,"Missing gallery artwork should be explained");
+  assert.equal(await imagePage.locator("#gallery-astro-fallback").isVisible(),true,"Missing astrology artwork should be explained");
+  assert.deepEqual(broken,[],"Broken images must not cause JS errors");
+  await noImages.close();
+  const noJs=await browser.newContext({viewport:{width:390,height:844},javaScriptEnabled:false,isMobile:true});
+  const staticPage=await noJs.newPage();
+  await staticPage.goto(base+"/welcome",{waitUntil:"domcontentloaded"});
+  assert.equal(await staticPage.locator("main section").count(),9,"Static LP content must exist without JavaScript");
+  assert.equal(await staticPage.getByRole("heading",{name:/あなたの鑑定を/}).count(),1);
+  assert.ok(await staticPage.getByRole("link",{name:"鑑定書を体験する"}).isVisible(),"Core navigation must work without JS");
+  await noJs.close();
+  console.log("PASS degraded modes: broken images, JavaScript disabled");
 }finally{await browser.close();server.close()}
 console.log("PASS",tested,"Chromium viewports; screenshots in lp-browser-evidence");
