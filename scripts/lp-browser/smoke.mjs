@@ -39,6 +39,8 @@ try{
     const response=await page.goto(base+"/welcome",{waitUntil:"networkidle"});
     assert.equal(response.status(),200,"Preview must load at "+device.name);
     assert.equal(await page.locator("section").count(),9);
+    const headlineLines=await page.locator("#hero-title").evaluate(el=>el.getBoundingClientRect().height/parseFloat(getComputedStyle(el).lineHeight));
+    assert.ok(headlineLines<=2.45,device.name+" hero headline should remain two lines, actual "+headlineLines.toFixed(2));
     assert.equal(await page.locator("#demo").isVisible(),true);
     const before=await page.locator("#cover").evaluate(el=>({background:getComputedStyle(el).backgroundImage,bg:getComputedStyle(el).backgroundColor}));
     await page.locator('[data-theme="pearl"]').click();
