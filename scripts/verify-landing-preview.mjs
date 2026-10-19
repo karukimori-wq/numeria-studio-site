@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import coreWorker from "../src/worker.js";
+import { PLAN_CONFIG } from "../src/plan-config.js";
 
 const html = readFileSync("assets/welcome.html", "utf8");
 const wrangler = JSON.parse(readFileSync("wrangler.jsonc", "utf8"));
@@ -13,6 +14,22 @@ assert.match(html, /data-method="tarot"/);
 assert.match(html, /data-layout="magazine"/);
 assert.match(html, /架空のサンプル/, "The report demo should be identified as illustrative.");
 assert.doesNotMatch(html, /https?:\/\/(?:api\.openai|api\.clerk|api\.stripe)\.com/, "Demo should not contain external API calls.");
+const free = PLAN_CONFIG.free.entitlements;
+for (const [description, value] of [
+  ["Free completed appraisals", free.monthlyAppraisals],
+  ["Free client profiles", free.appraisalClients],
+  ["Free in-progress drafts", free.inProgressAppraisals],
+  ["Free visible history", free.viewableCompletedAppraisals],
+]) {
+  assert.ok(Number.isInteger(value), description + " must have a numeric limit");
+}
+assert.match(html, new RegExp("月" + free.monthlyAppraisals + "件"), "LP Free monthly limit must match plan-config");
+assert.match(html, new RegExp("プロフィール" + free.appraisalClients + "名"), "LP Free client limit must match plan-config");
+assert.match(html, new RegExp("途中保存" + free.inProgressAppraisals + "件"), "LP Free draft limit must match plan-config");
+assert.match(html, new RegExp("完了鑑定" + free.viewableCompletedAppraisals + "件"), "LP Free history visibility must match plan-config");
+assert.equal(PLAN_CONFIG.pro.entitlements.monthlyAppraisals, "unlimited");
+assert.doesNotMatch(html, /2,980|2980/, "Unverified Pro price should not be hardcoded in the preview");
+
 
 const requested = [];
 const env = {
