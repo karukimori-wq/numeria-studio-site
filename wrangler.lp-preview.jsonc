@@ -1,0 +1,11 @@
+{
+  "name": "numeria-studio-lp-preview",
+  "main": "src/lp-preview-worker.js",
+  "compatibility_date": "2026-10-19",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./lp-preview-dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  }
+}
