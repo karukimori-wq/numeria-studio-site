@@ -20,7 +20,7 @@ const env = {
     async fetch(request) {
       const pathname = new URL(request.url).pathname;
       requested.push(pathname);
-      if (pathname === "/assets/welcome.html") {
+      if (pathname === "/assets/welcome") {
         return new Response(html, { status: 200, headers: { "Content-Type": "text/html" } });
       }
       if (pathname === "/original.html") {
@@ -44,7 +44,7 @@ assert.equal(preview.status, 200);
 assert.match(await preview.text(), /INTERACTIVE DEMO/);
 assert.equal(preview.headers.get("Cache-Control"), "no-store, max-age=0");
 assert.equal(preview.headers.get("X-Robots-Tag"), "noindex, nofollow");
-assert.equal(requested.at(-1), "/assets/welcome.html");
+assert.equal(requested.at(-1), "/assets/welcome");
 
 const head = await coreWorker.fetch(request("/welcome", "HEAD"), env, {});
 assert.equal(head.status, 200);
