@@ -2628,7 +2628,7 @@ export default {
     }
     // Preview-only route. The existing / and /original.html app entrypoints remain unchanged.
     if (url.pathname === "/welcome" && (request.method === "GET" || request.method === "HEAD")) {
-      const assetUrl = new URL("/assets/welcome.html", request.url);
+      const assetUrl = new URL("/assets/welcome", request.url);
       const asset = await env.ASSETS.fetch(new Request(assetUrl.toString(), request));
       const headers = new Headers(asset.headers);
       headers.set("Cache-Control", "no-store, max-age=0");
