@@ -47,3 +47,23 @@ jobs:
           fi
       - name: Deploy only the isolated LP Worker
         run: npx --yes wrangler deploy --config wrangler.lp-preview.jsonc
+      - name: HTTP smoke test isolated preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://numeria-studio-lp-preview.karukimori.workers.dev"
+          for attempt in 1 2 3 4 5; do
+            code="$(curl -sS -L -o /tmp/lp-home.html -D /tmp/lp-headers.txt -w '%{http_code}' "$BASE/welcome" || true)"
+            if [ "$code" = "200" ]; then break; fi
+            echo "Preview HTTP not yet ready (attempt $attempt, status $code)"
+            sleep 2
+          done
+          test "$code" = "200"
+          grep -q 'INTERACTIVE DEMO' /tmp/lp-home.html
+          grep -Eiq '^x-robots-tag: *noindex, *nofollow' /tmp/lp-headers.txt
+          grep -Eiq '^cache-control: *no-store' /tmp/lp-headers.txt
+          assetsCode="$(curl -sS -o /dev/null -w '%{http_code}' "$BASE/assets/tarot-decks/cards/celestialcosmos-major-17.webp")"
+          test "$assetsCode" = "200"
+          apiCode="$(curl -sS -o /dev/null -w '%{http_code}' "$BASE/api/usage")"
+          test "$apiCode" = "404"
+          echo "Preview HTTP 200 + noindex + no-store + design asset + API isolation: PASS"
