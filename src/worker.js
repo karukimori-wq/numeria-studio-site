@@ -2626,6 +2626,16 @@ export default {
       && (request.method === "GET" || request.method === "HEAD")) {
       return clerkBrowserAssetResponse(request, env);
     }
+    // Preview-only route. The existing / and /original.html app entrypoints remain unchanged.
+    if (url.pathname === "/welcome" && (request.method === "GET" || request.method === "HEAD")) {
+      const assetUrl = new URL("/assets/welcome.html", request.url);
+      const asset = await env.ASSETS.fetch(new Request(assetUrl.toString(), request));
+      const headers = new Headers(asset.headers);
+      headers.set("Cache-Control", "no-store, max-age=0");
+      headers.set("X-Robots-Tag", "noindex, nofollow");
+      headers.set("Content-Type", "text/html; charset=utf-8");
+      return new Response(request.method === "HEAD" ? null : asset.body, { status: asset.status, headers });
+    }
     if (url.pathname.startsWith("/api/")) {
       return handleApi(request, env, ctx);
     }
