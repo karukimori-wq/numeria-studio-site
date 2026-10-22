@@ -1986,9 +1986,8 @@ function acceptsHtml(request) {
 }
 
 function isAppRouteFallback(request, url) {
-  if (request.method !== "GET" || !acceptsHtml(request)) return false;
-  if (url.pathname === "/" || url.pathname === "/original.html" || url.pathname === "/original") return false;
-  return !url.pathname.split("/").pop().includes(".");
+  if (!["GET", "HEAD"].includes(request.method) || !acceptsHtml(request)) return false;
+  return url.pathname === "/app" || url.pathname.startsWith("/app/") || url.pathname === "/ai-reading";
 }
 
 function noStoreHtml(response) {
@@ -2007,7 +2006,42 @@ function noStoreHtml(response) {
 async function originalHtmlResponse(request, env) {
   const fallbackUrl = new URL("/original.html", request.url);
   const response = await env.ASSETS.fetch(new Request(fallbackUrl.toString(), request));
-  return noStoreHtml(response);
+  const headers = new Headers(response.headers);
+  headers.set("Cache-Control", "private, no-store, max-age=0");
+  headers.set("Vary", "Cookie, Authorization");
+  return new Response(request.method === "HEAD" ? null : response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+async function landingHtmlResponse(request, env, { noindex = false } = {}) {
+  const assetUrl = new URL("/index.html", request.url);
+  const response = await env.ASSETS.fetch(new Request(assetUrl.toString(), request));
+  const headers = new Headers(response.headers);
+  headers.set("Content-Type", "text/html; charset=utf-8");
+  headers.set("Cache-Control", "private, no-store, max-age=0");
+  headers.set("Vary", "Cookie, Authorization");
+  if (noindex) headers.set("X-Robots-Tag", "noindex, nofollow");
+  return new Response(request.method === "HEAD" ? null : response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+async function publicPageResponse(request, env, pathname) {
+  const assetUrl = new URL(`${pathname}/index.html`, request.url);
+  const response = await env.ASSETS.fetch(new Request(assetUrl.toString(), request));
+  const headers = new Headers(response.headers);
+  headers.set("Content-Type", "text/html; charset=utf-8");
+  headers.set("Cache-Control", "public, max-age=300");
+  return new Response(request.method === "HEAD" ? null : response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
 }
 
 async function clerkBrowserScriptResponse(request, env = {}) {
@@ -2626,13 +2660,24 @@ export default {
       && (request.method === "GET" || request.method === "HEAD")) {
       return clerkBrowserAssetResponse(request, env);
     }
+    if (url.pathname === "/" && ["GET", "HEAD"].includes(request.method) && acceptsHtml(request)) {
+      return landingHtmlResponse(request, env);
+    }
+    if (url.pathname === "/welcome" && ["GET", "HEAD"].includes(request.method) && acceptsHtml(request)) {
+      return landingHtmlResponse(request, env, { noindex: true });
+    }
+    if (["/terms", "/privacy", "/contact"].includes(url.pathname)
+      && ["GET", "HEAD"].includes(request.method)
+      && acceptsHtml(request)) {
+      return publicPageResponse(request, env, url.pathname);
+    }
     if (url.pathname.startsWith("/api/")) {
       return handleApi(request, env, ctx);
     }
     if (
-      request.method === "GET"
+      ["GET", "HEAD"].includes(request.method)
       && acceptsHtml(request)
-      && ["/", "/original", "/original.html"].includes(url.pathname)
+      && ["/original", "/original.html"].includes(url.pathname)
     ) {
       return originalHtmlResponse(request, env);
     }
@@ -2640,11 +2685,6 @@ export default {
       return originalHtmlResponse(request, env);
     }
 
-    const response = await env.ASSETS.fetch(request);
-    if (response.status !== 404 || request.method !== "GET" || !acceptsHtml(request)) {
-      return noStoreHtml(response);
-    }
-
-    return originalHtmlResponse(request, env);
+    return noStoreHtml(await env.ASSETS.fetch(request));
   },
 };
