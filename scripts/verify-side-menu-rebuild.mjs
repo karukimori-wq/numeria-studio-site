@@ -18,7 +18,7 @@ assert.doesNotMatch(build, /patch-side-menu-tap-bridge\.mjs/, "Transparent tap b
 assert.doesNotMatch(build, /patch-divination-current-label-click\.mjs/, "Text-click divination workaround must not run in Production.");
 assert.doesNotMatch(build, /patch-divination-settings-menu-fallback\.mjs/, "Divination menu fallback must not run in Production.");
 
-for (const token of ["NumeriaNavigationBridge.v2", "go:function(page){k(page)}", "newReading:function(){di()}", "openFeedback:function(){Vn(!0)}", "signOut:function(){return n()}", "getRole:function(){return tr}", "getPlan:function(){return ar}", "numeria-navigation-ready"]) {
+for (const token of ["NumeriaNavigationBridge.v3", "__NumeriaNavigationHandlers", "newReading:function(){di()}", "openClient:function(clientRef)", "resumeSession:function(clientRef,session)", "getSessionState:function()", "openFeedback:function(){Vn(!0)}", "signOut:function(){return n()}", "getRole:function(){return tr}", "getPlan:function(){return ar}", "numeria-navigation-ready"]) {
   assert.ok(navPatch.includes(token), `Navigation bridge is missing ${token}`);
 }
 
@@ -96,7 +96,7 @@ const config = menuPatch.match(/const MENU_SECTIONS = ([\s\S]*?);\n\nconst style
 const render = menuPatch.match(/function renderNavigation\(state\)\{[\s\S]*?\nfunction renderMenu/)[0].replace(/\nfunction renderMenu$/, "");
 const nav = { innerHTML: "", querySelectorAll: () => [] }, heading = { textContent: "" };
 const menu = { querySelector: selector => selector === "nav" ? nav : selector === "header h2" ? heading : null };
-const context = { document: { getElementById: () => menu }, result: null };
+const context = { document: { documentElement: { dataset: {} }, getElementById: () => menu }, result: null };
 runInNewContext(`const MENU_SECTIONS=${config};const MENU_ID="menu";let lastRenderSignature="",menuMode="settings";function sectionHtml(section,state){return section.id;} ${render};renderNavigation({role:"",plan:"free",page:"dashboard",admin:false});`, context);
 assert.equal(heading.textContent,"設定");
 assert.equal(nav.innerHTML,"supportadminsession", "Settings uses only settings/admin/session sections; visibility remains in sectionHtml/accessFor");

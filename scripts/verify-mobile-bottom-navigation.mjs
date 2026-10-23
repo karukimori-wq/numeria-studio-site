@@ -27,8 +27,8 @@ try {
     assert.ok(result.includes('class="numeria-settings-icon"') && result.includes('stroke="currentColor"'), "Settings uses palette-matching SVG line art");
     assert.ok(!result.includes('>⚙</span>'), "Do not use platform-dependent gear emoji");
     assert.ok(result.includes('openSettings()'), "Settings must not open the old support sheet");
-    assert.ok(result.includes('api.go("appraisalProfiles")'), "The bottom 鑑定書 entry must route to the report history list, not format settings");
-    assert.ok(result.includes('.customers-page .history-heading') && result.includes('document.querySelector(".customers-page .customer-record-layout")'), "Report navigation must target the history heading before the fallback profile container");
+    assert.ok(result.includes('routes.navigate("/app/reports")'), "The bottom 鑑定書 entry must route to the independent report list");
+    assert.ok(!result.includes('focusReports'), "Report navigation must not scroll the client profile screen");
     assert.ok(result.includes('grid-template-columns:repeat(4,minmax(0,1fr))'), "Profile status filters must fit four horizontal cells on a phone");
     assert.ok(result.includes('writing-mode:horizontal-tb!important') && result.includes('white-space:nowrap'), "Status buttons must not become vertical text");
     assert.ok(result.includes('numeria-report-tab-active'), "Report tab must have its own selection state");
@@ -43,20 +43,16 @@ try {
     const view = { height: 800, addEventListener(type,fn) { listeners.viewport=fn; } };
     const reportsButton = { textContent:'鑑定書', matches:()=>false };
     const buttons = [{ textContent:'ホーム', matches:()=>false }, { textContent:'カルテ', matches:()=>false }, { textContent:'鑑定', matches:()=>false }, reportsButton, { textContent:'設定', matches:()=>true }];
-    const reportTarget = { scrollIntoView(){ calls.push('focus-history'); } };
     const document = {
       documentElement:root,
       activeElement:null,
       readyState:'complete',
       body:{},
-      querySelector(selector) {
-        if (selector === '.history-panel,.client-history,.client-history-heading,.customers-page .history-heading') return reportTarget;
-        return {getBoundingClientRect(){return {top:700,height:72}}};
-      },
+      querySelector() { return {getBoundingClientRect(){return {top:700,height:72}}}; },
       querySelectorAll(selector) { return selector === 'aside.sidebar nav button' ? buttons : []; },
       addEventListener(type,fn) { listeners[type]=fn; }
     };
-    const window = { innerHeight:800, visualViewport:view, matchMedia(){return portrait;}, NumeriaNavigation:{ go(page){ calls.push(page); } }, addEventListener(type,fn){listeners[type]=fn;} };
+    const window = { innerHeight:800, visualViewport:view, matchMedia(){return portrait;}, NumeriaNavigation:{ go(page){ calls.push(page); } }, NumeriaAppRoutes:{ navigate(path){ calls.push(path); } }, addEventListener(type,fn){listeners[type]=fn;} };
     runInNewContext(runtime,{document,window,setTimeout:fn=>fn()});
     assert.equal(properties['--numeria-navigation-clearance'],'136px');
     document.activeElement={matches:()=>true};view.height=480;listeners.viewport();
@@ -72,13 +68,12 @@ try {
       stopPropagation(){ calls.push('stop'); },
       stopImmediatePropagation(){ calls.push('stop-immediate'); }
     });
-    assert.deepEqual(calls.slice(0, 4), ['prevent','stop','stop-immediate','appraisalProfiles'], 'Bottom 鑑定書 opens appraisal history without triggering the native settings button');
-    assert.ok(calls.includes('focus-history'), 'Report navigation scrolls to the history panel when it exists');
+    assert.deepEqual(calls.slice(0, 4), ['prevent','stop','stop-immediate','/app/reports'], 'Bottom 鑑定書 opens the independent report list without triggering the native settings button');
     assert.ok(classes.has('numeria-report-tab-active'), 'Report is selected after tapping the fourth tab');
     listeners.click({target:{closest:selector=>selector==='aside.sidebar nav button'?buttons[1]:null}});
     assert.ok(!classes.has('numeria-report-tab-active'), 'Returning to カルテ clears the report selection state');
   }
-  console.log("Bottom navigation verified: single retained menu, portrait/landscape, native divination symbol, line-art settings, report route and keyboard clearance.");
+  console.log("Bottom navigation verified: single retained menu, portrait/landscape, native divination symbol, line-art settings, independent report route and keyboard clearance.");
 } finally {
   rmSync(directory, { recursive: true, force: true });
 }

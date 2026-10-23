@@ -32,6 +32,12 @@ const welcome = await worker.fetch(request("/welcome"), env, {});
 assert.equal(await welcome.text(), "PUBLIC_LP");
 assert.equal(welcome.headers.get("X-Robots-Tag"), "noindex, nofollow");
 
+const previewEnv = { ...env, NUMERIA_PREVIEW_NOINDEX: "1" };
+const previewRoot = await worker.fetch(request("/"), previewEnv, {});
+assert.equal(previewRoot.headers.get("X-Robots-Tag"), "noindex, nofollow");
+const previewApp = await worker.fetch(request("/app/home"), previewEnv, {});
+assert.equal(previewApp.headers.get("X-Robots-Tag"), "noindex, nofollow");
+
 for (const path of ["/app", "/app/home", "/app/clients/client_demo", "/app/readings/new", "/app/reports/report_demo", "/app/settings/report-formats", "/original", "/original.html", "/ai-reading"]) {
   const response = await worker.fetch(request(path), env, {});
   assert.equal(response.status, 200, `${path} should return the private application shell.`);

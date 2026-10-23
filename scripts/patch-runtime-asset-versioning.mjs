@@ -4,7 +4,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 const assetsDir = "dist/assets";
 const htmlPaths = ["dist/original.html", "dist/original", "dist/index.html"].filter(existsSync);
 const marker = "NumeriaRuntimeAssetVersioning.v1";
-const navigationBridgeVersion = "NumeriaNavigationBridge.v2";
+const navigationBridgeVersion = "NumeriaNavigationBridge.v3";
 const recoveryRuntimeVersion = "NumeriaIOSRuntimeRecovery.v2";
 const rscBootstrapGuardVersion = "NumeriaRscBootstrapOrder.v2";
 

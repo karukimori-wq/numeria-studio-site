@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 const html = readFileSync("index.html", "utf8");
 const worker = readFileSync("src/worker.js", "utf8");
 const routePatch = readFileSync("scripts/patch-app-route-dispatch.mjs", "utf8");
+const routeRuntime = readFileSync("src/app-route-runtime.js", "utf8");
 const formatPatch = readFileSync("scripts/patch-report-format-settings.mjs", "utf8");
 const wrangler = readFileSync("wrangler.jsonc", "utf8");
 
@@ -37,10 +38,13 @@ assert.match(wrangler, /"not_found_handling": "404-page"/);
 assert.match(wrangler, /"run_worker_first": true/);
 
 for (const path of ["/app/home", "/app/clients", "/app/readings/new", "/app/reports", "/app/settings/report-formats"]) {
-  assert.ok(routePatch.includes(path), `Missing app route ${path}`);
+  assert.ok(routeRuntime.includes(path), `Missing app route ${path}`);
 }
-assert.match(routePatch, /location\.assign\("\/"\)/, "Logout must return to the public LP.");
-assert.match(routePatch, /safeReturnPath/);
+assert.match(routeRuntime, /location\.assign\("\/"\)/, "Logout must return to the public LP.");
+assert.match(routeRuntime, /safeReturnPath/);
+assert.match(routeRuntime, /api\.resumeSession\(data\.clientRef, data\.session\)/);
+assert.match(routeRuntime, /dataset\.routeScreen/);
+assert.match(routePatch, /numeria-app-routes-/);
 
 for (const label of ["基本情報", "背景", "レイアウト", "配色", "文字サイズ", "ビジュアル", "掲載ページ"]) {
   assert.ok(formatPatch.includes(label), `Missing report-format setting: ${label}`);

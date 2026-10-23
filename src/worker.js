@@ -387,6 +387,26 @@ function usageResponse(record) {
   return createUsageSnapshot(record);
 }
 
+function sessionClientRef(record = {}, session = {}) {
+  const snapshotRef = session?.snapshot?.selectedCustomerId;
+  if (snapshotRef) return String(snapshotRef);
+  const externalRef = session?.externalReferences?.appraisalClientRef;
+  if (externalRef) return String(externalRef);
+  const clientName = String(session?.clientName || session?.snapshot?.name || "").trim();
+  const profile = (record.appraisalClientProfiles || []).find((item) => {
+    return String(item?.clientName || "").trim() === clientName;
+  });
+  return profile?.id || null;
+}
+
+function sessionById(record = {}, sessionId = "") {
+  if (record.activeDraft?.id === sessionId) {
+    return { session: record.activeDraft, sessionState: "draft" };
+  }
+  const completed = (record.completedAppraisals || []).find((item) => item?.id === sessionId);
+  return completed ? { session: completed, sessionState: "completed" } : null;
+}
+
 function getPlanConfigForPlan(planId) {
   return PLAN_CONFIG[normalizePlanId(planId)] || PLAN_CONFIG.free;
 }
@@ -1985,6 +2005,16 @@ function acceptsHtml(request) {
   return accept.includes("text/html") || accept.includes("*/*");
 }
 
+function isNoindexEnvironment(env = {}) {
+  return String(env.NUMERIA_PREVIEW_NOINDEX || "").trim() === "1";
+}
+
+function applyHtmlIndexPolicy(headers, env = {}, forceNoindex = false) {
+  if (forceNoindex || isNoindexEnvironment(env)) {
+    headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+}
+
 function isAppRouteFallback(request, url) {
   if (!["GET", "HEAD"].includes(request.method) || !acceptsHtml(request)) return false;
   return url.pathname === "/app" || url.pathname.startsWith("/app/") || url.pathname === "/ai-reading";
@@ -2009,6 +2039,7 @@ async function originalHtmlResponse(request, env) {
   const headers = new Headers(response.headers);
   headers.set("Cache-Control", "private, no-store, max-age=0");
   headers.set("Vary", "Cookie, Authorization");
+  applyHtmlIndexPolicy(headers, env);
   return new Response(request.method === "HEAD" ? null : response.body, {
     status: response.status,
     statusText: response.statusText,
@@ -2023,7 +2054,7 @@ async function landingHtmlResponse(request, env, { noindex = false } = {}) {
   headers.set("Content-Type", "text/html; charset=utf-8");
   headers.set("Cache-Control", "private, no-store, max-age=0");
   headers.set("Vary", "Cookie, Authorization");
-  if (noindex) headers.set("X-Robots-Tag", "noindex, nofollow");
+  applyHtmlIndexPolicy(headers, env, noindex);
   return new Response(request.method === "HEAD" ? null : response.body, {
     status: response.status,
     statusText: response.statusText,
@@ -2037,6 +2068,7 @@ async function publicPageResponse(request, env, pathname) {
   const headers = new Headers(response.headers);
   headers.set("Content-Type", "text/html; charset=utf-8");
   headers.set("Cache-Control", "public, max-age=300");
+  applyHtmlIndexPolicy(headers, env);
   return new Response(request.method === "HEAD" ? null : response.body, {
     status: response.status,
     statusText: response.statusText,
@@ -2159,6 +2191,44 @@ async function handleApi(request, env = {}, ctx = null) {
     });
   }
 
+  const appraisalReadMatch = url.pathname.match(/^\/api\/appraisals\/([^/]+)$/);
+  if (appraisalReadMatch && request.method === "GET") {
+    const sessionId = decodeURIComponent(appraisalReadMatch[1]);
+    const resolved = sessionById(record, sessionId);
+    if (!resolved) {
+      return json({
+        status: "error",
+        errorCode: "APPRAISAL_SESSION_NOT_FOUND",
+        message: "指定された鑑定Sessionが見つかりません。",
+        sessionId,
+      }, { status: 404 });
+    }
+    const usage = usageResponse(effectiveRecord);
+    if (resolved.sessionState === "completed" && usage.lockedCompletedAppraisalIds.includes(sessionId)) {
+      return json({
+        status: "error",
+        errorCode: "APPRAISAL_SESSION_LOCKED",
+        message: "この鑑定Sessionは現在のプランでは表示できません。",
+        sessionId,
+      }, { status: 403 });
+    }
+    const clientRef = sessionClientRef(record, resolved.session);
+    const client = clientRef
+      ? (record.appraisalClientProfiles || []).find((item) => item?.id === clientRef) || null
+      : null;
+    return json({
+      status: "success",
+      workspaceId,
+      userId,
+      sessionId,
+      sessionState: resolved.sessionState,
+      clientRef,
+      client,
+      session: resolved.session,
+      sourceOfTruth: "numeria-d1-appraisal-session",
+    });
+  }
+
   if (url.pathname === "/api/reports/delivery-status" && request.method === "GET") {
     const usage = usageResponse(effectiveRecord);
     const exportId = url.searchParams.get("exportId") || "";
@@ -2199,6 +2269,46 @@ async function handleApi(request, env = {}, ctx = null) {
         numeriaOwns: ["ReportSnapshot", "ReportDeliverySnapshot"],
         externalOwns: ["Payment", "Sales", "Refund"],
       },
+    });
+  }
+
+  const reportReadMatch = url.pathname.match(/^\/api\/reports\/([^/]+)$/);
+  if (reportReadMatch && request.method === "GET") {
+    const reportId = decodeURIComponent(reportReadMatch[1]);
+    const report = (record.reportExports || []).find((item) => item?.exportId === reportId);
+    if (!report) {
+      return json({
+        status: "error",
+        errorCode: "REPORT_EXPORT_NOT_FOUND",
+        message: "指定された鑑定書が見つかりません。",
+        reportId,
+      }, { status: 404 });
+    }
+    const linked = report.appraisalId ? sessionById(record, report.appraisalId) : null;
+    const usage = usageResponse(effectiveRecord);
+    if (linked?.sessionState === "completed" && usage.lockedCompletedAppraisalIds.includes(report.appraisalId)) {
+      return json({
+        status: "error",
+        errorCode: "REPORT_EXPORT_LOCKED",
+        message: "この鑑定書は現在のプランでは表示できません。",
+        reportId,
+      }, { status: 403 });
+    }
+    const clientRef = linked ? sessionClientRef(record, linked.session) : null;
+    const client = clientRef
+      ? (record.appraisalClientProfiles || []).find((item) => item?.id === clientRef) || null
+      : null;
+    return json({
+      status: "success",
+      workspaceId,
+      userId,
+      reportId,
+      report,
+      session: linked?.session || null,
+      sessionState: linked?.sessionState || null,
+      clientRef,
+      client,
+      sourceOfTruth: "numeria-d1-report-export",
     });
   }
 
@@ -2285,7 +2395,7 @@ async function handleApi(request, env = {}, ctx = null) {
     }, { status: 201 });
   }
 
-  if (url.pathname.startsWith("/api/appraisal-clients/") && ["PATCH", "DELETE"].includes(request.method)) {
+  if (url.pathname.startsWith("/api/appraisal-clients/") && ["GET", "PATCH", "DELETE"].includes(request.method)) {
     const profileId = decodeURIComponent(url.pathname.split("/").pop() || "");
     const profiles = Array.isArray(record.appraisalClientProfiles) ? record.appraisalClientProfiles : [];
     const existingProfile = profiles.find((profile) => profile.id === profileId);
@@ -2296,6 +2406,27 @@ async function handleApi(request, env = {}, ctx = null) {
         message: "依頼者プロフィールが見つかりません。",
         usage: usageResponse(effectiveRecord),
       }, { status: 404 });
+    }
+
+    if (request.method === "GET") {
+      const usage = usageResponse(effectiveRecord);
+      const sessions = [record.activeDraft, ...(record.completedAppraisals || [])]
+        .filter(Boolean)
+        .filter((session) => sessionClientRef(record, session) === profileId);
+      const reports = (record.reportExports || []).filter((report) => {
+        return sessions.some((session) => session.id === report.appraisalId);
+      });
+      return json({
+        status: "success",
+        workspaceId,
+        userId,
+        appraisalClientRef: profileId,
+        appraisalClient: existingProfile,
+        sessions,
+        reports,
+        lockedCompletedAppraisalIds: usage.lockedCompletedAppraisalIds,
+        sourceOfTruth: "numeria-appraisal-client-profile",
+      });
     }
 
     if (request.method === "DELETE") {
@@ -2537,6 +2668,7 @@ async function handleApi(request, env = {}, ctx = null) {
       format,
       deliverySettings: reportSnapshot.deliverySettings,
       reportFormatSnapshot: reportSnapshot.reportFormatSnapshot,
+      reportSnapshot,
       generatedAt,
     };
     record.reportExports = [

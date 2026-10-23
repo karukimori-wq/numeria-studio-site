@@ -44,7 +44,7 @@ assert.ok(existsSync(indexPath), `Versioned index bundle is missing: ${indexPath
 
 const appSource = readFileSync(appPath, "utf8");
 const indexSource = readFileSync(indexPath, "utf8");
-assert.ok(appSource.includes("NumeriaNavigationBridge.v2"), "Versioned Numeria app bundle must contain navigation bridge v2.");
+assert.ok(appSource.includes("NumeriaNavigationBridge.v3"), "Versioned Numeria app bundle must contain stable navigation bridge v3.");
 assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Versioned Numeria app bundle must contain syntax guard repairs.");
 assert.ok(appSource.includes("numeria-navigation-ready"), "Versioned Numeria app bundle must signal navigation readiness.");
@@ -71,7 +71,7 @@ const legacyAppSource = readFileSync("dist/assets/numeria-app-Cckhajir.js", "utf
 assert.ok(legacyIndexSource.includes(appMatch[1]), "Legacy index bundle must import the recovered Numeria app bundle.");
 assert.ok(legacyIndexSource.includes("NumeriaRscBootstrapOrder.v2"), "Legacy index bundle must wait for inline RSC payload before bootstrapping.");
 assertBundleSyntax(legacyIndexSource, "Legacy index bundle");
-assert.ok(legacyAppSource.includes("NumeriaNavigationBridge.v2"), "Legacy Numeria app bundle must contain navigation bridge v2.");
+assert.ok(legacyAppSource.includes("NumeriaNavigationBridge.v3"), "Legacy Numeria app bundle must contain stable navigation bridge v3.");
 assert.ok(legacyAppSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Legacy Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(legacyAppSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Legacy Numeria app bundle must contain syntax guard repairs.");
 assert.ok(!legacyAppSource.includes("タロットは現在、管理者確認用です。命術を選択してください。"), "Legacy app bundle must remove the stale tarot-to-numerology redirect.");
