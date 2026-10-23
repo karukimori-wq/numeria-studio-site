@@ -17,7 +17,7 @@ env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
   PREVIEW_WORKER: numeria-studio-integration-preview
-  PREVIEW_URL: https://numeria-studio-integration-preview.karukimori.workers.dev
+  PREVIEW_URL: https://integration-preview.numeria-studio.com
   AUTH_ENFORCEMENT_MODE: enforce
   VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY || secrets.VITE_CLERK_PUBLISHABLE_KEY }}
   VITE_ADMIN_EMAILS: illusionddt@gmail.com
@@ -53,6 +53,7 @@ jobs:
         run: >-
           npx wrangler deploy
           --name "$PREVIEW_WORKER"
+          --domain integration-preview.numeria-studio.com
           --var VITE_CLERK_PUBLISHABLE_KEY:"$VITE_CLERK_PUBLISHABLE_KEY"
           --var AUTH_ENFORCEMENT_MODE:"$AUTH_ENFORCEMENT_MODE"
           --var VITE_ADMIN_EMAILS:"$VITE_ADMIN_EMAILS"

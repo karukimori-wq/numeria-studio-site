@@ -57,6 +57,10 @@ assert.equal(await unknown.text(), "missing");
 const asset = await worker.fetch(request("/assets/missing.png", "GET", "image/png"), env, {});
 assert.equal(asset.status, 404);
 
+const nestedAsset = await worker.fetch(request("/app/assets/missing.css", "GET", "text/css"), env, {});
+assert.equal(nestedAsset.status, 404);
+assert.notEqual(await nestedAsset.text(), "PRIVATE_APP_SHELL");
+
 assert.ok(calls.some((call) => call.pathname === "/index.html"));
 assert.ok(calls.some((call) => call.pathname === "/original.html"));
 console.log("Worker routing V2 verified: LP/app split, GET/HEAD, legacy entries, public info pages, and strict unknown-route 404.");

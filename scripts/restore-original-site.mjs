@@ -6,12 +6,19 @@ if (!existsSync("dist")) {
 
 mkdirSync("dist/assets", { recursive: true });
 
-const originalHtml = readFileSync("original.html", "utf8");
+let originalHtml = readFileSync("original.html", "utf8");
 const unsupportedStrategyGuard = 'var strategies=supportedStrategies(signUp);if(!strategies.includes("email_code")){return{signUp:signUp,error:{message:"メール確認方式が現在のログイン設定で許可されていません。本番用のログイン設定を確認してください。"}}}';
 
 if (!originalHtml.includes(unsupportedStrategyGuard)) {
   throw new Error("Expected Clerk email verification guard was not found in original.html.");
 }
+
+// The private shell is served from nested routes such as /app/home and
+// /app/readings/:id. Root-relative assets prevent the browser from requesting
+// /app/assets/* and receiving the HTML fallback instead of CSS/JS.
+originalHtml = originalHtml
+  .replace(/\b(href|src)="assets\//g, '$1="/assets/')
+  .replace(/\b(href|src)="favicon\.svg"/g, '$1="/favicon.svg"');
 
 // Clerk's production instance can require email verification even when the legacy
 // SignUp resource does not expose supportedStrategies at the location used by the

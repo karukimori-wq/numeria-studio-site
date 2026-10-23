@@ -11,6 +11,8 @@ function assertBundleSyntax(source, label) {
 }
 
 const html = readFileSync("dist/original.html", "utf8");
+assert.doesNotMatch(html, /\b(?:href|src)="assets\//, "Nested /app routes must use root-relative runtime assets.");
+assert.doesNotMatch(html, /\b(?:href|src)="favicon\.svg"/, "Nested /app routes must use a root-relative favicon.");
 const extensionlessHtml = readFileSync("dist/original", "utf8");
 assert.match(html, /NumeriaStaleRouteRecovery\.v1/, "Production HTML must clear stale dedicated-page routes before app startup.");
 assert.match(html, /NumeriaRuntimeAssetVersioning\.v1/, "Production HTML must include runtime asset versioning marker.");

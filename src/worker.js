@@ -2017,6 +2017,7 @@ function applyHtmlIndexPolicy(headers, env = {}, forceNoindex = false) {
 
 function isAppRouteFallback(request, url) {
   if (!["GET", "HEAD"].includes(request.method) || !acceptsHtml(request)) return false;
+  if (url.pathname.startsWith("/app/assets/") || /\/[^/]+\.[A-Za-z0-9]+$/.test(url.pathname)) return false;
   return url.pathname === "/app" || url.pathname.startsWith("/app/") || url.pathname === "/ai-reading";
 }
 
