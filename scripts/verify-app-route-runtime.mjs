@@ -75,6 +75,7 @@ function navigation(label) {
     version: "test-" + label,
     go(page) { calls.push(`${label}:go:${page}`); },
     newReading() { calls.push(`${label}:new`); },
+    getClients() { return [{ id: "client-431", name: "受入テスト 431b3ea" }]; },
     signOut() { calls.push(`${label}:signOut`); },
   };
 }
@@ -109,5 +110,13 @@ for (const listener of documentListeners.get("click") || []) {
   listener({ target: nativeClientsButton });
 }
 assert.equal(location.pathname, "/app/clients", "Native React navigation clicks synchronize the canonical URL.");
+
+const nativeClientButton = {
+  textContent: "受 受入テスト 431b3ea C-0005 · 鑑定 0回 受付 ›",
+  hasAttribute() { return false; },
+  closest(selector) { return selector === "button" ? this : null; },
+  getAttribute() { return ""; },
+};
+assert.equal(routes.nativeButtonPath(nativeClientButton), "/app/clients/client-431", "Native client rows resolve the selected client ID from either the name or clientName field.");
 
 console.log("App route runtime executed: direct IDs, API replacement, native navigation, Back dispatch, and URL synchronization verified.");

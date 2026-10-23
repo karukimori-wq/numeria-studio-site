@@ -382,7 +382,10 @@
     if (label === "鑑定書" || label === "▱鑑定書") return ROUTES.reports;
     if (label === "テンプレート調整" || label === "アカウント管理") return ROUTES.settings;
     if ((routeSpec()?.kind === "clients" || routeSpec()?.kind === "client-detail") && typeof api?.getClients === "function") {
-      const client = api.getClients().find((item) => item?.id && item?.clientName && label.includes(String(item.clientName).replace(/\s+/g, "")));
+      const client = api.getClients().find((item) => {
+        const clientName = item?.clientName || item?.name || "";
+        return item?.id && clientName && label.includes(String(clientName).replace(/\s+/g, ""));
+      });
       if (client) return `${ROUTES.clients}/${encodeURIComponent(client.id)}`;
     }
     return null;
@@ -409,6 +412,7 @@
     navigate: replaceOrPush,
     safeReturnPath,
     routeSpec,
+    nativeButtonPath,
     get connectedApi() { return connectedApi; },
   };
 
