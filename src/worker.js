@@ -2049,7 +2049,10 @@ async function originalHtmlResponse(request, env) {
 }
 
 async function landingHtmlResponse(request, env, { noindex = false } = {}) {
-  const assetUrl = new URL("/index.html", request.url);
+  // Fetch the canonical root URL. Cloudflare Static Assets redirects a direct
+  // /index.html request back to / on custom domains, which would loop because
+  // this Worker handles / before the asset binding.
+  const assetUrl = new URL("/", request.url);
   const response = await env.ASSETS.fetch(new Request(assetUrl.toString(), request));
   const headers = new Headers(response.headers);
   headers.set("Content-Type", "text/html; charset=utf-8");
