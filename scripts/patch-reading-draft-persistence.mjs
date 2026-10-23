@@ -26,6 +26,7 @@ replaceExactly(
 
 const saveEvent = (state) => `window.dispatchEvent(new CustomEvent("numeria-reading-draft-save-status",{detail:{state:"${state}"}}))`;
 const savingAnchor = "let a=tr===`admin`?{ok:!0,data:{status:`admin-preview`}}:await window.NumeriaAuthenticatedFetch(`/api/appraisals/save-draft`";
+const persistedSavingAnchor = "let a=await window.NumeriaAuthenticatedFetch(`/api/appraisals/save-draft`";
 const profileFailureAnchor = "if(!a.ok){B(a.data.message||`途中保存できませんでした`);return}";
 const readingFailureAnchor = "if(!a.ok){R(a.data.message||`途中保存できませんでした`),window.setTimeout(()=>R(``),3200);return}";
 const profileSuccessAnchor = "B(`${W.name}の鑑定準備を履歴へ保存しました`),k(`appraisalProfiles`)";
@@ -34,7 +35,7 @@ const readingSuccessAnchor = "R(`鑑定を下書き保存しました`),window.s
 // The production bundle currently has two draft-save entry points: one from the
 // client profile and one from the reading editor. Both must announce every state.
 // Exact counts intentionally fail the build when the generated bundle changes.
-replaceAllExactly(savingAnchor, saveEvent("saving") + ";" + savingAnchor, 2, "draft saving entry points");
+replaceAllExactly(savingAnchor, saveEvent("saving") + ";" + persistedSavingAnchor, 2, "draft saving entry points");
 replaceExactly(profileFailureAnchor, "if(!a.ok){" + saveEvent("error") + ";B(a.data.message||`途中保存できませんでした`);return}", "profile draft failure");
 replaceExactly(readingFailureAnchor, "if(!a.ok){" + saveEvent("error") + ";R(a.data.message||`途中保存できませんでした`),window.setTimeout(()=>R(``),3200);return}", "reading draft failure");
 replaceExactly(profileSuccessAnchor, saveEvent("saved") + ";" + profileSuccessAnchor, "profile draft success");
