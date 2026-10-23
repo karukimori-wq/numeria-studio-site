@@ -373,6 +373,30 @@
     return api;
   }
 
+  function nativeButtonPath(button, api = connectedApi) {
+    if (!button || button.hasAttribute?.("data-route-href") || button.closest?.(`#${SURFACE_ID}`)) return null;
+    const label = String(button.getAttribute?.("aria-label") || button.textContent || "").replace(/\s+/g, "").trim();
+    if (label === "ホーム" || label === "⌂ホーム" || label === "ダッシュボードへ") return ROUTES.home;
+    if (label === "カルテ" || label === "◇カルテ") return ROUTES.clients;
+    if (label === "鑑定" || label === "7鑑定") return ROUTES.newReading;
+    if (label === "鑑定書" || label === "▱鑑定書") return ROUTES.reports;
+    if (label === "テンプレート調整" || label === "アカウント管理") return ROUTES.settings;
+    if ((routeSpec()?.kind === "clients" || routeSpec()?.kind === "client-detail") && typeof api?.getClients === "function") {
+      const client = api.getClients().find((item) => item?.id && item?.clientName && label.includes(String(item.clientName).replace(/\s+/g, "")));
+      if (client) return `${ROUTES.clients}/${encodeURIComponent(client.id)}`;
+    }
+    return null;
+  }
+
+  function syncNativeNavigationClick(event) {
+    const button = event.target?.closest?.("button");
+    const path = nativeButtonPath(button);
+    if (!path) return;
+    queueMicrotask(() => {
+      if (location.pathname !== path) replaceOrPush(path, false);
+    });
+  }
+
   function ready() {
     connect(window.NumeriaNavigation);
     dispatch();
@@ -390,6 +414,7 @@
 
   window.addEventListener("numeria-navigation-ready", ready);
   window.addEventListener("popstate", dispatch);
+  document.addEventListener("click", syncNativeNavigationClick);
   window.addEventListener("numeria-reading-draft-save-status", (event) => {
     if (event.detail?.state !== "saved") return;
     queueMicrotask(() => {

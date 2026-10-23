@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 
 const source = readFileSync("src/app-route-runtime.js", "utf8");
 const listeners = new Map();
+const documentListeners = new Map();
 const calls = [];
 const location = { pathname: "/outside", assign(path) { this.pathname = path; } };
 const history = {
@@ -22,6 +23,11 @@ const document = {
   head: { appendChild() {} },
   body: { appendChild() {} },
   createElement() { return { setAttribute() {}, appendChild() {}, classList: { toggle() {} } }; },
+  addEventListener(type, listener) {
+    const list = documentListeners.get(type) || [];
+    list.push(listener);
+    documentListeners.set(type, list);
+  },
 };
 class CustomEvent {
   constructor(type, options = {}) { this.type = type; this.detail = options.detail; }
@@ -92,4 +98,16 @@ assert.ok(calls.includes("second:go:dashboard"), "Back/popstate dispatches throu
 second.newReading();
 assert.equal(location.pathname, "/app/readings/new", "New reading navigation owns a distinct URL.");
 
-console.log("App route runtime executed: direct IDs, API replacement, Back dispatch, and URL synchronization verified.");
+location.pathname = "/app/home";
+const nativeClientsButton = {
+  textContent: "◇ カルテ",
+  hasAttribute() { return false; },
+  closest(selector) { return selector === "button" ? this : null; },
+  getAttribute() { return ""; },
+};
+for (const listener of documentListeners.get("click") || []) {
+  listener({ target: nativeClientsButton });
+}
+assert.equal(location.pathname, "/app/clients", "Native React navigation clicks synchronize the canonical URL.");
+
+console.log("App route runtime executed: direct IDs, API replacement, native navigation, Back dispatch, and URL synchronization verified.");
