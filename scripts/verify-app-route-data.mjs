@@ -98,4 +98,12 @@ assert.equal(otherOwnerSession.response.status, 404, "Another owner must not res
 const otherOwnerReport = await api(`/api/reports/${reportId}`, { asUser: `${userId}-other` });
 assert.equal(otherOwnerReport.response.status, 404, "Another owner must not resolve the report ID.");
 
+const partialSessionId = "ses_route_partial_002";
+await api("/api/appraisals/save-draft", {
+  method: "POST",
+  body: { appraisalId: partialSessionId, clientName: "架空 花子", birthDate: "1990-01-02", question: "部分保存から復元" },
+});
+const restoredPartial = await api(`/api/appraisals/${partialSessionId}`);
+assert.equal(restoredPartial.body.session.snapshot.theme, "部分保存から復元", "Partial D1 drafts receive a restorable snapshot.");
+
 console.log(`ID restoration verified across client ${clientRef}, session ${sessionId}, and report ${reportId}, including owner isolation.`);

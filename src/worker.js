@@ -407,6 +407,22 @@ function sessionById(record = {}, sessionId = "") {
   return completed ? { session: completed, sessionState: "completed" } : null;
 }
 
+function withRestorableSnapshot(record = {}, session = {}) {
+  if (session?.snapshot && typeof session.snapshot === "object") return session;
+  return {
+    ...session,
+    snapshot: {
+      selectedCustomerId: sessionClientRef(record, session) || "",
+      name: session.clientName || "",
+      birthday: session.birthDate || "",
+      divination: session.divination || "numerology",
+      theme: session.question || "",
+      notes: session.notes || "",
+      resultSummary: session.resultSummary || "",
+    },
+  };
+}
+
 function getPlanConfigForPlan(planId) {
   return PLAN_CONFIG[normalizePlanId(planId)] || PLAN_CONFIG.free;
 }
@@ -2216,7 +2232,8 @@ async function handleApi(request, env = {}, ctx = null) {
         sessionId,
       }, { status: 403 });
     }
-    const clientRef = sessionClientRef(record, resolved.session);
+    const restorableSession = withRestorableSnapshot(record, resolved.session);
+    const clientRef = sessionClientRef(record, restorableSession);
     const client = clientRef
       ? (record.appraisalClientProfiles || []).find((item) => item?.id === clientRef) || null
       : null;
@@ -2228,7 +2245,7 @@ async function handleApi(request, env = {}, ctx = null) {
       sessionState: resolved.sessionState,
       clientRef,
       client,
-      session: resolved.session,
+      session: restorableSession,
       sourceOfTruth: "numeria-d1-appraisal-session",
     });
   }
