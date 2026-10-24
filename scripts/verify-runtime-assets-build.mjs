@@ -51,7 +51,8 @@ assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria
 assert.ok(appSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Versioned Numeria app bundle must contain syntax guard repairs.");
 assert.ok(appSource.includes("numeria-navigation-ready"), "Versioned Numeria app bundle must signal navigation readiness.");
 assert.equal((appSource.match(/detail:\{state:"saving"\}/g) || []).length, 2, "Both draft-save entry points must publish saving state.");
-assert.equal((appSource.match(/detail:\{state:"saved"\}/g) || []).length, 2, "Both successful draft-save paths must publish saved state.");
+assert.equal((appSource.match(/detail:\{state:"saved"(?:,sessionId:e,snapshot:r)?\}/g) || []).length, 2, "Both successful draft-save paths must publish saved state.");
+assert.ok(appSource.includes('detail:{state:"saved",sessionId:e,snapshot:r}'), "Editor ACK must identify the captured snapshot and Session.");
 assert.equal((appSource.match(/detail:\{state:"error"\}/g) || []).length, 2, "Both failed draft-save paths must publish error state.");
 assert.ok(!appSource.includes("タロットは現在、管理者確認用です。命術を選択してください。"), "Released tarot users must not be redirected back to numerology when starting a reading.");
 assert.ok(!appSource.includes("if(l===`tarot`&&tr!==`admin`){u(`numerology`)"), "Released tarot reading start must not force numerology for non-admin users.");
