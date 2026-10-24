@@ -8,6 +8,7 @@ const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 for (const token of ["clientName:G.name", "birthDate:G.birthday||M", "divination:l", "question:P", "snapshot:Fi(r)"]) {
   assert.ok(patch.includes(token), `draft request includes ${token}`);
 }
+assert.ok(patch.includes("persistedSavingAnchor"), "Admin preview saves drafts through the authenticated D1 endpoint too.");
 for (const token of ["currentDraft?.snapshot", "currentDraft?.divination"]) {
   assert.ok(worker.includes(token), `worker preserves ${token}`);
 }

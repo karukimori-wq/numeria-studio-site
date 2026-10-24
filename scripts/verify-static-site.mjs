@@ -6,6 +6,7 @@ const requiredFiles = [
   "index.html",
   "original.html",
   "src/main.jsx",
+  "src/landing.css",
   "src/auth-gate.js",
   "src/styles.css",
   "src/plan-config.js",
@@ -53,14 +54,19 @@ const envExample = readFileSync(".env.example", "utf8");
 const productionReadinessScript = readFileSync("scripts/verify-production-readiness.mjs", "utf8");
 const restoreOriginalSource = readFileSync("scripts/restore-original-site.mjs", "utf8");
 assert.match(html, /Numeria Studio/);
-assert.match(html, /window\.location\.replace\("\/original\.html"\)/);
+assert.match(html, /INTERACTIVE DEMO/);
+assert.match(html, /あなたの鑑定を、/);
+assert.match(html, /data-auth="sign-up"/, "Landing-page CTAs should open Clerk sign-up.");
+assert.match(html, /href="#pricing"/, "Landing page should include an in-page pricing link.");
 assert.doesNotMatch(html, /\/src\/auth-gate\.js/);
 assert.doesNotMatch(html, /studio-auth-bar/);
 assert.doesNotMatch(html, /signed-in-panel/);
 assert.doesNotMatch(html, /signed-out-panel/);
 assert.doesNotMatch(html, /プラン・請求/);
 assert.doesNotMatch(html, /ログアウト/);
-assert.doesNotMatch(html, /Clerk/);
+assert.match(html, /openSignIn/);
+assert.match(html, /openSignUp/);
+assert.match(html, /safeReturnTo/);
 assert.match(originalHtml, /Numeria Studio｜数秘術鑑定書作成/);
 assert.match(originalHtml, /数秘術鑑定を10分で/);
 assert.match(originalHtml, /NumeriaInstallAuthBridge/);
