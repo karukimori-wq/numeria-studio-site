@@ -125,12 +125,12 @@ async function loadUsageRecord(env = {}, workspaceId, userId) {
   return normalizeRecord(getRecord(workspaceId, userId), billingMonth);
 }
 
-async function saveUsageRecord(env = {}, workspaceId, userId, record) {
+async function saveUsageRecord(env = {}, workspaceId, userId, record, draftGuard = null) {
   const normalized = normalizeRecord(record, record.billingMonth || getBillingMonth());
   const key = scopeKey(workspaceId, userId, normalized.billingMonth);
   const d1 = getD1Binding(env);
   if (d1 && typeof d1.prepare === "function") {
-    await d1.prepare(`
+    const result = await d1.prepare(`
       INSERT INTO usage_records (
         scope_key, workspace_id, user_id, billing_month, plan_id,
         monthly_appraisals, appraisal_clients, in_progress_appraisals,
@@ -140,6 +140,10 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record) {
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(scope_key) DO UPDATE SET
+      ${draftGuard ? `active_draft_json = excluded.active_draft_json,
+        in_progress_appraisals = excluded.in_progress_appraisals,
+        updated_at = excluded.updated_at
+        WHERE usage_records.active_draft_json IS ?` : `
         plan_id = excluded.plan_id,
         monthly_appraisals = excluded.monthly_appraisals,
         appraisal_clients = excluded.appraisal_clients,
@@ -149,7 +153,7 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record) {
         completed_appraisal_ids_json = excluded.completed_appraisal_ids_json,
         completed_appraisals_json = excluded.completed_appraisals_json,
         report_exports_json = excluded.report_exports_json,
-        updated_at = excluded.updated_at
+        updated_at = excluded.updated_at`}
     `).bind(
       key,
       workspaceId,
@@ -165,7 +169,13 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record) {
       JSON.stringify(normalized.completedAppraisals),
       JSON.stringify(normalized.reportExports),
       new Date().toISOString(),
+      ...(draftGuard ? [draftGuard.previousDraft ? JSON.stringify(draftGuard.previousDraft) : null] : []),
     ).run();
+    if (draftGuard && result.meta?.changes !== 1) return null;
+  } else if (draftGuard) {
+    const current = getRecord(workspaceId, userId);
+    if (JSON.stringify(current.activeDraft) !== JSON.stringify(draftGuard.previousDraft)) return null;
+    Object.assign(normalized, current, { activeDraft: normalized.activeDraft, inProgressAppraisals: normalized.inProgressAppraisals });
   }
   runtimeStore.set(key, normalized);
   return normalized;
@@ -2517,29 +2527,33 @@ async function handleApi(request, env = {}, ctx = null) {
     const appraisalId = body.appraisalId || body.id || body.draftId || `draft_${Date.now()}`;
     const currentDraft = record.activeDraft;
     const isSameDraft = currentDraft && currentDraft.id === appraisalId;
+    const conflict = () => json({ status: "error", errorCode: "DRAFT_SAVE_CONFLICT", message: "別の保存が先に完了しました。入力内容は保持しています。本文を控えてから保存済みSessionを開き直してください。" }, { status: 409 });
+    if (Object.hasOwn(body, "expectedDraftVersion") && body.expectedDraftVersion !== (isSameDraft ? currentDraft.draftVersion || null : null)) return conflict();
     const decision = isSameDraft
       ? { allowed: true }
       : evaluateUsageLimit(snapshot, "save_in_progress_appraisal");
     if (!decision.allowed) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
+    const previousDraft = isSameDraft ? currentDraft : null;
     record.activeDraft = {
       id: appraisalId,
-      clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
-      birthDate: String(body.birthDate || currentDraft?.birthDate || "").trim(),
-      divination: String(body.divination || currentDraft?.divination || "numerology").trim(),
-      lifePathNumber: body.lifePathNumber || currentDraft?.lifePathNumber || null,
-      question: String(body.question || currentDraft?.question || "").trim(),
-      notes: String(body.notes || currentDraft?.notes || "").trim(),
-      resultSummary: String(body.resultSummary || currentDraft?.resultSummary || "").trim(),
+      draftVersion: crypto.randomUUID(),
+      clientName: String(body.clientName ?? previousDraft?.clientName ?? "未設定").trim(),
+      birthDate: String(body.birthDate ?? previousDraft?.birthDate ?? "").trim(),
+      divination: String(body.divination ?? previousDraft?.divination ?? "numerology").trim(),
+      lifePathNumber: body.lifePathNumber ?? previousDraft?.lifePathNumber ?? null,
+      question: String(body.question ?? previousDraft?.question ?? "").trim(),
+      notes: String(body.notes ?? previousDraft?.notes ?? "").trim(),
+      resultSummary: String(body.resultSummary ?? previousDraft?.resultSummary ?? "").trim(),
       snapshot: body.snapshot && typeof body.snapshot === "object"
         ? body.snapshot
-        : currentDraft?.snapshot || null,
-      externalReferences: normalizeGrowthEngineExternalReferences(body) || currentDraft?.externalReferences || null,
+        : previousDraft?.snapshot || null,
+      externalReferences: normalizeGrowthEngineExternalReferences(body) || previousDraft?.externalReferences || null,
       updatedAt: new Date().toISOString(),
     };
     record.inProgressAppraisals = record.activeDraft ? 1 : 0;
-    await saveUsageRecord(env, workspaceId, userId, record);
+    if (!await saveUsageRecord(env, workspaceId, userId, record, { previousDraft: currentDraft })) return conflict();
     return json({
       status: "success",
       draftId: appraisalId,

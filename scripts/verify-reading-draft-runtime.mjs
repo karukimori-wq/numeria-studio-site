@@ -38,11 +38,12 @@ for (const [start, end] of [["Ci=async()=>{", ",wi=()=>"], ["Ii=async()=>{", ",Y
       f() { historyWrites++; }, B() {}, R() {}, k() {}, Bt() {}, V() {},
       window: {
         dispatchEvent(event) { events.push(event.detail); }, setTimeout() {},
+        NumeriaDraftVersions: new Map([["session_fixture", "version_before"]]),
         NumeriaAuthenticatedFetch: async (_url, init) => {
           requestBody = JSON.parse(init.body);
           await new Promise(resolve => { finish = resolve; });
           if (outcome === "offline") throw new Error("offline");
-          return { ok: ["success", "malformed-ack"].includes(outcome), json: async () => { if (outcome === "malformed-ack") throw new Error("Invalid JSON"); return ({ status: outcome === "success" ? "success" : "error", message: outcome, draftId: requestBody.appraisalId }); } };
+          return { ok: ["success", "malformed-ack"].includes(outcome), json: async () => { if (outcome === "malformed-ack") throw new Error("Invalid JSON"); return ({ status: outcome === "success" ? "success" : "error", message: outcome, draftId: requestBody.appraisalId, activeDraft: { draftVersion: "version_after" } }); } };
         },
       },
     };
@@ -60,13 +61,17 @@ for (const [start, end] of [["Ci=async()=>{", ",wi=()=>"], ["Ii=async()=>{", ",Y
     assert.deepEqual(events.map(event => event.state), ["saving", outcome === "success" ? "saved" : "error"]);
     assert.equal(historyWrites, outcome === "success" ? 1 : 0);
     assert.equal(body, "保存中に追記した本文", "Save failure/ACK must retain the current editor text.");
-    if (start.startsWith("Ii") && outcome === "success") assert.equal(events.at(-1).sessionId, "session_fixture");
+    if (start.startsWith("Ii")) {
+      assert.equal(requestBody.expectedDraftVersion, "version_before");
+      assert.equal(context.window.NumeriaDraftVersions.get("session_fixture"), outcome === "success" ? "version_after" : "version_before");
+      if (outcome === "success") assert.equal(events.at(-1).sessionId, "session_fixture");
+    }
   }
 }
 console.log("Production save handlers executed: both full snapshots, delayed ACK, offline, conflict, server error, and editor retention (10 fixture cases).");
 
 const nodes = new Map();
-let statusListener;
+let statusListener, restoredListener;
 const document = {
   readyState: "complete",
   getElementById(id) { return nodes.get(id); },
@@ -75,12 +80,14 @@ const document = {
   body: { appendChild(node) { nodes.set(node.id, node); } },
 };
 const uiWindow = {
-  addEventListener(_type, listener) { statusListener = listener; },
+  addEventListener(type, listener) { if(type === "numeria-session-restored") restoredListener = listener; else statusListener = listener; },
   NumeriaNavigation: { getReadingSnapshot() { return { message: "保存中に追記" }; } },
 };
 const runtimeStart = bundle.lastIndexOf(';(()=>{if(window.__NumeriaDraftSaveStatusV1');
 assert.ok(runtimeStart > 0);
 vm.runInNewContext(bundle.slice(runtimeStart), { window: uiWindow, document });
+restoredListener({ detail: { session: { id: "fixture", draftVersion: "restored-version" } } });
+assert.equal(uiWindow.NumeriaDraftVersions.get("fixture"), "restored-version");
 statusListener({ detail: { state: "saved", sessionId: "fixture", snapshot: { message: "保存前" } } });
 assert.equal(nodes.get("numeria-draft-save-status").dataset.state, "dirty", "An ACK for an older snapshot must not claim all current text is saved.");
 statusListener({ detail: { state: "saved", sessionId: "fixture", snapshot: { message: "保存中に追記" } } });

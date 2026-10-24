@@ -290,6 +290,7 @@
       if (!api || typeof api.resumeSession !== "function" || !invokeRouteApi(() => api.resumeSession(data.clientRef, data.session))) {
         throw new Error("鑑定画面の復元準備が完了していません。");
       }
+      window.dispatchEvent(new CustomEvent("numeria-session-restored", { detail: { session: data.session } }));
       closeSurface();
     } catch (error) {
       if (sequence === dispatchSequence) renderError("reading-detail", "保存済みSessionを復元", error.message);

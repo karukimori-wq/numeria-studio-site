@@ -63,7 +63,13 @@ class MockD1Statement {
         reportExportsJson,
         updatedAt,
       ] = this.args;
-      const existing = this.db.usageRecords.get(scopeKey) || {
+      const previous = this.db.usageRecords.get(scopeKey);
+      if (this.sql.includes("WHERE usage_records.active_draft_json IS ?") && previous) {
+        if (previous.active_draft_json !== this.args.at(-1)) return { meta: { changes: 0 } };
+        this.db.usageRecords.set(scopeKey, { ...previous, active_draft_json: activeDraftJson, in_progress_appraisals: inProgressAppraisals, updated_at: updatedAt });
+        return { meta: { changes: 1 } };
+      }
+      const existing = previous || {
         created_at: "2026-09-09T00:00:00.000Z",
       };
       this.db.usageRecords.set(scopeKey, {
@@ -83,7 +89,7 @@ class MockD1Statement {
         report_exports_json: reportExportsJson,
         updated_at: updatedAt,
       });
-      return { success: true };
+      return { success: true, meta: { changes: 1 } };
     }
 
     if (this.sql.includes("INTO report_events")) {
@@ -111,7 +117,7 @@ class MockD1Statement {
         event_name: eventName,
         generated_at: generatedAt,
       });
-      return { success: true };
+      return { success: true, meta: { changes: 1 } };
     }
 
     return { success: true };
