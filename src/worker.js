@@ -2028,6 +2028,8 @@ function isNoindexEnvironment(env = {}) {
 function applyHtmlIndexPolicy(headers, env = {}, forceNoindex = false) {
   if (forceNoindex || isNoindexEnvironment(env)) {
     headers.set("X-Robots-Tag", "noindex, nofollow");
+    const buildSha = String(env.NUMERIA_BUILD_SHA || "");
+    if (/^[a-f0-9]{40}$/.test(buildSha)) headers.set("X-Numeria-Build-Sha", buildSha);
   }
 }
 

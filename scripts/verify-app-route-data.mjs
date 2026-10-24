@@ -2,22 +2,45 @@ import assert from "node:assert/strict";
 import worker from "../src/worker.js";
 
 const env = {
-  AUTH_ENFORCEMENT_MODE: "observe",
+  AUTH_ENFORCEMENT_MODE: "enforce",
+  CLERK_JWKS_URL: "https://route-fixture.test/.well-known/jwks.json",
+  CLERK_JWT_ISSUER: "https://route-fixture.test",
   ASSETS: { fetch: async () => new Response("missing", { status: 404 }) },
 };
 const userId = `route-test-${Date.now()}`;
 const workspaceId = "ws_route_test";
 
-async function api(path, { method = "GET", body, asUser = userId } = {}) {
+// Locally generated RS256 identities exercise signature verification in enforce
+// mode. This is a JWKS fixture, not an actual Clerk account or remote D1 test.
+const keys = await crypto.subtle.generateKey({ name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" }, true, ["sign", "verify"]);
+const jwk = { ...await crypto.subtle.exportKey("jwk", keys.publicKey), kid: "route-fixture", alg: "RS256" };
+const originalFetch = globalThis.fetch;
+globalThis.fetch = async url => {
+  assert.equal(String(url), env.CLERK_JWKS_URL, "No remote services should be called by the fixture.");
+  return Response.json({ keys: [jwk] });
+};
+const tokens = new Map();
+async function tokenFor(user) {
+  if (tokens.has(user)) return tokens.get(user);
+  const encode = value => Buffer.from(JSON.stringify(value)).toString("base64url");
+  const input = `${encode({ alg: "RS256", kid: "route-fixture" })}.${encode({ sub: user, sid: `fixture-${user}`, iss: env.CLERK_JWT_ISSUER, exp: Math.floor(Date.now() / 1000) + 300 })}`;
+  const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", keys.privateKey, new TextEncoder().encode(input));
+  const token = `${input}.${Buffer.from(signature).toString("base64url")}`;
+  tokens.set(user, token);
+  return token;
+}
+
+async function api(path, { method = "GET", body, asUser = userId, asWorkspace = workspaceId, tokenUser = asUser } = {}) {
   const response = await worker.fetch(new Request(`https://example.test${path}`, {
     method,
     headers: {
       Accept: "application/json",
+      Authorization: `Bearer ${await tokenFor(tokenUser)}`,
       "Content-Type": "application/json",
-      "X-Workspace-Id": workspaceId,
+      "X-Workspace-Id": asWorkspace,
       "X-User-Id": asUser,
     },
-    body: body ? JSON.stringify({ workspaceId, userId: asUser, ...body }) : undefined,
+    body: body ? JSON.stringify({ workspaceId: asWorkspace, userId: asUser, ...body }) : undefined,
   }), env, {});
   return { response, body: await response.json() };
 }
@@ -107,3 +130,18 @@ const restoredPartial = await api(`/api/appraisals/${partialSessionId}`);
 assert.equal(restoredPartial.body.session.snapshot.theme, "部分保存から復元", "Partial D1 drafts receive a restorable snapshot.");
 
 console.log(`ID restoration verified across client ${clientRef}, session ${sessionId}, and report ${reportId}, including owner isolation.`);
+
+for (const path of [`/api/appraisals/${sessionId}`, `/api/reports/${reportId}`, `/api/appraisal-clients/${clientRef}`]) {
+  const denied = await api(path, { asWorkspace: "ws_other" });
+  assert.equal(denied.response.status, 404, "Another workspace must not resolve an existing ID.");
+  const anonymous = await worker.fetch(new Request(`https://example.test${path}`, {
+    headers: { "X-User-Id": userId, "X-Workspace-Id": workspaceId },
+  }), { ...env, AUTH_ENFORCEMENT_MODE: "enforce" }, {});
+  assert.equal(anonymous.status, 401, "User/workspace headers cannot replace a Clerk token in enforce mode.");
+}
+console.log("Route API fixtures: workspace isolation and anonymous enforce-mode denial verified.");
+
+const spoofed = await api(`/api/appraisals/${sessionId}`, { tokenUser: `${userId}-other`, asUser: userId });
+assert.equal(spoofed.response.status, 404, "Signed owner takes precedence over a spoofed X-User-Id.");
+globalThis.fetch = originalFetch;
+console.log("Enforce-mode RS256/JWKS fixtures verified; spoofed owner headers cannot cross the authenticated scope.");

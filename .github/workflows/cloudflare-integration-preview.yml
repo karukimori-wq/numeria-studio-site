@@ -58,6 +58,7 @@ jobs:
           --var AUTH_ENFORCEMENT_MODE:"$AUTH_ENFORCEMENT_MODE"
           --var VITE_ADMIN_EMAILS:"$VITE_ADMIN_EMAILS"
           --var NUMERIA_PREVIEW_NOINDEX:"1"
+          --var NUMERIA_BUILD_SHA:"${{ github.sha }}"
 
       - name: Sync Clerk and integration secrets to preview
         shell: bash
@@ -79,5 +80,6 @@ jobs:
           printf '%s\n' "$headers" | grep -qi '^x-robots-tag: noindex, nofollow'
           app_headers="$(curl --fail --silent --show-error --retry 8 --retry-delay 3 --head "$PREVIEW_URL/app/home")"
           printf '%s\n' "$app_headers" | grep -qi '^x-robots-tag: noindex, nofollow'
+          printf '%s\n' "$app_headers" | grep -qi "^x-numeria-build-sha: $GITHUB_SHA"
           status="$(curl --silent --output /dev/null --write-out '%{http_code}' "$PREVIEW_URL/api/appraisals/status")"
           test "$status" = "401"

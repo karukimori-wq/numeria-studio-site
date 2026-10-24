@@ -238,6 +238,7 @@
       });
     } catch (error) {
       if (sequence === dispatchSequence) renderError(reportId ? "report-detail" : "reports", reportId ? "鑑定書詳細" : "鑑定書一覧", error.message);
+      throw error;
     }
   }
 
@@ -254,6 +255,7 @@
       renderSurface({ kind: "readings", kicker: "SESSIONS", title: "鑑定Session", body: sessionListBody(sessions) });
     } catch (error) {
       if (sequence === dispatchSequence) renderError("readings", "鑑定Session", error.message);
+      throw error;
     }
   }
 
@@ -275,6 +277,7 @@
       });
     } catch (error) {
       if (sequence === dispatchSequence) renderError("client-detail", "相談者詳細", error.message);
+      throw error;
     }
   }
 
@@ -290,6 +293,7 @@
       closeSurface();
     } catch (error) {
       if (sequence === dispatchSequence) renderError("reading-detail", "保存済みSessionを復元", error.message);
+      throw error;
     }
   }
 
@@ -327,7 +331,9 @@
       settle(specification, sequence, true);
     } catch (error) {
       settle(specification, sequence, false);
-      throw error;
+      // Event handlers also call dispatch without awaiting it. Report failure
+      // through the settled event without creating an unhandled rejection.
+      return false;
     }
   }
 
@@ -419,12 +425,22 @@
   window.addEventListener("numeria-navigation-ready", ready);
   window.addEventListener("popstate", dispatch);
   document.addEventListener("click", syncNativeNavigationClick);
+  let saveRoute = null;
   window.addEventListener("numeria-reading-draft-save-status", (event) => {
-    if (event.detail?.state !== "saved") return;
-    queueMicrotask(() => {
-      const state = window.NumeriaNavigation?.getSessionState?.();
-      if (state?.sessionId) replaceOrPush(`${ROUTES.readings}/${encodeURIComponent(state.sessionId)}`, true);
-    });
+    if (event.detail?.state === "saving") {
+      saveRoute = { sequence: dispatchSequence, path: location.pathname };
+      return;
+    }
+    const sessionId = event.detail?.sessionId;
+    if (event.detail?.state !== "saved" || !sessionId || !saveRoute) return;
+    if (saveRoute.sequence !== dispatchSequence || saveRoute.path !== location.pathname) return;
+    const spec = routeSpec();
+    if (spec?.kind !== "reading-new" && !(spec?.kind === "reading-detail" && spec.sessionId === sessionId)) return;
+    const path = `${ROUTES.readings}/${encodeURIComponent(sessionId)}`;
+    // An ACK only updates the address. Re-fetching and resuming here would
+    // replace edits made while the save was in flight with the older snapshot.
+    history.replaceState({ numeriaRoute: path }, "", path);
+    setRouteKind("reading-detail");
   });
 
   let lastApi = null;
