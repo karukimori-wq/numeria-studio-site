@@ -131,6 +131,16 @@ assert.equal(restoredPartial.body.session.snapshot.theme, "部分保存から復
 assert.deepEqual(restoredPartial.body.session.snapshot.customReportItems, [], "Partial D1 drafts restore collection fields with safe defaults.");
 assert.deepEqual(restoredPartial.body.session.snapshot.drafts, {}, "Partial D1 drafts restore object fields with safe defaults.");
 
+const partialSnapshotSessionId = partialSessionId;
+await api("/api/appraisals/save-draft", {
+  method: "POST",
+  body: { appraisalId: partialSnapshotSessionId, clientName: "架空 花子", birthDate: "1990-01-02", question: "既存partial snapshot", snapshot: { theme: "既存partial snapshot" } },
+});
+const restoredPartialSnapshot = await api(`/api/appraisals/${partialSnapshotSessionId}`);
+assert.equal(restoredPartialSnapshot.body.session.snapshot.birthday, "1990-01-02", "Existing partial snapshots receive missing persisted birth data.");
+assert.equal(restoredPartialSnapshot.body.session.snapshot.name, "架空 花子", "Existing partial snapshots receive missing persisted client data.");
+assert.deepEqual(restoredPartialSnapshot.body.session.snapshot.customReportItems, [], "Existing partial snapshots receive safe collection defaults.");
+
 console.log(`ID restoration verified across client ${clientRef}, session ${sessionId}, and report ${reportId}, including owner isolation.`);
 
 for (const path of [`/api/appraisals/${sessionId}`, `/api/reports/${reportId}`, `/api/appraisal-clients/${clientRef}`]) {

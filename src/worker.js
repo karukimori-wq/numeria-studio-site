@@ -431,13 +431,15 @@ function sessionById(record = {}, sessionId = "") {
 }
 
 function withRestorableSnapshot(record = {}, session = {}) {
-  if (session?.snapshot && typeof session.snapshot === "object") return session;
+  const existing = session?.snapshot && typeof session.snapshot === "object" ? session.snapshot : {};
+  const clientRef = sessionClientRef(record, session) || "";
+  const client = (record.appraisalClientProfiles || []).find((item) => item?.id === clientRef) || null;
   return {
     ...session,
     snapshot: {
-      selectedCustomerId: sessionClientRef(record, session) || "",
-      name: session.clientName || "",
-      birthday: session.birthDate || "",
+      selectedCustomerId: clientRef,
+      name: session.clientName || client?.clientName || "",
+      birthday: session.birthDate || client?.birthDate || "",
       divination: session.divination || "numerology",
       theme: session.question || "",
       notes: session.notes || "",
@@ -469,6 +471,10 @@ function withRestorableSnapshot(record = {}, session = {}) {
       visitDate: "",
       menuName: "数秘術鑑定",
       price: 0,
+      ...existing,
+      selectedCustomerId: existing.selectedCustomerId || clientRef,
+      name: existing.name || session.clientName || client?.clientName || "",
+      birthday: existing.birthday || session.birthDate || client?.birthDate || "",
     },
   };
 }

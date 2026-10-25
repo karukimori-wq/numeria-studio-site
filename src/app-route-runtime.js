@@ -287,6 +287,17 @@
       const data = await apiJson(`/api/appraisals/${encodeURIComponent(sessionId)}?workspaceId=ws_personal`);
       if (sequence !== dispatchSequence) return;
       if (!data.session?.snapshot) throw new Error("このSessionには復元可能なsnapshotがありません。");
+      const clients = api && typeof api.getClients === "function" ? invokeRouteApi(() => api.getClients()) : null;
+      const client = Array.isArray(clients) ? clients.find((item) => String(item?.id) === String(data.clientRef || data.session.snapshot.selectedCustomerId || "")) : null;
+      if (client) {
+        data.session.snapshot = {
+          ...data.session.snapshot,
+          selectedCustomerId: data.session.snapshot.selectedCustomerId || client.id || "",
+          name: data.session.snapshot.name || client.name || client.clientName || "",
+          birthday: data.session.snapshot.birthday || client.birthday || client.birthDate || "",
+          birthName: data.session.snapshot.birthName || client.birthName || "",
+        };
+      }
       if (!api || typeof api.resumeSession !== "function" || !invokeRouteApi(() => api.resumeSession(data.clientRef, data.session))) {
         throw new Error("鑑定画面の復元準備が完了していません。");
       }
