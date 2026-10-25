@@ -1,0 +1,30 @@
+import assert from "node:assert/strict";
+import { normalizeJapanBirthClock as clock } from "../src/japan-birth-clock.js";
+import { createKigakuResultFromClock as result, validateKigakuResult } from "../src/kigaku-result.js";
+const birth = { date: "1990-06-15", time: "12:34", countryCode: "JP", zoneId: "Asia/Tokyo", zoneConfirmed: true, offsetChoiceMinutes: null };
+const referenceInstant = "2026-10-24T12:00:00+09:00";
+assert.equal(clock(birth).selected.standardTime, "12:34:00");
+assert.equal(clock({ ...birth, date: "1948-05-02", time: "00:30" }).reasonCode, "BIRTH_CLOCK_TIME_NONEXISTENT");
+assert.equal(clock({ ...birth, date: "1948-09-12", time: "00:30" }).candidates.length, 2);
+for (const [date, hours] of [["1948-05-02", 23], ["1948-09-12", 25], ["2026-10-24", 24]]) {
+  const normalized = clock({ ...birth, date, time: null });
+  assert.equal(normalized.intervals.reduce((sum, row) => sum + Date.parse(row.endExclusiveUtc) - Date.parse(row.startInclusiveUtc), 0) / 3_600_000, hours);
+}
+const ready = result({ referenceInstant, birthClock: birth });
+assert.equal(ready.state, "ready");
+assert.deepEqual(validateKigakuResult(JSON.parse(JSON.stringify(ready))), ready);
+const tampered = structuredClone(ready);
+tampered.natal.mainStar.value = 99;
+assert.throws(() => validateKigakuResult(tampered), /RECOMPUTATION_MISMATCH/);
+const unknown = result({ referenceInstant, birthClock: { ...birth, date: "2026-02-04", time: null } });
+assert.equal(unknown.natal.mainStar.state, "missing_input");
+assert.equal(unknown.natal.monthStar.state, "missing_input");
+const ordinaryUnknown = result({ referenceInstant, birthClock: { ...birth, time: null } });
+assert.equal(ordinaryUnknown.natal.mainStar.state, "ready");
+assert.equal(ordinaryUnknown.natal.monthStar.state, "ready");
+const fold = result({ referenceInstant, birthClock: { ...birth, date: "1948-09-12", time: "00:30" } });
+assert.equal(fold.natal.mainStar.value, null);
+assert.equal(fold.clockNormalization.candidates.length, 2);
+assert.equal(result({ referenceInstant: "1901-01-01T00:00:00+09:00" }).day.date, "1901-01-01");
+assert.throws(() => result({ referenceInstant: "2026-02-30T00:00:00Z" }), /INSTANT_INVALID/);
+console.log("Kigaku result: birth clocks, uncertain boundaries, JSON recomputation and lower range verified.");

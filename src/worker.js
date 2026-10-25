@@ -1,3 +1,4 @@
+import { createKigakuReading, validateKigakuReading, KIGAKU_READING_SCHEMA } from "./kigaku-reading.js";
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 
@@ -2081,6 +2082,15 @@ async function handleApi(request, env = {}, ctx = null) {
     return json(adminAccount, { status: adminAccount.adminMode ? 200 : 403 });
   }
 
+  if (url.pathname === "/api/kigaku/calculate" && request.method === "POST") {
+    if (!auth.verified) return json({ status: "error", errorCode: "AUTH_REQUIRED" }, { status: 401 });
+    try {
+      return json({ status: "success", reading: createKigakuReading(body.input) });
+    } catch (error) {
+      return json({ status: "error", errorCode: error.message }, { status: 400 });
+    }
+  }
+
   const { workspaceId, userId } = getScope(request, body, auth);
 
   if (url.pathname === "/api/feedback/submit" && request.method === "POST") {
@@ -2091,6 +2101,14 @@ async function handleApi(request, env = {}, ctx = null) {
   const record = await loadUsageRecord(env, workspaceId, userId);
   const billingSubscription = await fetchExternalBillingSubscription(env, workspaceId, userId);
   const effectiveRecord = applyBillingSubscription(record, billingSubscription);
+
+  // New snapshots are verified before saving and before being returned for restore.
+  // Untyped legacy snapshots remain on their existing compatibility path.
+  if (record.activeDraft?.snapshot?.schemaVersion === KIGAKU_READING_SCHEMA) {
+    if (!auth.verified) return json({ status: "error", errorCode: "AUTH_REQUIRED" }, { status: 401 });
+    try { validateKigakuReading(record.activeDraft.snapshot); }
+    catch { return json({ status: "error", errorCode: "KIGAKU_DRAFT_RESTORE_INVALID" }, { status: 409 }); }
+  }
 
   if (url.pathname === "/api/usage" && request.method === "GET") {
     const usage = usageResponse(effectiveRecord);
@@ -2325,6 +2343,15 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/appraisals/save-draft" && request.method === "POST") {
+    if (body.snapshot?.schemaVersion === KIGAKU_READING_SCHEMA) {
+      if (!auth.verified) return json({ status: "error", errorCode: "AUTH_REQUIRED" }, { status: 401 });
+      try {
+        body.snapshot = validateKigakuReading(body.snapshot);
+        body.divination = "nine-star-ki";
+      } catch (error) {
+        return json({ status: "error", errorCode: error.message }, { status: 400 });
+      }
+    }
     const snapshot = usageResponse(effectiveRecord);
     const appraisalId = body.appraisalId || body.id || body.draftId || `draft_${Date.now()}`;
     const currentDraft = record.activeDraft;
@@ -2338,6 +2365,7 @@ async function handleApi(request, env = {}, ctx = null) {
     record.activeDraft = {
       id: appraisalId,
       clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
+      clientProfileId: typeof body.clientProfileId === "string" ? body.clientProfileId.slice(0, 200) : Object.hasOwn(body, "clientProfileId") ? null : currentDraft?.clientProfileId || null,
       birthDate: String(body.birthDate || currentDraft?.birthDate || "").trim(),
       divination: String(body.divination || currentDraft?.divination || "numerology").trim(),
       lifePathNumber: body.lifePathNumber || currentDraft?.lifePathNumber || null,
@@ -2382,6 +2410,7 @@ async function handleApi(request, env = {}, ctx = null) {
     const completedAppraisal = {
       id: appraisalId,
       clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
+      clientProfileId: typeof body.clientProfileId === "string" ? body.clientProfileId.slice(0, 200) : Object.hasOwn(body, "clientProfileId") ? null : currentDraft?.clientProfileId || null,
       birthDate: String(body.birthDate || currentDraft?.birthDate || "").trim(),
       divination: String(body.divination || currentDraft?.divination || "numerology").trim(),
       lifePathNumber: body.lifePathNumber || currentDraft?.lifePathNumber || null,
