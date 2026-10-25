@@ -128,6 +128,8 @@ await api("/api/appraisals/save-draft", {
 });
 const restoredPartial = await api(`/api/appraisals/${partialSessionId}`);
 assert.equal(restoredPartial.body.session.snapshot.theme, "部分保存から復元", "Partial D1 drafts receive a restorable snapshot.");
+assert.deepEqual(restoredPartial.body.session.snapshot.customReportItems, [], "Partial D1 drafts restore collection fields with safe defaults.");
+assert.deepEqual(restoredPartial.body.session.snapshot.drafts, {}, "Partial D1 drafts restore object fields with safe defaults.");
 
 console.log(`ID restoration verified across client ${clientRef}, session ${sessionId}, and report ${reportId}, including owner isolation.`);
 
