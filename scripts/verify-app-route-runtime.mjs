@@ -64,6 +64,7 @@ const context = vm.createContext({
 vm.runInContext(source, context, { filename: "app-route-runtime.js" });
 
 const routes = window.NumeriaAppRoutes;
+assert.ok(!source.includes("=> navigate(element.dataset.routeHref)"), "Route cards must use the defined history dispatcher.");
 assert.equal(routes.routeSpec("/app/home").kind, "home");
 assert.equal(routes.routeSpec("/app/clients/acl_123").clientRef, "acl_123");
 assert.equal(routes.routeSpec("/app/readings/ses_456").sessionId, "ses_456");

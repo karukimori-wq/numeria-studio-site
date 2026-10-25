@@ -146,7 +146,7 @@
       else navigate(ROUTES.home, { replace: true });
     });
     for (const element of node.querySelectorAll("[data-route-href]")) {
-      element.addEventListener("click", () => navigate(element.dataset.routeHref));
+      element.addEventListener("click", () => replaceOrPush(element.dataset.routeHref));
     }
     return node;
   }
@@ -262,12 +262,12 @@
   async function showClient(clientRef, sequence, api) {
     renderLoading("client-detail", "相談者詳細");
     try {
-      const data = await apiJson(`/api/appraisal-clients/${encodeURIComponent(clientRef)}?workspaceId=ws_personal`);
-      if (sequence !== dispatchSequence) return;
       if (api && typeof api.openClient === "function" && invokeRouteApi(() => api.openClient(clientRef))) {
         closeSurface();
         return;
       }
+      const data = await apiJson(`/api/appraisal-clients/${encodeURIComponent(clientRef)}?workspaceId=ws_personal`);
+      if (sequence !== dispatchSequence) return;
       const client = data.appraisalClient || {};
       renderSurface({
         kind: "client-detail",
