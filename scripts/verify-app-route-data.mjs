@@ -143,5 +143,15 @@ console.log("Route API fixtures: workspace isolation and anonymous enforce-mode 
 
 const spoofed = await api(`/api/appraisals/${sessionId}`, { tokenUser: `${userId}-other`, asUser: userId });
 assert.equal(spoofed.response.status, 404, "Signed owner takes precedence over a spoofed X-User-Id.");
-globalThis.fetch = originalFetch;
+
 console.log("Enforce-mode RS256/JWKS fixtures verified; spoofed owner headers cannot cross the authenticated scope.");
+
+const beforeRetry = await api("/api/appraisals/status");
+const retryCompletion = await api("/api/appraisals/complete", { method: "POST", body: { appraisalId: sessionId, resultSummary: "再送で変更しない本文" } });
+assert.equal(retryCompletion.response.status, 200);
+assert.equal(retryCompletion.body.alreadyCompleted, true);
+const afterRetry = await api("/api/appraisals/status");
+assert.deepEqual(afterRetry.body, beforeRetry.body, "Completion retry must preserve counters, unrelated active draft, completed snapshots, and reports.");
+console.log("Completion retry preserves the entire persisted status instead of counting or overwriting again.");
+
+globalThis.fetch = originalFetch;

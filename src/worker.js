@@ -2564,6 +2564,12 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/appraisals/complete" && request.method === "POST") {
+    const requestedId = body.appraisalId || body.id;
+    const existingCompletion = requestedId && (record.completedAppraisals || []).find(item => item.id === requestedId);
+    if (existingCompletion) {
+      return json({ status: "success", appraisalId: requestedId, appraisal: existingCompletion,
+        alreadyCompleted: true, usage: usageResponse(effectiveRecord) });
+    }
     const snapshot = usageResponse(effectiveRecord);
     const decision = evaluateUsageLimit(snapshot, "complete_appraisal");
     if (!decision.allowed) {
