@@ -140,7 +140,15 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record, draftGuard
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(scope_key) DO UPDATE SET
-      ${draftGuard ? `active_draft_json = excluded.active_draft_json,
+      ${draftGuard?.completion ? `active_draft_json = excluded.active_draft_json,
+        in_progress_appraisals = excluded.in_progress_appraisals,
+        monthly_appraisals = excluded.monthly_appraisals,
+        completed_appraisal_ids_json = excluded.completed_appraisal_ids_json,
+        completed_appraisals_json = excluded.completed_appraisals_json,
+        updated_at = excluded.updated_at
+        WHERE usage_records.active_draft_json IS ?
+          AND usage_records.completed_appraisal_ids_json = ?
+          AND usage_records.monthly_appraisals = ?` : draftGuard ? `active_draft_json = excluded.active_draft_json,
         in_progress_appraisals = excluded.in_progress_appraisals,
         updated_at = excluded.updated_at
         WHERE usage_records.active_draft_json IS ?` : `
@@ -170,12 +178,17 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record, draftGuard
       JSON.stringify(normalized.reportExports),
       new Date().toISOString(),
       ...(draftGuard ? [draftGuard.previousDraft ? JSON.stringify(draftGuard.previousDraft) : null] : []),
+      ...(draftGuard?.completion ? [JSON.stringify(draftGuard.completedIds), draftGuard.monthly] : []),
     ).run();
     if (draftGuard && result.meta?.changes !== 1) return null;
   } else if (draftGuard) {
     const current = getRecord(workspaceId, userId);
     if (JSON.stringify(current.activeDraft) !== JSON.stringify(draftGuard.previousDraft)) return null;
-    Object.assign(normalized, current, { activeDraft: normalized.activeDraft, inProgressAppraisals: normalized.inProgressAppraisals });
+    if (draftGuard.completion) {
+      if (JSON.stringify(current.completedAppraisalIds) !== JSON.stringify(draftGuard.completedIds) || current.monthlyAppraisals !== draftGuard.monthly) return null;
+      normalized.reportExports = current.reportExports;
+      normalized.appraisalClientProfiles = current.appraisalClientProfiles;
+    } else Object.assign(normalized, current, { activeDraft: normalized.activeDraft, inProgressAppraisals: normalized.inProgressAppraisals });
   }
   runtimeStore.set(key, normalized);
   return normalized;
@@ -2585,6 +2598,8 @@ async function handleApi(request, env = {}, ctx = null) {
         usage: snapshot,
       }, { status: 409 });
     }
+    const completionGuard = { completion: true, previousDraft: record.activeDraft,
+      completedIds: [...record.completedAppraisalIds], monthly: record.monthlyAppraisals };
     const completedAt = new Date().toISOString();
     const currentDraft = record.activeDraft;
     const completedAppraisal = {
@@ -2609,7 +2624,9 @@ async function handleApi(request, env = {}, ctx = null) {
     record.inProgressAppraisals = record.activeDraft ? 1 : 0;
     record.completedAppraisalIds = [...(record.completedAppraisalIds || []), appraisalId];
     record.completedAppraisals = [...(record.completedAppraisals || []), completedAppraisal];
-    await saveUsageRecord(env, workspaceId, userId, record);
+    if (!await saveUsageRecord(env, workspaceId, userId, record, completionGuard)) {
+      return json({ status: "error", errorCode: "COMPLETION_CONFLICT", message: "保存状態が更新されました。内容を保持したまま、保存済み状態を確認して再試行してください。" }, { status: 409 });
+    }
     const updatedUsage = usageResponse(applyBillingSubscription(record, billingSubscription));
     const aiUsageEvent = createAiUsageEvent({
       eventName: "studio.session.completed.v1",

@@ -78,6 +78,16 @@ try {
   assert.equal(cleared.status, 201);
   assert.equal(cleared.body.activeDraft.question, "", "An intentional blank must not restore old text.");
   const persisted = cleared.body.activeDraft;
+  holdReads = true;
+  const completions = await Promise.all([api("/api/appraisals/complete", { appraisalId: "session_cas" }), api("/api/appraisals/complete", { appraisalId: "session_cas" })]);
+  assert.deepEqual(completions.map(x => x.status).sort(), [201, 409]);
+  const completedRow = sql("SELECT * FROM usage_records")[0];
+  assert.equal(completedRow.monthly_appraisals, 10);
+  assert.equal(JSON.parse(completedRow.completed_appraisals_json).filter(x => x.id === "session_cas").length, 1);
+  assert.deepEqual(JSON.parse(completedRow.report_exports_json), [report]);
+  const restarted = await save("次の下書き", null);
+  assert.equal(restarted.status, 201);
+  Object.assign(persisted, restarted.body.activeDraft);
   failWrite = true;
   await assert.rejects(() => save("保存失敗の本文", persisted.draftVersion), /fixture disk failure/);
   assert.deepEqual(JSON.parse(sql("SELECT active_draft_json FROM usage_records")[0].active_draft_json), persisted);
