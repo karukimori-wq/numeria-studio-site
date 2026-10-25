@@ -2604,6 +2604,7 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/appraisals/complete" && request.method === "POST") {
+    const adminMode = requireAdmin(request, env, body).adminMode;
     const requestedId = body.appraisalId || body.id;
     const existingCompletion = requestedId && (record.completedAppraisals || []).find(item => item.id === requestedId);
     if (existingCompletion) {
@@ -2612,7 +2613,7 @@ async function handleApi(request, env = {}, ctx = null) {
     }
     const snapshot = usageResponse(effectiveRecord);
     const decision = evaluateUsageLimit(snapshot, "complete_appraisal");
-    if (!decision.allowed) {
+    if (!decision.allowed && !adminMode) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
     const appraisalId = body.appraisalId || body.id || `app_${Date.now()}`;
@@ -2705,6 +2706,7 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/reports/export" && request.method === "POST") {
+    const adminMode = requireAdmin(request, env, body).adminMode;
     const snapshot = usageResponse(effectiveRecord);
     const format = String(body.format || "pdf").toLowerCase();
     const reportType = String(body.reportType || "basic").toLowerCase();
@@ -2719,7 +2721,7 @@ async function handleApi(request, env = {}, ctx = null) {
       reportType === "detailed" ? evaluateUsageLimit(snapshot, "export_detailed_report") : { allowed: true },
       removeBranding ? evaluateUsageLimit(snapshot, "remove_report_branding") : { allowed: true },
     ];
-    const blocked = checks.find((check) => !check.allowed);
+    const blocked = adminMode ? null : checks.find((check) => !check.allowed);
 
     if (blocked) {
       return json({
