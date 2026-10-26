@@ -46,6 +46,9 @@ jobs:
           test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing CLOUDFLARE_ACCOUNT_ID"; exit 1; }
           test -n "$VITE_CLERK_PUBLISHABLE_KEY" || { echo "::error::Missing VITE_CLERK_PUBLISHABLE_KEY"; exit 1; }
 
+      - name: Record current production deployment (read only)
+        run: npx wrangler deployments status --name numeria-studio-site --json
+
       - name: Apply shared D1 migrations
         run: npx wrangler d1 migrations apply numeria-studio-db --remote
 
