@@ -47,7 +47,7 @@ try {
   const restored = await request('/api/usage');
   assert.equal(restored.status, 200); assert.deepEqual(restored.body.usage.activeDraft.snapshot, reading);
   const preview=await request('/api/kigaku/period-pages',{snapshot:reading,planId:'pro'});
-  assert.equal(preview.status,200);assert.ok(preview.body.pages.slice(2).every(page=>page.reasonCode==='PRO_REQUIRED'));
+  assert.equal(preview.status,200);assert.deepEqual(preview.body.pages.slice(0,4).map(page=>page.state),Array(4).fill('draft_preview'));assert.ok(preview.body.pages.slice(4).every(page=>page.reasonCode==='PRO_REQUIRED'));
   assert.equal((await request('/api/kigaku/period-pages',{snapshot:reading},false)).status,401);
   // Change only the mocked server-side record; request plan claims remain untrusted.
   const serverRow = [...rows.values()][0];
@@ -55,15 +55,16 @@ try {
     serverRow.plan_id = plan;
     const allowed = await request('/api/kigaku/period-pages', { snapshot: reading, planId: 'free' });
     assert.equal(allowed.status, 200);
-    assert.deepEqual(allowed.body.pages.map(page => page.state), ['draft_preview','draft_preview','draft_preview','draft_preview']);
-    assert.deepEqual(allowed.body.pages.map(page => page.slots.length), [2,3,2,9]);
+    assert.deepEqual(allowed.body.pages.map(page => page.state), ['draft_preview','draft_preview','draft_preview','draft_preview','draft_preview','draft_preview']);
+    assert.deepEqual(allowed.body.pages.map(page => page.slots.length), [2,3,2,2,2,9]);
     assert.ok(allowed.body.pages.every(page => page.exportAllowed === false && page.releaseEnabled === false));
   }
   const broken = structuredClone(reading); broken.result.sourceResult.natal.mainStar.value = 99;
   assert.equal((await request('/api/kigaku/period-pages', { snapshot: broken })).status, 400);
   serverRow.plan_id = 'free';
   const downgraded = await request('/api/kigaku/period-pages', { snapshot: reading, planId: 'business' });
-  assert.ok(downgraded.body.pages.slice(2).every(page => page.reasonCode === 'PRO_REQUIRED'));
+  assert.deepEqual(downgraded.body.pages.slice(0,4).map(page=>page.state),Array(4).fill('draft_preview'));
+  assert.ok(downgraded.body.pages.slice(4).every(page => page.reasonCode === 'PRO_REQUIRED'));
   const bad = structuredClone(reading); bad.result.analysis.common.directions.push('C');
   assert.equal((await request('/api/appraisals/save-draft', { appraisalId: 'ki-test', snapshot: bad })).status, 400);
   assert.deepEqual((await request('/api/usage')).body.usage.activeDraft.snapshot, reading);
