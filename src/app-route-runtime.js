@@ -11,6 +11,7 @@
   const SURFACE_ID = "numeria-route-surface";
   const STYLE_ID = "numeria-route-surface-style";
   const wrappedApis = new WeakSet();
+  const backgroundState = new WeakMap();
   let dispatchSequence = 0;
   let dispatching = false;
   let connectedApi = null;
@@ -94,6 +95,7 @@
 #${SURFACE_ID} .nr-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
 #${SURFACE_ID} .nr-action{min-height:44px;border:1px solid #cbb888;border-radius:999px;background:#2c2440;color:#fff;padding:10px 18px;font-weight:800;cursor:pointer}
 #${SURFACE_ID} .nr-action.secondary{background:#fff;color:#2c2440}
+#${SURFACE_ID} button:focus-visible{outline:3px solid #7b5da7;outline-offset:3px}
 @media(max-width:760px){#${SURFACE_ID}{z-index:226}#${SURFACE_ID} .nr-header{padding:calc(14px + env(safe-area-inset-top)) 16px 14px}#${SURFACE_ID} .nr-body{padding:20px 14px}.nr-grid{grid-template-columns:1fr!important}#${SURFACE_ID} .nr-detail dl{grid-template-columns:1fr;gap:3px}#${SURFACE_ID} .nr-detail dd{margin-bottom:10px}}
 @media print{#${SURFACE_ID}{position:static;padding:0}.nr-back,.nr-actions{display:none!important}}
 `;
@@ -125,6 +127,31 @@
       node.hidden = true;
       node.replaceChildren();
     }
+    setBackgroundDisabled(false);
+  }
+
+  function setBackgroundDisabled(disabled) {
+    const node = document.getElementById(SURFACE_ID);
+    for (const element of Array.from(document.body?.children || [])) {
+      if (element === node || element.tagName === "SCRIPT" || element.tagName === "STYLE") continue;
+      if (disabled) {
+        if (!backgroundState.has(element)) {
+          backgroundState.set(element, {
+            ariaHidden: element.getAttribute("aria-hidden"),
+            inert: Boolean(element.inert),
+          });
+        }
+        element.setAttribute("aria-hidden", "true");
+        element.inert = true;
+        continue;
+      }
+      const previous = backgroundState.get(element);
+      if (!previous) continue;
+      if (previous.ariaHidden === null) element.removeAttribute("aria-hidden");
+      else element.setAttribute("aria-hidden", previous.ariaHidden);
+      element.inert = previous.inert;
+      backgroundState.delete(element);
+    }
   }
 
   function invokeRouteApi(callback) {
@@ -138,6 +165,7 @@
 
   function renderSurface({ kind, kicker, title, body }) {
     const node = surface();
+    setBackgroundDisabled(true);
     node.hidden = false;
     node.dataset.routeScreen = kind;
     node.innerHTML = `<header class="nr-header"><button type="button" class="nr-back" aria-label="前の画面へ戻る">‹</button><div><small>${escapeHtml(kicker)}</small><h1>${escapeHtml(title)}</h1></div></header><main class="nr-body">${body}</main>`;
@@ -148,6 +176,7 @@
     for (const element of node.querySelectorAll("[data-route-href]")) {
       element.addEventListener("click", () => replaceOrPush(element.dataset.routeHref));
     }
+    node.querySelector(".nr-back")?.focus();
     return node;
   }
 

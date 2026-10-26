@@ -65,6 +65,11 @@ vm.runInContext(source, context, { filename: "app-route-runtime.js" });
 
 const routes = window.NumeriaAppRoutes;
 assert.ok(!source.includes("=> navigate(element.dataset.routeHref)"), "Route cards must use the defined history dispatcher.");
+assert.match(source, /setBackgroundDisabled\(true\)/, "Dedicated route surfaces must disable the background app for assistive technology.");
+assert.match(source, /element\.setAttribute\("aria-hidden", "true"\)/, "Dedicated route surfaces must hide the background accessibility tree.");
+assert.match(source, /element\.inert = true/, "Dedicated route surfaces must remove background controls from keyboard focus.");
+assert.match(source, /setBackgroundDisabled\(false\)/, "Closing a dedicated route surface must restore the background app.");
+assert.match(source, /\.nr-back"\)\?\.focus\(\)/, "Dedicated routes must move focus into the visible surface.");
 assert.equal(routes.routeSpec("/app/home").kind, "home");
 assert.equal(routes.routeSpec("/app/clients/acl_123").clientRef, "acl_123");
 assert.equal(routes.routeSpec("/app/readings/ses_456").sessionId, "ses_456");
