@@ -64,6 +64,11 @@ class MockD1Statement {
         updatedAt,
       ] = this.args;
       const previous = this.db.usageRecords.get(scopeKey);
+      if (this.sql.includes("WHERE usage_records.report_exports_json = ?") && previous) {
+        if (previous.report_exports_json !== this.args[14]) return { meta: { changes: 0 } };
+        this.db.usageRecords.set(scopeKey, { ...previous, report_exports_json: reportExportsJson, updated_at: updatedAt });
+        return { meta: { changes: 1 } };
+      }
       if (this.sql.includes("WHERE usage_records.active_draft_json IS ?") && previous) {
         if (this.sql.includes("AND usage_records.completed_appraisal_ids_json = ?")) {
           if (previous.active_draft_json !== this.args[14] || previous.completed_appraisal_ids_json !== this.args[15] || previous.monthly_appraisals !== this.args[16]) return { meta: { changes: 0 } };

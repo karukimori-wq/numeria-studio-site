@@ -85,6 +85,13 @@ try {
   assert.equal(completedRow.monthly_appraisals, 10);
   assert.equal(JSON.parse(completedRow.completed_appraisals_json).filter(x => x.id === "session_cas").length, 1);
   assert.deepEqual(JSON.parse(completedRow.report_exports_json), [report]);
+  holdReads = true;
+  const exports = await Promise.all([1, 2].map(() => api("/api/reports/export", { appraisalId: "session_cas", reportType: "basic", format: "pdf", resultSummary: "競合試験" })));
+  assert.deepEqual(exports.map(x => x.status).sort(), [201, 409]);
+  const exportRow = sql("SELECT * FROM usage_records")[0];
+  assert.equal(JSON.parse(exportRow.report_exports_json).length, 2);
+  assert.equal(exportRow.monthly_appraisals, 10);
+  assert.deepEqual(JSON.parse(exportRow.completed_appraisals_json), JSON.parse(completedRow.completed_appraisals_json));
   const restarted = await save("次の下書き", null);
   assert.equal(restarted.status, 201);
   Object.assign(persisted, restarted.body.activeDraft);

@@ -140,7 +140,9 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record, draftGuard
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(scope_key) DO UPDATE SET
-      ${draftGuard?.completion ? `active_draft_json = excluded.active_draft_json,
+      ${draftGuard?.report ? `report_exports_json = excluded.report_exports_json,
+        updated_at = excluded.updated_at
+        WHERE usage_records.report_exports_json = ?` : draftGuard?.completion ? `active_draft_json = excluded.active_draft_json,
         in_progress_appraisals = excluded.in_progress_appraisals,
         monthly_appraisals = excluded.monthly_appraisals,
         completed_appraisal_ids_json = excluded.completed_appraisal_ids_json,
@@ -177,18 +179,23 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record, draftGuard
       JSON.stringify(normalized.completedAppraisals),
       JSON.stringify(normalized.reportExports),
       new Date().toISOString(),
-      ...(draftGuard ? [draftGuard.previousDraft ? JSON.stringify(draftGuard.previousDraft) : null] : []),
+      ...(draftGuard ? [draftGuard.report ? JSON.stringify(draftGuard.reports) : draftGuard.previousDraft ? JSON.stringify(draftGuard.previousDraft) : null] : []),
       ...(draftGuard?.completion ? [JSON.stringify(draftGuard.completedIds), draftGuard.monthly] : []),
     ).run();
     if (draftGuard && result.meta?.changes !== 1) return null;
   } else if (draftGuard) {
     const current = getRecord(workspaceId, userId);
+    if (draftGuard.report) {
+      if (JSON.stringify(current.reportExports) !== JSON.stringify(draftGuard.reports)) return null;
+      Object.assign(normalized, current, { reportExports: normalized.reportExports });
+    } else {
     if (JSON.stringify(current.activeDraft) !== JSON.stringify(draftGuard.previousDraft)) return null;
     if (draftGuard.completion) {
       if (JSON.stringify(current.completedAppraisalIds) !== JSON.stringify(draftGuard.completedIds) || current.monthlyAppraisals !== draftGuard.monthly) return null;
       normalized.reportExports = current.reportExports;
       normalized.appraisalClientProfiles = current.appraisalClientProfiles;
     } else Object.assign(normalized, current, { activeDraft: normalized.activeDraft, inProgressAppraisals: normalized.inProgressAppraisals });
+  }
   }
   runtimeStore.set(key, normalized);
   return normalized;
@@ -2739,7 +2746,7 @@ async function handleApi(request, env = {}, ctx = null) {
       }, { status: 402 });
     }
 
-    const exportId = `rep_${Date.now()}`;
+    const exportId = `rep_${crypto.randomUUID()}`;
     const generatedAt = new Date().toISOString();
     const branding = removeBranding ? "hidden" : "numeria-logo-included";
     const fileName = `numeria-${reportType}-report-${exportId}.pdf`;
@@ -2766,11 +2773,14 @@ async function handleApi(request, env = {}, ctx = null) {
       reportSnapshot,
       generatedAt,
     };
+    const reportGuard = { report: true, reports: [...(record.reportExports || [])] };
     record.reportExports = [
       ...(record.reportExports || []),
       reportEvent,
     ];
-    await saveUsageRecord(env, workspaceId, userId, record);
+    if (!await saveUsageRecord(env, workspaceId, userId, record, reportGuard)) {
+      return json({ status: "error", errorCode: "REPORT_SAVE_CONFLICT", message: "鑑定書一覧が更新されました。本文を保持したまま再試行してください。" }, { status: 409 });
+    }
     await saveReportEvent(env, workspaceId, userId, record, reportEvent);
     const updatedUsage = usageResponse(applyBillingSubscription(record, billingSubscription));
     const aiUsageEvent = createAiUsageEvent({
