@@ -451,9 +451,6 @@ function withRestorableSnapshot(record = {}, session = {}) {
   return {
     ...session,
     snapshot: {
-      selectedCustomerId: clientRef,
-      name: session.clientName || client?.clientName || "",
-      birthday: session.birthDate || client?.birthDate || "",
       divination: session.divination || "numerology",
       theme: session.question || "",
       notes: session.notes || "",
