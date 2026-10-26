@@ -87,3 +87,10 @@ console.log('Kigaku UI effects: clean navigation, unsaved unload, rejected/accep
 first=calculate();first.call.resolve({reading:createKigakuReading(first.call.body.input)});await first.promise;
 const preview=client.previewPeriods();call=pending.shift();assert.equal(call.path,'/api/kigaku/period-pages');client.change({theme:'new input'});call.resolve({pages:[{title:'stale'}]});await preview;assert.equal(client.current().periodPages,null);
 console.log('Period preview stale response rejected after edit.');
+
+first=calculate();first.call.resolve({reading:createKigakuReading(first.call.body.input)});await first.promise;
+let previewRequest=client.previewPeriods();call=pending.shift();assert.equal(client.current().periodPreviewState,'loading');await client.previewPeriods();assert.equal(pending.length,0);
+call.reject(new Error('network'));await previewRequest;assert.equal(client.current().periodPreviewState,'error');
+previewRequest=client.previewPeriods();call=pending.shift();call.resolve({pages:[]});await previewRequest;assert.equal(client.current().periodPreviewState,'ready');
+client.change({theme:'invalidate'});assert.equal(client.current().periodPreviewState,'idle');assert.equal(client.current().periodPages,null);
+console.log('Period preview loading, duplicate suppression, network failure, retry and invalidation verified.');
