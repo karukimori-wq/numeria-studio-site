@@ -118,6 +118,14 @@ patched = replaceExactly(
   "mantic PDF completion gate",
 );
 
+patched = replaceExactly(
+  patched,
+  "}catch{Gt(`PDFを作成できませんでした。もう一度お試しください。`)}finally",
+  "}catch(e){console.error(`[Numeria PDF]`,e),Gt(`PDFを作成できませんでした：${e?.message||`不明なエラー`}`)}finally",
+  2,
+  "PDF error diagnostics",
+);
+
 // Free history keeps the latest three completed/detail rows. Older local legacy rows remain counted but their content/actions are locked.
 // The direct open/edit functions repeat the guard so DOM manipulation cannot bypass it.
 const legacyHistoryMapStart = "G.history.map((e,t)=>{let n=na.find(t=>t.id===(e.divination??`numerology`))??na[0],r=Jo(e);return";
