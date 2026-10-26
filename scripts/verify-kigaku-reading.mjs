@@ -46,6 +46,9 @@ try {
   assert.equal(saved.body.activeDraft.clientProfileId, 'customer-ki');
   const restored = await request('/api/usage');
   assert.equal(restored.status, 200); assert.deepEqual(restored.body.usage.activeDraft.snapshot, reading);
+  const preview=await request('/api/kigaku/period-pages',{snapshot:reading,planId:'pro'});
+  assert.equal(preview.status,200);assert.ok(preview.body.pages.every(page=>page.reasonCode==='PRO_REQUIRED'));
+  assert.equal((await request('/api/kigaku/period-pages',{snapshot:reading},false)).status,401);
   const bad = structuredClone(reading); bad.result.analysis.common.directions.push('C');
   assert.equal((await request('/api/appraisals/save-draft', { appraisalId: 'ki-test', snapshot: bad })).status, 400);
   assert.deepEqual((await request('/api/usage')).body.usage.activeDraft.snapshot, reading);

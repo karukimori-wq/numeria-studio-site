@@ -83,3 +83,7 @@ try {
   cleanups.forEach(cleanup => cleanup?.()); assert.equal(listeners.size, 0);
 } finally { globalThis.window = savedWindow; globalThis.document = savedDocument; }
 console.log('Kigaku UI effects: clean navigation, unsaved unload, rejected/accepted navigation and cleanup verified with event mocks.');
+
+first=calculate();first.call.resolve({reading:createKigakuReading(first.call.body.input)});await first.promise;
+const preview=client.previewPeriods();call=pending.shift();assert.equal(call.path,'/api/kigaku/period-pages');client.change({theme:'new input'});call.resolve({pages:[{title:'stale'}]});await preview;assert.equal(client.current().periodPages,null);
+console.log('Period preview stale response rejected after edit.');

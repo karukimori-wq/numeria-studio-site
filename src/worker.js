@@ -1,3 +1,4 @@
+import { createKigakuPeriodPages } from "./kigaku-period-pages.js";
 import { createKigakuReading, validateKigakuReading, KIGAKU_READING_SCHEMA } from "./kigaku-reading.js";
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
@@ -2101,6 +2102,12 @@ async function handleApi(request, env = {}, ctx = null) {
   const record = await loadUsageRecord(env, workspaceId, userId);
   const billingSubscription = await fetchExternalBillingSubscription(env, workspaceId, userId);
   const effectiveRecord = applyBillingSubscription(record, billingSubscription);
+
+  if (url.pathname === "/api/kigaku/period-pages" && request.method === "POST") {
+    if (!auth.verified) return json({status:"error",errorCode:"AUTH_REQUIRED"},{status:401});
+    try { return json({status:"success",pages:createKigakuPeriodPages(body.snapshot,effectiveRecord.planId)}); }
+    catch(error) { return json({status:"error",errorCode:error.message},{status:400}); }
+  }
 
   // New snapshots are verified before saving and before being returned for restore.
   // Untyped legacy snapshots remain on their existing compatibility path.
