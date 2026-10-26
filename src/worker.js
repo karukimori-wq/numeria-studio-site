@@ -1,3 +1,4 @@
+import {createKigakuBasicPages} from './kigaku-basic-pages.js';
 import { createKigakuPeriodPages } from "./kigaku-period-pages.js";
 import { createKigakuReading, validateKigakuReading, KIGAKU_READING_SCHEMA } from "./kigaku-reading.js";
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
@@ -2105,7 +2106,7 @@ async function handleApi(request, env = {}, ctx = null) {
 
   if (url.pathname === "/api/kigaku/period-pages" && request.method === "POST") {
     if (!auth.verified) return json({status:"error",errorCode:"AUTH_REQUIRED"},{status:401});
-    try { return json({status:"success",pages:createKigakuPeriodPages(body.snapshot,effectiveRecord.planId)}); }
+    try { return json({status:"success",pages:[...createKigakuBasicPages(body.snapshot),...createKigakuPeriodPages(body.snapshot,effectiveRecord.planId)]}); }
     catch(error) { return json({status:"error",errorCode:error.message},{status:400}); }
   }
 
