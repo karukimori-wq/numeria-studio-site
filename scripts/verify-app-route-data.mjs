@@ -20,13 +20,13 @@ globalThis.fetch = async url => {
   return Response.json({ keys: [jwk] });
 };
 const tokens = new Map();
-async function tokenFor(user) {
-  if (tokens.has(user)) return tokens.get(user);
+async function tokenFor(user, claims = {}) {
+  if (!Object.keys(claims).length && tokens.has(user)) return tokens.get(user);
   const encode = value => Buffer.from(JSON.stringify(value)).toString("base64url");
-  const input = `${encode({ alg: "RS256", kid: "route-fixture" })}.${encode({ sub: user, sid: `fixture-${user}`, iss: env.CLERK_JWT_ISSUER, exp: Math.floor(Date.now() / 1000) + 300 })}`;
+  const input = `${encode({ alg: "RS256", kid: "route-fixture" })}.${encode({ sub: user, sid: `fixture-${user}`, iss: env.CLERK_JWT_ISSUER, exp: Math.floor(Date.now() / 1000) + 300, ...claims })}`;
   const signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", keys.privateKey, new TextEncoder().encode(input));
   const token = `${input}.${Buffer.from(signature).toString("base64url")}`;
-  tokens.set(user, token);
+  if (!Object.keys(claims).length) tokens.set(user, token);
   return token;
 }
 
@@ -165,5 +165,22 @@ assert.equal(retryCompletion.body.alreadyCompleted, true);
 const afterRetry = await api("/api/appraisals/status");
 assert.deepEqual(afterRetry.body, beforeRetry.body, "Completion retry must preserve counters, unrelated active draft, completed snapshots, and reports.");
 console.log("Completion retry preserves the entire persisted status instead of counting or overwriting again.");
+
+const statusBeforeInvalidTokens = await api("/api/appraisals/status");
+for (const claims of [
+  { exp: undefined }, { exp: null }, { exp: 0 }, { exp: "not-a-number" },
+  { exp: String(Math.floor(Date.now() / 1000) + 300) },
+  { exp: Math.floor(Date.now() / 1000) - 60 },
+  { nbf: "not-a-number" }, { nbf: Math.floor(Date.now() / 1000) + 300 },
+]) {
+  const response = await worker.fetch(new Request("https://example.test/api/appraisals/save-draft", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${await tokenFor(userId, claims)}`, "Content-Type": "application/json", "X-Workspace-Id": workspaceId, "X-User-Id": userId },
+    body: JSON.stringify({ workspaceId, userId, appraisalId: sessionId, snapshot: { message: "不正期限で上書きしない" } }),
+  }), env, {});
+  assert.equal(response.status, 401, `Invalid JWT timing must reject writes: ${JSON.stringify(claims)}`);
+}
+assert.deepEqual((await api("/api/appraisals/status")).body, statusBeforeInvalidTokens.body, "Rejected JWT timing must preserve persisted data; a valid token can resume.");
+console.log("Signed JWT timing fixtures: missing/malformed/expired exp and invalid/future nbf deny writes; valid-token resume preserves data.");
 
 globalThis.fetch = originalFetch;

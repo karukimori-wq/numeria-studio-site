@@ -1919,10 +1919,16 @@ async function verifyClerkSessionToken(request, env = {}) {
     }
 
     const now = Math.floor(Date.now() / 1000);
-    if (payload.exp && Number(payload.exp) <= now) {
+    if (typeof payload.exp !== "number" || !Number.isFinite(payload.exp)) {
+      return { verified: false, reason: "token-expiration-invalid", userId: "", method: "jwks-rs256" };
+    }
+    if (payload.exp <= now) {
       return { verified: false, reason: "token-expired", userId: "", method: "jwks-rs256" };
     }
-    if (payload.nbf && Number(payload.nbf) > now) {
+    if (payload.nbf !== undefined && (typeof payload.nbf !== "number" || !Number.isFinite(payload.nbf))) {
+      return { verified: false, reason: "token-not-before-invalid", userId: "", method: "jwks-rs256" };
+    }
+    if (payload.nbf !== undefined && payload.nbf > now) {
       return { verified: false, reason: "token-not-yet-valid", userId: "", method: "jwks-rs256" };
     }
 
