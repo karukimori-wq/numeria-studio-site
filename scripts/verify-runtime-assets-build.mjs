@@ -71,6 +71,14 @@ assert.ok(!extensionlessHtml.includes("assets/numeria-app-Cckhajir.js"), "Extens
 
 const legacyIndexSource = readFileSync("dist/assets/index-CYZnnbch.js", "utf8");
 const legacyAppSource = readFileSync("dist/assets/numeria-app-Cckhajir.js", "utf8");
+const legacyPdfImagePath = "dist/assets/es-CqqE0H6X.js";
+const legacyJsPdfPath = "dist/assets/jspdf.es.min-BfRqlasZ.js";
+assert.ok(existsSync(legacyPdfImagePath), `Legacy PDF image runtime is missing: ${legacyPdfImagePath}`);
+assert.ok(existsSync(legacyJsPdfPath), `Legacy jsPDF runtime is missing: ${legacyJsPdfPath}`);
+const legacyPdfImageSource = readFileSync(legacyPdfImagePath, "utf8");
+const legacyJsPdfSource = readFileSync(legacyJsPdfPath, "utf8");
+assert.ok(legacyPdfImageSource.includes("toJpeg") && legacyPdfImageSource.includes("toPng"), "PDF image runtime must export toJpeg and toPng.");
+assert.ok(legacyJsPdfSource.includes("jsPDF"), "jsPDF runtime must export jsPDF.");
 assert.ok(legacyIndexSource.includes(appMatch[1]), "Legacy index bundle must import the recovered Numeria app bundle.");
 assert.ok(legacyIndexSource.includes("NumeriaRscBootstrapOrder.v2"), "Legacy index bundle must wait for inline RSC payload before bootstrapping.");
 assertBundleSyntax(legacyIndexSource, "Legacy index bundle");

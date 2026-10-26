@@ -180,5 +180,6 @@ writeFileSync("dist/original", productionHtml);
 cpSync("assets", "dist/assets", { recursive: true });
 
 await import("./patch-legacy-static-assets.mjs");
+await import("./build-legacy-pdf-runtime.mjs");
 
 console.log("Original Numeria Studio HTML and assets restored into dist with Clerk production verification compatibility.");
