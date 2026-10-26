@@ -12,6 +12,11 @@ function sql(query, args = [], script = false) {
 p=json.load(sys.stdin);c=sqlite3.connect(p['database']);c.row_factory=sqlite3.Row
 if p['script']:
  c.executescript(p['query']);value=None
+elif isinstance(p['query'],list):
+ value=[]
+ with c:
+  for q in p['query']:
+   cur=c.execute(q['query'],q['args']);value.append({'meta':{'changes':cur.rowcount}})
 else:
  cur=c.execute(p['query'],p['args'])
  value=[dict(r) for r in cur.fetchall()] if cur.description else {'meta':{'changes':cur.rowcount}}
@@ -21,7 +26,7 @@ c.commit();print(json.dumps(value))
   return JSON.parse(result.stdout);
 }
 let waiting = [], holdReads = false, beforeWrite = null, failWrite = false;
-const db = { prepare(query) { return {
+const db = { async batch(statements) { return sql(statements.map(s => ({query:s.query,args:s.args}))); }, prepare(query) { return { query,
   args: [], bind(...args) { this.args = args; return this; },
   async first() {
     const row = sql(query, this.args)[0] || null;
@@ -92,6 +97,14 @@ try {
   assert.equal(JSON.parse(exportRow.report_exports_json).length, 2);
   assert.equal(exportRow.monthly_appraisals, 10);
   assert.deepEqual(JSON.parse(exportRow.completed_appraisals_json), JSON.parse(completedRow.completed_appraisals_json));
+  const beforeFailure = sql("SELECT report_exports_json FROM usage_records")[0].report_exports_json;
+  const eventCount = sql("SELECT count(*) AS n FROM report_events")[0].n;
+  assert.equal(eventCount, 1, "Only the winning Report gets an event.");
+  sql("CREATE TRIGGER reject_report_event BEFORE INSERT ON report_events BEGIN SELECT RAISE(ABORT, 'event failure'); END", [], true);
+  await assert.rejects(() => api("/api/reports/export", { appraisalId: "session_cas", reportType: "basic", format: "pdf" }), /event failure/);
+  assert.equal(sql("SELECT report_exports_json FROM usage_records")[0].report_exports_json, beforeFailure);
+  assert.equal(sql("SELECT count(*) AS n FROM report_events")[0].n, eventCount);
+  sql("DROP TRIGGER reject_report_event", [], true);
   const restarted = await save("次の下書き", null);
   assert.equal(restarted.status, 201);
   Object.assign(persisted, restarted.body.activeDraft);

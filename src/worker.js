@@ -130,7 +130,7 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record, draftGuard
   const key = scopeKey(workspaceId, userId, normalized.billingMonth);
   const d1 = getD1Binding(env);
   if (d1 && typeof d1.prepare === "function") {
-    const result = await d1.prepare(`
+    const statement = d1.prepare(`
       INSERT INTO usage_records (
         scope_key, workspace_id, user_id, billing_month, plan_id,
         monthly_appraisals, appraisal_clients, in_progress_appraisals,
@@ -181,7 +181,10 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record, draftGuard
       new Date().toISOString(),
       ...(draftGuard ? [draftGuard.report ? JSON.stringify(draftGuard.reports) : draftGuard.previousDraft ? JSON.stringify(draftGuard.previousDraft) : null] : []),
       ...(draftGuard?.completion ? [JSON.stringify(draftGuard.completedIds), draftGuard.monthly] : []),
-    ).run();
+    );
+    const result = draftGuard?.event
+      ? (await d1.batch([statement, await saveReportEvent(env, workspaceId, userId, normalized, draftGuard.event, true)]))[0]
+      : await statement.run();
     if (draftGuard && result.meta?.changes !== 1) return null;
   } else if (draftGuard) {
     const current = getRecord(workspaceId, userId);
@@ -201,16 +204,18 @@ async function saveUsageRecord(env = {}, workspaceId, userId, record, draftGuard
   return normalized;
 }
 
-async function saveReportEvent(env = {}, workspaceId, userId, record, event) {
+async function saveReportEvent(env = {}, workspaceId, userId, record, event, prepareOnly = false) {
   const d1 = getD1Binding(env);
   if (!d1 || typeof d1.prepare !== "function") return;
   const key = scopeKey(workspaceId, userId, record.billingMonth);
-  await d1.prepare(`
+  const statement = d1.prepare(`
     INSERT OR REPLACE INTO report_events (
       event_id, scope_key, workspace_id, user_id, appraisal_id,
       report_type, format, branding, event_name, generated_at
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    WHERE EXISTS (SELECT 1 FROM usage_records, json_each(usage_records.report_exports_json) AS report
+      WHERE scope_key = ? AND json_extract(report.value, '$.exportId') = ?)
   `).bind(
     event.exportId,
     key,
@@ -222,7 +227,9 @@ async function saveReportEvent(env = {}, workspaceId, userId, record, event) {
     event.branding,
     "studio.report.generated.v1",
     event.generatedAt,
-  ).run();
+    key, event.exportId,
+  );
+  return prepareOnly ? statement : statement.run();
 }
 
 function getAiPlatformCoreUrl(env = {}) {
@@ -2773,7 +2780,7 @@ async function handleApi(request, env = {}, ctx = null) {
       reportSnapshot,
       generatedAt,
     };
-    const reportGuard = { report: true, reports: [...(record.reportExports || [])] };
+    const reportGuard = { report: true, event: reportEvent, reports: [...(record.reportExports || [])] };
     record.reportExports = [
       ...(record.reportExports || []),
       reportEvent,
@@ -2781,7 +2788,7 @@ async function handleApi(request, env = {}, ctx = null) {
     if (!await saveUsageRecord(env, workspaceId, userId, record, reportGuard)) {
       return json({ status: "error", errorCode: "REPORT_SAVE_CONFLICT", message: "鑑定書一覧が更新されました。本文を保持したまま再試行してください。" }, { status: 409 });
     }
-    await saveReportEvent(env, workspaceId, userId, record, reportEvent);
+
     const updatedUsage = usageResponse(applyBillingSubscription(record, billingSubscription));
     const aiUsageEvent = createAiUsageEvent({
       eventName: "studio.report.generated.v1",

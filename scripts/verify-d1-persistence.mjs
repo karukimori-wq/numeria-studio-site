@@ -9,6 +9,12 @@ class MockD1 {
     this.tables = new Set(["usage_records", "report_events"]);
   }
 
+  async batch(statements) {
+    const results = [];
+    for (const statement of statements) results.push(await statement.run());
+    return results;
+  }
+
   prepare(sql) {
     return new MockD1Statement(this, sql);
   }
