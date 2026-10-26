@@ -19,7 +19,7 @@ assert.match(workerSource, /lockedCompletedAppraisalIds/);
 assert.match(patchSource, /NumeriaAuthenticatedFetch/);
 assert.match(patchSource, /\/api\/appraisal-clients/);
 assert.match(patchSource, /\/api\/appraisals\/complete/);
-assert.match(patchSource, /\/api\/appraisals\/status/);
+assert.ok(patchSource.includes("let i=n||t,s=Fi(i)"), "Completion keeps the originating Session ID while server APIs enforce plan limits.");
 assert.match(patchSource, /Freeでは鑑定対象者は3名までです/);
 assert.match(patchSource, /Freeでは最新3件まで詳細を表示できます/);
 assert.match(patchSource, /tr===`admin`\?\{ok:!0,data:\{status:`admin-preview`\}\}/);
