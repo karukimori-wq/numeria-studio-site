@@ -19,5 +19,8 @@ for (const expected of [
   "auth script timeout",
   "auth script global missing",
   "script.remove()",
+  "data-clerk-publishable-key",
+  "ui.browser.js",
+  "__internal_ClerkUICtor",
 ]) assert.ok(auth.includes(expected), `Missing auth diagnostic: ${expected}`);
 console.log("LP Clerk auth syntax and diagnostic guards passed");
