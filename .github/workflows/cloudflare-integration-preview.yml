@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - codex/site-v2-lp-v1-1-20261022
+      - codex/pdf-save-ack-20261027
 
 permissions:
   contents: read
