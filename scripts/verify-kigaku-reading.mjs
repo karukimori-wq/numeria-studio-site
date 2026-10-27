@@ -55,8 +55,8 @@ try {
     serverRow.plan_id = plan;
     const allowed = await request('/api/kigaku/period-pages', { snapshot: reading, planId: 'free' });
     assert.equal(allowed.status, 200);
-    assert.deepEqual(allowed.body.pages.map(page => page.state), ['draft_preview','draft_preview','draft_preview','draft_preview','draft_preview','draft_preview']);
-    assert.deepEqual(allowed.body.pages.map(page => page.slots.length), [2,3,2,2,2,9]);
+    assert.deepEqual(allowed.body.pages.map(page => page.state), Array(7).fill('draft_preview'));
+    assert.deepEqual(allowed.body.pages.map(page => page.slots.length), [2,3,2,2,1,2,9]);
     assert.ok(allowed.body.pages.every(page => page.exportAllowed === false && page.releaseEnabled === false));
   }
   const broken = structuredClone(reading); broken.result.sourceResult.natal.mainStar.value = 99;

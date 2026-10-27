@@ -1,3 +1,4 @@
+import {createKigakuDayPage} from './kigaku-day-page.js';
 import {createKigakuCurrentPages} from './kigaku-current-pages.js';
 import {createKigakuBasicPages} from './kigaku-basic-pages.js';
 import { createKigakuPeriodPages } from "./kigaku-period-pages.js";
@@ -2107,7 +2108,7 @@ async function handleApi(request, env = {}, ctx = null) {
 
   if (url.pathname === "/api/kigaku/period-pages" && request.method === "POST") {
     if (!auth.verified) return json({status:"error",errorCode:"AUTH_REQUIRED"},{status:401});
-    try { return json({status:"success",pages:[...createKigakuBasicPages(body.snapshot),...createKigakuCurrentPages(body.snapshot),...createKigakuPeriodPages(body.snapshot,effectiveRecord.planId)]}); }
+    try { return json({status:"success",pages:[...createKigakuBasicPages(body.snapshot),...createKigakuCurrentPages(body.snapshot),createKigakuDayPage(body.snapshot,effectiveRecord.planId),...createKigakuPeriodPages(body.snapshot,effectiveRecord.planId)]}); }
     catch(error) { return json({status:"error",errorCode:error.message},{status:400}); }
   }
 
