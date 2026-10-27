@@ -16,5 +16,8 @@ for (const expected of [
   "AUTH_DIALOG",
   "Clerk load failed",
   "Clerk dialog failed",
+  "auth script timeout",
+  "auth script global missing",
+  "script.remove()",
 ]) assert.ok(auth.includes(expected), `Missing auth diagnostic: ${expected}`);
 console.log("LP Clerk auth syntax and diagnostic guards passed");
