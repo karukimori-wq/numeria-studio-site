@@ -40,7 +40,7 @@ assert.match(wrangler, /"run_worker_first": true/);
 for (const path of ["/app/home", "/app/clients", "/app/readings/new", "/app/reports", "/app/settings/report-formats"]) {
   assert.ok(routeRuntime.includes(path), `Missing app route ${path}`);
 }
-assert.match(routeRuntime, /location\.assign\("\/"\)/, "Logout must return to the public LP.");
+assert.match(routeRuntime, /location\.assign\("\/\?signedOut=1"\)/, "Logout must return to the signed-out public LP.");
 assert.match(routeRuntime, /safeReturnPath/);
 assert.match(routeRuntime, /api\.resumeSession\(data\.clientRef, data\.session\)/);
 assert.match(routeRuntime, /dataset\.routeScreen/);

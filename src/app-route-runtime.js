@@ -413,7 +413,7 @@
     }
     if (originalSignOut) {
       api.signOut = function routedSignOut() {
-        return Promise.resolve(originalSignOut(...arguments)).finally(() => location.assign("/"));
+        return Promise.resolve(originalSignOut(...arguments)).then((result) => { if (result?.error) throw new Error(result.error.message || "ログアウトに失敗しました"); location.assign("/?signedOut=1"); return result; });
       };
     }
     wrappedApis.add(api);
