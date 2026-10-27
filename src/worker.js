@@ -1,8 +1,4 @@
-import {createKigakuDirectionPage} from './kigaku-direction-page.js';
-import {createKigakuDayPage} from './kigaku-day-page.js';
-import {createKigakuCurrentPages} from './kigaku-current-pages.js';
-import {createKigakuBasicPages} from './kigaku-basic-pages.js';
-import { createKigakuPeriodPages } from "./kigaku-period-pages.js";
+import {createKigakuFixedPages} from './kigaku-fixed-pages.js';
 import { createKigakuReading, validateKigakuReading, KIGAKU_READING_SCHEMA } from "./kigaku-reading.js";
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
@@ -2109,7 +2105,7 @@ async function handleApi(request, env = {}, ctx = null) {
 
   if (url.pathname === "/api/kigaku/period-pages" && request.method === "POST") {
     if (!auth.verified) return json({status:"error",errorCode:"AUTH_REQUIRED"},{status:401});
-    try { return json({status:"success",pages:[...createKigakuBasicPages(body.snapshot),...createKigakuCurrentPages(body.snapshot),createKigakuDayPage(body.snapshot,effectiveRecord.planId),createKigakuDirectionPage(body.snapshot,effectiveRecord.planId),...createKigakuPeriodPages(body.snapshot,effectiveRecord.planId)]}); }
+    try { return json({status:"success",pages:createKigakuFixedPages(body.snapshot,effectiveRecord.planId)}); }
     catch(error) { return json({status:"error",errorCode:error.message},{status:400}); }
   }
 

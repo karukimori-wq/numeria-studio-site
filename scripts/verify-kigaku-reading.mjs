@@ -55,13 +55,21 @@ try {
     serverRow.plan_id = plan;
     const allowed = await request('/api/kigaku/period-pages', { snapshot: reading, planId: 'free' });
     assert.equal(allowed.status, 200);
-    assert.deepEqual(allowed.body.pages.map(page => page.state), Array(8).fill('draft_preview'));
-    assert.deepEqual(allowed.body.pages.map(page => page.slots.length), [2,3,2,2,1,2,2,9]);
+    assert.deepEqual(allowed.body.pages.map(page => page.state), [...Array(7).fill('draft_preview'),...Array(6).fill('unavailable'),'draft_preview']);
+    assert.deepEqual(allowed.body.pages.map(page => page.slots.length), [2,3,2,2,1,2,2,0,0,0,0,0,0,9]);
     assert.ok(allowed.body.pages.every(page => page.exportAllowed === false && page.releaseEnabled === false));
   }
+  const full=createKigakuReading({...input,partnerBirthClock:{...input.birthClock,date:'1993-08-15'},partnerName:'相手',loveRelationship:'交際相手',workRelationship:'同僚',familyRelationship:'子',workTheme:'job-change',directionPurpose:'travel'});
+  const fullResponse=await request('/api/kigaku/period-pages',{snapshot:full});
+  assert.equal(fullResponse.status,200);assert.equal(fullResponse.body.pages.length,14);assert.ok(fullResponse.body.pages.every(p=>p.state==='draft_preview'));
+  const fullSaved=await request('/api/appraisals/save-draft',{appraisalId:'ki-test',snapshot:full});assert.equal(fullSaved.status,201);
+  assert.deepEqual((await request('/api/usage')).body.usage.activeDraft.snapshot,full);
+  const corruptPartner=structuredClone(full);corruptPartner.partnerResult.natal.mainStar.value=99;
+  assert.equal((await request('/api/kigaku/period-pages',{snapshot:corruptPartner})).status,400);
+  await request('/api/appraisals/save-draft',{appraisalId:'ki-test',snapshot:reading});
   const broken = structuredClone(reading); broken.result.sourceResult.natal.mainStar.value = 99;
   assert.equal((await request('/api/kigaku/period-pages', { snapshot: broken })).status, 400);
-  serverRow.plan_id = 'free';
+  [...rows.values()][0].plan_id = 'free';
   const downgraded = await request('/api/kigaku/period-pages', { snapshot: reading, planId: 'business' });
   assert.deepEqual(downgraded.body.pages.slice(0,4).map(page=>page.state),Array(4).fill('draft_preview'));
   assert.ok(downgraded.body.pages.slice(4).every(page => page.reasonCode === 'PRO_REQUIRED'));

@@ -2,7 +2,9 @@ import { createKigakuResultFromClock } from "./kigaku-result.js";
 import { createKigakuDirectionResult } from "./kigaku-directions.js";
 
 export const KIGAKU_READING_SCHEMA = "numeria.kigaku.reading.v1";
-const fields = ["referenceInstant", "birthClock", "birthPlace", "selectedDirection", "question", "purpose", "theme", "practitionerComment", "commentEnabled"];
+const extraText = ["partnerName", "loveRelationship", "workRelationship", "familyRelationship"];
+const choices = {workTheme:["", "job-change", "independence"], directionPurpose:["", "travel", "move"]};
+const fields = ["partnerBirthClock", ...extraText, ...Object.keys(choices), "referenceInstant", "birthClock", "birthPlace", "selectedDirection", "question", "purpose", "theme", "practitionerComment", "commentEnabled"];
 function text(value, max) {
   if (typeof value !== "string" || value.length > max) throw new TypeError("KIGAKU_READING_TEXT_INVALID");
   return value;
@@ -23,7 +25,21 @@ export function createKigakuReading(input) {
     practitionerComment: text(input.practitionerComment ?? "", 20000),
     commentEnabled: input.commentEnabled ?? true,
   };
+  // Optional additions preserve the exact shape of older saved v1 snapshots.
+  for (const key of extraText) if (Object.hasOwn(input,key)) canonicalInput[key]=text(input[key],200);
+  for (const [key,allowed] of Object.entries(choices)) if(Object.hasOwn(input,key)) {
+    if(!allowed.includes(input[key])) throw new TypeError('KIGAKU_READING_CONTEXT_INVALID');
+    canonicalInput[key]=input[key];
+  }
+  let partnerResult;
+  if(Object.hasOwn(input,'partnerBirthClock')) {
+    if(input.partnerBirthClock!==null && (typeof input.partnerBirthClock!=='object'||Array.isArray(input.partnerBirthClock))) throw new TypeError('KIGAKU_READING_BIRTH_CLOCK_INVALID');
+    partnerResult=createKigakuResultFromClock({referenceInstant:input.referenceInstant,birthClock:input.partnerBirthClock});
+    if(partnerResult.clockNormalization?.state==='invalid') throw new TypeError(partnerResult.clockNormalization.reasonCode);
+    canonicalInput.partnerBirthClock=partnerResult.input.birthClock;
+  }
   return {
+    ...(partnerResult?{partnerResult}:{}),
     schemaVersion: KIGAKU_READING_SCHEMA,
     input: canonicalInput,
     result: createKigakuDirectionResult({ sourceResult, selectedDirection: canonicalInput.selectedDirection }),
