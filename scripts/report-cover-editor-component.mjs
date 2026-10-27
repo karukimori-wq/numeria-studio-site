@@ -75,9 +75,10 @@ export function patchCoverEditor(source) {
   const start = source.indexOf(',' + uploadStart), end = source.indexOf(uploadEnd, start);
   if (start < 0 || end < start) throw new Error('Cover editor patch: logo upload anchor mismatch');
   source = source.slice(0, start) + source.slice(end + uploadEnd.length);
-  once('Ei=e=>{Yt(e.name)', 'Ei=e=>{window.NumeriaCoverSettings.restore(l,e.coverOptions);Ht(ar!==`free`||tr===`admin`?e.logoImage||null:null);Yt(e.name)', 'preset restore');
+  once('Ei=e=>{Yt(e.name)', 'Ei=e=>{window.NumeriaCoverSettings.restore(l,e.coverOptions);(e.reportTemplate||e.layoutId)&&window.NumeriaReportTemplate.write(e.reportTemplate||{layoutId:e.layoutId});Ht(ar!==`free`||tr===`admin`?e.logoImage||null:null);Yt(e.name)', 'preset restore');
   // The plan gate may prepend a guard to Ti, so match the object itself.
-  once('name:Jt.trim()||`名称未設定のプリセット`,divination:l,', 'name:Jt.trim()||`名称未設定のプリセット`,coverOptions:window.NumeriaCoverSettings.read(l),logoImage:Vt,divination:l,', 'preset save');
-  once('Fi=e=>({id:e,divination:l,', 'Fi=e=>({id:e,coverOptions:window.NumeriaCoverSettings.read(l),logoImage:Vt,divination:l,', 'snapshot save');
+  once('name:Jt.trim()||`名称未設定のプリセット`,divination:l,', 'name:Jt.trim()||`名称未設定のプリセット`,reportTemplate:window.NumeriaReportTemplate.read(),coverOptions:window.NumeriaCoverSettings.read(l),logoImage:Vt,divination:l,', 'preset save');
+  once('Fi=e=>({id:e,divination:l,', 'Fi=e=>({id:e,reportTemplate:window.NumeriaReportTemplate.read(),coverOptions:window.NumeriaCoverSettings.read(l),logoImage:Vt,divination:l,', 'snapshot save');
+  once('Y=(e,t)=>{', 'Y=(e,t)=>{t.snapshot?.reportTemplate&&window.NumeriaReportTemplate.write(t.snapshot.reportTemplate);', 'saved session layout restore');
   return source;
 }
