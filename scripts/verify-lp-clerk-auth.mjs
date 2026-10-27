@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import vm from "node:vm";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
-const scripts = [...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/g)].map((match) => match[1]);
+const scripts = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
 const auth = scripts.find((script) => script.includes("async function initAuth()"));
 assert.ok(auth, "LP authentication script exists");
 new vm.Script(auth, { filename: "index.html:inline-auth" });
