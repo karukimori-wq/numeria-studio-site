@@ -2858,6 +2858,15 @@ async function handleApi(request, env = {}, ctx = null) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // A percent-encoded LP fragment is a path, not a hash. Normalize it
+    // before the assets fallback can return an empty page.
+    const encodedAnchor = /^\/%23(features|workflow|demo|gallery|pricing|top|main)$/i.exec(url.pathname);
+    if (encodedAnchor && (request.method === "GET" || request.method === "HEAD")) {
+      const target = new URL("/", url.origin);
+      target.hash = encodedAnchor[1].toLowerCase();
+      target.search = url.search;
+      return Response.redirect(target.toString(), 302);
+    }
     if (url.pathname === "/health") {
       return json(healthResponse());
     }
