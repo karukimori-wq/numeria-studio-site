@@ -2,6 +2,11 @@ name: Clerk LP Isolated Preview
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - fix/lp-clerk-auth-retry-20261027
+    paths:
+      - .github/workflows/clerk-lp-isolated-preview.yml
 
 permissions:
   contents: read
