@@ -7,6 +7,45 @@ const groups = {
   "zi-wei-dou-shu": { prefix: "ZIW", basic: [1, 2, 3, 7], count: 14 },
 };
 
+export const REPORT_RENDERER_TYPES = Object.freeze([
+  "result-icons",
+  "result-table",
+  "relationship-map",
+  "period-timeline",
+  "placement-map",
+  "card-spread",
+  "direction-board",
+  "direction-map",
+  "composition-ratio",
+  "natal-wheel",
+  "destiny-chart",
+  "text-only",
+]);
+
+const methodResultKeys = Object.freeze({
+  numerology: ["core_numbers"],
+  tarot: ["spread"],
+  "nine-star-ki": ["honmei_star", "getsumei_star"],
+  "four-pillars": ["natal_chart"],
+  "western-astrology": ["natal_chart"],
+  "zi-wei-dou-shu": ["natal_chart"],
+});
+
+function rendererTypeFor(specification = "") {
+  if (specification === "なし・文章中心") return "text-only";
+  if (specification.includes("カード")) return "card-spread";
+  if (specification.includes("方位マップ")) return "direction-map";
+  if (specification.includes("方位盤")) return "direction-board";
+  if (specification.includes("天体図")) return "natal-wheel";
+  if (specification.includes("命盤")) return "destiny-chart";
+  if (specification.includes("構成比")) return "composition-ratio";
+  if (specification.includes("期間図")) return "period-timeline";
+  if (specification.includes("配置マップ")) return "placement-map";
+  if (specification.includes("関係図")) return "relationship-map";
+  if (specification.includes("結果表")) return "result-table";
+  return "result-icons";
+}
+
 const basicMetadata = {
   "NUM-01": ["8つのコアナンバー", "結果アイコン（対象数8）", "8結果が全て確定。未算出項目があれば理由付き利用不可"],
   "NUM-02": ["本質・才能・社会での役割", "結果アイコン（3）", "意味対応が正式に定義され、対象3結果が確定"],
@@ -59,6 +98,11 @@ export const REPORT_PAGE_DEFINITIONS = Object.entries(groups).flatMap(([methodKe
       diagramSpecification: metadata?.[1] || null,
       visualRequired: metadata?.[1] !== "なし・文章中心",
       availabilityCondition: metadata?.[2] || null,
+      rendererType: rendererTypeFor(metadata?.[1]),
+      visualId: metadata?.[1] === "なし・文章中心" ? null : `visual.${group.prefix.toLowerCase()}.${String(ordinal).padStart(2, "0")}.v1`,
+      requiredResultKeys: [...(methodResultKeys[methodKey] || [])],
+      optionalResultKeys: [],
+      unavailableReason: "confirmed-result-contract-required",
     };
   }),
 );

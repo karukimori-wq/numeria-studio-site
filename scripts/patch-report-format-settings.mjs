@@ -29,6 +29,16 @@ new MutationObserver(schedule).observe(document.documentElement,{childList:true,
 document.addEventListener("DOMContentLoaded",schedule);schedule();
 })();`;
 
+// Fixed-page template selection is intentionally small: layout changes only the
+// presentation class and never rewrites report content, results, or page order.
+const reportTemplateV2Runtime = `;(()=>{if(window.__NumeriaReportTemplateV2)return;window.__NumeriaReportTemplateV2=true;
+const key="numeria.reportTemplate.v2",layouts=["standard","magazine"],defaults={contractVersion:"numeria-report-template.v2",layoutId:"standard",designSetId:"numeria-neutral.v1",appearance:{backgroundId:"plain",colorSetId:"neutral"},displayOptions:{logo:true,client:true,practitioner:true}};
+function read(){try{const value=JSON.parse(localStorage.getItem(key)||"{}");const requestedLayoutId=String(value.layoutId||"standard");return{...defaults,...value,layoutId:layouts.includes(requestedLayoutId)?requestedLayoutId:"standard",requestedLayoutId,layoutFallbackApplied:!layouts.includes(requestedLayoutId),appearance:{...defaults.appearance,...value.appearance},displayOptions:{...defaults.displayOptions,...value.displayOptions}}}catch{return{...defaults}}}
+function write(next){const previous=read(),value={...previous,...next,appearance:{...previous.appearance,...next.appearance},displayOptions:{...previous.displayOptions,...next.displayOptions}};try{localStorage.setItem(key,JSON.stringify(value))}catch{}apply(value);window.dispatchEvent(new CustomEvent("numeria:report-template-change",{detail:value}))}
+function apply(value=read()){document.documentElement.dataset.numeriaReportLayout=value.layoutId;document.querySelectorAll("[data-report-layout-id]").forEach(button=>{const active=button.dataset.reportLayoutId===value.layoutId;button.setAttribute("aria-pressed",String(active));button.setAttribute("aria-current",active?"true":"false")});document.querySelectorAll(".report-document,.tarot-report-page").forEach(page=>{page.classList.toggle("numeria-layout-standard",value.layoutId==="standard");page.classList.toggle("numeria-layout-magazine",value.layoutId==="magazine")})}
+function mount(){const host=document.querySelector(".format-page-design-body,.tarot-report-format-card");if(!host||host.querySelector(".numeria-layout-choice"))return apply();const section=document.createElement("section");section.className="numeria-layout-choice";section.setAttribute("aria-label","鑑定書レイアウト");section.innerHTML='<h3>レイアウト</h3><p>内容を変えずにページ構成だけを切り替えます。</p><div><button type="button" data-report-layout-id="standard">スタンダード<small>タイトル → 図表 → 解説 → コメント</small></button><button type="button" data-report-layout-id="magazine">マガジン<small>対応する図表と解説を左右配置</small></button></div>';section.addEventListener("click",event=>{const button=event.target.closest("[data-report-layout-id]");if(button)write({layoutId:button.dataset.reportLayoutId})});host.prepend(section);apply()}
+window.NumeriaReportTemplate={version:"v2",read,write,normalize:value=>({...defaults,...value,layoutId:layouts.includes(value?.layoutId)?value.layoutId:"standard"})};new MutationObserver(mount).observe(document.documentElement,{childList:true,subtree:true});document.addEventListener("DOMContentLoaded",mount);mount();})();`;
+
 for (const file of appBundles) {
   let source = fs.readFileSync(file, "utf8");
   if (!source.includes(oldTarotCopy) && !source.includes(newTarotCopy)) {
@@ -66,7 +76,7 @@ for (const file of appBundles) {
     .replace('b&&b.textContent!==n&&(b.textContent=n);t&&t.textContent!==h&&(t.textContent=h);d&&p&&d.textContent!==p&&(d.textContent=p)', 'b&&b.textContent!==n&&(b.textContent=n);t&&t.textContent!==h&&(t.textContent=h);d&&p&&d.textContent!==p&&(d.textContent=p)')
     .replace('if(el.dataset.numeriaFooterText&&el.textContent!==el.dataset.numeriaFooterText)el.textContent=el.dataset.numeriaFooterText', 'if(el.dataset.numeriaFooterText&&el.textContent!==el.dataset.numeriaFooterText)el.textContent=el.dataset.numeriaFooterText')
     .replace('else if(text.includes("Created with care by")){let next=text.split("　Created with care by")[0]||text.split(" Created with care by")[0]||text;if(el.textContent!==next)el.textContent=next}', 'else if(text.includes("Created with care by")){let next=text.split("　Created with care by")[0]||text.split(" Created with care by")[0]||text;if(el.textContent!==next)el.textContent=next}');
-  source += coverEditorRuntime + stableSettingsRuntime + presetSelectionRuntime;
+  source += coverEditorRuntime + stableSettingsRuntime + presetSelectionRuntime + reportTemplateV2Runtime;
   fs.writeFileSync(file, source);
 }
 
@@ -112,6 +122,10 @@ const presetSelectionStyle = `/* NumeriaPresetSelection.v1 */
 .format-basic-card .saved-preset-list article button:first-child:focus-visible{outline:2px solid #ad8a4b;outline-offset:2px}
 `;
 
+const reportTemplateV2Style = `/* NumeriaReportTemplate.v2 */
+.numeria-layout-choice{display:grid;gap:10px;margin:0 0 18px;padding:16px;border:1px solid #e4deea;border-radius:16px;background:#fff}.numeria-layout-choice h3,.numeria-layout-choice p{margin:0}.numeria-layout-choice p{color:#746c7b;font-size:13px}.numeria-layout-choice>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.numeria-layout-choice button{display:grid;gap:5px;min-height:72px;padding:12px;border:1px solid #ded7e5;border-radius:12px;background:#faf8fc;color:#241b3a;text-align:left;font-weight:800}.numeria-layout-choice button small{color:#756d7d;font-weight:500}.numeria-layout-choice button[aria-pressed=true]{border-color:#ae8b45;background:#fff8e8;box-shadow:inset 0 0 0 2px #d7bd7c}.numeria-layout-choice button:focus-visible{outline:3px solid #ae8b45;outline-offset:2px}.numeria-layout-magazine .report-visual-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}.numeria-layout-magazine .report-visual,.numeria-layout-standard .report-visual{break-inside:avoid;page-break-inside:avoid}.numeria-layout-magazine .report-visual[data-full-width=true]{grid-column:1/-1}@media(width<=760px){.numeria-layout-choice>div,.numeria-layout-magazine .report-visual-pair{grid-template-columns:1fr}}
+`;
+
 const reportTemplateDecorationRule =
   ".report-cover-page .paper-theme{display:none!important}.template-cosmic-guide.report-cover-page:before,.template-cosmic-guide.report-cover-page:after,.template-cosmic-guide.report-cover-page .template-index,.template-cosmic-guide.report-cover-page .cover-index,.template-cosmic-guide.report-cover-page .format-index,.template-cosmic-guide.report-cover-page .paper-index,.template-cosmic-guide.report-cover-page .design-number{display:none!important}";
 
@@ -146,6 +160,7 @@ for (const file of styleBundles) {
   source += presetListRepairRule;
   if (!source.includes('NumeriaPresetRail.v2')) source += presetRailV2Rule;
   if (!source.includes('NumeriaPresetSelection.v1')) source += presetSelectionStyle;
+  if (!source.includes('NumeriaReportTemplate.v2')) source += reportTemplateV2Style;
   fs.writeFileSync(file, source);
 }
 
