@@ -1,6 +1,23 @@
 // Receives the host React instance so hooks share the existing app renderer.
 export function createKigakuReadingComponent(R) {
   const h = R.createElement;
+  const directionPreview = page => !page.directionRows?.length ? null : h('section', null,
+    h('h3', null, '年・月の共通吉方位'),
+    h('table', {style:{minWidth:0,tableLayout:'fixed'},'aria-label':'年・月の共通吉方位マップ'},
+      h('caption', null, '吉方位マップ（南が上・年と月の積集合）'),
+      h('tbody', null, ...[['SE','S','SW'],['E','C','W'],['NE','N','NW']].map((row,i) => h('tr', {key:i}, ...row.map(direction => h('td', {key:direction}, direction === 'C' ? '年・月の共通判定' : `${page.directionRows.find(r => r.direction === direction).label}：${page.commonGood.includes(direction) ? '共通吉' : '共通吉に該当せず'}`)))))),
+    h('p', null, page.commonGood.length ? page.commonGood.map(d => page.directionRows.find(row => row.direction === d).label).join('・') : '該当なし（年・月の判定は完了）'),
+    h('div', {className:'kigaku-table-wrap'}, h('table', null,
+      h('caption', null, '八方位の年・月比較（日盤は含めません）'),
+      h('thead', null, h('tr', null, ...['方位','年盤','月盤','共通吉'].map(label => h('th', {key:label,scope:'col'}, label)))),
+      h('tbody', null, ...page.directionRows.filter(row => row.period === 'year').map(year => {
+        const month = page.directionRows.find(row => row.period === 'month' && row.direction === year.direction);
+        return h('tr', {key:year.direction}, h('th', {scope:'row'}, year.label), h('td', null, year.judgementLabel), h('td', null, month.judgementLabel), h('td', null, page.commonGood.includes(year.direction) ? '該当' : '該当せず'));
+      })))),
+    ...page.directionRows.map(row => h('section', {key:`${row.period}-${row.direction}`},
+      h('h4', null, `${row.period === 'year' ? '年盤' : '月盤'}・${row.label} ／ 盤内星 ${row.star} ／ ${row.judgementLabel}`),
+      h('p', null, `五行関係：${row.elementRelation.label} ／ 吉候補条件：${row.goodCandidate ? '該当' : '該当せず'} ／ 候補除外：${row.candidateExclusions.map(code => ({OWN_STAR:'本命星と同じ星',FIVE_YELLOW:'五黄'})[code]).join('・') || 'なし'} ／ 凶理由：${row.dangerReasons.map(reason => reason.label).join('・') || 'なし'}`),
+      ...row.copies.map(copy => h('p', {key:copy.copyId}, copy.body)))));
   return function KigakuReading({ profiles = [], onSaved = null } = {}) {
     const [state, setState] = R.useState(null);
     const client = R.useRef(null);
@@ -56,7 +73,7 @@ export function createKigakuReadingComponent(R) {
         h('button',{type:'button',disabled:!s.reading||s.periodPreviewState==='loading',onClick:()=>client.current.previewPeriods()},s.periodPreviewState==='loading'?'草案を読み込み中…':'基本・日運・期間ページの草案を確認'),
         h('p',{role:'status','aria-live':'polite'},s.periodPreviewState==='loading'?'草案ページを準備しています':s.periodPreviewState==='error'?'草案を取得できませんでした。再試行してください':''),
         ...(s.periodPages||[]).map(page=>h('article',{key:page.pageId,className:'kigaku-step'},h('h2',null,page.title),page.board&&h('table',{'aria-label':`${page.title}の九宮盤`,style:{minWidth:0,tableLayout:'fixed'}},h('caption',null,'南が上の九宮盤'),h('tbody',null,...[['SE','S','SW'],['E','C','W'],['NE','N','NW']].map((row,i)=>h('tr',{key:i},...row.map(palace=>h('td',{key:palace},`${({SE:'南東',S:'南',SW:'南西',E:'東',C:'中央',W:'西',NE:'北東',N:'北',NW:'北西'})[palace]}：${page.board[palace]}${page.rows[0]?.palace===palace?'（本命星）':''}`)))))),h('p',null,page.state==='draft_preview'?'未承認草案・正式出力不可':({NATAL_STARS_REQUIRED:'本命星・月命星の確定が必要です',PRO_REQUIRED:'Pro対象ページです',MAIN_STAR_REQUIRED:'本命星の確定が必要です',FULL_PERIOD_OUT_OF_RANGE:'全期間が対応範囲に収まりません'})[page.reasonCode]||'利用できません'),
-          ...page.slots.map((slot,i)=>h('section',{key:i},...slot.resultRefs.map((ref,j)=>h('p',{key:j},ref.role?`${ref.label}：${ref.star}（本人）`:`${ref.date?`対象日 ${ref.date}（${ref.timeZone}） ／ ${ref.methodLabel} ／ 計算版 ${ref.calculationVersion} ／ `:''}${ref.kiYear!==undefined?`${ref.kiYear}節年 ／ `:''}${ref.startInclusive} 以上 ～ ${ref.endExclusive} 未満 ／ 本命星 ${ref.mainStar} ／ 回座宮 ${ref.palace}`)),...slot.copies.map((copy,j)=>h('p',{key:j},copy.variant==='short'?copy.short:copy.body)))),page.practitionerComment&&h('p',null,page.practitionerComment)))),
+          directionPreview(page),...page.slots.map((slot,i)=>h('section',{key:i},...slot.resultRefs.map((ref,j)=>h('p',{key:j},ref.role?`${ref.label}：${ref.star}（本人）`:`${ref.date?`対象日 ${ref.date}（${ref.timeZone}） ／ ${ref.methodLabel} ／ 計算版 ${ref.calculationVersion} ／ `:''}${ref.kiYear!==undefined?`${ref.kiYear}節年 ／ `:''}${ref.startInclusive} 以上 ～ ${ref.endExclusive} 未満 ／ 本命星 ${ref.mainStar} ／ 回座宮 ${ref.palace}`)),...slot.copies.map((copy,j)=>h('p',{key:j},copy.variant==='short'?copy.short:copy.body)))),page.practitionerComment&&h('p',null,page.practitionerComment)))),
       step(4, '鑑定計算結果の確認', h('button', { type: 'button', disabled: s.calculation === 'loading', onClick: () => client.current.calculate() }, s.calculation === 'loading' ? '計算中…' : '入力内容で計算する'),
         !analysis && h('p', null, '計算後に結果を表示します。入力を変更すると前の結果を無効にします。'),
         analysis && h('p', null, `本命星：${s.reading.result.sourceResult.natal.mainStar.value ?? '未確定'} ／月命星：${s.reading.result.sourceResult.natal.monthStar.value ?? '未確定'}`),
