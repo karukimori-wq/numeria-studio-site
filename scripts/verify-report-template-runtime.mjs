@@ -13,13 +13,15 @@ assert.ok(source.includes('body.appendChild(grid);return card'), "Background cho
 assert.ok(!source.includes('[".preset-count",".template-grid-20"].forEach'), "Background choices are no longer moved into layout");
 assert.ok(source.includes('.full-preview .report-paper,.mantic-full-preview .report-paper,.mini-preview .report-paper,.pdf-export-stage .report-paper'), "Layout reaches both live previews and PDF clones");
 assert.ok(source.includes('page.dataset.reportLayout=value.layoutId'), "Rendered pages expose the selected layout for evidence and CSS");
-assert.ok(coverSource.includes('(e.reportTemplate||e.layoutId)&&window.NumeriaReportTemplate.write(e.reportTemplate||{layoutId:e.layoutId})'), "Loading a saved preset restores its layout without changing layout for old presets");
+assert.ok(coverSource.includes('window.NumeriaReportTemplate.write(window.NumeriaReportTemplate.migratePreset(e))'), "Loading a preset uses non-destructive migration before restore");
 assert.equal(coverSource.split('reportTemplate:window.NumeriaReportTemplate.read()').length - 1, 2, "Both preset and report snapshots persist the selected layout");
 assert.ok(coverSource.includes('t.snapshot?.reportTemplate&&window.NumeriaReportTemplate.write(t.snapshot.reportTemplate)'), "Re-editing a saved session restores its layout");
 assert.ok(source.includes('localStorage.setItem(key,JSON.stringify(value))'), "Layout changes survive a page reload");
 assert.ok(source.includes('layoutId:allowed?requestedLayoutId:"standard"'), "Restored legacy, unknown, and unavailable layouts normalize safely");
 assert.ok(source.includes('getPlan'), "Layout entitlement uses the authoritative navigation plan");
 assert.ok(source.includes('button.disabled=!allowed'), "Magazine is visibly disabled when the plan cannot use it");
+assert.ok(source.includes('migratePreset'), "Legacy presets have an explicit migration path");
+assert.ok(coverSource.includes('window.NumeriaReportTemplate.migratePreset(e)'), "Preset loading uses the migration path");
 assert.ok(source.includes('.numeria-layout-magazine.report-visual-page>.relationship-visual-section{grid-column:1}'));
 assert.ok(source.includes('.numeria-layout-magazine.report-visual-page>.relationship-pairs{grid-column:2}'));
 assert.ok(source.includes('.numeria-layout-magazine.report-cycle-page>.cycle-visual-section{grid-column:1}'));
