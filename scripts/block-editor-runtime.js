@@ -69,17 +69,26 @@ function locateBlock(blockId){
   return null
 }
 function pageSelectionFor(definition){
-  return data.pageSelection.find(item=>item.pageDefinitionId===definition.pageDefinitionId)||{pageDefinitionId:definition.pageDefinitionId,pageInstanceId:`page_${definition.pageDefinitionId}`,visible:definition.tier==="basic",order:data.pageSelection.length}
+  return data.pageSelection.find(item=>item.pageDefinitionId===definition.pageDefinitionId)||{pageDefinitionId:definition.pageDefinitionId,pageInstanceId:`page_${definition.pageDefinitionId}`,visible:definition.tier==="basic",order:Math.max(0,pageDefinitions.findIndex(item=>item.pageDefinitionId===definition.pageDefinitionId))}
 }
 function setPageVisibility(pageDefinitionId,visible){
   let selection=data.pageSelection.find(item=>item.pageDefinitionId===pageDefinitionId);
   if(!selection){const definition=pageDefinitions.find(item=>item.pageDefinitionId===pageDefinitionId);if(!definition)return;selection=pageSelectionFor(definition);data.pageSelection.push(selection)}
   selection.visible=visible;remember();status=visible?"ページをONにしました":"ページをOFFにしました（内容は保持されます）";render()
 }
+function orderedDefinitions(definitions){
+  return definitions.map((definition,index)=>({definition,index,order:pageSelectionFor(definition).order})).sort((left,right)=>left.order-right.order||left.index-right.index).map(item=>item.definition)
+}
+function movePageDefinition(pageDefinitionId,direction){
+  const definition=pageDefinitions.find(item=>item.pageDefinitionId===pageDefinitionId);if(!definition)return;
+  const ordered=orderedDefinitions(pageDefinitions),from=ordered.findIndex(item=>item.pageDefinitionId===pageDefinitionId),to=from+(direction<0?-1:1);if(from<0||to<0||to>=ordered.length)return;
+  const selections=ordered.map(item=>{let selection=data.pageSelection.find(value=>value.pageDefinitionId===item.pageDefinitionId);if(!selection){selection=pageSelectionFor(item);data.pageSelection.push(selection)}return selection});
+  [selections[from],selections[to]]=[selections[to],selections[from]];selections.forEach((selection,index)=>selection.order=index);remember();status="ページ順序を変更しました";render()
+}
 function renderDefinitionCatalog(definitions){
-  const rows=items=>items.map(definition=>{const selection=pageSelectionFor(definition);return `<details><summary><label><input type="checkbox" data-page-visibility="${esc(definition.pageDefinitionId)}" ${selection.visible?"checked":""}>${esc(definition.pageDefinitionId)} · ${esc(definition.title)}</label></summary><small>図表：${esc(definition.diagramSpecification)}<br>条件：${esc(definition.availabilityCondition)}</small></details>`}).join("");
-  const basic=definitions.filter(definition=>definition.tier==="basic");
-  const additional=definitions.filter(definition=>definition.tier==="additional");
+  const rows=items=>items.map(definition=>{const selection=pageSelectionFor(definition);return `<details><summary><label><input type="checkbox" data-page-visibility="${esc(definition.pageDefinitionId)}" ${selection.visible?"checked":""}>${esc(definition.pageDefinitionId)} · ${esc(definition.title)}</label><span><small>出力順 ${Number(selection.order)+1}</small><button type="button" data-page-definition-up="${esc(definition.pageDefinitionId)}" aria-label="${esc(definition.title)}を前へ">↑</button><button type="button" data-page-definition-down="${esc(definition.pageDefinitionId)}" aria-label="${esc(definition.title)}を後へ">↓</button></span></summary><small>図表：${esc(definition.diagramSpecification)}<br>条件：${esc(definition.availabilityCondition)}</small></details>`}).join("");
+  const basic=orderedDefinitions(definitions.filter(definition=>definition.tier==="basic"));
+  const additional=orderedDefinitions(definitions.filter(definition=>definition.tier==="additional"));
   return `<section data-page-tier="basic"><h4>基本ページ（${basic.length}）</h4>${rows(basic)}</section>${additional.length?`<details data-page-tier="additional"><summary>追加ページ・Pro（${additional.length}）</summary>${rows(additional)}</details>`:""}`
 }
 function decorateEditor(){
@@ -94,6 +103,8 @@ function decorateEditor(){
     const catalog=document.createElement("section");catalog.dataset.v3PageDefinitions="1";catalog.className="nbe-page-definitions";
     catalog.innerHTML=`<h3>利用可能なページ定義</h3><p>${esc(pageDefinitionsPlan)}プラン · 結果が確定した場合のみ追加できます。</p>${pageDefinitions.length?renderDefinitionCatalog(pageDefinitions):"<small>ページ定義を読み込めませんでした。</small>"}`;
     catalog.querySelectorAll("[data-page-visibility]").forEach(input=>input.onchange=()=>setPageVisibility(input.dataset.pageVisibility,input.checked));
+    catalog.querySelectorAll("[data-page-definition-up]").forEach(button=>button.onclick=event=>{event.preventDefault();movePageDefinition(button.dataset.pageDefinitionUp,-1)});
+    catalog.querySelectorAll("[data-page-definition-down]").forEach(button=>button.onclick=event=>{event.preventDefault();movePageDefinition(button.dataset.pageDefinitionDown,1)});
     settings.append(catalog);
   }
   if(settings&&!settings.querySelector("[data-v3-format-backups]")&&backups.length){
