@@ -5,7 +5,7 @@ const character=()=>({characterId:"preset-gentle-reader",type:"preset",character
 const makeBlock=(type,content)=>({blockId:uid("block"),type,position:0,style:{},content:content??(type==="page-title"?"新しい鑑定書":type==="heading"?"見出し":""),dataBinding:type==="numerology-result"?{source:"confirmed-result",methodKey:"numerology",resultKey:"core_numbers"}:type==="tarot-cards"?{source:"confirmed-result",methodKey:"tarot",resultKey:"spread"}:null,aiConfig:type==="ai-text"?{commentPurpose:"auto",contextMode:"auto",sourceBlockIds:[],sourceDataKeys:[],customInstruction:"",generationStatus:"idle"}:null});
 const makeRegion=(columns=1)=>({regionId:uid("region"),position:0,columns,ratio:columns===2?"50:50":"100",columnBlocks:Array.from({length:columns},()=>[])});
 function makePage(title="新しいページ"){let r=makeRegion();r.columnBlocks[0].push(makeBlock("page-title",title));return{pageId:uid("page"),title,position:0,manualBreakBefore:false,layoutRegions:[r]}}
-function fresh(){return{schemaVersion:3,formatId:uid("format"),templateId:"default",templateVersion:1,selectedDivination:"numerology",characterSnapshot:character(),globalStyle:{},allowedFeatures:{},pages:[makePage("鑑定書")],updatedAt:new Date().toISOString()}}
+function fresh(){return{schemaVersion:3,formatId:uid("format"),templateId:"default",templateVersion:1,selectedDivination:"numerology",characterSnapshot:character(),globalStyle:{},allowedFeatures:{},pageSelection:[],pages:[makePage("鑑定書")],updatedAt:new Date().toISOString()}}
 function block(b,i){let type=T[b?.type]?b.type:"body",ai=b?.aiConfig||{};return{blockId:b?.blockId||b?.id||uid("block"),type,position:i,style:b?.style||{},content:String(b?.content??""),dataBinding:b?.dataBinding||null,aiConfig:type==="ai-text"?{commentPurpose:ai.commentPurpose||b?.purpose||"auto",contextMode:ai.contextMode||"auto",sourceBlockIds:Array.isArray(ai.sourceBlockIds)?ai.sourceBlockIds:[],sourceDataKeys:Array.isArray(ai.sourceDataKeys)?ai.sourceDataKeys:[],customInstruction:String(ai.customInstruction||""),generationStatus:ai.generationStatus||"idle",pendingDraft:String(ai.pendingDraft||""),generationId:String(ai.generationId||""),characterSnapshot:ai.characterSnapshot||null}:null}}
 function normal(x){
   if(!x||typeof x!=="object")return fresh();
@@ -19,10 +19,10 @@ function normal(x){
       }));
       if(!p.layoutRegions.length)p.layoutRegions=[makeRegion()]
     });
-    x.characterSnapshot={...character(),...(x.characterSnapshot||{})};return x.pages.length?x:fresh()
+    x.characterSnapshot={...character(),...(x.characterSnapshot||{})};x.pageSelection=(Array.isArray(x.pageSelection)?x.pageSelection:[]).filter(item=>item&&typeof item.pageDefinitionId==="string").map((item,index)=>({...item,visible:item.visible!==false,order:Number.isFinite(Number(item.order))?Number(item.order):index}));return x.pages.length?x:fresh()
   }
   if(x.version===1&&Array.isArray(x.pages)){let converted={...x,pages:x.pages.flatMap(p=>(p.sections||[]).map((section,index)=>({id:index?`${p.id||uid("page")}_${index}`:p.id,title:index?`${p.title||"ページ"} ${index+1}`:p.title,layout:section.columns===2?"two":"one",ratio:section.ratio,columns:section.content}))) };return normal({...converted,version:2})}
-  let y={schemaVersion:3,formatId:uid("format"),templateId:"legacy-import",templateVersion:1,selectedDivination:"numerology",characterSnapshot:character(),globalStyle:{},allowedFeatures:{},pages:[],updatedAt:new Date().toISOString()};
+  let y={schemaVersion:3,formatId:uid("format"),templateId:"legacy-import",templateVersion:1,selectedDivination:"numerology",characterSnapshot:character(),globalStyle:{},allowedFeatures:{},pageSelection:[],pages:[],updatedAt:new Date().toISOString()};
   (x.pages||[]).forEach((p,i)=>{
     let r=makeRegion(p.layout==="two"?2:1);r.ratio=R.includes(p.ratio)?p.ratio:"50:50";
     r.columnBlocks=Array.from({length:r.columns},(_,c)=>{
@@ -68,8 +68,16 @@ function locateBlock(blockId){
   for(const page of data.pages)for(const region of page.layoutRegions)for(let column=0;column<region.columnBlocks.length;column++){let index=region.columnBlocks[column].findIndex(block=>block.blockId===blockId);if(index>=0)return{page,region,column,index,block:region.columnBlocks[column][index]}}
   return null
 }
+function pageSelectionFor(definition){
+  return data.pageSelection.find(item=>item.pageDefinitionId===definition.pageDefinitionId)||{pageDefinitionId:definition.pageDefinitionId,pageInstanceId:`page_${definition.pageDefinitionId}`,visible:definition.tier==="basic",order:data.pageSelection.length}
+}
+function setPageVisibility(pageDefinitionId,visible){
+  let selection=data.pageSelection.find(item=>item.pageDefinitionId===pageDefinitionId);
+  if(!selection){const definition=pageDefinitions.find(item=>item.pageDefinitionId===pageDefinitionId);if(!definition)return;selection=pageSelectionFor(definition);data.pageSelection.push(selection)}
+  selection.visible=visible;remember();status=visible?"ページをONにしました":"ページをOFFにしました（内容は保持されます）";render()
+}
 function renderDefinitionCatalog(definitions){
-  const rows=items=>items.map(definition=>`<details><summary>${esc(definition.pageDefinitionId)} · ${esc(definition.title)}</summary><small>図表：${esc(definition.diagramSpecification)}<br>条件：${esc(definition.availabilityCondition)}</small></details>`).join("");
+  const rows=items=>items.map(definition=>{const selection=pageSelectionFor(definition);return `<details><summary><label><input type="checkbox" data-page-visibility="${esc(definition.pageDefinitionId)}" ${selection.visible?"checked":""}>${esc(definition.pageDefinitionId)} · ${esc(definition.title)}</label></summary><small>図表：${esc(definition.diagramSpecification)}<br>条件：${esc(definition.availabilityCondition)}</small></details>`}).join("");
   const basic=definitions.filter(definition=>definition.tier==="basic");
   const additional=definitions.filter(definition=>definition.tier==="additional");
   return `<section data-page-tier="basic"><h4>基本ページ（${basic.length}）</h4>${rows(basic)}</section>${additional.length?`<details data-page-tier="additional"><summary>追加ページ・Pro（${additional.length}）</summary>${rows(additional)}</details>`:""}`
@@ -85,6 +93,7 @@ function decorateEditor(){
   if(settings&&!settings.querySelector("[data-v3-page-definitions]")){
     const catalog=document.createElement("section");catalog.dataset.v3PageDefinitions="1";catalog.className="nbe-page-definitions";
     catalog.innerHTML=`<h3>利用可能なページ定義</h3><p>${esc(pageDefinitionsPlan)}プラン · 結果が確定した場合のみ追加できます。</p>${pageDefinitions.length?renderDefinitionCatalog(pageDefinitions):"<small>ページ定義を読み込めませんでした。</small>"}`;
+    catalog.querySelectorAll("[data-page-visibility]").forEach(input=>input.onchange=()=>setPageVisibility(input.dataset.pageVisibility,input.checked));
     settings.append(catalog);
   }
   if(settings&&!settings.querySelector("[data-v3-format-backups]")&&backups.length){

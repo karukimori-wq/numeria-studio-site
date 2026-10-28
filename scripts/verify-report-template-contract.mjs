@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { createReportTemplate, normalizeReportTemplate, switchReportLayout } from "../src/report-template-contract.js";
+import { createReportTemplate, normalizeReportTemplate, setReportPageVisibility, switchReportLayout } from "../src/report-template-contract.js";
 
 const legacy = {
   id: "legacy-1",
@@ -24,5 +24,14 @@ const magazine = switchReportLayout(normalized, "magazine");
 assert.equal(magazine.layoutId, "magazine");
 assert.deepEqual(magazine.editedText, legacy.editedText);
 assert.deepEqual(magazine.results, legacy.results);
+const hidden = setReportPageVisibility({
+  ...normalized,
+  pageSelection: [{ pageDefinitionId: "NUM-01", content: "保存済み本文", visible: true }],
+}, "NUM-01", false);
+assert.equal(hidden.pageSelection[0].visible, false);
+assert.equal(hidden.pageSelection[0].content, "保存済み本文");
+const shownAgain = setReportPageVisibility(hidden, "NUM-01", true);
+assert.equal(shownAgain.pageSelection[0].visible, true);
+assert.equal(shownAgain.pageSelection[0].content, "保存済み本文");
 assert.equal(createReportTemplate({ appearance: { backgroundId: "night", colorSetId: "gold" } }).appearance.backgroundId, "night");
-console.log("Versioned report template normalization and non-destructive layout switching verified.");
+console.log("Versioned report template normalization, visibility, and non-destructive switching verified.");

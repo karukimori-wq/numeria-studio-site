@@ -29,4 +29,18 @@ assert.equal(paragraphPlan.warnings.length, 0);
 assert.equal(paragraphPlan.physicalPages.length, 2);
 assert.equal(paragraphPlan.physicalPages[0].items[0].paragraphFlow, true);
 assert.equal(paragraphPlan.physicalPages[1].items[0].blockId, "after-text");
+
+const visibilityFormat = {
+  pageSelection: [{ pageDefinitionId: "NUM-01", visible: false }],
+  pages: [
+    { pageId: "fixed", pageDefinitionId: "NUM-01", layoutRegions: [{ regionId: "fixed-region", columns: 1, ratio: "100", columnBlocks: [[{ blockId: "saved-content", type: "body", content: "削除しない本文" }]] }] },
+    { pageId: "free", layoutRegions: [{ regionId: "free-region", columns: 1, ratio: "100", columnBlocks: [[{ blockId: "free-content", type: "body", content: "自由ページ" }]] }] },
+  ],
+};
+const hiddenPlan = createPhysicalPagePlan(visibilityFormat, { "saved-content": 100, "free-content": 100 }, { contentHeightPx: 900 });
+assert.deepEqual(hiddenPlan.physicalPages.map((page) => page.logicalPageId), ["free"]);
+assert.equal(visibilityFormat.pages[0].layoutRegions[0].columnBlocks[0][0].content, "削除しない本文");
+visibilityFormat.pageSelection[0].visible = true;
+const restoredPlan = createPhysicalPagePlan(visibilityFormat, { "saved-content": 100, "free-content": 100 }, { contentHeightPx: 900 });
+assert.deepEqual(restoredPlan.physicalPages.map((page) => page.logicalPageId), ["fixed", "free"]);
 console.log("Physical A4 page plan contract verified.");

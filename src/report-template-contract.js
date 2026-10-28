@@ -54,6 +54,16 @@ export function switchReportLayout(template, layoutId) {
   return normalizeReportTemplate({ ...record(template), layoutId });
 }
 
+export function setReportPageVisibility(template, pageDefinitionId, visible) {
+  const normalized = normalizeReportTemplate(template);
+  return normalizeReportTemplate({
+    ...normalized,
+    pageSelection: normalized.pageSelection.map((page) =>
+      page.pageDefinitionId === pageDefinitionId ? { ...page, visible: visible !== false } : page
+    ),
+  });
+}
+
 export function createReportTemplate(input = {}) {
   return normalizeReportTemplate({
     id: `preset-${Date.now()}`,
