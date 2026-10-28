@@ -144,6 +144,21 @@ assert.equal(freeDefinitions.body.planId, "free");
 assert.equal(freeDefinitions.body.definitions.length, 4);
 assert.equal(freeDefinitions.body.definitions[0].pageDefinitionId, "NUM-01");
 assert.equal(freeDefinitions.body.definitions[0].availabilityCondition, "8結果が全て確定。未算出項目があれば理由付き利用不可");
+for (const [methodKey, expectedPrefix, expectedCount] of [
+  ["numerology", "NUM", 4],
+  ["tarot", "TAR", 4],
+  ["nine-star-ki", "KIG", 4],
+  ["four-pillars", "BAZ", 5],
+  ["western-astrology", "AST", 4],
+  ["zi-wei-dou-shu", "ZIW", 4],
+]) {
+  const catalog = await jsonFetch(`/api/report-page-definitions?methodKey=${methodKey}`, { headers }, env);
+  assert.equal(catalog.response.status, 200);
+  assert.equal(catalog.body.methodKey, methodKey);
+  assert.equal(catalog.body.definitions.length, expectedCount);
+  assert.ok(catalog.body.definitions.every((definition) => definition.methodKey === methodKey));
+  assert.ok(catalog.body.definitions.every((definition) => definition.pageDefinitionId.startsWith(`${expectedPrefix}-`)));
+}
 const invalidDefinitions = await jsonFetch("/api/report-page-definitions?methodKey=unknown", { headers }, env);
 assert.equal(invalidDefinitions.response.status, 400);
 

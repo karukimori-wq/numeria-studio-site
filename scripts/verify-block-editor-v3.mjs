@@ -37,6 +37,9 @@ assert.match(runtime, /pendingDraft/);
 assert.match(runtime, /data-ai-adopt/);
 assert.match(runtime, /sourceDataKeys/);
 assert.match(runtime, /nine-star-ki/);
+for (const methodKey of ["numerology", "tarot", "nine-star-ki", "four-pillars", "western-astrology", "zi-wei-dou-shu"]) {
+  assert.match(runtime, new RegExp(`(?:^|[,{])(?:"${methodKey}"|${methodKey.replaceAll("-", "\\-")})?:?\\{label:[^}]+catalogSelectable:true`), `${methodKey} must be selectable for its fixed-page catalog`);
+}
 assert.match(runtime, /data-v3-divination-visuals/);
 assert.match(runtime, /assets\/divination-visuals/);
 assert.match(runtime, /data-print/);
@@ -53,6 +56,12 @@ assert.match(runtime, /data-v3-page-limit/);
 assert.match(runtime, /v3PageLimitBound/);
 assert.match(runtime, /data-block-page][\s\S]*data\.pages\.length>=pageLimit/);
 assert.match(runtime, /\/api\/report-page-definitions/);
+assert.match(runtime, /let methodKey=data\.selectedDivination/);
+assert.match(runtime, /methodKey=\$\{encodeURIComponent\(methodKey\)\}/);
+assert.match(runtime, /if\(methodKey!==data\.selectedDivination\)return/);
+assert.match(runtime, /resultConnected:false/);
+assert.match(runtime, /ページ台帳は確認できます。確定結果スキーマが未接続/);
+assert.match(runtime, /data\.selectedDivination=e\.target\.value;pageDefinitions=\[\];remember\(\);render\(\);void loadPageDefinitions\(\)/);
 assert.match(runtime, /data-v3-page-definitions/);
 assert.match(runtime, /結果が確定した場合のみ追加できます/);
 assert.match(runtime, /plan\.physicalPages\.map/);
