@@ -94,3 +94,12 @@ call.reject(new Error('network'));await previewRequest;assert.equal(client.curre
 previewRequest=client.previewPeriods();call=pending.shift();call.resolve({pages:[]});await previewRequest;assert.equal(client.current().periodPreviewState,'ready');
 client.change({theme:'invalidate'});assert.equal(client.current().periodPreviewState,'idle');assert.equal(client.current().periodPages,null);
 console.log('Period preview loading, duplicate suppression, network failure, retry and invalidation verified.');
+
+// Saved report pages are restored verbatim and do not make another preview request.
+const frozenPages=[{pageId:'KIG-01',slots:[{copies:[{body:'保存時本文'}],resultRefs:[]}]}];
+const frozenReport={pages:frozenPages};
+restore=client.restore();call=pending.shift();call.resolve({usage:{activeDraft:{id:stored.appraisalId,snapshot:stored.snapshot,reportSnapshot:frozenReport}}});await restore;
+assert.deepEqual(client.current().periodPages,frozenPages);
+await client.previewPeriods();assert.equal(pending.length,0);
+client.change({question:'編集'});assert.equal(client.current().reportSnapshot,null);
+console.log('Frozen report restore, preview without regeneration, and edit invalidation verified.');

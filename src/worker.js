@@ -1,3 +1,5 @@
+import {renderKigakuReportHtml} from './kigaku-report-print.js';
+import {createKigakuReportSnapshot,validateKigakuReportSnapshot,sameKigakuReading} from './kigaku-report-snapshot.js';
 import {createKigakuFixedPages} from './kigaku-fixed-pages.js';
 import { createKigakuReading, validateKigakuReading, KIGAKU_READING_SCHEMA } from "./kigaku-reading.js";
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
@@ -385,8 +387,15 @@ async function readJson(request) {
   }
 }
 
+function visibleKigakuDraft(draft,planId) {
+  if(!draft?.reportSnapshot || ['pro','business'].includes(planId) || draft.reportSnapshot.planId==='free') return draft;
+  const {reportSnapshot,...legacy}=draft;
+  return legacy; // Retain frozen premium bytes in D1, withhold them after downgrade.
+}
 function usageResponse(record) {
-  return createUsageSnapshot(record);
+  const usage=createUsageSnapshot(record);
+  usage.activeDraft=visibleKigakuDraft(usage.activeDraft,record.planId);
+  return usage;
 }
 
 function getPlanConfigForPlan(planId) {
@@ -2109,11 +2118,21 @@ async function handleApi(request, env = {}, ctx = null) {
     catch(error) { return json({status:"error",errorCode:error.message},{status:400}); }
   }
 
+  if(url.pathname==='/api/kigaku/report-print' && request.method==='POST') {
+    if(!auth.verified) return json({errorCode:'AUTH_REQUIRED'},{status:401});
+    try {
+      const draft=visibleKigakuDraft(record.activeDraft,effectiveRecord.planId);
+      if(!draft?.reportSnapshot || body.draftId!==draft.id) return json({errorCode:'SAVED_REPORT_REQUIRED'},{status:409});
+      const report=await validateKigakuReportSnapshot(draft.reportSnapshot,draft.snapshot);
+      return json({status:'success',html:renderKigakuReportHtml(report,body.format),publicationStatus:'draft',exportAllowed:false});
+    } catch(error){return json({errorCode:error.message},{status:400});}
+  }
+
   // New snapshots are verified before saving and before being returned for restore.
   // Untyped legacy snapshots remain on their existing compatibility path.
   if (record.activeDraft?.snapshot?.schemaVersion === KIGAKU_READING_SCHEMA) {
     if (!auth.verified) return json({ status: "error", errorCode: "AUTH_REQUIRED" }, { status: 401 });
-    try { validateKigakuReading(record.activeDraft.snapshot); }
+    try { if(record.activeDraft.reportSnapshot) await validateKigakuReportSnapshot(record.activeDraft.reportSnapshot,record.activeDraft.snapshot); else validateKigakuReading(record.activeDraft.snapshot); }
     catch { return json({ status: "error", errorCode: "KIGAKU_DRAFT_RESTORE_INVALID" }, { status: 409 }); }
   }
 
@@ -2353,7 +2372,8 @@ async function handleApi(request, env = {}, ctx = null) {
     if (body.snapshot?.schemaVersion === KIGAKU_READING_SCHEMA) {
       if (!auth.verified) return json({ status: "error", errorCode: "AUTH_REQUIRED" }, { status: 401 });
       try {
-        body.snapshot = validateKigakuReading(body.snapshot);
+        if(record.activeDraft?.reportSnapshot && sameKigakuReading(record.activeDraft.snapshot,body.snapshot)) await validateKigakuReportSnapshot(record.activeDraft.reportSnapshot,body.snapshot);
+        else body.snapshot = validateKigakuReading(body.snapshot);
         body.divination = "nine-star-ki";
       } catch (error) {
         return json({ status: "error", errorCode: error.message }, { status: 400 });
@@ -2369,7 +2389,16 @@ async function handleApi(request, env = {}, ctx = null) {
     if (!decision.allowed) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
+    let reportSnapshot;
+    const savedReading=body.snapshot && typeof body.snapshot==='object'?body.snapshot:currentDraft?.snapshot;
+    if(savedReading?.schemaVersion===KIGAKU_READING_SCHEMA) {
+      // An unchanged saved report retains its original timestamp, catalog and calculation bytes.
+      reportSnapshot = currentDraft?.reportSnapshot && sameKigakuReading(currentDraft.snapshot,savedReading) && (!Object.hasOwn(body,'clientProfileId') || body.clientProfileId===currentDraft.clientProfileId) && currentDraft.clientName===String(body.clientName || currentDraft.clientName || '未設定').trim()
+        ? await validateKigakuReportSnapshot(currentDraft.reportSnapshot,savedReading)
+        : await createKigakuReportSnapshot(savedReading,effectiveRecord.planId,String(body.clientName || currentDraft?.clientName || '未設定').trim(),typeof body.clientProfileId==='string'?body.clientProfileId.slice(0,200):Object.hasOwn(body,'clientProfileId')?null:currentDraft?.clientProfileId||null);
+    }
     record.activeDraft = {
+      ...(reportSnapshot?{reportSnapshot}:{}),
       id: appraisalId,
       clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
       clientProfileId: typeof body.clientProfileId === "string" ? body.clientProfileId.slice(0, 200) : Object.hasOwn(body, "clientProfileId") ? null : currentDraft?.clientProfileId || null,
@@ -2390,7 +2419,7 @@ async function handleApi(request, env = {}, ctx = null) {
     return json({
       status: "success",
       draftId: appraisalId,
-      activeDraft: record.activeDraft,
+      activeDraft: visibleKigakuDraft(record.activeDraft,effectiveRecord.planId),
       limitPolicy: "free-one-in-progress-appraisal",
       usage: usageResponse(applyBillingSubscription(record, billingSubscription)),
     }, { status: 201 });

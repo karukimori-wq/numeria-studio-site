@@ -1,3 +1,5 @@
+import {renderKigakuReportHtml} from '../src/kigaku-report-print.js';
+import {KIGAKU_COPY_CATALOG} from '../src/kigaku-copy-catalog.js';
 import assert from 'node:assert/strict';
 import worker from '../src/worker-entry.js';
 import { createKigakuReading, validateKigakuReading } from '../src/kigaku-reading.js';
@@ -46,6 +48,10 @@ try {
   assert.equal(saved.body.activeDraft.clientProfileId, 'customer-ki');
   const restored = await request('/api/usage');
   assert.equal(restored.status, 200); assert.deepEqual(restored.body.usage.activeDraft.snapshot, reading);
+  const legacyRow=[...rows.values()][0];const legacyDraft=JSON.parse(legacyRow.active_draft_json);delete legacyDraft.reportSnapshot;legacyRow.active_draft_json=JSON.stringify(legacyDraft);
+  assert.equal((await request('/api/usage')).status,200);
+  const upgradedLegacy=await request('/api/appraisals/save-draft',{appraisalId:'ki-test',snapshot:reading});
+  assert.equal(upgradedLegacy.body.activeDraft.reportSnapshot.schemaVersion,'numeria.kigaku.report.v1');
   const preview=await request('/api/kigaku/period-pages',{snapshot:reading,planId:'pro'});
   assert.equal(preview.status,200);assert.deepEqual(preview.body.pages.slice(0,4).map(page=>page.state),Array(4).fill('draft_preview'));assert.ok(preview.body.pages.slice(4).every(page=>page.reasonCode==='PRO_REQUIRED'));
   assert.equal((await request('/api/kigaku/period-pages',{snapshot:reading},false)).status,401);
@@ -64,6 +70,39 @@ try {
   assert.equal(fullResponse.status,200);assert.equal(fullResponse.body.pages.length,14);assert.ok(fullResponse.body.pages.every(p=>p.state==='draft_preview'));
   const fullSaved=await request('/api/appraisals/save-draft',{appraisalId:'ki-test',snapshot:full});assert.equal(fullSaved.status,201);
   assert.deepEqual((await request('/api/usage')).body.usage.activeDraft.snapshot,full);
+  const frozen=fullSaved.body.activeDraft.reportSnapshot;
+  assert.equal(frozen.pages.length,14);
+  const hostile=structuredClone(frozen);hostile.subjectName='<script>alert(1)</script>';hostile.pages[0].slots[0].copies[0].body='<img src=x onerror=alert(1)>';
+  const safeHtml=renderKigakuReportHtml(hostile);
+  assert.ok(!safeHtml.includes('<script>'));assert.ok(!safeHtml.includes('<img'));
+  assert.match(safeHtml,/&lt;script&gt;/);
+  assert.deepEqual(frozen.pages,fullResponse.body.pages);
+  assert.deepEqual((await request('/api/usage')).body.usage.activeDraft.reportSnapshot,frozen);
+  const originalCopy=KIGAKU_COPY_CATALOG[0].body;KIGAKU_COPY_CATALOG[0].body='後日更新された本文';
+  assert.deepEqual((await request('/api/usage')).body.usage.activeDraft.reportSnapshot,frozen);
+  const repeated=await request('/api/appraisals/save-draft',{appraisalId:'ki-test',snapshot:full,reportSnapshot:{pages:[]}});
+  assert.deepEqual(repeated.body.activeDraft.reportSnapshot,frozen);
+  KIGAKU_COPY_CATALOG[0].body=originalCopy;
+  const notesOnly=await request('/api/appraisals/save-draft',{appraisalId:'ki-test',notes:'メモだけ変更'});
+  assert.deepEqual(notesOnly.body.activeDraft.reportSnapshot,frozen);
+  for(const format of ['standard','magazine']) {
+    const printed=await request('/api/kigaku/report-print',{draftId:'ki-test',format});
+    assert.equal(printed.status,200);assert.match(printed.body.html,/@page\{size:A4/);
+    assert.equal((printed.body.html.match(/<article>/g)||[]).length,14);
+    assert.match(printed.body.html,/未承認草案/);assert.equal(printed.body.exportAllowed,false);
+  }
+  assert.equal((await request('/api/kigaku/report-print',{draftId:'other',format:'standard'})).status,409);
+  assert.equal((await request('/api/kigaku/report-print',{draftId:'ki-test',format:'bad'})).status,400);
+  assert.equal((await request('/api/kigaku/report-print',{draftId:'ki-test',format:'standard'},false)).status,401);
+  const fullRow=[...rows.values()][0];fullRow.plan_id='free';
+  assert.equal((await request('/api/usage')).body.usage.activeDraft.reportSnapshot,undefined);
+  assert.equal((await request('/api/kigaku/report-print',{draftId:'ki-test',format:'standard'})).status,409);
+  assert.deepEqual(JSON.parse(fullRow.active_draft_json).reportSnapshot,frozen);
+  fullRow.plan_id='business';
+  assert.deepEqual((await request('/api/usage')).body.usage.activeDraft.reportSnapshot,frozen);
+  const corrupt=JSON.parse(fullRow.active_draft_json);corrupt.reportSnapshot.pages[0].title='改変';
+  const intact=fullRow.active_draft_json;fullRow.active_draft_json=JSON.stringify(corrupt);
+  assert.equal((await request('/api/usage')).status,409);fullRow.active_draft_json=intact;
   const corruptPartner=structuredClone(full);corruptPartner.partnerResult.natal.mainStar.value=99;
   assert.equal((await request('/api/kigaku/period-pages',{snapshot:corruptPartner})).status,400);
   await request('/api/appraisals/save-draft',{appraisalId:'ki-test',snapshot:reading});
