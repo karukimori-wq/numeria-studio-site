@@ -43,4 +43,15 @@ assert.equal(visibilityFormat.pages[0].layoutRegions[0].columnBlocks[0][0].conte
 visibilityFormat.pageSelection[0].visible = true;
 const restoredPlan = createPhysicalPagePlan(visibilityFormat, { "saved-content": 100, "free-content": 100 }, { contentHeightPx: 900 });
 assert.deepEqual(restoredPlan.physicalPages.map((page) => page.logicalPageId), ["fixed", "free"]);
+
+const orderedFormat = {
+  pageSelection: [{ pageDefinitionId: "NUM-01", order: 1 }, { pageDefinitionId: "NUM-02", order: 0 }],
+  pages: [
+    { pageId: "fixed-one", pageDefinitionId: "NUM-01", layoutRegions: [{ regionId: "one", columns: 1, columnBlocks: [[{ blockId: "one", type: "body" }]] }] },
+    { pageId: "free-middle", layoutRegions: [{ regionId: "middle", columns: 1, columnBlocks: [[{ blockId: "middle", type: "body" }]] }] },
+    { pageId: "fixed-two", pageDefinitionId: "NUM-02", layoutRegions: [{ regionId: "two", columns: 1, columnBlocks: [[{ blockId: "two", type: "body" }]] }] },
+  ],
+};
+const orderedPlan = createPhysicalPagePlan(orderedFormat, { one: 100, middle: 100, two: 100 }, { contentHeightPx: 900 });
+assert.deepEqual(orderedPlan.physicalPages.map((page) => page.logicalPageId), ["fixed-two", "free-middle", "fixed-one"]);
 console.log("Physical A4 page plan contract verified.");

@@ -64,6 +64,19 @@ export function setReportPageVisibility(template, pageDefinitionId, visible) {
   });
 }
 
+export function moveReportPage(template, pageDefinitionId, direction) {
+  const normalized = normalizeReportTemplate(template);
+  const ordered = [...normalized.pageSelection].sort((left, right) => left.order - right.order);
+  const from = ordered.findIndex((page) => page.pageDefinitionId === pageDefinitionId);
+  const to = from + (direction < 0 ? -1 : 1);
+  if (from < 0 || to < 0 || to >= ordered.length) return normalized;
+  [ordered[from], ordered[to]] = [ordered[to], ordered[from]];
+  return normalizeReportTemplate({
+    ...normalized,
+    pageSelection: ordered.map((page, index) => ({ ...page, order: index })),
+  });
+}
+
 export function createReportTemplate(input = {}) {
   return normalizeReportTemplate({
     id: `preset-${Date.now()}`,

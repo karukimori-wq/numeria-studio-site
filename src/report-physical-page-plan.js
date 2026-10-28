@@ -43,7 +43,11 @@ export function createPhysicalPagePlan(format, measurements = {}, options = {}) 
   }
 
   const pageVisibility = new Map((format?.pageSelection || []).map((selection) => [selection.pageDefinitionId, selection.visible !== false]));
-  const logicalPages = (format?.pages || []).filter((page) => !page.pageDefinitionId || pageVisibility.get(page.pageDefinitionId) !== false);
+  const pageOrder = new Map((format?.pageSelection || []).map((selection, index) => [selection.pageDefinitionId, Number.isFinite(Number(selection.order)) ? Number(selection.order) : index]));
+  const visiblePages = (format?.pages || []).filter((page) => !page.pageDefinitionId || pageVisibility.get(page.pageDefinitionId) !== false);
+  const fixedPages = visiblePages.filter((page) => page.pageDefinitionId).sort((left, right) => (pageOrder.get(left.pageDefinitionId) ?? Infinity) - (pageOrder.get(right.pageDefinitionId) ?? Infinity));
+  let fixedIndex = 0;
+  const logicalPages = visiblePages.map((page) => page.pageDefinitionId ? fixedPages[fixedIndex++] : page);
   for (const logicalPage of logicalPages) {
     if (!physical || logicalPage.manualBreakBefore) start(logicalPage.pageId, logicalPage.manualBreakBefore ? "manual-break" : "logical-page");
     for (const region of logicalPage.layoutRegions || []) {
