@@ -42,7 +42,9 @@ export function createPhysicalPagePlan(format, measurements = {}, options = {}) 
     physical.usedHeightPx += height;
   }
 
-  for (const logicalPage of format?.pages || []) {
+  const pageVisibility = new Map((format?.pageSelection || []).map((selection) => [selection.pageDefinitionId, selection.visible !== false]));
+  const logicalPages = (format?.pages || []).filter((page) => !page.pageDefinitionId || pageVisibility.get(page.pageDefinitionId) !== false);
+  for (const logicalPage of logicalPages) {
     if (!physical || logicalPage.manualBreakBefore) start(logicalPage.pageId, logicalPage.manualBreakBefore ? "manual-break" : "logical-page");
     for (const region of logicalPage.layoutRegions || []) {
       // Two-column regions retain their reading order (left then right) when they
