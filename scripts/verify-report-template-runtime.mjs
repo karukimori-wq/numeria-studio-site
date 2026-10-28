@@ -17,7 +17,9 @@ assert.ok(coverSource.includes('(e.reportTemplate||e.layoutId)&&window.NumeriaRe
 assert.equal(coverSource.split('reportTemplate:window.NumeriaReportTemplate.read()').length - 1, 2, "Both preset and report snapshots persist the selected layout");
 assert.ok(coverSource.includes('t.snapshot?.reportTemplate&&window.NumeriaReportTemplate.write(t.snapshot.reportTemplate)'), "Re-editing a saved session restores its layout");
 assert.ok(source.includes('localStorage.setItem(key,JSON.stringify(value))'), "Layout changes survive a page reload");
-assert.ok(source.includes('layoutId:layouts.includes(requestedLayoutId)?requestedLayoutId:"standard"'), "Restored legacy and unknown layouts normalize safely");
+assert.ok(source.includes('layoutId:allowed?requestedLayoutId:"standard"'), "Restored legacy, unknown, and unavailable layouts normalize safely");
+assert.ok(source.includes('getPlan'), "Layout entitlement uses the authoritative navigation plan");
+assert.ok(source.includes('button.disabled=!allowed'), "Magazine is visibly disabled when the plan cannot use it");
 assert.ok(source.includes('.numeria-layout-magazine.report-visual-page>.relationship-visual-section{grid-column:1}'));
 assert.ok(source.includes('.numeria-layout-magazine.report-visual-page>.relationship-pairs{grid-column:2}'));
 assert.ok(source.includes('.numeria-layout-magazine.report-cycle-page>.cycle-visual-section{grid-column:1}'));
