@@ -14,7 +14,7 @@ function createStorage(seed = new Map()) {
   };
 }
 
-function boot(storage) {
+function boot(storage, { plan = "pro", role = "user" } = {}) {
   const documentElement = { dataset: {} };
   const document = {
     documentElement,
@@ -22,7 +22,11 @@ function boot(storage) {
     querySelectorAll: () => [],
     addEventListener: () => {},
   };
-  const window = { dispatchEvent: () => {} };
+  const window = {
+    dispatchEvent: () => {},
+    addEventListener: () => {},
+    NumeriaNavigation: { getPlan: () => plan, getRole: () => role },
+  };
   const context = vm.createContext({
     window,
     document,
@@ -55,4 +59,17 @@ assert.equal(api.read().layoutId, "magazine", "Re-editing a saved session restor
 api.write({ layoutId: "unknown-layout" });
 assert.equal(api.read().layoutId, "standard", "Unknown saved layouts safely fall back to Standard");
 
-console.log("F1-05 integration verified: save, reload, preset restore, session re-edit, and legacy fallback.");
+const freeStorage = createStorage();
+const freeApi = boot(freeStorage, { plan: "free" });
+freeApi.write({ layoutId: "magazine" });
+assert.equal(freeApi.read().layoutId, "standard", "Free cannot activate or persist Magazine");
+
+const proApi = boot(createStorage(), { plan: "pro" });
+proApi.write({ layoutId: "magazine" });
+assert.equal(proApi.read().layoutId, "magazine", "Pro can select Magazine");
+
+const adminApi = boot(createStorage(), { plan: "free", role: "admin" });
+adminApi.write({ layoutId: "magazine" });
+assert.equal(adminApi.read().layoutId, "magazine", "Admin preview can verify Magazine without changing the subscription plan");
+
+console.log("F1-05/F1-06 integration verified: persistence, re-edit, and Free/Pro layout entitlements.");
