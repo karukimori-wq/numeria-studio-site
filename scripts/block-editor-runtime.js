@@ -68,6 +68,12 @@ function locateBlock(blockId){
   for(const page of data.pages)for(const region of page.layoutRegions)for(let column=0;column<region.columnBlocks.length;column++){let index=region.columnBlocks[column].findIndex(block=>block.blockId===blockId);if(index>=0)return{page,region,column,index,block:region.columnBlocks[column][index]}}
   return null
 }
+function renderDefinitionCatalog(definitions){
+  const rows=items=>items.map(definition=>`<details><summary>${esc(definition.pageDefinitionId)} · ${esc(definition.title)}</summary><small>図表：${esc(definition.diagramSpecification)}<br>条件：${esc(definition.availabilityCondition)}</small></details>`).join("");
+  const basic=definitions.filter(definition=>definition.tier==="basic");
+  const additional=definitions.filter(definition=>definition.tier==="additional");
+  return `<section data-page-tier="basic"><h4>基本ページ（${basic.length}）</h4>${rows(basic)}</section>${additional.length?`<details data-page-tier="additional"><summary>追加ページ・Pro（${additional.length}）</summary>${rows(additional)}</details>`:""}`
+}
 function decorateEditor(){
   if(!root?.classList.contains("open"))return;
   const settings=root.querySelector(".nbe-settings");
@@ -78,7 +84,7 @@ function decorateEditor(){
   }
   if(settings&&!settings.querySelector("[data-v3-page-definitions]")){
     const catalog=document.createElement("section");catalog.dataset.v3PageDefinitions="1";catalog.className="nbe-page-definitions";
-    catalog.innerHTML=`<h3>利用可能なページ定義</h3><p>${esc(pageDefinitionsPlan)}プラン · 結果が確定した場合のみ追加できます。</p>${pageDefinitions.length?pageDefinitions.map(definition=>`<details><summary>${esc(definition.pageDefinitionId)} · ${esc(definition.title)}</summary><small>図表：${esc(definition.diagramSpecification)}<br>条件：${esc(definition.availabilityCondition)}</small></details>`).join(""):"<small>ページ定義を読み込めませんでした。</small>"}`;
+    catalog.innerHTML=`<h3>利用可能なページ定義</h3><p>${esc(pageDefinitionsPlan)}プラン · 結果が確定した場合のみ追加できます。</p>${pageDefinitions.length?renderDefinitionCatalog(pageDefinitions):"<small>ページ定義を読み込めませんでした。</small>"}`;
     settings.append(catalog);
   }
   if(settings&&!settings.querySelector("[data-v3-format-backups]")&&backups.length){

@@ -64,6 +64,14 @@ assert.match(runtime, /ページ台帳は確認できます。確定結果スキ
 assert.match(runtime, /data\.selectedDivination=e\.target\.value;pageDefinitions=\[\];remember\(\);render\(\);void loadPageDefinitions\(\)/);
 assert.match(runtime, /data-v3-page-definitions/);
 assert.match(runtime, /結果が確定した場合のみ追加できます/);
+assert.match(runtime, /function renderDefinitionCatalog\(definitions\)/);
+assert.match(runtime, /definition\.tier==="basic"/);
+assert.match(runtime, /definition\.tier==="additional"/);
+assert.match(runtime, /data-page-tier="basic"/);
+assert.match(runtime, /data-page-tier="additional"/);
+assert.match(runtime, /基本ページ（\$\{basic\.length\}）/);
+assert.match(runtime, /追加ページ・Pro（\$\{additional\.length\}）/);
+assert.match(runtime, /<details data-page-tier="additional">/);
 assert.match(runtime, /plan\.physicalPages\.map/);
 assert.match(runtime, /data-logical-page/);
 assert.match(runtime, /data-block-id/);
