@@ -64,6 +64,17 @@ export function setReportPageVisibility(template, pageDefinitionId, visible) {
   });
 }
 
+export function setReportPageTitle(template, pageDefinitionId, title) {
+  const normalized = normalizeReportTemplate(template);
+  const nextTitle = text(title);
+  return normalizeReportTemplate({
+    ...normalized,
+    pageSelection: normalized.pageSelection.map((page) =>
+      page.pageDefinitionId === pageDefinitionId ? { ...page, title: nextTitle || page.title } : page
+    ),
+  });
+}
+
 export function moveReportPage(template, pageDefinitionId, direction) {
   const normalized = normalizeReportTemplate(template);
   const ordered = [...normalized.pageSelection].sort((left, right) => left.order - right.order);

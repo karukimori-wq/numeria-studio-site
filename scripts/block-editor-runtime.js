@@ -19,7 +19,7 @@ function normal(x){
       }));
       if(!p.layoutRegions.length)p.layoutRegions=[makeRegion()]
     });
-    x.characterSnapshot={...character(),...(x.characterSnapshot||{})};x.pageSelection=(Array.isArray(x.pageSelection)?x.pageSelection:[]).filter(item=>item&&typeof item.pageDefinitionId==="string").map((item,index)=>({...item,visible:item.visible!==false,order:Number.isFinite(Number(item.order))?Number(item.order):index}));return x.pages.length?x:fresh()
+    x.characterSnapshot={...character(),...(x.characterSnapshot||{})};x.pageSelection=(Array.isArray(x.pageSelection)?x.pageSelection:[]).filter(item=>item&&typeof item.pageDefinitionId==="string").map((item,index)=>({...item,visible:item.visible!==false,order:Number.isFinite(Number(item.order))?Number(item.order):index}));x.pages.forEach(page=>{const title=x.pageSelection.find(item=>item.pageDefinitionId===page.pageDefinitionId)?.title;if(!title)return;let titleBlock=page.layoutRegions.flatMap(region=>region.columnBlocks.flat()).find(item=>item.type==="page-title");if(titleBlock)titleBlock.content=title;else page.layoutRegions[0].columnBlocks[0].unshift(makeBlock("page-title",title))});return x.pages.length?x:fresh()
   }
   if(x.version===1&&Array.isArray(x.pages)){let converted={...x,pages:x.pages.flatMap(p=>(p.sections||[]).map((section,index)=>({id:index?`${p.id||uid("page")}_${index}`:p.id,title:index?`${p.title||"ページ"} ${index+1}`:p.title,layout:section.columns===2?"two":"one",ratio:section.ratio,columns:section.content}))) };return normal({...converted,version:2})}
   let y={schemaVersion:3,formatId:uid("format"),templateId:"legacy-import",templateVersion:1,selectedDivination:"numerology",characterSnapshot:character(),globalStyle:{},allowedFeatures:{},pageSelection:[],pages:[],updatedAt:new Date().toISOString()};
@@ -69,12 +69,20 @@ function locateBlock(blockId){
   return null
 }
 function pageSelectionFor(definition){
-  return data.pageSelection.find(item=>item.pageDefinitionId===definition.pageDefinitionId)||{pageDefinitionId:definition.pageDefinitionId,pageInstanceId:`page_${definition.pageDefinitionId}`,visible:definition.tier==="basic",order:Math.max(0,pageDefinitions.findIndex(item=>item.pageDefinitionId===definition.pageDefinitionId))}
+  return data.pageSelection.find(item=>item.pageDefinitionId===definition.pageDefinitionId)||{pageDefinitionId:definition.pageDefinitionId,pageInstanceId:`page_${definition.pageDefinitionId}`,title:definition.title,visible:definition.tier==="basic",order:Math.max(0,pageDefinitions.findIndex(item=>item.pageDefinitionId===definition.pageDefinitionId))}
+}
+function ensurePageSelection(pageDefinitionId){
+  let selection=data.pageSelection.find(item=>item.pageDefinitionId===pageDefinitionId);if(selection)return selection;
+  const definition=pageDefinitions.find(item=>item.pageDefinitionId===pageDefinitionId);if(!definition)return null;selection=pageSelectionFor(definition);data.pageSelection.push(selection);return selection
 }
 function setPageVisibility(pageDefinitionId,visible){
-  let selection=data.pageSelection.find(item=>item.pageDefinitionId===pageDefinitionId);
-  if(!selection){const definition=pageDefinitions.find(item=>item.pageDefinitionId===pageDefinitionId);if(!definition)return;selection=pageSelectionFor(definition);data.pageSelection.push(selection)}
+  const selection=ensurePageSelection(pageDefinitionId);if(!selection)return;
   selection.visible=visible;remember();status=visible?"ページをONにしました":"ページをOFFにしました（内容は保持されます）";render()
+}
+function setPageDefinitionTitle(pageDefinitionId,title){
+  const definition=pageDefinitions.find(item=>item.pageDefinitionId===pageDefinitionId);if(!definition)return;
+  const selection=ensurePageSelection(pageDefinitionId);if(!selection)return;selection.title=String(title||"").trim()||definition.title;
+  data.pages.filter(page=>page.pageDefinitionId===pageDefinitionId).forEach(page=>{let titleBlock=page.layoutRegions.flatMap(region=>region.columnBlocks.flat()).find(block=>block.type==="page-title");if(titleBlock)titleBlock.content=selection.title;else page.layoutRegions[0].columnBlocks[0].unshift(makeBlock("page-title",selection.title))});remember();status="ページタイトルを変更しました";render()
 }
 function orderedDefinitions(definitions){
   return definitions.map((definition,index)=>({definition,index,order:pageSelectionFor(definition).order})).sort((left,right)=>left.order-right.order||left.index-right.index).map(item=>item.definition)
@@ -82,11 +90,11 @@ function orderedDefinitions(definitions){
 function movePageDefinition(pageDefinitionId,direction){
   const definition=pageDefinitions.find(item=>item.pageDefinitionId===pageDefinitionId);if(!definition)return;
   const ordered=orderedDefinitions(pageDefinitions),from=ordered.findIndex(item=>item.pageDefinitionId===pageDefinitionId),to=from+(direction<0?-1:1);if(from<0||to<0||to>=ordered.length)return;
-  const selections=ordered.map(item=>{let selection=data.pageSelection.find(value=>value.pageDefinitionId===item.pageDefinitionId);if(!selection){selection=pageSelectionFor(item);data.pageSelection.push(selection)}return selection});
+  const selections=ordered.map(item=>ensurePageSelection(item.pageDefinitionId));
   [selections[from],selections[to]]=[selections[to],selections[from]];selections.forEach((selection,index)=>selection.order=index);remember();status="ページ順序を変更しました";render()
 }
 function renderDefinitionCatalog(definitions){
-  const rows=items=>items.map(definition=>{const selection=pageSelectionFor(definition);return `<details><summary><label><input type="checkbox" data-page-visibility="${esc(definition.pageDefinitionId)}" ${selection.visible?"checked":""}>${esc(definition.pageDefinitionId)} · ${esc(definition.title)}</label><span><small>出力順 ${Number(selection.order)+1}</small><button type="button" data-page-definition-up="${esc(definition.pageDefinitionId)}" aria-label="${esc(definition.title)}を前へ">↑</button><button type="button" data-page-definition-down="${esc(definition.pageDefinitionId)}" aria-label="${esc(definition.title)}を後へ">↓</button></span></summary><small>図表：${esc(definition.diagramSpecification)}<br>条件：${esc(definition.availabilityCondition)}</small></details>`}).join("");
+  const rows=items=>items.map(definition=>{const selection=pageSelectionFor(definition);return `<details><summary><label><input type="checkbox" data-page-visibility="${esc(definition.pageDefinitionId)}" ${selection.visible?"checked":""}>${esc(definition.pageDefinitionId)} · ${esc(selection.title||definition.title)}</label><span><small>出力順 ${Number(selection.order)+1}</small><button type="button" data-page-definition-up="${esc(definition.pageDefinitionId)}" aria-label="${esc(definition.title)}を前へ">↑</button><button type="button" data-page-definition-down="${esc(definition.pageDefinitionId)}" aria-label="${esc(definition.title)}を後へ">↓</button></span></summary><label>表示タイトル<input data-page-definition-title="${esc(definition.pageDefinitionId)}" value="${esc(selection.title||definition.title)}"></label><small>元の定義：${esc(definition.title)}<br>図表：${esc(definition.diagramSpecification)}<br>条件：${esc(definition.availabilityCondition)}</small></details>`}).join("");
   const basic=orderedDefinitions(definitions.filter(definition=>definition.tier==="basic"));
   const additional=orderedDefinitions(definitions.filter(definition=>definition.tier==="additional"));
   return `<section data-page-tier="basic"><h4>基本ページ（${basic.length}）</h4>${rows(basic)}</section>${additional.length?`<details data-page-tier="additional"><summary>追加ページ・Pro（${additional.length}）</summary>${rows(additional)}</details>`:""}`
@@ -103,6 +111,7 @@ function decorateEditor(){
     const catalog=document.createElement("section");catalog.dataset.v3PageDefinitions="1";catalog.className="nbe-page-definitions";
     catalog.innerHTML=`<h3>利用可能なページ定義</h3><p>${esc(pageDefinitionsPlan)}プラン · 結果が確定した場合のみ追加できます。</p>${pageDefinitions.length?renderDefinitionCatalog(pageDefinitions):"<small>ページ定義を読み込めませんでした。</small>"}`;
     catalog.querySelectorAll("[data-page-visibility]").forEach(input=>input.onchange=()=>setPageVisibility(input.dataset.pageVisibility,input.checked));
+    catalog.querySelectorAll("[data-page-definition-title]").forEach(input=>input.onchange=()=>setPageDefinitionTitle(input.dataset.pageDefinitionTitle,input.value));
     catalog.querySelectorAll("[data-page-definition-up]").forEach(button=>button.onclick=event=>{event.preventDefault();movePageDefinition(button.dataset.pageDefinitionUp,-1)});
     catalog.querySelectorAll("[data-page-definition-down]").forEach(button=>button.onclick=event=>{event.preventDefault();movePageDefinition(button.dataset.pageDefinitionDown,1)});
     settings.append(catalog);
