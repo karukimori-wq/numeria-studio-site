@@ -45,6 +45,9 @@ assert.match(runtime, /data-v3-divination-visuals/);
 assert.match(runtime, /assets\/divination-visuals/);
 assert.match(runtime, /data-print/);
 assert.match(runtime, /function print\(\)/);
+assert.match(runtime, /if\(!pageDefinitionsReady\)\{status="ページの利用条件を確認中です。読み込み完了後にもう一度お試しください。"/);
+assert.match(runtime, /reportPublicationBlockers\(data,pageDefinitions,confirmedResultSource\(\)\)/);
+assert.match(runtime, /発行できません：\$\{blockers\[0\]\.title\} — \$\{blockers\[0\]\.reason\}/);
 assert.match(runtime, /measurePhysicalPlan/);
 assert.match(runtime, /NumeriaPhysicalPagePlan/);
 assert.match(runtime, /restoreBackup/);
@@ -81,6 +84,8 @@ assert.match(runtime, /data\.selectedDivination=e\.target\.value;pageDefinitions
 assert.match(runtime, /data-v3-page-definitions/);
 assert.match(runtime, /結果が確定した場合のみ追加できます/);
 assert.match(runtime, /function renderDefinitionCatalog\(definitions\)/);
+assert.match(runtime, /assessReportPageAvailability\(definition,confirmedResultSource\(\)\)/);
+assert.match(runtime, /発行不可：\$\{esc\(availability\.reason\)\}/);
 assert.match(runtime, /definition\.tier==="basic"/);
 assert.match(runtime, /definition\.tier==="additional"/);
 assert.match(runtime, /data-page-tier="basic"/);
