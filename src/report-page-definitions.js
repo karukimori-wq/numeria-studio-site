@@ -7,20 +7,22 @@ const groups = {
   "zi-wei-dou-shu": { prefix: "ZIW", basic: [1, 2, 3, 7], count: 14 },
 };
 
-export const REPORT_RENDERER_TYPES = Object.freeze([
-  "result-icons",
-  "result-table",
-  "relationship-map",
-  "period-timeline",
-  "placement-map",
-  "card-spread",
-  "direction-board",
-  "direction-map",
-  "composition-ratio",
-  "natal-wheel",
-  "destiny-chart",
-  "text-only",
-]);
+export const REPORT_VISUAL_TYPES = Object.freeze([
+  { rendererType: "result-icons", label: "結果アイコン", visual: true },
+  { rendererType: "result-table", label: "結果表", visual: true },
+  { rendererType: "relationship-map", label: "関係図", visual: true },
+  { rendererType: "period-timeline", label: "期間図", visual: true },
+  { rendererType: "placement-map", label: "配置マップ", visual: true },
+  { rendererType: "card-spread", label: "カード配置図", visual: true },
+  { rendererType: "direction-board", label: "方位盤", visual: true },
+  { rendererType: "direction-map", label: "方位マップ", visual: true },
+  { rendererType: "composition-ratio", label: "構成比", visual: true },
+  { rendererType: "natal-wheel", label: "天体図", visual: true },
+  { rendererType: "destiny-chart", label: "命盤", visual: true },
+  { rendererType: "text-only", label: "文章中心", visual: false },
+].map(Object.freeze));
+
+export const REPORT_RENDERER_TYPES = Object.freeze(REPORT_VISUAL_TYPES.map((type) => type.rendererType));
 
 const methodResultKeys = Object.freeze({
   numerology: ["core_numbers"],
