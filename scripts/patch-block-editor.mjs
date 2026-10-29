@@ -18,9 +18,11 @@ const resultContractRuntime = readFileSync("src/divination-result-contract.js", 
 const availabilityRuntime = readFileSync("src/report-page-availability.js", "utf8")
   .replace(/^import .*divination-result-contract\.js";\s*/m, "")
   .replaceAll("export function ", "function ");
+const catalogViewRuntime = readFileSync("src/report-page-catalog-view.js", "utf8")
+  .replaceAll("export function ", "function ");
 const layoutRuntime = readFileSync("src/report-physical-page-plan.js", "utf8")
   .replace("export const ", "const ")
   .replace("export function ", "function ")
   + "\nwindow.NumeriaPhysicalPagePlan={createPhysicalPagePlan,A4_LAYOUT_CONTRACT_VERSION};\n";
-writeFileSync(target, source + layoutRuntime + pageCommentRuntime + hydrationRuntime + resultContractRuntime + availabilityRuntime + runtime);
+writeFileSync(target, source + layoutRuntime + pageCommentRuntime + hydrationRuntime + resultContractRuntime + availabilityRuntime + catalogViewRuntime + runtime);
 console.log(`Block editor v2 patched into ${target}.`);
