@@ -172,7 +172,11 @@ async function resolveAuthenticatedScope(request, env, ctx, requestedWorkspaceId
 }
 
 function validReportFormat(value, pageLimit = Infinity) {
-  if (!value || typeof value !== "object" || value.schemaVersion !== 3 || !Array.isArray(value.pages) || !value.pages.length || value.pages.length > pageLimit) return false;
+  if (!value || typeof value !== "object" || value.schemaVersion !== 3 || !Array.isArray(value.pages) || !value.pages.length) return false;
+  const freePageCount = value.pages.filter((page) => page?.pageKind === "free" || (page?.pageKind == null && page?.pageDefinitionId == null)).length;
+  if (freePageCount > pageLimit) return false;
+  const fixedPageDefinitionIds = value.pages.filter((page) => page?.pageDefinitionId != null).map((page) => page.pageDefinitionId);
+  if (new Set(fixedPageDefinitionIds).size !== fixedPageDefinitionIds.length) return false;
   const types = new Set(["page-title", "heading", "body", "ai-text", "divider", "numerology-result", "tarot-cards"]);
   return value.pages.every((page) =>
     page && typeof page.pageId === "string" && Array.isArray(page.layoutRegions) && page.layoutRegions.every((region) =>

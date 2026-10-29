@@ -120,13 +120,23 @@ const reportFormat = {
   schemaVersion: 3,
   pages: [{
     pageId: "page_v3",
+    pageKind: "cover",
     layoutRegions: [{
       regionId: "region_v3",
       columns: 1,
       ratio: "100",
       columnBlocks: [[{ blockId: "block_v3", type: "page-title", content: "テスト鑑定書" }]],
     }],
-  }],
+  }, ...[1, 2, 3].map((number) => ({
+    pageId: `free_${number}`,
+    pageKind: "free",
+    layoutRegions: [{
+      regionId: `free_region_${number}`,
+      columns: 1,
+      ratio: "100",
+      columnBlocks: [[{ blockId: `free_block_${number}`, type: "body", content: `自由ページ${number}` }]],
+    }],
+  }))],
 };
 const savedFormat = await jsonFetch("/api/report-formats/default", {
   method: "PUT",
@@ -172,10 +182,21 @@ const savedDefinedFormat = await jsonFetch("/api/report-formats/default", {
 assert.equal(savedDefinedFormat.response.status, 200);
 assert.equal(savedDefinedFormat.body.format.pages[0].pageDefinitionId, "NUM-01");
 
+const duplicateFixedFormat = structuredClone(definedFormat);
+duplicateFixedFormat.pages.push({ ...structuredClone(definedFormat.pages[0]), pageId: "duplicate_NUM_01", pageKind: "fixed" });
+const rejectedDuplicateFixed = await jsonFetch("/api/report-formats/default", {
+  method: "PUT",
+  headers,
+  body: JSON.stringify({ format: duplicateFixedFormat, expectedRevision: 2 }),
+}, env);
+assert.equal(rejectedDuplicateFixed.response.status, 400);
+assert.equal(rejectedDuplicateFixed.body.errorCode, "REPORT_FORMAT_INVALID");
+
 const overLimitFormat = structuredClone(reportFormat);
 overLimitFormat.pages = Array.from({ length: 4 }, (_, index) => ({
   ...structuredClone(reportFormat.pages[0]),
   pageId: `page_free_${index}`,
+  pageKind: "free",
 }));
 const rejectedOverLimit = await jsonFetch("/api/report-formats/default", {
   method: "PUT",

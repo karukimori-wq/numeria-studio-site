@@ -54,4 +54,14 @@ const orderedFormat = {
 };
 const orderedPlan = createPhysicalPagePlan(orderedFormat, { one: 100, middle: 100, two: 100 }, { contentHeightPx: 900 });
 assert.deepEqual(orderedPlan.physicalPages.map((page) => page.logicalPageId), ["fixed-two", "free-middle", "fixed-one"]);
+
+const methodFormat = {
+  selectedDivination: "numerology",
+  pages: [
+    { pageId: "numerology-fixed", pageDefinitionId: "NUM-01", methodKey: "numerology", layoutRegions: [{ regionId: "num", columns: 1, columnBlocks: [[{ blockId: "num-block", type: "body" }]] }] },
+    { pageId: "tarot-fixed", pageDefinitionId: "TAR-01", methodKey: "tarot", layoutRegions: [{ regionId: "tar", columns: 1, columnBlocks: [[{ blockId: "tar-block", type: "body" }]] }] },
+  ],
+};
+const methodPlan = createPhysicalPagePlan(methodFormat, { "num-block": 100, "tar-block": 100 }, { contentHeightPx: 900 });
+assert.deepEqual(methodPlan.physicalPages.map((page) => page.logicalPageId), ["numerology-fixed"]);
 console.log("Physical A4 page plan contract verified.");
