@@ -1,10 +1,32 @@
 import assert from "node:assert/strict";
-import { REPORT_PAGE_DEFINITIONS, REPORT_RENDERER_TYPES } from "../src/report-page-definitions.js";
-import { REPORT_VISUAL_REGISTRY, VISUAL_STATE, reportVisualSnapshotValue, resolveReportVisual } from "../src/report-visual-registry.js";
+import { REPORT_PAGE_DEFINITIONS, REPORT_RENDERER_TYPES, REPORT_VISUAL_TYPES } from "../src/report-page-definitions.js";
+import { REPORT_VISUAL_REGISTRY, VISUAL_STATE, reportVisualSnapshotValue, reportVisualsForRenderer, resolveReportVisual } from "../src/report-visual-registry.js";
 
 assert.equal(Object.keys(REPORT_VISUAL_REGISTRY).length, 85);
 assert.ok(REPORT_PAGE_DEFINITIONS.every((item) => REPORT_RENDERER_TYPES.includes(item.rendererType)));
 assert.ok(REPORT_PAGE_DEFINITIONS.every((item) => Array.isArray(item.requiredResultKeys) && Array.isArray(item.optionalResultKeys)));
+const registryValues = Object.values(REPORT_VISUAL_REGISTRY);
+const requiredVisuals = registryValues.filter((visual) => visual.required);
+assert.equal(requiredVisuals.length, 82);
+assert.equal(new Set(requiredVisuals.map((visual) => visual.visualId)).size, 82);
+assert.ok(requiredVisuals.every((visual) => /^visual\.(num|tar|kig|baz|ast|ziw)\.\d{2}\.v1$/.test(visual.visualId)));
+assert.deepEqual(registryValues.filter((visual) => !visual.required).map((visual) => visual.visualId), [null, null, null]);
+assert.deepEqual(Object.fromEntries(REPORT_VISUAL_TYPES.map((type) => [type.rendererType, reportVisualsForRenderer(type.rendererType).length])), {
+  "result-icons": 8,
+  "result-table": 8,
+  "relationship-map": 14,
+  "period-timeline": 14,
+  "placement-map": 1,
+  "card-spread": 9,
+  "direction-board": 4,
+  "direction-map": 1,
+  "composition-ratio": 3,
+  "natal-wheel": 9,
+  "destiny-chart": 11,
+  "text-only": 3,
+});
+assert.ok(REPORT_VISUAL_TYPES.every((type) => reportVisualsForRenderer(type.rendererType).every((visual) => visual.rendererLabel === type.label)));
+assert.throws(() => reportVisualsForRenderer("unknown"), /REPORT_VISUAL_RENDERER_UNKNOWN:unknown/);
 assert.equal(resolveReportVisual("TAR-05", null).state, VISUAL_STATE.TEXT_ONLY);
 assert.equal(resolveReportVisual("NUM-01", null).state, VISUAL_STATE.NOT_CALCULATED);
 assert.equal(resolveReportVisual("NUM-01", null, { inputComplete: false }).state, VISUAL_STATE.INPUT_INCOMPLETE);
