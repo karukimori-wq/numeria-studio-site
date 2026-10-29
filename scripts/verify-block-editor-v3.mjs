@@ -84,10 +84,13 @@ assert.match(runtime, /data\.selectedDivination=e\.target\.value;pageDefinitions
 assert.match(runtime, /data-v3-page-definitions/);
 assert.match(runtime, /結果が確定した場合のみ追加できます/);
 assert.match(runtime, /function renderDefinitionCatalog\(definitions\)/);
+assert.match(runtime, /buildReportPageCatalogView\(definitions\)/);
+assert.match(runtime, /data-page-definition-id=/);
+assert.match(runtime, /利用可能なページ定義（\$\{pageDefinitions\.length\}件）/);
 assert.match(runtime, /assessReportPageAvailability\(definition,confirmedResultSource\(\)\)/);
 assert.match(runtime, /発行不可：\$\{esc\(availability\.reason\)\}/);
-assert.match(runtime, /definition\.tier==="basic"/);
-assert.match(runtime, /definition\.tier==="additional"/);
+assert.match(runtime, /orderedDefinitions\(view\.basic\)/);
+assert.match(runtime, /orderedDefinitions\(view\.additional\)/);
 assert.match(runtime, /data-page-tier="basic"/);
 assert.match(runtime, /data-page-tier="additional"/);
 assert.match(runtime, /基本ページ（\$\{basic\.length\}）/);
