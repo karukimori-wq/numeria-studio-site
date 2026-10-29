@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { createReportTemplate, moveReportPage, normalizeReportTemplate, setReportPageTitle, setReportPageVisibility, switchReportLayout } from "../src/report-template-contract.js";
+import { createReportTemplate, moveReportPage, normalizeReportTemplate, setReportPageComment, setReportPageTitle, setReportPageVisibility, switchReportLayout } from "../src/report-template-contract.js";
 
 const legacy = {
   id: "legacy-1",
@@ -36,6 +36,10 @@ assert.equal(shownAgain.pageSelection[0].content, "保存済み本文");
 const renamed = setReportPageTitle({ pageSelection: [{ pageDefinitionId: "NUM-01", title: "本質", content: "本文は保持" }] }, "NUM-01", "あなたの本質");
 assert.equal(renamed.pageSelection[0].title, "あなたの本質");
 assert.equal(renamed.pageSelection[0].content, "本文は保持");
+const commented = setReportPageComment(renamed, "NUM-01", { content: "利用者の補足", visible: false });
+assert.equal(commented.pageSelection[0].customComment.visible, false);
+assert.equal(commented.pageSelection[0].customComment.content, "利用者の補足");
+assert.equal(setReportPageComment(commented, "NUM-01", { visible: true }).pageSelection[0].customComment.content, "利用者の補足");
 const reordered = moveReportPage({ pageSelection: [
   { pageDefinitionId: "NUM-01", order: 0, content: "先頭の本文" },
   { pageDefinitionId: "NUM-02", order: 1, content: "次の本文" },

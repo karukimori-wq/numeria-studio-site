@@ -24,6 +24,10 @@ export function normalizeReportTemplate(candidate = {}) {
       pageInstanceId: text(page.pageInstanceId, `page_${pageDefinitionId || "unknown"}_${index + 1}`),
       visible: page.visible !== false,
       order: Number.isFinite(Number(page.order)) ? Number(page.order) : index,
+      customComment: {
+        visible: record(page.customComment).visible !== false,
+        content: typeof record(page.customComment).content === "string" ? record(page.customComment).content : "",
+      },
       knownDefinition: REPORT_PAGE_DEFINITION_IDS.has(pageDefinitionId),
     };
   });
@@ -72,6 +76,17 @@ export function setReportPageTitle(template, pageDefinitionId, title) {
     pageSelection: normalized.pageSelection.map((page) =>
       page.pageDefinitionId === pageDefinitionId ? { ...page, title: nextTitle || page.title } : page
     ),
+  });
+}
+
+export function setReportPageComment(template, pageDefinitionId, update = {}) {
+  const normalized = normalizeReportTemplate(template);
+  return normalizeReportTemplate({
+    ...normalized,
+    pageSelection: normalized.pageSelection.map((page) => page.pageDefinitionId === pageDefinitionId ? {
+      ...page,
+      customComment: { ...page.customComment, ...record(update) },
+    } : page),
   });
 }
 
