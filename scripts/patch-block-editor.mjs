@@ -20,9 +20,11 @@ const availabilityRuntime = readFileSync("src/report-page-availability.js", "utf
   .replaceAll("export function ", "function ");
 const catalogViewRuntime = readFileSync("src/report-page-catalog-view.js", "utf8")
   .replaceAll("export function ", "function ");
+const visualSlotRuntime = readFileSync("src/report-visual-slot.js", "utf8")
+  .replaceAll("export function ", "function ");
 const layoutRuntime = readFileSync("src/report-physical-page-plan.js", "utf8")
   .replace("export const ", "const ")
   .replace("export function ", "function ")
   + "\nwindow.NumeriaPhysicalPagePlan={createPhysicalPagePlan,A4_LAYOUT_CONTRACT_VERSION};\n";
-writeFileSync(target, source + layoutRuntime + pageCommentRuntime + hydrationRuntime + resultContractRuntime + availabilityRuntime + catalogViewRuntime + runtime);
+writeFileSync(target, source + layoutRuntime + pageCommentRuntime + hydrationRuntime + resultContractRuntime + availabilityRuntime + catalogViewRuntime + visualSlotRuntime + runtime);
 console.log(`Block editor v2 patched into ${target}.`);
