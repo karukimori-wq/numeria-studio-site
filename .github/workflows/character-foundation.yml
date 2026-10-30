@@ -1,0 +1,17 @@
+name: Character foundation (offline)
+on:
+  pull_request:
+    paths: ['src/character-store.js', 'scripts/verify-character-store.mjs', 'migrations/0005_character_collections.sql', '.github/workflows/character-foundation.yml']
+  push:
+    branches: ['feat/character-foundation-20261028']
+permissions:
+  contents: read
+jobs:
+  sqlite-domain:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node --test scripts/verify-character-store.mjs
