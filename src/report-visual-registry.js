@@ -1,7 +1,5 @@
-import { REPORT_PAGE_DEFINITIONS, REPORT_VISUAL_TYPES } from "./report-page-definitions.js";
+import { REPORT_PAGE_DEFINITIONS, reportVisualTypeFor } from "./report-page-definitions.js";
 import { validateConfirmedDivinationResult } from "./divination-result-contract.js";
-
-const visualTypeByRenderer = new Map(REPORT_VISUAL_TYPES.map((type) => [type.rendererType, type]));
 
 export const VISUAL_STATE = Object.freeze({
   READY: "ready",
@@ -13,13 +11,12 @@ export const VISUAL_STATE = Object.freeze({
 });
 
 export const REPORT_VISUAL_REGISTRY = Object.freeze(Object.fromEntries(REPORT_PAGE_DEFINITIONS.map((definition) => {
-  const visualType = visualTypeByRenderer.get(definition.rendererType);
-  if (!visualType) throw new Error(`REPORT_VISUAL_RENDERER_UNKNOWN:${definition.rendererType}`);
+  reportVisualTypeFor(definition.rendererType);
   return [definition.pageDefinitionId, Object.freeze({
     pageDefinitionId: definition.pageDefinitionId,
     visualId: definition.visualId,
     rendererType: definition.rendererType,
-    rendererLabel: visualType.label,
+    rendererLabel: definition.rendererLabel,
     required: definition.visualRequired,
     requiredResultKeys: definition.requiredResultKeys,
     optionalResultKeys: definition.optionalResultKeys,
@@ -28,7 +25,7 @@ export const REPORT_VISUAL_REGISTRY = Object.freeze(Object.fromEntries(REPORT_PA
 })));
 
 export function reportVisualsForRenderer(rendererType) {
-  if (!visualTypeByRenderer.has(rendererType)) throw new Error(`REPORT_VISUAL_RENDERER_UNKNOWN:${rendererType}`);
+  reportVisualTypeFor(rendererType);
   return Object.freeze(Object.values(REPORT_VISUAL_REGISTRY).filter((visual) => visual.rendererType === rendererType));
 }
 

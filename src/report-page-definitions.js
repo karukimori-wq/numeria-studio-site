@@ -24,6 +24,14 @@ export const REPORT_VISUAL_TYPES = Object.freeze([
 
 export const REPORT_RENDERER_TYPES = Object.freeze(REPORT_VISUAL_TYPES.map((type) => type.rendererType));
 
+const reportVisualTypeByRenderer = new Map(REPORT_VISUAL_TYPES.map((type) => [type.rendererType, type]));
+
+export function reportVisualTypeFor(rendererType) {
+  const type = reportVisualTypeByRenderer.get(rendererType);
+  if (!type) throw new Error(`REPORT_VISUAL_RENDERER_UNKNOWN:${rendererType}`);
+  return type;
+}
+
 const methodResultKeys = Object.freeze({
   numerology: ["core_numbers"],
   tarot: ["spread"],
@@ -89,6 +97,7 @@ export const REPORT_PAGE_DEFINITIONS = Object.entries(groups).flatMap(([methodKe
   Array.from({ length: group.count }, (_, index) => {
     const ordinal = index + 1;
     const metadata = (group.basic.includes(ordinal) ? basicMetadata : additionalMetadata)[`${group.prefix}-${String(ordinal).padStart(2, "0")}`];
+    const rendererType = rendererTypeFor(metadata?.[1]);
     return {
       pageDefinitionId: `${group.prefix}-${String(ordinal).padStart(2, "0")}`,
       methodKey,
@@ -100,7 +109,8 @@ export const REPORT_PAGE_DEFINITIONS = Object.entries(groups).flatMap(([methodKe
       diagramSpecification: metadata?.[1] || null,
       visualRequired: metadata?.[1] !== "なし・文章中心",
       availabilityCondition: metadata?.[2] || null,
-      rendererType: rendererTypeFor(metadata?.[1]),
+      rendererType,
+      rendererLabel: reportVisualTypeFor(rendererType).label,
       visualId: metadata?.[1] === "なし・文章中心" ? null : `visual.${group.prefix.toLowerCase()}.${String(ordinal).padStart(2, "0")}.v1`,
       requiredResultKeys: [...(methodResultKeys[methodKey] || [])],
       optionalResultKeys: [],

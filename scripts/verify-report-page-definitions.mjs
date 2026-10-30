@@ -24,6 +24,7 @@ assert.equal(REPORT_PAGE_DEFINITIONS.filter((definition) => definition.tier === 
 assert.equal(REPORT_PAGE_DEFINITIONS.filter((definition) => definition.tier === "additional" && definition.title).length, 60);
 assert.equal(REPORT_PAGE_DEFINITIONS.find((definition) => definition.pageDefinitionId === "TAR-05").diagramSpecification, "なし・文章中心");
 assert.equal(REPORT_PAGE_DEFINITIONS.filter((definition) => definition.visualRequired && definition.visualId && definition.rendererType).length, 82);
+assert.equal(REPORT_PAGE_DEFINITIONS.filter((definition) => definition.rendererLabel).length, 85);
 assert.equal(REPORT_PAGE_DEFINITIONS.filter((definition) => !definition.visualRequired && definition.visualId === null && definition.rendererType === "text-only").length, 3);
 assert.deepEqual(Object.fromEntries(METHOD_KEYS.map((methodKey) => [methodKey, REPORT_PAGE_DEFINITIONS.filter((item) => item.methodKey === methodKey).length])), { numerology: 14, tarot: 13, "nine-star-ki": 14, "four-pillars": 14, "western-astrology": 16, "zi-wei-dou-shu": 14 });
 assert.deepEqual(Object.fromEntries(METHOD_KEYS.map((methodKey) => [methodKey, {
