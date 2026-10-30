@@ -24,6 +24,10 @@ export function normalizeReportTemplate(candidate = {}) {
       pageInstanceId: text(page.pageInstanceId, `page_${pageDefinitionId || "unknown"}_${index + 1}`),
       visible: page.visible !== false,
       order: Number.isFinite(Number(page.order)) ? Number(page.order) : index,
+      customComment: {
+        visible: record(page.customComment).visible !== false,
+        content: typeof record(page.customComment).content === "string" ? record(page.customComment).content : "",
+      },
       knownDefinition: REPORT_PAGE_DEFINITION_IDS.has(pageDefinitionId),
     };
   });
@@ -52,6 +56,51 @@ export function normalizeReportTemplate(candidate = {}) {
 
 export function switchReportLayout(template, layoutId) {
   return normalizeReportTemplate({ ...record(template), layoutId });
+}
+
+export function setReportPageVisibility(template, pageDefinitionId, visible) {
+  const normalized = normalizeReportTemplate(template);
+  return normalizeReportTemplate({
+    ...normalized,
+    pageSelection: normalized.pageSelection.map((page) =>
+      page.pageDefinitionId === pageDefinitionId ? { ...page, visible: visible !== false } : page
+    ),
+  });
+}
+
+export function setReportPageTitle(template, pageDefinitionId, title) {
+  const normalized = normalizeReportTemplate(template);
+  const nextTitle = text(title);
+  return normalizeReportTemplate({
+    ...normalized,
+    pageSelection: normalized.pageSelection.map((page) =>
+      page.pageDefinitionId === pageDefinitionId ? { ...page, title: nextTitle || page.title } : page
+    ),
+  });
+}
+
+export function setReportPageComment(template, pageDefinitionId, update = {}) {
+  const normalized = normalizeReportTemplate(template);
+  return normalizeReportTemplate({
+    ...normalized,
+    pageSelection: normalized.pageSelection.map((page) => page.pageDefinitionId === pageDefinitionId ? {
+      ...page,
+      customComment: { ...page.customComment, ...record(update) },
+    } : page),
+  });
+}
+
+export function moveReportPage(template, pageDefinitionId, direction) {
+  const normalized = normalizeReportTemplate(template);
+  const ordered = [...normalized.pageSelection].sort((left, right) => left.order - right.order);
+  const from = ordered.findIndex((page) => page.pageDefinitionId === pageDefinitionId);
+  const to = from + (direction < 0 ? -1 : 1);
+  if (from < 0 || to < 0 || to >= ordered.length) return normalized;
+  [ordered[from], ordered[to]] = [ordered[to], ordered[from]];
+  return normalizeReportTemplate({
+    ...normalized,
+    pageSelection: ordered.map((page, index) => ({ ...page, order: index })),
+  });
 }
 
 export function createReportTemplate(input = {}) {

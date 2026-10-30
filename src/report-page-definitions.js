@@ -7,20 +7,30 @@ const groups = {
   "zi-wei-dou-shu": { prefix: "ZIW", basic: [1, 2, 3, 7], count: 14 },
 };
 
-export const REPORT_RENDERER_TYPES = Object.freeze([
-  "result-icons",
-  "result-table",
-  "relationship-map",
-  "period-timeline",
-  "placement-map",
-  "card-spread",
-  "direction-board",
-  "direction-map",
-  "composition-ratio",
-  "natal-wheel",
-  "destiny-chart",
-  "text-only",
-]);
+export const REPORT_VISUAL_TYPES = Object.freeze([
+  { rendererType: "result-icons", label: "結果アイコン", visual: true },
+  { rendererType: "result-table", label: "結果表", visual: true },
+  { rendererType: "relationship-map", label: "関係図", visual: true },
+  { rendererType: "period-timeline", label: "期間図", visual: true },
+  { rendererType: "placement-map", label: "配置マップ", visual: true },
+  { rendererType: "card-spread", label: "カード配置図", visual: true },
+  { rendererType: "direction-board", label: "方位盤", visual: true },
+  { rendererType: "direction-map", label: "方位マップ", visual: true },
+  { rendererType: "composition-ratio", label: "構成比", visual: true },
+  { rendererType: "natal-wheel", label: "天体図", visual: true },
+  { rendererType: "destiny-chart", label: "命盤", visual: true },
+  { rendererType: "text-only", label: "文章中心", visual: false },
+].map(Object.freeze));
+
+export const REPORT_RENDERER_TYPES = Object.freeze(REPORT_VISUAL_TYPES.map((type) => type.rendererType));
+
+const reportVisualTypeByRenderer = new Map(REPORT_VISUAL_TYPES.map((type) => [type.rendererType, type]));
+
+export function reportVisualTypeFor(rendererType) {
+  const type = reportVisualTypeByRenderer.get(rendererType);
+  if (!type) throw new Error(`REPORT_VISUAL_RENDERER_UNKNOWN:${rendererType}`);
+  return type;
+}
 
 const methodResultKeys = Object.freeze({
   numerology: ["core_numbers"],
@@ -87,6 +97,7 @@ export const REPORT_PAGE_DEFINITIONS = Object.entries(groups).flatMap(([methodKe
   Array.from({ length: group.count }, (_, index) => {
     const ordinal = index + 1;
     const metadata = (group.basic.includes(ordinal) ? basicMetadata : additionalMetadata)[`${group.prefix}-${String(ordinal).padStart(2, "0")}`];
+    const rendererType = rendererTypeFor(metadata?.[1]);
     return {
       pageDefinitionId: `${group.prefix}-${String(ordinal).padStart(2, "0")}`,
       methodKey,
@@ -98,7 +109,8 @@ export const REPORT_PAGE_DEFINITIONS = Object.entries(groups).flatMap(([methodKe
       diagramSpecification: metadata?.[1] || null,
       visualRequired: metadata?.[1] !== "なし・文章中心",
       availabilityCondition: metadata?.[2] || null,
-      rendererType: rendererTypeFor(metadata?.[1]),
+      rendererType,
+      rendererLabel: reportVisualTypeFor(rendererType).label,
       visualId: metadata?.[1] === "なし・文章中心" ? null : `visual.${group.prefix.toLowerCase()}.${String(ordinal).padStart(2, "0")}.v1`,
       requiredResultKeys: [...(methodResultKeys[methodKey] || [])],
       optionalResultKeys: [],

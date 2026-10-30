@@ -120,13 +120,23 @@ const reportFormat = {
   schemaVersion: 3,
   pages: [{
     pageId: "page_v3",
+    pageKind: "cover",
     layoutRegions: [{
       regionId: "region_v3",
       columns: 1,
       ratio: "100",
       columnBlocks: [[{ blockId: "block_v3", type: "page-title", content: "テスト鑑定書" }]],
     }],
-  }],
+  }, ...[1, 2, 3].map((number) => ({
+    pageId: `free_${number}`,
+    pageKind: "free",
+    layoutRegions: [{
+      regionId: `free_region_${number}`,
+      columns: 1,
+      ratio: "100",
+      columnBlocks: [[{ blockId: `free_block_${number}`, type: "body", content: `自由ページ${number}` }]],
+    }],
+  }))],
 };
 const savedFormat = await jsonFetch("/api/report-formats/default", {
   method: "PUT",
@@ -144,6 +154,21 @@ assert.equal(freeDefinitions.body.planId, "free");
 assert.equal(freeDefinitions.body.definitions.length, 4);
 assert.equal(freeDefinitions.body.definitions[0].pageDefinitionId, "NUM-01");
 assert.equal(freeDefinitions.body.definitions[0].availabilityCondition, "8結果が全て確定。未算出項目があれば理由付き利用不可");
+for (const [methodKey, expectedPrefix, expectedCount] of [
+  ["numerology", "NUM", 4],
+  ["tarot", "TAR", 4],
+  ["nine-star-ki", "KIG", 4],
+  ["four-pillars", "BAZ", 5],
+  ["western-astrology", "AST", 4],
+  ["zi-wei-dou-shu", "ZIW", 4],
+]) {
+  const catalog = await jsonFetch(`/api/report-page-definitions?methodKey=${methodKey}`, { headers }, env);
+  assert.equal(catalog.response.status, 200);
+  assert.equal(catalog.body.methodKey, methodKey);
+  assert.equal(catalog.body.definitions.length, expectedCount);
+  assert.ok(catalog.body.definitions.every((definition) => definition.methodKey === methodKey));
+  assert.ok(catalog.body.definitions.every((definition) => definition.pageDefinitionId.startsWith(`${expectedPrefix}-`)));
+}
 const invalidDefinitions = await jsonFetch("/api/report-page-definitions?methodKey=unknown", { headers }, env);
 assert.equal(invalidDefinitions.response.status, 400);
 
@@ -157,10 +182,21 @@ const savedDefinedFormat = await jsonFetch("/api/report-formats/default", {
 assert.equal(savedDefinedFormat.response.status, 200);
 assert.equal(savedDefinedFormat.body.format.pages[0].pageDefinitionId, "NUM-01");
 
+const duplicateFixedFormat = structuredClone(definedFormat);
+duplicateFixedFormat.pages.push({ ...structuredClone(definedFormat.pages[0]), pageId: "duplicate_NUM_01", pageKind: "fixed" });
+const rejectedDuplicateFixed = await jsonFetch("/api/report-formats/default", {
+  method: "PUT",
+  headers,
+  body: JSON.stringify({ format: duplicateFixedFormat, expectedRevision: 2 }),
+}, env);
+assert.equal(rejectedDuplicateFixed.response.status, 400);
+assert.equal(rejectedDuplicateFixed.body.errorCode, "REPORT_FORMAT_INVALID");
+
 const overLimitFormat = structuredClone(reportFormat);
 overLimitFormat.pages = Array.from({ length: 4 }, (_, index) => ({
   ...structuredClone(reportFormat.pages[0]),
   pageId: `page_free_${index}`,
+  pageKind: "free",
 }));
 const rejectedOverLimit = await jsonFetch("/api/report-formats/default", {
   method: "PUT",

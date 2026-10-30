@@ -1,4 +1,4 @@
-import { REPORT_PAGE_DEFINITIONS } from "./report-page-definitions.js";
+import { REPORT_PAGE_DEFINITIONS, reportVisualTypeFor } from "./report-page-definitions.js";
 import { validateConfirmedDivinationResult } from "./divination-result-contract.js";
 
 export const VISUAL_STATE = Object.freeze({
@@ -10,15 +10,24 @@ export const VISUAL_STATE = Object.freeze({
   TEXT_ONLY: "text-only",
 });
 
-export const REPORT_VISUAL_REGISTRY = Object.freeze(Object.fromEntries(REPORT_PAGE_DEFINITIONS.map((definition) => [definition.pageDefinitionId, Object.freeze({
-  pageDefinitionId: definition.pageDefinitionId,
-  visualId: definition.visualId,
-  rendererType: definition.rendererType,
-  required: definition.visualRequired,
-  requiredResultKeys: definition.requiredResultKeys,
-  optionalResultKeys: definition.optionalResultKeys,
-  unavailableReason: definition.unavailableReason,
-})])));
+export const REPORT_VISUAL_REGISTRY = Object.freeze(Object.fromEntries(REPORT_PAGE_DEFINITIONS.map((definition) => {
+  reportVisualTypeFor(definition.rendererType);
+  return [definition.pageDefinitionId, Object.freeze({
+    pageDefinitionId: definition.pageDefinitionId,
+    visualId: definition.visualId,
+    rendererType: definition.rendererType,
+    rendererLabel: definition.rendererLabel,
+    required: definition.visualRequired,
+    requiredResultKeys: definition.requiredResultKeys,
+    optionalResultKeys: definition.optionalResultKeys,
+    unavailableReason: definition.unavailableReason,
+  })];
+})));
+
+export function reportVisualsForRenderer(rendererType) {
+  reportVisualTypeFor(rendererType);
+  return Object.freeze(Object.values(REPORT_VISUAL_REGISTRY).filter((visual) => visual.rendererType === rendererType));
+}
 
 export function resolveReportVisual(pageDefinitionId, result, context = {}) {
   const visual = REPORT_VISUAL_REGISTRY[pageDefinitionId];

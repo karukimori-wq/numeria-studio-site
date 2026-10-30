@@ -50,6 +50,7 @@ assert.ok(appSource.includes("NumeriaNavigationBridge.v3"), "Versioned Numeria a
 assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Versioned Numeria app bundle must contain syntax guard repairs.");
 assert.ok(appSource.includes("numeria-navigation-ready"), "Versioned Numeria app bundle must signal navigation readiness.");
+assert.ok(!appSource.includes('from "./divination-result-contract.js"'), "Injected report availability runtime must not retain an unresolved ESM import.");
 assert.equal((appSource.match(/detail:\{state:"saving"\}/g) || []).length, 2, "Both draft-save entry points must publish saving state.");
 assert.equal((appSource.match(/detail:\{state:"saved"(?:,sessionId:e,snapshot:r)?\}/g) || []).length, 2, "Both successful draft-save paths must publish saved state.");
 assert.ok(appSource.includes('detail:{state:"saved",sessionId:e,snapshot:r}'), "Editor ACK must identify the captured snapshot and Session.");

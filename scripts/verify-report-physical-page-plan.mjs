@@ -29,4 +29,39 @@ assert.equal(paragraphPlan.warnings.length, 0);
 assert.equal(paragraphPlan.physicalPages.length, 2);
 assert.equal(paragraphPlan.physicalPages[0].items[0].paragraphFlow, true);
 assert.equal(paragraphPlan.physicalPages[1].items[0].blockId, "after-text");
+
+const visibilityFormat = {
+  pageSelection: [{ pageDefinitionId: "NUM-01", visible: false }],
+  pages: [
+    { pageId: "fixed", pageDefinitionId: "NUM-01", layoutRegions: [{ regionId: "fixed-region", columns: 1, ratio: "100", columnBlocks: [[{ blockId: "saved-content", type: "body", content: "削除しない本文" }]] }] },
+    { pageId: "free", layoutRegions: [{ regionId: "free-region", columns: 1, ratio: "100", columnBlocks: [[{ blockId: "free-content", type: "body", content: "自由ページ" }]] }] },
+  ],
+};
+const hiddenPlan = createPhysicalPagePlan(visibilityFormat, { "saved-content": 100, "free-content": 100 }, { contentHeightPx: 900 });
+assert.deepEqual(hiddenPlan.physicalPages.map((page) => page.logicalPageId), ["free"]);
+assert.equal(visibilityFormat.pages[0].layoutRegions[0].columnBlocks[0][0].content, "削除しない本文");
+visibilityFormat.pageSelection[0].visible = true;
+const restoredPlan = createPhysicalPagePlan(visibilityFormat, { "saved-content": 100, "free-content": 100 }, { contentHeightPx: 900 });
+assert.deepEqual(restoredPlan.physicalPages.map((page) => page.logicalPageId), ["fixed", "free"]);
+
+const orderedFormat = {
+  pageSelection: [{ pageDefinitionId: "NUM-01", order: 1 }, { pageDefinitionId: "NUM-02", order: 0 }],
+  pages: [
+    { pageId: "fixed-one", pageDefinitionId: "NUM-01", layoutRegions: [{ regionId: "one", columns: 1, columnBlocks: [[{ blockId: "one", type: "body" }]] }] },
+    { pageId: "free-middle", layoutRegions: [{ regionId: "middle", columns: 1, columnBlocks: [[{ blockId: "middle", type: "body" }]] }] },
+    { pageId: "fixed-two", pageDefinitionId: "NUM-02", layoutRegions: [{ regionId: "two", columns: 1, columnBlocks: [[{ blockId: "two", type: "body" }]] }] },
+  ],
+};
+const orderedPlan = createPhysicalPagePlan(orderedFormat, { one: 100, middle: 100, two: 100 }, { contentHeightPx: 900 });
+assert.deepEqual(orderedPlan.physicalPages.map((page) => page.logicalPageId), ["fixed-two", "free-middle", "fixed-one"]);
+
+const methodFormat = {
+  selectedDivination: "numerology",
+  pages: [
+    { pageId: "numerology-fixed", pageDefinitionId: "NUM-01", methodKey: "numerology", layoutRegions: [{ regionId: "num", columns: 1, columnBlocks: [[{ blockId: "num-block", type: "body" }]] }] },
+    { pageId: "tarot-fixed", pageDefinitionId: "TAR-01", methodKey: "tarot", layoutRegions: [{ regionId: "tar", columns: 1, columnBlocks: [[{ blockId: "tar-block", type: "body" }]] }] },
+  ],
+};
+const methodPlan = createPhysicalPagePlan(methodFormat, { "num-block": 100, "tar-block": 100 }, { contentHeightPx: 900 });
+assert.deepEqual(methodPlan.physicalPages.map((page) => page.logicalPageId), ["numerology-fixed"]);
 console.log("Physical A4 page plan contract verified.");
