@@ -25,3 +25,6 @@ The existing generic workspace-state JSON path and report-generation normalizer 
 - R1–R10 remain open: authentication/API/UI, official selection, real D1 integration, APC actual-use evidence, NP fixed-version generation/delivery, events, notifications, operational approvals and staged-release evidence are still required.
 
 Full P0 inventory and Q1–Q240 traceability: `professional-platform-contracts/docs/release-readiness/character-foundation-p0-20261028.md` on the companion Draft PR branch.
+
+## 2026-10-30 API integration
+GET/POST /api/characters and PUT /api/characters/:id are wired, disabled unless CHARACTER_API_ENABLED=1 and AUTH_ENFORCEMENT_MODE=enforce. Verified Clerk subject and direct GE entitlement lookup are required. Only personal workspace and Free/Pro are supported; Business remains unavailable under the current GE contract. Mutation requires bearer auth. Official catalog, duplication endpoint, images, publication/deletion lifecycle and UI remain deferred. New API tests use injected auth/GE adapters; real Clerk/GE/D1 integration is not yet verified.
