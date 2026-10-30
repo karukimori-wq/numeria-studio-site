@@ -9,7 +9,8 @@
     "verify:divination-results": "node scripts/verify-divination-result-contract.mjs",
     "verify:production": "node scripts/verify-production-readiness.mjs && node scripts/verify-workspace-state-production.mjs && node scripts/verify-user-preferences-production.mjs && node scripts/verify-ai-assist-production.mjs && node scripts/verify-admin-preview-production.mjs",
     "verify:custom-domain": "node scripts/verify-custom-domain.mjs",
-    "verify:auth-release": "REQUIRE_CLERK_ENFORCE_READY=1 REQUIRE_AUTH_ENFORCE_MODE=1 node scripts/verify-production-readiness.mjs"
+    "verify:auth-release": "REQUIRE_CLERK_ENFORCE_READY=1 REQUIRE_AUTH_ENFORCE_MODE=1 node scripts/verify-production-readiness.mjs",
+    "test:characters": "node --test scripts/verify-character-store.mjs scripts/verify-character-api.mjs scripts/verify-character-integration.mjs"
   },
   "dependencies": {
     "@clerk/react": "^6.14.8",

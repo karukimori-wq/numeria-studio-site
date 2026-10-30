@@ -1,4 +1,6 @@
 import coreWorker from "./worker.js";
+import { createCharacterApi } from './character-api.js';
+const handleCharacterApi = createCharacterApi({ coreWorker });
 import { REPORT_PAGE_DEFINITION_IDS, reportPageDefinitionsFor } from "./report-page-definitions.js";
 
 const WORKSPACE_STATE_CONTRACT_VERSION = "numeria-d1-workspace-state.v1";
@@ -422,6 +424,7 @@ async function handleUserPreferences(request, env = {}, ctx = null) {
 export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/characters' || url.pathname.startsWith('/api/characters/')) return handleCharacterApi(request, env, ctx);
     if (url.pathname === "/workspace-state/status" && request.method === "GET") {
       return handleWorkspaceStateStatus(env);
     }
