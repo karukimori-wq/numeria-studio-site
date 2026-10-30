@@ -1,14 +1,16 @@
 import { normalizeLayoutId } from "./report-template-contract.js";
+import { createReportVisualView } from "./report-visual-view.js";
 
 const fullWidthRenderers = new Set(["natal-wheel", "destiny-chart", "card-spread"]);
 
-export function createLogicalPageLayout({ layoutId, pageDefinition, title, visual, registeredExplanation, customComment }) {
+export function createLogicalPageLayout({ layoutId, pageDefinition, title, visual, resolvedVisual, registeredExplanation, customComment }) {
   const requestedLayoutId = normalizeLayoutId(layoutId);
   const visualRequired = Boolean(pageDefinition?.visualRequired);
-  const useFullWidth = requestedLayoutId === "standard" || fullWidthRenderers.has(pageDefinition?.rendererType);
+  const useFullWidth = requestedLayoutId === "standard" || !visualRequired || fullWidthRenderers.has(pageDefinition?.rendererType);
+  const visualValue = resolvedVisual === undefined ? visual : createReportVisualView(resolvedVisual);
   const blocks = {
     title: { type: "title", value: title || pageDefinition?.title || "" },
-    visual: visualRequired ? { type: "visual", value: visual, nonSplittable: true } : null,
+    visual: visualRequired ? { type: "visual", value: visualValue, nonSplittable: true } : null,
     registeredExplanation: { type: "registered-explanation", value: registeredExplanation || "" },
     customComment: { type: "custom-comment", value: customComment || "" },
   };
