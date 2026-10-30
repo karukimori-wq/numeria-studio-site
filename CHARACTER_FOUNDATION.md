@@ -28,3 +28,5 @@ Full P0 inventory and Q1–Q240 traceability: `professional-platform-contracts/d
 
 ## 2026-10-30 API integration
 GET/POST /api/characters and PUT /api/characters/:id are wired, disabled unless CHARACTER_API_ENABLED=1 and AUTH_ENFORCEMENT_MODE=enforce. Verified Clerk subject and direct GE entitlement lookup are required. Only personal workspace and Free/Pro are supported; Business remains unavailable under the current GE contract. Mutation requires bearer auth. Official catalog, duplication endpoint, images, publication/deletion lifecycle and UI remain deferred. New API tests use injected auth/GE adapters; real Clerk/GE/D1 integration is not yet verified.
+
+Worker integration test: real JWT RS256 verification and GE adapter code, fixture JWKS/GE transport, real SQLite storage. Expired/tampered JWT, cross-owner updates, GE outage, expired entitlement and storage failure are rejected. This is offline integration evidence, not live Clerk/GE/Cloudflare D1 acceptance.
