@@ -11,6 +11,10 @@ export const DIVINATION_RESULT_REQUIREMENTS = Object.freeze({
 
 // Decorative images and partial form values never make a result confirmed.
 // A calculator must declare its version and a reproducible validation reference.
+function isValidResultItem(item) {
+  return Boolean(item && typeof item.resultKey === "string" && item.data && typeof item.data === "object");
+}
+
 export function validateConfirmedDivinationResult(candidate) {
   const methodKey = String(candidate?.methodKey || "");
   const requiredResultKeys = DIVINATION_RESULT_REQUIREMENTS[methodKey];
@@ -19,7 +23,7 @@ export function validateConfirmedDivinationResult(candidate) {
   if (typeof candidate.calculationVersion !== "string" || !candidate.calculationVersion.trim()) return { ok: false, code: "CALCULATION_VERSION_REQUIRED" };
   if (!Array.isArray(candidate.validationEvidence) || !candidate.validationEvidence.some((item) => typeof item === "string" && item.trim())) return { ok: false, code: "VALIDATION_EVIDENCE_REQUIRED" };
   const results = Array.isArray(candidate.results) ? candidate.results : [];
-  const keys = new Set(results.filter((item) => item && typeof item.resultKey === "string" && item.data && typeof item.data === "object").map((item) => item.resultKey));
+  const keys = new Set(results.filter(isValidResultItem).map((item) => item.resultKey));
   const missing = requiredResultKeys.filter((key) => !keys.has(key));
   return missing.length ? { ok: false, code: "REQUIRED_RESULT_MISSING", missing } : { ok: true, methodKey, requiredResultKeys };
 }
@@ -33,5 +37,5 @@ export function confirmedResultForBinding(source, binding) {
   if (binding?.source !== "confirmed-result") return null;
   const records = Array.isArray(source) ? source : [source];
   const record = records.find((candidate) => candidate?.methodKey === binding.methodKey && validateConfirmedDivinationResult(candidate).ok);
-  return record?.results.find((item) => item?.resultKey === binding.resultKey && item.data && typeof item.data === "object") || null;
+  return record?.results.find((item) => isValidResultItem(item) && item.resultKey === binding.resultKey) || null;
 }
