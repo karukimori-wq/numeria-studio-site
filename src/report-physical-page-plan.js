@@ -52,7 +52,7 @@ export function createPhysicalPagePlan(format, measurements = {}, options = {}) 
   let fixedIndex = 0;
   const logicalPages = visiblePages.map((page) => page.pageDefinitionId ? fixedPages[fixedIndex++] : page);
   for (const logicalPage of logicalPages) {
-    if (!physical || logicalPage.manualBreakBefore) start(logicalPage.pageId, logicalPage.manualBreakBefore ? "manual-break" : "logical-page");
+    if (!physical || physical.logicalPageId !== logicalPage.pageId || logicalPage.manualBreakBefore) start(logicalPage.pageId, logicalPage.manualBreakBefore ? "manual-break" : "logical-page");
     for (const region of logicalPage.layoutRegions || []) {
       // Two-column regions retain their reading order (left then right) when they
       // continue onto a new physical page as a one-column continuation.

@@ -9,6 +9,26 @@ assert.equal(plan.physicalPages[0].items[0].continuationColumns, 2);
 assert.equal(plan.physicalPages[0].items[1].blockId, "right");
 assert.equal(plan.physicalPages[0].items[1].continuationColumns, 2);
 assert.equal(plan.warnings.length, 0);
+for (const height of [100, 600]) {
+  const pages = ["first", "second"].map((pageId) => ({
+    pageId,
+    layoutRegions: [{ regionId: `${pageId}-region`, columns: 2, columnBlocks: [[{ blockId: `${pageId}-left`, type: "body" }], [{ blockId: `${pageId}-right`, type: "body" }]] }],
+  }));
+  const measurements = Object.fromEntries(pages.flatMap((page) => page.layoutRegions[0].columnBlocks.flat().map((block) => [block.blockId, height])));
+  const separate = createPhysicalPagePlan({ pages }, measurements, { contentHeightPx: 900 });
+  assert.deepEqual(separate.physicalPages.map((page) => page.logicalPageId), ["first", "second"]);
+  assert.deepEqual(separate.physicalPages.map((page) => page.reason), ["logical-page", "logical-page"]);
+  for (const page of separate.physicalPages) {
+    assert.deepEqual(page.items.map((item) => item.blockId), [`${page.logicalPageId}-left`, `${page.logicalPageId}-right`]);
+    assert.ok(page.items.every((item) => item.continuationColumns === 2));
+    assert.equal(page.usedHeightPx, height);
+  }
+  assert.equal(separate.warnings.length, 0);
+  pages[1].manualBreakBefore = true;
+  const manual = createPhysicalPagePlan({ pages }, measurements, { contentHeightPx: 900 });
+  assert.equal(manual.physicalPages.length, 2);
+  assert.equal(manual.physicalPages[1].reason, "manual-break");
+}
 const pending = createPhysicalPagePlan(format, {}, { contentHeightPx: 900 });
 assert.equal(pending.warnings[0].code, "MEASUREMENT_REQUIRED");
 
