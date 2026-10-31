@@ -28,3 +28,10 @@ export function confirmedResultRecord(candidate) {
   const validation = validateConfirmedDivinationResult(candidate);
   return validation.ok ? { ...candidate, contractVersion: DIVINATION_RESULT_CONTRACT_VERSION } : null;
 }
+
+export function confirmedResultForBinding(source, binding) {
+  if (binding?.source !== "confirmed-result") return null;
+  const records = Array.isArray(source) ? source : [source];
+  const record = records.find((candidate) => candidate?.methodKey === binding.methodKey && validateConfirmedDivinationResult(candidate).ok);
+  return record?.results.find((item) => item?.resultKey === binding.resultKey && item.data && typeof item.data === "object") || null;
+}
