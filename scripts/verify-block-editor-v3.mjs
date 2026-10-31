@@ -4,13 +4,13 @@ import vm from "node:vm";
 import { confirmedResultForBinding } from "../src/divination-result-contract.js";
 
 const runtime = readFileSync("scripts/block-editor-runtime.js", "utf8");
-const previewFunction = runtime.slice(runtime.indexOf("function resultPreview("), runtime.indexOf("function renderBlock("));
+const previewFunction = runtime.slice(runtime.indexOf("function isResultBlock("), runtime.indexOf("function renderBlock("));
 const numericBlock = { type: "numerology-result", dataBinding: { source: "confirmed-result", methodKey: "numerology", resultKey: "core_numbers" } };
 const numericResult = { methodKey: "numerology", status: "confirmed", calculationVersion: "fixture.v1", validationEvidence: ["fixture"], results: [{ resultKey: "core_numbers", data: { lifePath: 7, destiny: 3 } }] };
 const tarotBlock = { type: "tarot-cards", dataBinding: { source: "confirmed-result", methodKey: "tarot", resultKey: "spread" } };
 const tarotResult = { ...numericResult, methodKey: "tarot", results: [{ resultKey: "spread", data: { cards: [{ cardName: "The Sun", orientation: "reversed" }] } }] };
 function preview(source, block) {
-  return vm.runInNewContext(`${previewFunction};resultPreview(block)`, { block, confirmedResultForBinding, confirmedResultSource: () => source, T: { "numerology-result": "数秘術の結果", "tarot-cards": "タロットカード" }, esc: (value) => String(value) });
+  return vm.runInNewContext(`${previewFunction};renderResultBlock(block)`, { block, confirmedResultForBinding, confirmedResultSource: () => source, T: { "numerology-result": "数秘術の結果", "tarot-cards": "タロットカード" }, esc: (value) => String(value) });
 }
 assert.match(preview(numericResult, numericBlock), /<dd>7<\/dd>/);
 assert.match(preview([numericResult, tarotResult], tarotBlock), /The Sun（reversed）/);
@@ -18,6 +18,28 @@ for (const source of [null, tarotResult, { ...numericResult, status: "draft" }, 
   assert.match(preview(source, numericBlock), /nbe-result-empty/);
 }
 assert.equal(confirmedResultForBinding(numericResult, { ...numericBlock.dataBinding, source: "draft" }), null);
+const printFunction = runtime.slice(runtime.indexOf("function print(){"), runtime.indexOf('document.addEventListener("click",event=>'));
+function printResult(source, block, blockers = []) {
+  let html = "";
+  const printedBlock = { ...block, blockId: "result", content: "stale cached result" };
+  vm.runInNewContext(`${previewFunction};${printFunction};print()`, {
+    data: { pages: [{ layoutRegions: [{ columnBlocks: [[printedBlock]] }] }] },
+    pageDefinitionsReady: true, pageDefinitions: [], status: "", render() {},
+    reportPublicationBlockers: () => blockers,
+    measurePhysicalPlan: () => ({ physicalPages: [{ logicalPageId: "page", items: [{ regionId: "region", blockId: "result", sourceColumns: 1, columnIndex: 0 }] }] }),
+    confirmedResultForBinding, confirmedResultSource: () => source,
+    T: { "numerology-result": "数秘術の結果", "tarot-cards": "タロットカード" },
+    esc: (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+    window: { open: () => ({ document: { write: (value) => { html = value; }, close() {} } }) },
+  });
+  return html;
+}
+assert.match(printResult(numericResult, numericBlock), /<dd>7<\/dd>/);
+assert.match(printResult(tarotResult, tarotBlock), /The Sun（reversed）/);
+assert.doesNotMatch(printResult(numericResult, numericBlock), /stale cached result/);
+assert.match(printResult({ ...numericResult, status: "draft" }, numericBlock), /nbe-result-empty/);
+assert.match(printResult({ ...tarotResult, results: [{ resultKey: "spread", data: { cards: [{ cardName: "<script>bad</script>" }] } }] }, tarotBlock), /&lt;script&gt;bad&lt;\/script&gt;/);
+assert.equal(printResult(numericResult, numericBlock, [{ title: "blocked", reason: "missing evidence" }]), "");
 const pageComment = readFileSync("src/report-page-comment.js", "utf8");
 const cloudPatch = readFileSync("scripts/patch-block-editor-cloud-sync.mjs", "utf8");
 const printPatch = readFileSync("scripts/patch-block-editor-print.mjs", "utf8");
