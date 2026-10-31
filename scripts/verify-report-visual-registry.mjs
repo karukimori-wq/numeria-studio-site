@@ -39,3 +39,19 @@ const ready = resolveReportVisual("NUM-01", confirmed, { items: [7] });
 assert.equal(ready.state, VISUAL_STATE.READY);
 assert.equal(reportVisualSnapshotValue(ready).visualId, "visual.num.01.v1");
 console.log("Visual registry and explicit result states verified.");
+
+const methodKeys = [...new Set(REPORT_PAGE_DEFINITIONS.map((definition) => definition.methodKey))];
+for (const definition of REPORT_PAGE_DEFINITIONS.filter((item) => item.visualRequired)) {
+  for (const methodKey of methodKeys) {
+    const sourceDefinition = REPORT_PAGE_DEFINITIONS.find((item) => item.methodKey === methodKey);
+    const result = { ...confirmed, methodKey, results: sourceDefinition.requiredResultKeys.map((resultKey) => ({ resultKey, data: { fixture: true } })) };
+    const resolved = resolveReportVisual(definition.pageDefinitionId, result);
+    assert.equal(resolved.state, methodKey === definition.methodKey ? VISUAL_STATE.READY : VISUAL_STATE.CONTRACT_UNCONNECTED);
+    if (methodKey !== definition.methodKey) {
+      assert.equal(resolved.reason, "RESULT_METHOD_MISMATCH");
+      assert.equal("data" in resolved, false);
+      assert.equal(reportVisualSnapshotValue(resolved), null);
+      assert.equal(resolveReportVisual(definition.pageDefinitionId, result, { items: [] }).state, VISUAL_STATE.CONTRACT_UNCONNECTED);
+    }
+  }
+}

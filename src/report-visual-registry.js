@@ -14,6 +14,7 @@ export const REPORT_VISUAL_REGISTRY = Object.freeze(Object.fromEntries(REPORT_PA
   reportVisualTypeFor(definition.rendererType);
   return [definition.pageDefinitionId, Object.freeze({
     pageDefinitionId: definition.pageDefinitionId,
+    methodKey: definition.methodKey,
     visualId: definition.visualId,
     rendererType: definition.rendererType,
     rendererLabel: definition.rendererLabel,
@@ -37,6 +38,7 @@ export function resolveReportVisual(pageDefinitionId, result, context = {}) {
   if (!result) return { state: VISUAL_STATE.NOT_CALCULATED, reason: "result-not-calculated", visual };
   const validation = validateConfirmedDivinationResult(result);
   if (!validation.ok) return { state: VISUAL_STATE.CONTRACT_UNCONNECTED, reason: validation.code, missing: validation.missing || [], visual };
+  if (validation.methodKey !== visual.methodKey) return { state: VISUAL_STATE.CONTRACT_UNCONNECTED, reason: "RESULT_METHOD_MISMATCH", visual };
   const items = Array.isArray(context.items) ? context.items : null;
   if (items && items.length === 0) return { state: VISUAL_STATE.EMPTY, reason: "confirmed-zero-items", visual, data: [] };
   return { state: VISUAL_STATE.READY, visual, data: result };
