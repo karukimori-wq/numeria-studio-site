@@ -18,6 +18,28 @@ for (const source of [null, tarotResult, { ...numericResult, status: "draft" }, 
   assert.match(preview(source, numericBlock), /nbe-result-empty/);
 }
 assert.equal(confirmedResultForBinding(numericResult, { ...numericBlock.dataBinding, source: "draft" }), null);
+const printFunction = runtime.slice(runtime.indexOf("function print(){"), runtime.indexOf('document.addEventListener("click",event=>'));
+function printResult(source, block, blockers = []) {
+  let html = "";
+  const printedBlock = { ...block, blockId: "result", content: "stale cached result" };
+  vm.runInNewContext(`${previewFunction};${printFunction};print()`, {
+    data: { pages: [{ layoutRegions: [{ columnBlocks: [[printedBlock]] }] }] },
+    pageDefinitionsReady: true, pageDefinitions: [], status: "", render() {},
+    reportPublicationBlockers: () => blockers,
+    measurePhysicalPlan: () => ({ physicalPages: [{ logicalPageId: "page", items: [{ regionId: "region", blockId: "result", sourceColumns: 1, columnIndex: 0 }] }] }),
+    confirmedResultForBinding, confirmedResultSource: () => source,
+    T: { "numerology-result": "数秘術の結果", "tarot-cards": "タロットカード" },
+    esc: (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+    window: { open: () => ({ document: { write: (value) => { html = value; }, close() {} } }) },
+  });
+  return html;
+}
+assert.match(printResult(numericResult, numericBlock), /<dd>7<\/dd>/);
+assert.match(printResult(tarotResult, tarotBlock), /The Sun（reversed）/);
+assert.doesNotMatch(printResult(numericResult, numericBlock), /stale cached result/);
+assert.match(printResult({ ...numericResult, status: "draft" }, numericBlock), /nbe-result-empty/);
+assert.match(printResult({ ...tarotResult, results: [{ resultKey: "spread", data: { cards: [{ cardName: "<script>bad</script>" }] } }] }, tarotBlock), /&lt;script&gt;bad&lt;\/script&gt;/);
+assert.equal(printResult(numericResult, numericBlock, [{ title: "blocked", reason: "missing evidence" }]), "");
 const pageComment = readFileSync("src/report-page-comment.js", "utf8");
 const cloudPatch = readFileSync("scripts/patch-block-editor-cloud-sync.mjs", "utf8");
 const printPatch = readFileSync("scripts/patch-block-editor-print.mjs", "utf8");
