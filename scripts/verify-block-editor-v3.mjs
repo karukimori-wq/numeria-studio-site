@@ -19,8 +19,9 @@ for (const source of [null, tarotResult, { ...numericResult, status: "draft" }, 
 }
 assert.equal(confirmedResultForBinding(numericResult, { ...numericBlock.dataBinding, source: "draft" }), null);
 const printFunction = runtime.slice(runtime.indexOf("function print(){"), runtime.indexOf('document.addEventListener("click",event=>'));
-function printResult(source, block, blockers = []) {
+function printResult(source, block, blockers = [], popupBlocked = false) {
   let html = "";
+  let detached = false;
   const printedBlock = { ...block, blockId: "result", content: "stale cached result" };
   vm.runInNewContext(`${previewFunction};${printFunction};print()`, {
     data: { pages: [{ layoutRegions: [{ columnBlocks: [[printedBlock]] }] }] },
@@ -30,7 +31,12 @@ function printResult(source, block, blockers = []) {
     confirmedResultForBinding, confirmedResultSource: () => source,
     T: { "numerology-result": "数秘術の結果", "tarot-cards": "タロットカード" },
     esc: (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-    window: { open: () => ({ document: { write: (value) => { html = value; }, close() {} } }) },
+    window: { open: (url, target, features) => {
+      assert.equal(url, "about:blank");
+      assert.equal(target, "_blank");
+      if (popupBlocked || /noopener|noreferrer/.test(features || "")) return null;
+      return { set opener(value) { assert.equal(value, null); detached = true; }, document: { write: (value) => { assert.equal(detached, true); html = value; }, close() {} } };
+    } },
   });
   return html;
 }
@@ -40,6 +46,7 @@ assert.doesNotMatch(printResult(numericResult, numericBlock), /stale cached resu
 assert.match(printResult({ ...numericResult, status: "draft" }, numericBlock), /nbe-result-empty/);
 assert.match(printResult({ ...tarotResult, results: [{ resultKey: "spread", data: { cards: [{ cardName: "<script>bad</script>" }] } }] }, tarotBlock), /&lt;script&gt;bad&lt;\/script&gt;/);
 assert.equal(printResult(numericResult, numericBlock, [{ title: "blocked", reason: "missing evidence" }]), "");
+assert.equal(printResult(numericResult, numericBlock, [], true), "");
 const pageComment = readFileSync("src/report-page-comment.js", "utf8");
 const cloudPatch = readFileSync("scripts/patch-block-editor-cloud-sync.mjs", "utf8");
 const printPatch = readFileSync("scripts/patch-block-editor-print.mjs", "utf8");
