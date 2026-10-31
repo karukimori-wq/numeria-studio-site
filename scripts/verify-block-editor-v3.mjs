@@ -1,7 +1,23 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import vm from "node:vm";
+import { confirmedResultForBinding } from "../src/divination-result-contract.js";
 
 const runtime = readFileSync("scripts/block-editor-runtime.js", "utf8");
+const previewFunction = runtime.slice(runtime.indexOf("function resultPreview("), runtime.indexOf("function renderBlock("));
+const numericBlock = { type: "numerology-result", dataBinding: { source: "confirmed-result", methodKey: "numerology", resultKey: "core_numbers" } };
+const numericResult = { methodKey: "numerology", status: "confirmed", calculationVersion: "fixture.v1", validationEvidence: ["fixture"], results: [{ resultKey: "core_numbers", data: { lifePath: 7, destiny: 3 } }] };
+const tarotBlock = { type: "tarot-cards", dataBinding: { source: "confirmed-result", methodKey: "tarot", resultKey: "spread" } };
+const tarotResult = { ...numericResult, methodKey: "tarot", results: [{ resultKey: "spread", data: { cards: [{ cardName: "The Sun", orientation: "reversed" }] } }] };
+function preview(source, block) {
+  return vm.runInNewContext(`${previewFunction};resultPreview(block)`, { block, confirmedResultForBinding, confirmedResultSource: () => source, T: { "numerology-result": "数秘術の結果", "tarot-cards": "タロットカード" }, esc: (value) => String(value) });
+}
+assert.match(preview(numericResult, numericBlock), /<dd>7<\/dd>/);
+assert.match(preview([numericResult, tarotResult], tarotBlock), /The Sun（reversed）/);
+for (const source of [null, tarotResult, { ...numericResult, status: "draft" }, { ...numericResult, calculationVersion: "" }, { ...numericResult, validationEvidence: [] }]) {
+  assert.match(preview(source, numericBlock), /nbe-result-empty/);
+}
+assert.equal(confirmedResultForBinding(numericResult, { ...numericBlock.dataBinding, source: "draft" }), null);
 const pageComment = readFileSync("src/report-page-comment.js", "utf8");
 const cloudPatch = readFileSync("scripts/patch-block-editor-cloud-sync.mjs", "utf8");
 const printPatch = readFileSync("scripts/patch-block-editor-print.mjs", "utf8");
