@@ -13,6 +13,7 @@ JSON正本: https://app.notion.com/p/3fee71121fed8162802ac12c7097d692
 - 82図表ページの互換分類対応。TAR-02はFIG-CARDS、NUM-04はRELATION＋TIME。
 - 確定結果の `figures: [{pageDefinitionId, figure}]` を実ページへ接続。計算版・結果revision・対象者・ページ証拠を照合する。
 - 編集、印刷前測定、ブラウザ印刷で同じ描画を使用。sample、未接続、版違い等は発行を阻止。
+- 図表は保存データと別の印刷用コピーで独立項目へ展開。タイトルとの合算による大型図表の発行停止を避ける。表・カード一覧等は継続可能、配置図は単一図として扱う。
 - JSON正本の12例はそのまま `exampleOnly:true` で検査専用fixtureへ収録。正式出力は拒否。
 - サンプル確認用HTML: `node scripts/generate-figure-gallery.mjs` → `output/f3/index.html`。
 - 6占術の色は内部既定値。承認済み正式デザインセットの証拠とはしない。
@@ -23,7 +24,7 @@ JSON正本: https://app.notion.com/p/3fee71121fed8162802ac12c7097d692
 | --- | --- |
 | 12方式の実ブラウザ画像 | 未検証。Computer Useが Local browser use is disabled in Work settings を返した |
 | 実計算データ12方式の表示 | 未検証。今回の入力例はサンプル・架空値・部分カバレッジを含む。計算アダプターはF4依存 |
-| 完全ホロスコープ・命盤 | 未達。例は6天体／主星のみ。完全図へ昇格させない |
+| 完全ホロスコープ・命盤 | 未達。例は6天体／主星のみ。完全入力の承認済みschemaがないため、この2方式のready正式出力はFULL_CHART_CONTRACT_UNCONNECTEDで拒否。サンプル描画のみ |
 | 正式カード画像素材 | 未接続。assetRefを任意URLとして使用せず、今回は正逆ラベル付きカード枠 |
 | 正式デザインセット | 要照合。内部配色を承認済みと扱わない |
 | スマホ・A4実物、最小寸法・分割規則 | 未検証。自動HTML検査と実ブラウザ受入を区別する |

@@ -1,6 +1,6 @@
 import { REPORT_FIGURE_TYPES } from "./report-figure-types.js";
 
-const figureEscape = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+export const figureEscape = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 const textValue = value => typeof value === "string" || (typeof value === "number" && Number.isFinite(value));
 const nonempty = value => typeof value === "string" && value.trim().length > 0;
 const listOf = (value, predicate) => Array.isArray(value) && value.every(predicate);
@@ -28,11 +28,18 @@ const figureDataChecks = {
 
 export function validateReportFigure(figure, { allowExample = false } = {}) {
   if (!figure || figure.schemaVersion !== "ns.figure.v1" || !Object.hasOwn(REPORT_FIGURE_TYPES, figure.type)) return { ok: false, code: "FIGURE_CONTRACT_INVALID" };
+  if (typeof figureDataChecks[figure.type] !== "function" || typeof figureRenderers[figure.type] !== "function") return { ok: false, code: "FIGURE_RENDERER_UNCONNECTED" };
   if (figure.exampleOnly === true && !allowExample) return { ok: false, code: "FIGURE_SAMPLE_FORBIDDEN" };
+  if (figure.exampleOnly !== undefined && typeof figure.exampleOnly !== "boolean") return { ok: false, code: "FIGURE_SAMPLE_FLAG_INVALID" };
   if (!listOf(figure.subjectRefs, nonempty) || !figure.subjectRefs.length || !nonempty(figure.resultRevision) || !nonempty(figure.calculationVersion) || !nonempty(figure.alt)) return { ok: false, code: "FIGURE_PROVENANCE_REQUIRED" };
   if (!["ready", "empty", "missing_input", "unsupported", "error"].includes(figure.state)) return { ok: false, code: "FIGURE_STATE_INVALID" };
   if (figure.state === "error" && (!nonempty(figure.error?.code) || !nonempty(figure.error?.message))) return { ok: false, code: "FIGURE_ERROR_INVALID" };
   if (figure.state === "ready" && (!figure.data || !figureDataChecks[figure.type](figure.data))) return { ok: false, code: "FIGURE_DATA_INVALID" };
+  // The approved JSON only defines partial examples for these two modes.
+  // Do not invent a full-chart schema or promote a renamed sample to production.
+  if (!allowExample && figure.state === "ready" && ["FIG-ASTRO", "FIG-ZIW"].includes(figure.type)) return { ok: false, code: "FULL_CHART_CONTRACT_UNCONNECTED" };
+  if (figure.state === "ready" && figure.data.legend !== undefined && !listOf(figure.data.legend, item => item && nonempty(item.kind) && nonempty(item.label))) return { ok: false, code: "FIGURE_LEGEND_INVALID" };
+  if (figure.state === "ready" && figure.type === "FIG-GEO" && figure.data.assessment.yearReasons !== undefined && !listOf(figure.data.assessment.yearReasons, nonempty)) return { ok: false, code: "FIGURE_DATA_INVALID" };
   if (figure.state === "empty" && !["FIG-RELATION", "FIG-TIME", "FIG-TABLE", "FIG-DIRECTION", "FIG-GEO"].includes(figure.type)) return { ok: false, code: "FIGURE_EMPTY_FORBIDDEN" };
   return { ok: true };
 }

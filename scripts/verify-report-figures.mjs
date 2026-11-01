@@ -3,7 +3,10 @@ import { readFileSync } from "node:fs";
 import { REPORT_FIGURE_TYPES, reportFigureTypesForPage } from "../src/report-figure-types.js";
 import { REPORT_PAGE_DEFINITIONS } from "../src/report-page-definitions.js";
 import { renderReportFigure, validateReportFigure } from "../src/report-figure-renderer.js";
-import { resolveReportPageFigures, renderReportPageFigures } from "../src/report-page-figures.js";
+import { resolveReportPageFigures, renderReportPageFigures, createReportFigurePrintFormat } from "../src/report-page-figures.js";
+import { createPhysicalPagePlan } from "../src/report-physical-page-plan.js";
+import vm from "node:vm";
+import { REPORT_FIGURE_CSS } from "../src/report-figure-renderer.js";
 
 const fixtures = JSON.parse(readFileSync("tests/fixtures/report-figures.notion.json", "utf8"));
 assert.equal(Object.keys(REPORT_FIGURE_TYPES).length, 12);
@@ -50,3 +53,25 @@ for (const invalid of [
   assert.doesNotMatch(renderReportPageFigures(definition, invalid), /<svg|<dl/);
 }
 assert.equal(renderReportPageFigures(REPORT_PAGE_DEFINITIONS.find(d => d.pageDefinitionId === "TAR-05"), record), "");
+const runtime = readFileSync("scripts/block-editor-runtime.js", "utf8");
+const printSupport = runtime.slice(runtime.indexOf("const PRINT_PAGE_CSS="), runtime.indexOf("function measurePhysicalPlan("));
+const printedFigure = vm.runInNewContext(`${printSupport};renderPrintBlock({type:"body",reportFigure:figure})`, {
+  figure, REPORT_FIGURE_CSS, renderReportFigure, isResultBlock: () => false, esc: value => value,
+});
+assert.match(printedFigure, /data-figure-type="FIG-RESULT"/);
+const format = { pages: [{ pageId: "p", pageDefinitionId: "NUM-01", layoutRegions: [{ regionId: "r", columns: 1, columnBlocks: [[{ blockId: "title", type: "page-title", content: "test" }]] }] }] };
+const snapshot = JSON.stringify(format);
+const printFormat = createReportFigurePrintFormat(format, [definition], record);
+assert.equal(JSON.stringify(format), snapshot);
+const blocks = printFormat.pages[0].layoutRegions.flatMap(r => r.columnBlocks.flat());
+assert.equal(blocks.length, 2);
+assert.equal(blocks[0].type, "page-title");
+assert.equal(blocks[1].reportFigure.type, "FIG-RESULT");
+const plan = createPhysicalPagePlan(printFormat, { title: 100, [blocks[1].blockId]: 850 }, { contentHeightPx: 900 });
+assert.equal(plan.warnings.length, 0);
+assert.equal(plan.physicalPages.length, 2);
+assert.equal(plan.physicalPages[1].items[0].blockId, blocks[1].blockId);
+for (const type of ["FIG-ASTRO", "FIG-ZIW"]) {
+  const partial = { ...fixtures.find(f => f.type === type), exampleOnly: false };
+  assert.equal(validateReportFigure(partial).code, "FULL_CHART_CONTRACT_UNCONNECTED");
+}

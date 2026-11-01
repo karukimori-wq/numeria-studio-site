@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 import { confirmedResultForBinding } from "../src/divination-result-contract.js";
 import { REPORT_FIGURE_CSS } from "../src/report-figure-renderer.js";
+import { createReportFigurePrintFormat } from "../src/report-page-figures.js";
 
 const runtime = readFileSync("scripts/block-editor-runtime.js", "utf8");
 const previewFunction = runtime.slice(runtime.indexOf("function isResultBlock("), runtime.indexOf("function renderBlock("));
@@ -27,7 +28,7 @@ function printResult(source, block, blockers = [], popupBlocked = false) {
   const printedBlock = { ...block, blockId: "result", content: "stale cached result" };
   vm.runInNewContext(`${previewFunction};${printSupport};${printFunction};print()`, {
     data: { pages: [{ layoutRegions: [{ columnBlocks: [[printedBlock]] }] }] },
-    pageDefinitionsReady: true, pageDefinitions: [], status: "", render() {}, REPORT_FIGURE_CSS,
+    pageDefinitionsReady: true, pageDefinitions: [], status: "", render() {}, REPORT_FIGURE_CSS, createReportFigurePrintFormat,
     reportPublicationBlockers: () => blockers,
     measurePhysicalPlan: () => ({ physicalPages: [{ logicalPageId: "page", items: [{ regionId: "region", blockId: "result", sourceColumns: 1, columnIndex: 0 }] }] }),
     confirmedResultForBinding, confirmedResultSource: () => source,
@@ -62,10 +63,10 @@ for (const fails of [false, true]) {
     },
     contentWindow: { getComputedStyle: () => ({ paddingTop: "75.59", paddingBottom: "75.59" }) },
   };
-  const context = { data: measuredFormat, document: { createElement: () => frame, body: { append() {} } }, esc: (value) => value,
+  const context = { data: measuredFormat, pageDefinitions: [], confirmedResultSource:()=>null, createReportFigurePrintFormat, document: { createElement: () => frame, body: { append() {} } }, esc: (value) => value,
     REPORT_FIGURE_CSS, window: { NumeriaPhysicalPagePlan: { createPhysicalPagePlan(format, heights, options) {
       measured = true;
-      assert.equal(format, measuredFormat);
+      assert.deepEqual(JSON.parse(JSON.stringify(format)), measuredFormat);
       assert.deepEqual({ ...heights }, { opened: 100, unopened: 200 });
       assert.ok(options.contentHeightPx > 970 && options.contentHeightPx < 972);
       if (fails) throw new Error("measurement failure");
@@ -165,7 +166,7 @@ assert.match(runtime, /function renderDefinitionCatalog\(definitions\)/);
 assert.match(runtime, /function renderDefinitionRow\(definition\)/);
 assert.match(runtime, /items\.map\(renderDefinitionRow\)\.join\(""\)/);
 assert.match(runtime, /function renderFixedPageVisualSlot\(page\)/);
-assert.match(runtime, /createReportVisualSlot\(definition,assessReportPageAvailability\(definition,confirmedResultSource\(\)\)\)/);
+assert.match(runtime, /if\(!definition\.visualRequired\)return ""/);
 assert.match(runtime, /data-report-visual-slot/);
 assert.match(runtime, /renderReportPageFigures\(definition,confirmedResultSource\(\)\)/);
 assert.match(runtime, /buildReportPageCatalogView\(definitions\)/);
