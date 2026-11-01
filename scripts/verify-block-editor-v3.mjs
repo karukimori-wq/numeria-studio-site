@@ -19,11 +19,12 @@ for (const source of [null, tarotResult, { ...numericResult, status: "draft" }, 
 }
 assert.equal(confirmedResultForBinding(numericResult, { ...numericBlock.dataBinding, source: "draft" }), null);
 const printFunction = runtime.slice(runtime.indexOf("function print(){"), runtime.indexOf('document.addEventListener("click",event=>'));
+const printSupport = runtime.slice(runtime.indexOf("const PRINT_PAGE_CSS="), runtime.indexOf("function measurePhysicalPlan("));
 function printResult(source, block, blockers = [], popupBlocked = false) {
   let html = "";
   let detached = false;
   const printedBlock = { ...block, blockId: "result", content: "stale cached result" };
-  vm.runInNewContext(`${previewFunction};${printFunction};print()`, {
+  vm.runInNewContext(`${previewFunction};${printSupport};${printFunction};print()`, {
     data: { pages: [{ layoutRegions: [{ columnBlocks: [[printedBlock]] }] }] },
     pageDefinitionsReady: true, pageDefinitions: [], status: "", render() {},
     reportPublicationBlockers: () => blockers,
@@ -47,6 +48,37 @@ assert.match(printResult({ ...numericResult, status: "draft" }, numericBlock), /
 assert.match(printResult({ ...tarotResult, results: [{ resultKey: "spread", data: { cards: [{ cardName: "<script>bad</script>" }] } }] }, tarotBlock), /&lt;script&gt;bad&lt;\/script&gt;/);
 assert.equal(printResult(numericResult, numericBlock, [{ title: "blocked", reason: "missing evidence" }]), "");
 assert.equal(printResult(numericResult, numericBlock, [], true), "");
+const measurementFunction = runtime.slice(runtime.indexOf("function measurePhysicalPlan("), runtime.indexOf("function print(){"));
+const measuredFormat = { pages: ["opened", "unopened"].map((pageId) => ({ pageId, layoutRegions: [{ columns: 1, columnBlocks: [[{ blockId: pageId, type: "body", content: pageId }]] }] })) };
+const beforeMeasurement = JSON.stringify(measuredFormat);
+for (const fails of [false, true]) {
+  let removed = false, markup = "", measured = false;
+  const frame = {
+    style: {}, setAttribute() {}, remove() { removed = true; },
+    contentDocument: { open() {}, write(value) { markup = value; }, close() {},
+      querySelector() { return {}; },
+      querySelectorAll() { return ["opened", "unopened"].map((id, i) => ({ dataset: { printMeasure: id }, getBoundingClientRect: () => ({ height: 100 + i * 100 }) })); },
+    },
+    contentWindow: { getComputedStyle: () => ({ paddingTop: "75.59", paddingBottom: "75.59" }) },
+  };
+  const context = { data: measuredFormat, document: { createElement: () => frame, body: { append() {} } }, esc: (value) => value,
+    window: { NumeriaPhysicalPagePlan: { createPhysicalPagePlan(format, heights, options) {
+      measured = true;
+      assert.equal(format, measuredFormat);
+      assert.deepEqual({ ...heights }, { opened: 100, unopened: 200 });
+      assert.ok(options.contentHeightPx > 970 && options.contentHeightPx < 972);
+      if (fails) throw new Error("measurement failure");
+      return { physicalPages: [], warnings: [] };
+    } } },
+  };
+  if (fails) assert.throws(() => vm.runInNewContext(`${previewFunction};${printSupport};${measurementFunction};measurePhysicalPlan()`, context), /measurement failure/);
+  else vm.runInNewContext(`${previewFunction};${printSupport};${measurementFunction};measurePhysicalPlan()`, context);
+  assert.equal(measured, true);
+  assert.equal(removed, true);
+  assert.match(markup, /data-print-measure="unopened"/);
+  assert.match(markup, /width:210mm/);
+  assert.equal(JSON.stringify(measuredFormat), beforeMeasurement);
+}
 const pageComment = readFileSync("src/report-page-comment.js", "utf8");
 const cloudPatch = readFileSync("scripts/patch-block-editor-cloud-sync.mjs", "utf8");
 const printPatch = readFileSync("scripts/patch-block-editor-print.mjs", "utf8");
