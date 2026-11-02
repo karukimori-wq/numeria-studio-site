@@ -33,3 +33,5 @@ Worker integration test: real JWT RS256 verification and GE adapter code, fixtur
 
 ## Official catalog (2026-11-02)
 GET /api/characters/official exposes only published catalog fields (no hidden settings). POST /api/characters/duplicate accepts name and source ID/version only, resolves the published server source and requires Pro. Official versions are immutable by SQL triggers; publication pointers are separate. Stale/stopped sources are rejected. Existing copies retain inherited private values. Migration 0006 is local-only; no approved catalog data is seeded. Operator catalog publishing, Free selection persistence, UI and live integration remain pending.
+
+Official selection: GET/PUT /api/characters/selection persists an owner-scoped reference for Free/Pro. PUT requires expectedRevision (0 initially). Publication validation and CAS use one SQL statement. GET reports available=false after update/stop and never silently replaces the selected version. This is a preference, not an order-fixed version or generation authorization. UI/live integration remain pending.

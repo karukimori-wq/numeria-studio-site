@@ -1,6 +1,7 @@
 import { CharacterStore, D1CharacterRepository } from './character-store.js';
 import { fetchGrowthSubscriptionEntitlement } from './growth-subscription-source.js';
 import { D1OfficialCharacterCatalog } from './official-character-catalog.js';
+import { D1CharacterSelection } from './character-selection.js';
 
 const reply = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
 // Personal workspace only until verified organization membership is available.
@@ -24,6 +25,7 @@ export function createCharacterApi({ coreWorker, entitlement = fetchGrowthSubscr
       const scope = { workspaceId, userId, planId: e.planId };
       const url = new URL(request.url);
       if (url.search) return reply(400, { errorCode: 'CHARACTER_QUERY_NOT_SUPPORTED' });
+      if (request.method === 'GET' && url.pathname === '/api/characters/selection') return reply(200, { selection: await new D1CharacterSelection(db).read(scope) });
       if (request.method === 'GET' && url.pathname === '/api/characters/official') return reply(200, { characters: await (catalog || new D1OfficialCharacterCatalog(db)).list() });
       if (request.method === 'GET' && url.pathname === '/api/characters') return reply(200, { characters: await store.list(scope) });
       if (!['POST', 'PUT'].includes(request.method)) return reply(405, { errorCode: 'METHOD_NOT_ALLOWED' });
@@ -32,6 +34,7 @@ export function createCharacterApi({ coreWorker, entitlement = fetchGrowthSubscr
       if (!/^Bearer\s+\S+$/i.test(request.headers.get('authorization') || '')) return reply(401, { errorCode: 'BEARER_REQUIRED' });
       const raw = await request.text(); if (raw.length > 8192) return reply(413, { errorCode: 'BODY_TOO_LARGE' });
       let body; try { body = JSON.parse(raw); } catch { return reply(400, { errorCode: 'INVALID_JSON' }); }
+      if (request.method === 'PUT' && url.pathname === '/api/characters/selection') return reply(200, { selection: await new D1CharacterSelection(db).save(scope, body) });
       if (request.method === 'POST' && url.pathname === '/api/characters/duplicate') {
         if (!body || Array.isArray(body) || Object.keys(body).some(k => !['name', 'sourceCharacterId', 'sourceCharacterVersion'].includes(k)) || !['sourceCharacterId', 'sourceCharacterVersion'].every(k => typeof body[k] === 'string' && body[k].trim())) return reply(400, { errorCode: 'CHARACTER_INPUT_INVALID' });
         if (scope.planId === 'free') return reply(403, { errorCode: 'CHARACTER_PLAN_REQUIRED' });
