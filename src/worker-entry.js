@@ -1,5 +1,6 @@
 import coreWorker from "./worker.js";
 import { REPORT_PAGE_DEFINITION_IDS, reportPageDefinitionsFor } from "./report-page-definitions.js";
+import { reportResultReferenceFor } from "./report-result-references.js";
 
 const WORKSPACE_STATE_CONTRACT_VERSION = "numeria-d1-workspace-state.v1";
 const USER_PREFERENCES_CONTRACT_VERSION = "numeria-d1-user-preferences.v1";
@@ -243,7 +244,7 @@ async function handleReportPageDefinitions(request, env = {}, ctx = null) {
     status: "success",
     methodKey,
     planId,
-    definitions: reportPageDefinitionsFor(methodKey, planId),
+    definitions: reportPageDefinitionsFor(methodKey, planId).map(definition => ({ ...definition, resultReference: reportResultReferenceFor(definition.pageDefinitionId) })),
     sourceOfTruth: "numeria-report-page-catalog",
   });
 }
