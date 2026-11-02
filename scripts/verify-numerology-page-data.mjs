@@ -76,13 +76,15 @@ const runtime = readFileSync("scripts/block-editor-runtime.js", "utf8");
 const start = runtime.indexOf('  if(settings&&data.selectedDivination==="numerology"');
 const end = runtime.indexOf('  if(settings&&!settings.querySelector("[data-v3-divination-visuals]"))', start);
 const inserted = [];
+const previewValues = { innerHTML: "" }, nameForm = {};
 vm.runInNewContext(runtime.slice(start, end), {
   settings: { querySelector: () => false, append: item => inserted.push(item) }, data: { selectedDivination: "numerology" },
-  document: { createElement: () => ({ dataset: {} }) }, window: { NumeriaNavigation: { getReadingSnapshot: () => snapshot } },
+  document: { createElement: () => ({ dataset: {}, querySelector: selector => selector.includes("calculation-values") ? previewValues : nameForm }) }, window: { NumeriaNavigation: { getReadingSnapshot: () => snapshot } },
+  mountNumerologyNameForm: target => assert.equal(target, nameForm),
   numerologyPageDataFromReading, renderNumerologyCalculationPreview, pageDefinitions: definitions,
 });
 assert.equal(inserted.length, 1);
-assert.match(inserted[0].innerHTML, /2026-11-01/);
+assert.match(previewValues.innerHTML, /2026-11-01/);
 assert.match(inserted[0].innerHTML, /計算プレビュー/);
-assert.match(inserted[0].innerHTML, /正式発行はできません/);
+assert.match(previewValues.innerHTML, /正式発行はできません/);
 console.log("Numerology: 14 page projections, peak/challenge boundaries, pair inputs, missing names, saved-date preview, plan filtering and publication isolation verified.");

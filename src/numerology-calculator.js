@@ -15,12 +15,17 @@ function numerologyDate(value) {
   return day <= limit ? { year, month, day } : null;
 }
 
+export function normalizeNumerologyRomanName(value) {
+  if (typeof value !== "string") return null;
+  const name = value.normalize("NFKC").replace(/[\s'\u2019-]/g, "");
+  return /[^A-Za-z]/.test(name) ? null : name.toUpperCase();
+}
+
 export function calculateNumerology({ birthday, romanName = "", referenceDate } = {}) {
   const birth = numerologyDate(birthday), reference = numerologyDate(referenceDate);
   if (!birth || !reference || birthday > referenceDate) return { status: "input-incomplete", code: "NUMEROLOGY_DATE_INVALID", calculationVersion: NUMEROLOGY_CALCULATION_VERSION };
-  if (typeof romanName !== "string") return { status: "input-incomplete", code: "NUMEROLOGY_NAME_INVALID", calculationVersion: NUMEROLOGY_CALCULATION_VERSION };
-  const name = romanName.normalize("NFKC").toUpperCase().replace(/[\s'\u2019-]/g, "");
-  if (/[^A-Z]/.test(name)) return { status: "input-incomplete", code: "NUMEROLOGY_NAME_INVALID", calculationVersion: NUMEROLOGY_CALCULATION_VERSION };
+  const name = normalizeNumerologyRomanName(romanName);
+  if (name === null) return { status: "input-incomplete", code: "NUMEROLOGY_NAME_INVALID", calculationVersion: NUMEROLOGY_CALCULATION_VERSION };
   const characters = [...name].map(letter => ({ vowel: "AEIOU".includes(letter), value: (letter.charCodeAt(0) - 65) % 9 + 1 }));
   const numberFor = items => items.length ? reduceNumerology(items.reduce((sum, item) => sum + item.value, 0)) : null;
   const lifePath = reduceNumerology(reduceNumerology(birth.year) + reduceNumerology(birth.month) + reduceNumerology(birth.day));
