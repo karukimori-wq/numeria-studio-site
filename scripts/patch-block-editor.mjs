@@ -24,8 +24,11 @@ const visualSlotRuntime = readFileSync("src/report-visual-slot.js", "utf8")
   .replaceAll("export function ", "function ");
 const numerologyRuntime = readFileSync("src/numerology-calculator.js", "utf8")
   .replaceAll("export const ", "const ").replaceAll("export function ", "function ")
-  + readFileSync("src/numerology-page-data.js", "utf8").replace(/^import .*;\s*/m, "")
-    .replaceAll("export function ", "function ");
+  + readFileSync("src/numerology-name-input.js", "utf8").replace(/^import .*;\s*/gm, "")
+    .replaceAll("export const ", "const ").replaceAll("export function ", "function ")
+  + readFileSync("src/numerology-page-data.js", "utf8").replace(/^import .*;\s*/gm, "")
+    .replaceAll("export function ", "function ")
+  + readFileSync("scripts/numerology-name-form-runtime.js", "utf8");
 const layoutRuntime = readFileSync("src/report-physical-page-plan.js", "utf8")
   .replace("export const ", "const ")
   .replace("export function ", "function ")

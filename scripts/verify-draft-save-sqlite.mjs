@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import worker from "../src/worker.js";
+import { normalizeNumerologyNameInputs, updateNumerologyNameInputs, selectedNumerologyName } from "../src/numerology-name-input.js";
 
 // Run the Worker's real D1 SQL on SQLite. Identity and D1 transport are fixtures.
 const directory = mkdtempSync(join(tmpdir(), "numeria-draft-cas-"));
@@ -53,14 +54,23 @@ async function api(path, body) {
   }), env, {});
   return { status: response.status, body: await response.json() };
 }
+const nameIdentity = { divination: "numerology", name: "架空", birthday: "2009-11-11", birthName: "TARO YAMADA", visitDate: "2026-11-01" };
+let savedNames = updateNumerologyNameInputs(normalizeNumerologyNameInputs(null), { role: "subject", operation: "edit", romanName: "TARO YAMADA" }, nameIdentity).value;
+savedNames = updateNumerologyNameInputs(savedNames, { role: "subject", operation: "confirm" }, nameIdentity).value;
+savedNames.subject.current.romanName = "TARO SATO";
 const save = (message, expectedDraftVersion) => api("/api/appraisals/save-draft", {
   appraisalId: "session_cas", expectedDraftVersion, question: message,
-  snapshot: { id: "session_cas", name: "架空", theme: message, customReportItems: [], drafts: {} },
+  snapshot: { ...nameIdentity, id: "session_cas", theme: message, customReportItems: [], drafts: {}, numerologyNameInputs: savedNames },
 });
 try {
   for (const file of readdirSync("migrations").filter(name => name.endsWith(".sql")).sort()) sql(readFileSync(join("migrations", file), "utf8"), [], true);
   const initial = await save("初回", null);
   assert.equal(initial.status, 201);
+  assert.deepEqual(initial.body.activeDraft.snapshot.numerologyNameInputs, savedNames);
+  assert.deepEqual(JSON.parse(sql("SELECT active_draft_json FROM usage_records")[0].active_draft_json).snapshot.numerologyNameInputs, savedNames, "D1 must persist birth/current names separately with confirmation provenance.");
+  assert.deepEqual((await api("/api/appraisals/status")).body.activeDraft.snapshot.numerologyNameInputs, savedNames, "Read API must restore the persisted name selection and confirmation.");
+  const restoredNames = (await api("/api/appraisals/session_cas")).body.session.snapshot;
+  assert.equal(selectedNumerologyName(restoredNames).romanNameConfirmed, true, "Session resume API must preserve confirmation identity.");
   const version = initial.body.activeDraft.draftVersion;
   assert.ok(version);
   holdReads = true;

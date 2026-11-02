@@ -1,4 +1,5 @@
 import { calculateNumerology } from "./numerology-calculator.js";
+import { selectedNumerologyName } from "./numerology-name-input.js";
 
 const NUMEROLOGY_CORE_KEYS = ["lifePath", "birthdayNumber", "attitude", "destiny", "soul", "personality", "maturity", "personalYear"];
 const NUMEROLOGY_COMPARISON_KEYS = ["birthdayNumber", "attitude", "destiny", "soul", "personality"];
@@ -53,22 +54,25 @@ export function buildNumerologyPageData({ subject, partner, referenceDate, famil
     birthday: subject?.birthday, normalizedRomanName: own.normalizedRomanName || "", pages };
 }
 
-// Legacy snapshots have no explicit name-confirmation field. Do not infer it
-// from birthName/current name or replace a saved reference date with today's date.
+// Only explicit confirmation belongs to the input. Legacy birthName alone does
+// not confirm a name; the saved reference date is never replaced with today.
 export function numerologyPageDataFromReading(snapshot) {
   if (snapshot?.divination !== "numerology") return null;
-  return buildNumerologyPageData({ subject: { birthday: snapshot.birthday },
-    partner: snapshot.includeCompatibility === true ? { birthday: snapshot.partnerBirthday } : undefined,
+  const subjectName = selectedNumerologyName(snapshot), partnerName = selectedNumerologyName(snapshot, "partner");
+  return { ...buildNumerologyPageData({ subject: { birthday: snapshot.birthday, ...subjectName },
+    partner: snapshot.includeCompatibility === true ? { birthday: snapshot.partnerBirthday, ...partnerName } : undefined,
     referenceDate: snapshot.visitDate,
     familyRelation: snapshot.includeCompatibility === true && snapshot.partnerRelation === "家族" ? "家族" : "",
-  });
+  }), nameSources: { subject: subjectName, partner: snapshot.includeCompatibility === true ? partnerName : null } };
 }
 
 export function renderNumerologyCalculationPreview(connection, definitions) {
   if (!connection) return "<p>数秘術の鑑定を開くと計算プレビューを確認できます。</p>";
   const escape = value => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
   const labels = { lifePath: "ライフパス", birthdayNumber: "バースデー", attitude: "アティチュード", destiny: "デスティニー", soul: "ソウル", personality: "パーソナリティ", maturity: "マチュリティ", personalYear: "個人年", confirmedRomanName: "確認済みローマ字氏名", personalYears: "9年周期と基準日", "partner.lifePath": "相手の生年月日", familyRelation: "家族関係", pinnacles: "ピークと生年月日・基準日", challengeNumbers: "チャレンジと生年月日・基準日", personalMonth: "個人月と基準日" };
-  return `<p>基準日：${escape(connection.referenceDate || "未入力")} · 計算プレビュー（正式発行前の確認用）</p><p>氏名を使う結果はローマ字氏名の確認後に利用できます。</p>${(Array.isArray(definitions) ? definitions : []).filter(item => item.methodKey === "numerology").map(definition => {
+  const usedNames = Object.entries(connection.nameSources || {}).filter(([, value]) => value?.romanNameConfirmed)
+    .map(([role, value]) => `${role === "subject" ? "本人" : "相手"}：${value.nameKind === "current" ? "現在" : "出生時"}の氏名 ${value.romanName}`).join(" ／ ");
+  return `<p>基準日：${escape(connection.referenceDate || "未入力")} · 計算プレビュー（正式発行前の確認用）</p><p>${usedNames ? `使用氏名：${escape(usedNames)}` : "氏名を使う結果はローマ字氏名の確認後に利用できます。"}</p>${(Array.isArray(definitions) ? definitions : []).filter(item => item.methodKey === "numerology").map(definition => {
     const page = connection.pages.find(item => item.pageDefinitionId === definition.pageDefinitionId);
     if (!page) return "";
     const values = page.data || {}, rows = [];

@@ -148,8 +148,9 @@ function decorateEditor(){
   const settings=root.querySelector(".nbe-settings");
   if(settings&&data.selectedDivination==="numerology"&&!settings.querySelector("[data-numerology-calculation-preview]")){
     const preview=document.createElement("section");preview.dataset.numerologyCalculationPreview="1";
-    const snapshot=window.NumeriaNavigation?.getReadingSnapshot?.();
-    preview.innerHTML=`<h3>数秘術の計算プレビュー</h3>${renderNumerologyCalculationPreview(numerologyPageDataFromReading(snapshot),pageDefinitions)}`;
+    preview.innerHTML=`<h3>数秘術の計算プレビュー</h3><div data-numerology-name-form></div><div data-numerology-calculation-values></div>`;
+    const refresh=()=>{preview.querySelector("[data-numerology-calculation-values]").innerHTML=renderNumerologyCalculationPreview(numerologyPageDataFromReading(window.NumeriaNavigation?.getReadingSnapshot?.()),pageDefinitions)};
+    refresh();mountNumerologyNameForm(preview.querySelector("[data-numerology-name-form]"),refresh);
     settings.append(preview);
   }
   if(settings&&!settings.querySelector("[data-v3-divination-visuals]")){

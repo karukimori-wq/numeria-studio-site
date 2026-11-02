@@ -51,6 +51,9 @@ assert.equal(appMatch[1], `numeria-app-runtime-${createHash("sha256").update(app
 assert.equal(indexMatch[1], `index-runtime-${createHash("sha256").update(indexSource).digest("hex").slice(0, 12)}.js`, "Index filename must hash final imports.");
 assert.ok(appSource.includes("function numerologyPageDataFromReading("), "Production app must include the numerology snapshot adapter.");
 assert.ok(!appSource.includes('from "./numerology-calculator.js"'), "Numerology preview must not retain unresolved imports.");
+assert.ok(!appSource.includes('from "./numerology-name-input.js"'), "Name confirmation must not retain unresolved imports.");
+assert.ok(appSource.includes("numerologyNameInputs:normalizeNumerologyNameInputs(numeriaNameInputsRef.current)"), "Reading snapshots must capture the name selection and explicit confirmation.");
+assert.ok(appSource.includes("updateNumerologyNames:function(change)"), "Production navigation must expose the name-update handler.");
 assert.ok(appSource.includes("NumeriaNavigationBridge.v3"), "Versioned Numeria app bundle must contain stable navigation bridge v3.");
 assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Versioned Numeria app bundle must contain syntax guard repairs.");
