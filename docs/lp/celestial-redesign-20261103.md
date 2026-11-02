@@ -23,3 +23,14 @@ Direction: a quiet celestial atelier, with midnight blue, warm gold, paper, fine
 ## Review before release
 
 Review copy and visual direction, then verify Clerk sign-up/sign-in and signed-in redirects in an environment with the real auth configuration. Confirm plan copy against the current commercial release. No main merge or production deployment was performed.
+
+## Motion graphics revision
+
+User feedback: strengthen motion graphics; defer rebuilding the inaccurate interactive demo.
+
+- Hero now uses Canvas light particles, CSS 3D orbit rings and satellite numerals. A 15-second loop moves through intuition, symbol and Report creation.
+- Scroll-driven story transitions through client context, symbols and a finished page.
+- Old interactive demo is hidden and its CTA/navigation removed. It is retained for later replacement with a real product flow; no attempt was made to reconcile it now.
+- Stop/resume and reduced-motion preferences apply to Canvas as well as CSS. Rendering pauses outside the hero viewport or when the tab is hidden. Particle drawing is capped near 30fps and pixel ratio at 1.5.
+- The back-to-top anchor now targets a static element before the sticky navigation.
+- Inline script syntax, existing automated suite and production build passed. Desktop and embedded mobile viewport QA cover visuals and navigation; real iOS and live Clerk verification remain pending.
