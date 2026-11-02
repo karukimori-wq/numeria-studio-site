@@ -69,6 +69,13 @@ export class CharacterStore {
     const { state } = await this.repository.read(scope);
     return state.filter((c) => c.status !== 'deleted').map(userView);
   }
+  async history(scope, characterId) {
+    scopeKey(scope);
+    const { state } = await this.repository.read(scope);
+    const character = state.find(c => c.characterId === characterId && c.status !== 'deleted');
+    if (!character) fail('CHARACTER_NOT_FOUND');
+    return userView(character);
+  }
   async mutate(scope, action) {
     scopeKey(scope);
     const { revision, state } = await this.repository.read(scope);

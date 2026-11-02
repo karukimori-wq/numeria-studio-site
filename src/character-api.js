@@ -25,6 +25,8 @@ export function createCharacterApi({ coreWorker, entitlement = fetchGrowthSubscr
       const scope = { workspaceId, userId, planId: e.planId };
       const url = new URL(request.url);
       if (url.search) return reply(400, { errorCode: 'CHARACTER_QUERY_NOT_SUPPORTED' });
+      const historyMatch = url.pathname.match(/^\/api\/characters\/([A-Za-z0-9_-]+)\/versions$/);
+      if (request.method === 'GET' && historyMatch) return reply(200, { character: await store.history(scope, historyMatch[1]) });
       if (request.method === 'GET' && url.pathname === '/api/characters/selection') return reply(200, { selection: await new D1CharacterSelection(db).read(scope) });
       if (request.method === 'GET' && url.pathname === '/api/characters/official') return reply(200, { characters: await (catalog || new D1OfficialCharacterCatalog(db)).list() });
       if (request.method === 'GET' && url.pathname === '/api/characters') return reply(200, { characters: await store.list(scope) });

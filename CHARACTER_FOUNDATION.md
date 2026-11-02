@@ -38,3 +38,5 @@ Official selection: GET/PUT /api/characters/selection persists an owner-scoped r
 
 ## Free selection Worker verification (2026-11-02)
 Extended the signed-JWT/GE-adapter/SQLite Worker test through official listing and Free selection PUT/GET. Confirms private fields are omitted, custom creation remains denied, forged owner input is rejected, other owners see no selection, stale revisions return 409, storage failures preserve the previous selection, and stopping publication immediately before SQL execution rejects the save. Restoration retains the original reference/revision and reports available=false. These are offline integration results with fixture JWKS/GE responses, not live service acceptance.
+
+History: GET /api/characters/:id/versions returns owner-only allowlisted immutable history. character-editor-state.js preserves inputs on errors, compares latest history, requires an explicit choice to rebase, and retains CAS validation on the next save. No screen is wired to this state module yet.
