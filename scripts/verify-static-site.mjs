@@ -54,7 +54,7 @@ const envExample = readFileSync(".env.example", "utf8");
 const productionReadinessScript = readFileSync("scripts/verify-production-readiness.mjs", "utf8");
 const restoreOriginalSource = readFileSync("scripts/restore-original-site.mjs", "utf8");
 assert.match(html, /Numeria Studio/);
-assert.match(html, /INTERACTIVE DEMO/);
+assert.match(html, /id="demo"/, "Landing page should include an interactive report demo.");
 assert.match(html, /あなたの鑑定を、/);
 assert.match(html, /data-auth="sign-up"/, "Landing-page CTAs should open Clerk sign-up.");
 assert.match(html, /href="#pricing"/, "Landing page should include an in-page pricing link.");
