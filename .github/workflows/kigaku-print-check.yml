@@ -1,0 +1,28 @@
+name: Kigaku draft PDF check
+on:
+  push:
+    branches: [codex/rebuild-kigaku-20261024]
+    paths: [src/kigaku-*.js, scripts/verify-kigaku-print-browser.mjs, .github/workflows/kigaku-print-check.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  print:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install --no-package-lock
+      - run: npm install --no-save --no-package-lock playwright
+      - run: npx playwright install --with-deps chromium
+      - run: sudo apt-get install -y fonts-noto-cjk
+      - run: node scripts/verify-kigaku-print-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kigaku-draft-pdf-review
+          path: tmp/kigaku-print/
+          retention-days: 7
