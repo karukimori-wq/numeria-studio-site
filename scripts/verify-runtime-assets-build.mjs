@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import "./verify-layout-regressions.mjs";
 
@@ -46,6 +47,10 @@ assert.ok(existsSync(indexPath), `Versioned index bundle is missing: ${indexPath
 
 const appSource = readFileSync(appPath, "utf8");
 const indexSource = readFileSync(indexPath, "utf8");
+assert.equal(appMatch[1], `numeria-app-runtime-${createHash("sha256").update(appSource).digest("hex").slice(0, 12)}.js`, "App filename must hash final bytes, including all block-editor patches.");
+assert.equal(indexMatch[1], `index-runtime-${createHash("sha256").update(indexSource).digest("hex").slice(0, 12)}.js`, "Index filename must hash final imports.");
+assert.ok(appSource.includes("function numerologyPageDataFromReading("), "Production app must include the numerology snapshot adapter.");
+assert.ok(!appSource.includes('from "./numerology-calculator.js"'), "Numerology preview must not retain unresolved imports.");
 assert.ok(appSource.includes("NumeriaNavigationBridge.v3"), "Versioned Numeria app bundle must contain stable navigation bridge v3.");
 assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Versioned Numeria app bundle must contain syntax guard repairs.");
