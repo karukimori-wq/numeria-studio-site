@@ -52,6 +52,7 @@ try {
   assert.equal((await request('/api/usage')).status,200);
   const upgradedLegacy=await request('/api/appraisals/save-draft',{appraisalId:'ki-test',snapshot:reading});
   assert.equal(upgradedLegacy.body.activeDraft.reportSnapshot.schemaVersion,'numeria.kigaku.report.v1');
+  assert.equal((await request('/api/kigaku/report-print',{draftId:'ki-test',format:'standard',planId:'business'})).status,403);
   const preview=await request('/api/kigaku/period-pages',{snapshot:reading,planId:'pro'});
   assert.equal(preview.status,200);assert.deepEqual(preview.body.pages.slice(0,4).map(page=>page.state),Array(4).fill('draft_preview'));assert.ok(preview.body.pages.slice(4).every(page=>page.reasonCode==='PRO_REQUIRED'));
   assert.equal((await request('/api/kigaku/period-pages',{snapshot:reading},false)).status,401);
@@ -96,7 +97,7 @@ try {
   assert.equal((await request('/api/kigaku/report-print',{draftId:'ki-test',format:'standard'},false)).status,401);
   const fullRow=[...rows.values()][0];fullRow.plan_id='free';
   assert.equal((await request('/api/usage')).body.usage.activeDraft.reportSnapshot,undefined);
-  assert.equal((await request('/api/kigaku/report-print',{draftId:'ki-test',format:'standard'})).status,409);
+  assert.equal((await request('/api/kigaku/report-print',{draftId:'ki-test',format:'standard'})).status,403);
   assert.deepEqual(JSON.parse(fullRow.active_draft_json).reportSnapshot,frozen);
   fullRow.plan_id='business';
   assert.deepEqual((await request('/api/usage')).body.usage.activeDraft.reportSnapshot,frozen);

@@ -2120,6 +2120,7 @@ async function handleApi(request, env = {}, ctx = null) {
 
   if(url.pathname==='/api/kigaku/report-print' && request.method==='POST') {
     if(!auth.verified) return json({errorCode:'AUTH_REQUIRED'},{status:401});
+    if(!['pro','business'].includes(effectiveRecord.planId)) return json({errorCode:'PRO_REQUIRED'},{status:403});
     try {
       const draft=visibleKigakuDraft(record.activeDraft,effectiveRecord.planId);
       if(!draft?.reportSnapshot || body.draftId!==draft.id) return json({errorCode:'SAVED_REPORT_REQUIRED'},{status:409});
