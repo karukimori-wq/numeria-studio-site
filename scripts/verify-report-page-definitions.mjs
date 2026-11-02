@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { REPORT_PAGE_DEFINITIONS, reportPageDefinitionsFor } from "../src/report-page-definitions.js";
 
-const NOTION_CATALOG_ID_TITLE_SHA256 = "e33d30c3a342135d94424e04cc37ee5dd139d4c0f5e42f59134ad95f3e18026e";
+// Original 85-page catalog plus adopted decision 77 (NUM-07 renamed).
+const NOTION_CATALOG_ID_TITLE_SHA256 = "806e3375ccd4ff957b7243894db0fc1b21879336ecb897d3b4a0fde22bcdda86";
 const METHOD_KEYS = ["numerology", "tarot", "nine-star-ki", "four-pillars", "western-astrology", "zi-wei-dou-shu"];
 
 const catalogIdTitleSnapshot = REPORT_PAGE_DEFINITIONS
@@ -41,6 +42,6 @@ assert.deepEqual(Object.fromEntries(METHOD_KEYS.map((methodKey) => [methodKey, {
 assert.equal(
   createHash("sha256").update(catalogIdTitleSnapshot).digest("hex"),
   NOTION_CATALOG_ID_TITLE_SHA256,
-  "Report page IDs or titles differ from the Notion 85-page catalog fetched on 2026-10-28",
+  "Report page IDs or titles differ from the Notion catalog with adopted decision 77",
 );
 console.log("Report page definition catalog verified against Notion: 85 total, 25 basic, 60 additional.");

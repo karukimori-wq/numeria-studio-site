@@ -36,11 +36,25 @@ export function calculateNumerology({ birthday, romanName = "", referenceDate } 
   };
   const nameDigitCounts = Object.fromEntries(Array.from({ length: 9 }, (_, i) => [i + 1, characters.filter(item => item.value === i + 1).length]));
   const maximum = Math.max(...Object.values(nameDigitCounts));
+  const month = reduceNumerology(birth.month), day = reduceNumerology(birth.day), year = reduceNumerology(birth.year);
+  const pinnacleValues = [reduceNumerology(month + day), reduceNumerology(day + year)];
+  pinnacleValues.push(reduceNumerology(pinnacleValues[0] + pinnacleValues[1]), reduceNumerology(month + year));
+  const secondStartAge = 36 - reduceNumerology(lifePath, false);
+  const singleMonth = reduceNumerology(birth.month, false), singleDay = reduceNumerology(birth.day, false), singleYear = reduceNumerology(birth.year, false);
+  const firstChallenge = Math.abs(singleMonth - singleDay), secondChallenge = Math.abs(singleDay - singleYear);
   return {
     status: "calculated", calculationVersion: NUMEROLOGY_CALCULATION_VERSION,
     // Calculation completion is not independent validation or formal release approval.
     referenceDate, birthday, normalizedRomanName: name, coreNumbers,
     personalMonth: reduceNumerology(coreNumbers.personalYear + reference.month, false),
+    pinnacles: pinnacleValues.map((value, index) => ({ stage: index + 1, value,
+      startAge: index === 0 ? 0 : secondStartAge + (index - 1) * 9,
+      endAgeExclusive: index === 3 ? null : secondStartAge + index * 9,
+      boundary: "birthday", birthMonth: birth.month, birthDay: birth.day,
+    })),
+    // Challenges have no pinnacle age intervals; zero is a valid result.
+    challengeNumbers: [firstChallenge, secondChallenge, Math.abs(firstChallenge - secondChallenge), Math.abs(singleMonth - singleYear)]
+      .map((value, index) => ({ stage: index + 1, value, scope: index === 2 ? "lifelong" : "life-stage-tendency" })),
     personalYears: reference.year >= 5 && reference.year <= 9995 ? Array.from({ length: 9 }, (_, index) => ({ year: reference.year - 4 + index, value: personalYearFor(reference.year - 4 + index), current: index === 4 })) : null,
     nameDigitCounts: name ? nameDigitCounts : null,
     missingDigits: name ? Object.keys(nameDigitCounts).map(Number).filter(key => nameDigitCounts[key] === 0) : null,

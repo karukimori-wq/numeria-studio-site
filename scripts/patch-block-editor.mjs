@@ -22,9 +22,13 @@ const catalogViewRuntime = readFileSync("src/report-page-catalog-view.js", "utf8
   .replaceAll("export function ", "function ");
 const visualSlotRuntime = readFileSync("src/report-visual-slot.js", "utf8")
   .replaceAll("export function ", "function ");
+const numerologyRuntime = readFileSync("src/numerology-calculator.js", "utf8")
+  .replaceAll("export const ", "const ").replaceAll("export function ", "function ")
+  + readFileSync("src/numerology-page-data.js", "utf8").replace(/^import .*;\s*/m, "")
+    .replaceAll("export function ", "function ");
 const layoutRuntime = readFileSync("src/report-physical-page-plan.js", "utf8")
   .replace("export const ", "const ")
   .replace("export function ", "function ")
   + "\nwindow.NumeriaPhysicalPagePlan={createPhysicalPagePlan,A4_LAYOUT_CONTRACT_VERSION};\n";
-writeFileSync(target, source + layoutRuntime + pageCommentRuntime + hydrationRuntime + resultContractRuntime + availabilityRuntime + catalogViewRuntime + visualSlotRuntime + runtime);
+writeFileSync(target, source + layoutRuntime + pageCommentRuntime + hydrationRuntime + resultContractRuntime + availabilityRuntime + catalogViewRuntime + visualSlotRuntime + numerologyRuntime + runtime);
 console.log(`Block editor v2 patched into ${target}.`);

@@ -146,6 +146,12 @@ function renderFixedPageVisualSlot(page){
 function decorateEditor(){
   if(!root?.classList.contains("open"))return;
   const settings=root.querySelector(".nbe-settings");
+  if(settings&&data.selectedDivination==="numerology"&&!settings.querySelector("[data-numerology-calculation-preview]")){
+    const preview=document.createElement("section");preview.dataset.numerologyCalculationPreview="1";
+    const snapshot=window.NumeriaNavigation?.getReadingSnapshot?.();
+    preview.innerHTML=`<h3>数秘術の計算プレビュー</h3>${renderNumerologyCalculationPreview(numerologyPageDataFromReading(snapshot),pageDefinitions)}`;
+    settings.append(preview);
+  }
   if(settings&&!settings.querySelector("[data-v3-divination-visuals]")){
     const gallery=document.createElement("section");gallery.dataset.v3DivinationVisuals="1";gallery.className="nbe-divination-visuals";
     gallery.innerHTML=`<h3>対応予定の占術ビジュアル</h3><p>結果スキーマが接続されるまで、鑑定結果の代わりには表示しません。</p>${Object.entries(DIVINATION).filter(([,item])=>item.visual).map(([,item])=>`<figure><img src="${item.visual}" alt="${esc(item.label)}の構成イメージ"><figcaption>${esc(item.label)} · 準備中</figcaption></figure>`).join("")}`;
