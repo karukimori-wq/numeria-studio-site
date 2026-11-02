@@ -4,7 +4,7 @@ function mountNumerologyNameForm(container, onUpdate) {
   const inputs = normalizeNumerologyNameInputs(snapshot.numerologyNameInputs);
   let saving = false;
   const escape = value => String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
-  container.innerHTML = `<h4>計算に使うローマ字氏名</h4><p>出生時の氏名／現在の氏名を別々に入力できます。フルネームを確認したものだけ計算に使います。</p>${["subject", ...(snapshot.includeCompatibility === true ? ["partner"] : [])].map(role => {
+  container.innerHTML = `<h4>計算に使うローマ字氏名</h4><p>出生時の氏名／現在の氏名を別々に入力できます。フルネームを確認したものだけ、この計算プレビューに使います。</p>${["subject", ...(snapshot.includeCompatibility === true ? ["partner"] : [])].map(role => {
     const person = inputs[role], selected = selectedNumerologyName(snapshot, role);
     return `<fieldset data-numerology-name-person="${role}"><legend>${role === "subject" ? "本人" : "相手"}</legend><label>使用する氏名<select data-numerology-name-kind><option value="birth" ${person.selected === "birth" ? "selected" : ""}>出生時の氏名</option><option value="current" ${person.selected === "current" ? "selected" : ""}>現在の氏名</option></select></label><label>ローマ字フルネーム<input data-numerology-name-value maxlength="256" autocomplete="off" value="${escape(person[person.selected].romanName)}" placeholder="TARO YAMADA"></label><button type="button" data-numerology-name-confirm>このローマ字氏名を確認</button><p data-numerology-name-status role="status">${selected.romanNameConfirmed ? `確認済み：${escape(selected.romanName)}` : "未確認：入力したフルネームを確認してください"}</p></fieldset>`;
   }).join("")}<p>変更後は鑑定の下書きを保存してください。フォーマットの保存とは別です。</p><button type="button" data-numerology-name-save>鑑定の下書きを保存</button><p data-numerology-name-save-status role="status"></p>`;
@@ -28,16 +28,18 @@ function mountNumerologyNameForm(container, onUpdate) {
     const button = event.currentTarget;
     if (saving || typeof api.saveReadingDraft !== "function") return;
     const feedback = container.querySelector("[data-numerology-name-save-status]");
-    let received = false;
+    let started = false, terminalReceived = false;
     const onStatus = event => {
       let state = event.detail?.state;
       if (state === "saved" && event.detail?.snapshot && JSON.stringify(api.getReadingSnapshot(event.detail.sessionId)) !== JSON.stringify(event.detail.snapshot)) state = "dirty";
       const messages = { saving: "鑑定の下書きを保存中…", saved: "鑑定の下書きを保存しました", dirty: "保存中に変更があります。もう一度保存してください", error: "保存できませんでした。再試行してください" };
-      if (messages[state]) { received = true; feedback.textContent = messages[state]; }
+      if (state === "saving") started = true;
+      if (["saved", "dirty", "error"].includes(state)) terminalReceived = true;
+      if (messages[state]) feedback.textContent = messages[state];
     };
     saving = true; button.disabled = true;
     window.addEventListener("numeria-reading-draft-save-status", onStatus);
-    try { await api.saveReadingDraft(); if (!received) feedback.textContent = "鑑定画面の氏名・生年月日など、必須入力を確認してください"; }
+    try { await api.saveReadingDraft(); if (!terminalReceived) feedback.textContent = started ? "保存完了を確認できませんでした。もう一度保存してください" : "鑑定画面の氏名・生年月日など、必須入力を確認してください"; }
     catch { feedback.textContent = "保存できませんでした。再試行してください"; }
     finally { saving = false; button.disabled = false; window.removeEventListener("numeria-reading-draft-save-status", onStatus); }
   };
