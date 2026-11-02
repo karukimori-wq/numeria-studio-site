@@ -103,3 +103,20 @@ assert.deepEqual(client.current().periodPages,frozenPages);
 await client.previewPeriods();assert.equal(pending.length,0);
 client.change({question:'編集'});assert.equal(client.current().reportSnapshot,null);
 console.log('Frozen report restore, preview without regeneration, and edit invalidation verified.');
+
+{
+// Print requests use saved reports and never publish a stale success or failure.
+const savedWindow=globalThis.window;
+const windows=[];
+globalThis.window={open(){const popup={closed:false,document:{open(){},write(html){popup.html=html;},close(){}},close(){this.closed=true;}};windows.push(popup);return popup;}};
+const loadFrozen=async()=>{const task=client.restore();pending.shift().resolve({usage:{activeDraft:{id:stored.appraisalId,snapshot:stored.snapshot,reportSnapshot:frozenReport}}});await task;};
+await loadFrozen();
+let printing=client.printReport('standard');call=pending.shift();call.resolve({html:null});await printing;assert.equal(windows.at(-1).closed,true);assert.match(client.current().error,/印刷用データ/);
+printing=client.printReport('magazine');call=pending.shift();assert.equal(client.current().error,'');call.resolve({html:'<!doctype html><html>草案</html>'});await printing;assert.match(windows.at(-1).html,/草案/);
+printing=client.printReport('standard');call=pending.shift();client.change({question:'印刷待ち中の編集'});call.resolve({html:'<!doctype html><html>古い本文</html>'});await printing;assert.equal(windows.at(-1).closed,true);assert.equal(windows.at(-1).html,undefined);
+await loadFrozen();const oldPrint=client.printReport('standard'),oldCall=pending.shift();printing=client.printReport('magazine');call=pending.shift();call.resolve({html:'<!doctype html><html>最新</html>'});await printing;oldCall.reject(new Error('古い失敗'));await oldPrint;assert.equal(client.current().error,'');
+globalThis.window={open:()=>null};await client.printReport('standard');assert.match(client.current().error,/ポップアップ/);assert.equal(pending.length,0);
+globalThis.window=savedWindow;
+console.log('Print retry, malformed response, stale success/failure, popup blocking and saved-only rendering verified.');
+
+}

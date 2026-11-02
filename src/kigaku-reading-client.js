@@ -58,6 +58,7 @@ export function createKigakuReadingClient({ request, onChange, referenceInstant 
     async printReport(format) {
       if(!state.reportSnapshot || state.save!=='saved') return;
       const id=++requestId,version=revision;
+      state.error='';emit();
       // Open synchronously on the user gesture so popup blockers permit the preview.
       const preview=window.open('about:blank','_blank');
       if(!preview){state.error='プレビューのポップアップを許可してください';emit();return;}
@@ -65,8 +66,10 @@ export function createKigakuReadingClient({ request, onChange, referenceInstant 
       try {
         const body=await request('/api/kigaku/report-print',{draftId:state.draftId,format});
         if(id!==requestId||version!==revision){preview.close();return;}
+        if(typeof body.html!=='string'||!body.html.startsWith('<!doctype html>')) throw new Error('印刷用データを確認できませんでした。再試行してください');
+        if(preview.closed)return;
         preview.document.open();preview.document.write(body.html);preview.document.close();
-      }catch(error){preview.close();if(version===revision){fail(error);emit();}}
+      }catch(error){preview.close();if(id===requestId&&version===revision){fail(error);emit();}}
     },
     async restore(expectedDraftId = null) {
       if (saving) return;
