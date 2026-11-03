@@ -44,3 +44,12 @@ User feedback: strengthen motion graphics; defer rebuilding the inaccurate inter
 - Reduced motion / pause collapses the extra scroll distance and shows a static cover.
 
 Scroll-turn verification: full existing test suite and production build passed. Browser checked closed cover, intermediate leaf angles, complete turns and reverse scrolling. The 390px embedded mobile viewport showed progress 0.791 with the spread inside the viewport; physical iOS Safari remains unverified.
+
+
+## Page-turn non-movement fix
+
+Reproduced: with OS reduced motion enabled, clicking resume removed the local pause flag but JavaScript and CSS still unconditionally blocked the book. The new runtime regression failed before the fix with `Explicit motion resume must allow page turning even with OS reduced motion`.
+
+Explicit activation now overrides that default consistently in CSS and JavaScript, while first load still respects OS/user pause preferences. Controls beside the book expose pause state and provide previous/next/return-to-cover operations. Passive touch/wheel fallback handles hosts that scroll an outer preview instead of the inner window; no scrolling is cancelled. Manual button positions survive browser scroll adjustments until a new scroll gesture begins.
+
+Verification: the real inline runtime is exercised for normal/reverse scrolling, reduced-motion opt-in, manual controls and outer-host gesture fallback. The test is included in `npm test`. Browser verified a button turn to progress 0.350 / cover -174 degrees and its open-spread rendering. This confirms the reproduced path; the user's exact iOS WebView environment remains unverified.
