@@ -34,3 +34,13 @@ User feedback: strengthen motion graphics; defer rebuilding the inaccurate inter
 - Stop/resume and reduced-motion preferences apply to Canvas as well as CSS. Rendering pauses outside the hero viewport or when the tab is hidden. Particle drawing is capped near 30fps and pixel ratio at 1.5.
 - The back-to-top anchor now targets a static element before the sticky navigation.
 - Inline script syntax, existing automated suite and production build passed. Desktop and embedded mobile viewport QA cover visuals and navigation; real iOS and live Clerk verification remain pending.
+
+## Scroll-linked page turning
+
+- The hero Report remains visible and opens with the visitor's scroll instead of disappearing on a timed loop.
+- A front cover and two double-sided paper leaves turn around a left-side spine with perspective, paper shading and back faces. Reverse scrolling restores the earlier pages and closes the cover.
+- The Report scene stays in view during the sequence. On mobile the introductory text scrolls away before the book pins below the navigation; the open spread is scaled to fit.
+- Content is explicitly a fictional design concept. Rebuilding the real product demo remains deferred.
+- Reduced motion / pause collapses the extra scroll distance and shows a static cover.
+
+Scroll-turn verification: full existing test suite and production build passed. Browser checked closed cover, intermediate leaf angles, complete turns and reverse scrolling. The 390px embedded mobile viewport showed progress 0.791 with the spread inside the viewport; physical iOS Safari remains unverified.
