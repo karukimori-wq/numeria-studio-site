@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 import vm from "node:vm";
 import { normalizeNumerologyNameInputs, selectedNumerologyName, updateNumerologyNameInputs } from "../src/numerology-name-input.js";
 import { numerologyPageDataFromReading } from "../src/numerology-page-data.js";
+import { withNumerologyCalculationCheckpoint } from "../src/numerology-result-checkpoint.js";
 
 let snapshot = { id: "session-name", divination: "numerology", name: "本人", birthday: "2009-11-11", birthName: "LEGACY NAME", visitDate: "2026-11-01", includeCompatibility: true, partnerName: "相手", partnerBirthday: "1990-01-02", partnerBirthName: "OTHER LEGACY", partnerRelation: "家族", numerologyNameInputs: normalizeNumerologyNameInputs(null) };
 function update(role, operation, extra = {}) {
@@ -61,7 +62,7 @@ const directory = mkdtempSync(join(tmpdir(), "numeria-name-input-"));
 try {
   mkdirSync(join(directory, "dist/assets"), { recursive: true });
   copyFileSync("assets/numeria-app-Cckhajir.js", join(directory, "dist/assets/numeria-app-Cckhajir.js"));
-  for (const patch of ["patch-navigation-bridge.mjs", "patch-numerology-name-input.mjs"]) {
+  for (const patch of ["patch-navigation-bridge.mjs", "patch-numerology-name-input.mjs", "patch-numerology-result-checkpoint.mjs"]) {
     const result = spawnSync(process.execPath, [join(process.cwd(), "scripts", patch)], { cwd: directory, encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
   }
@@ -71,7 +72,7 @@ try {
   const handler = bundle.slice(handlerStart, bundle.indexOf(",saveReadingDraft:", handlerStart));
   const events = [];
   const context = Object.fromEntries([...new Set(snapshotCode.match(/[A-Za-z_$][\w$]*/g))].map(key => [key, undefined]));
-  Object.assign(context, { normalizeNumerologyNameInputs, updateNumerologyNameInputs,
+  Object.assign(context, { normalizeNumerologyNameInputs, updateNumerologyNameInputs, withNumerologyCalculationCheckpoint,
     numeriaNameInputsRef: { current: snapshot.numerologyNameInputs }, l: "numerology", ce: true, Dn: "session-name",
     j: snapshot.name, ae: snapshot.birthName, M: snapshot.birthday, be: snapshot.visitDate,
     de: snapshot.partnerName, pe: snapshot.partnerBirthName, he: snapshot.partnerBirthday, _e: "家族", Lt: [], Re: [],
@@ -81,9 +82,13 @@ try {
   vm.runInContext(`var ${snapshotCode};var bridge={${handler}};`, sandbox);
   const captured = vm.runInContext("Fi(Dn)", sandbox);
   assert.equal(selectedNumerologyName(captured).romanNameConfirmed, true);
+  assert.equal(captured.numerologyCalculation.results[0].data.lifePath, 33);
+  assert.equal(captured.numerologyCalculation.source.nameSources.subject.romanName, "TAROYAMADA");
   vm.runInContext('bridge.updateNumerologyNames({role:"subject",operation:"edit",romanName:"NEW NAME"})', sandbox);
   assert.equal(selectedNumerologyName(vm.runInContext("Fi(Dn)", sandbox)).romanNameConfirmed, false);
+  assert.equal(vm.runInContext("Fi(Dn)", sandbox).numerologyCalculation.results[0].data.destiny, null);
   assert.equal(selectedNumerologyName(captured).romanNameConfirmed, true, "captured in-flight draft snapshot must remain immutable");
+  assert.equal(captured.numerologyCalculation.results[0].data.destiny, 9);
   assert.equal(events.at(-1).detail.state, "dirty");
   vm.runInContext('l="tarot"', sandbox);
   assert.equal(vm.runInContext('bridge.updateNumerologyNames({role:"subject",operation:"confirm"}).ok', sandbox), false);

@@ -1,0 +1,349 @@
+{
+  "executedAt": "2026-11-06T09:26:07.131Z",
+  "calculationVersion": "numeria-numerology-rules-2026-10-19.v1",
+  "moduleSha256": {
+    "src/numerology-calculator.js": "3cb87487b856475227da177be49fa38b6fe61125482d19e58cbe7003713f1c5c",
+    "src/numerology-page-data.js": "1178c1981f5f89ab33fef4d989b5ac1576a3343d8b59dbc988875c94d162e658"
+  },
+  "fixtureSha256": "4b4426ef2094084d0e655bc7b71d3322e42aba78e9c08e8014b3c397b3bebe8e",
+  "cases": [
+    {
+      "id": "NUM-FULL-001",
+      "kind": "manual-derivation",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "birthday": "2009-11-11",
+        "romanName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "lifePath": 33,
+        "birthdayNumber": 11,
+        "attitude": 4,
+        "destiny": 9,
+        "soul": 1,
+        "personality": 8,
+        "maturity": 6,
+        "personalYear": 5,
+        "personalMonth": 6
+      },
+      "actual": {
+        "lifePath": 33,
+        "birthdayNumber": 11,
+        "attitude": 4,
+        "destiny": 9,
+        "soul": 1,
+        "personality": 8,
+        "maturity": 6,
+        "personalYear": 5,
+        "personalMonth": 6
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    },
+    {
+      "id": "NUM-NAME-MISSING",
+      "kind": "normative-spec",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "birthday": "2009-11-11",
+        "romanName": "",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "lifePath": 33,
+        "birthdayNumber": 11,
+        "attitude": 4,
+        "destiny": null,
+        "soul": null,
+        "personality": null,
+        "maturity": null,
+        "num01Availability": "missing_input"
+      },
+      "actual": {
+        "lifePath": 33,
+        "birthdayNumber": 11,
+        "attitude": 4,
+        "destiny": null,
+        "soul": null,
+        "personality": null,
+        "maturity": null,
+        "num01Availability": "missing_input"
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    },
+    {
+      "id": "NUM-Y-CONSONANT",
+      "kind": "normative-spec",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "birthday": "2009-11-11",
+        "romanName": "RY",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "destiny": 7,
+        "personality": 7,
+        "soul": null,
+        "soulStatus": "missing_input"
+      },
+      "actual": {
+        "destiny": 7,
+        "personality": 7,
+        "soul": null,
+        "soulStatus": "missing_input"
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    },
+    {
+      "id": "NUM-ALL-VOWELS",
+      "kind": "normative-spec",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "birthday": "2009-11-11",
+        "romanName": "AI",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "destiny": 1,
+        "soul": 1,
+        "personality": null
+      },
+      "actual": {
+        "destiny": 1,
+        "soul": 1,
+        "personality": null
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    },
+    {
+      "id": "NUM-SUPPLEMENT",
+      "kind": "normative-spec",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "birthday": "2009-11-11",
+        "romanName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "counts": {
+          "1": 4,
+          "2": 1,
+          "3": 0,
+          "4": 2,
+          "5": 0,
+          "6": 1,
+          "7": 1,
+          "8": 0,
+          "9": 1
+        },
+        "missingDigits": [
+          3,
+          5,
+          8
+        ],
+        "mostFrequentDigits": [
+          1
+        ]
+      },
+      "actual": {
+        "counts": {
+          "1": 4,
+          "2": 1,
+          "3": 0,
+          "4": 2,
+          "5": 0,
+          "6": 1,
+          "7": 1,
+          "8": 0,
+          "9": 1
+        },
+        "missingDigits": [
+          3,
+          5,
+          8
+        ],
+        "mostFrequentDigits": [
+          1
+        ]
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    },
+    {
+      "id": "NUM-PINNACLE",
+      "kind": "normative-spec",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "birthday": "2009-11-11",
+        "romanName": "",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "pinnacles": [
+          22,
+          22,
+          8,
+          22
+        ],
+        "secondStarts": "2039-11-11",
+        "thirdStarts": "2048-11-11",
+        "fourthStarts": "2057-11-11",
+        "challenges": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "actual": {
+        "pinnacles": [
+          22,
+          22,
+          8,
+          22
+        ],
+        "secondStarts": "2039-11-11",
+        "thirdStarts": "2048-11-11",
+        "fourthStarts": "2057-11-11",
+        "challenges": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    },
+    {
+      "id": "EXTERNAL-LP-1980",
+      "kind": "external-published-example",
+      "source": "https://www.numerology.com/articles/your-numerology-chart/life-path-number-meanings/",
+      "sourceVerificationStatus": "published-example",
+      "input": {
+        "birthday": "1980-10-22",
+        "romanName": "",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "lifePath": 5
+      },
+      "actual": {
+        "lifePath": 5
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    },
+    {
+      "id": "EXTERNAL-LP-1990",
+      "kind": "external-published-example",
+      "source": "https://www.worldnumerology.com/do-your-own-reading/",
+      "sourceVerificationStatus": "published-example",
+      "input": {
+        "birthday": "1990-08-12",
+        "romanName": "",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "lifePath": 3
+      },
+      "actual": {
+        "lifePath": 3
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    },
+    {
+      "id": "EXTERNAL-LP-1983",
+      "kind": "external-published-example",
+      "source": "https://www.worldnumerology.com/do-your-own-reading/",
+      "sourceVerificationStatus": "published-example",
+      "input": {
+        "birthday": "1983-11-22",
+        "romanName": "",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "lifePath": 9
+      },
+      "actual": {
+        "lifePath": 9
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    },
+    {
+      "id": "EXTERNAL-PINNACLE-1949",
+      "kind": "external-published-example",
+      "source": "https://www.worldnumerology.com/do-your-own-reading/",
+      "sourceVerificationStatus": "published-example",
+      "input": {
+        "birthday": "1949-05-15",
+        "romanName": "",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "pinnacles": [
+          11,
+          11,
+          22,
+          1
+        ]
+      },
+      "actual": {
+        "pinnacles": [
+          11,
+          11,
+          22,
+          1
+        ]
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    },
+    {
+      "id": "EXTERNAL-YEAR-MONTH-2026",
+      "kind": "external-published-example",
+      "source": "https://www.worldnumerology.com/do-your-own-reading/",
+      "sourceVerificationStatus": "published-example",
+      "input": {
+        "birthday": "1949-05-15",
+        "romanName": "",
+        "referenceDate": "2026-02-03"
+      },
+      "expected": {
+        "personalYear": 3,
+        "personalMonth": 5
+      },
+      "actual": {
+        "personalYear": 3,
+        "personalMonth": 5
+      },
+      "outcome": "pass",
+      "executionScope": "local-production-calculator-module"
+    }
+  ],
+  "summary": {
+    "total": 11,
+    "passed": 11,
+    "externalPublishedExamples": 5
+  },
+  "coverage": "partial",
+  "publicationApproved": false,
+  "limitations": [
+    "No logged-in browser/PDF acceptance",
+    "No external validation of all name rules or all birth dates",
+    "Feb 29 non-leap anniversary policy unresolved",
+    "No original text/material approval"
+  ]
+}

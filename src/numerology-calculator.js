@@ -45,6 +45,11 @@ export function calculateNumerology({ birthday, romanName = "", referenceDate } 
   const pinnacleValues = [reduceNumerology(month + day), reduceNumerology(day + year)];
   pinnacleValues.push(reduceNumerology(pinnacleValues[0] + pinnacleValues[1]), reduceNumerology(month + year));
   const secondStartAge = 36 - reduceNumerology(lifePath, false);
+  const birthdayAtAge = age => {
+    const target = `${String(birth.year + age).padStart(4, "0")}-${String(birth.month).padStart(2, "0")}-${String(birth.day).padStart(2, "0")}`;
+    // Do not silently choose Feb 28 or Mar 1 for a Feb 29 birthday.
+    return numerologyDate(target) ? target : null;
+  };
   const singleMonth = reduceNumerology(birth.month, false), singleDay = reduceNumerology(birth.day, false), singleYear = reduceNumerology(birth.year, false);
   const firstChallenge = Math.abs(singleMonth - singleDay), secondChallenge = Math.abs(singleDay - singleYear);
   return {
@@ -52,11 +57,14 @@ export function calculateNumerology({ birthday, romanName = "", referenceDate } 
     // Calculation completion is not independent validation or formal release approval.
     referenceDate, birthday, normalizedRomanName: name, coreNumbers,
     personalMonth: reduceNumerology(coreNumbers.personalYear + reference.month, false),
-    pinnacles: pinnacleValues.map((value, index) => ({ stage: index + 1, value,
-      startAge: index === 0 ? 0 : secondStartAge + (index - 1) * 9,
-      endAgeExclusive: index === 3 ? null : secondStartAge + index * 9,
-      boundary: "birthday", birthMonth: birth.month, birthDay: birth.day,
-    })),
+    pinnacles: pinnacleValues.map((value, index) => {
+      const startAge = index === 0 ? 0 : secondStartAge + (index - 1) * 9;
+      const endAgeExclusive = index === 3 ? null : secondStartAge + index * 9;
+      const startDate = birthdayAtAge(startAge), endDateExclusive = endAgeExclusive === null ? null : birthdayAtAge(endAgeExclusive);
+      return { stage: index + 1, value, startAge, endAgeExclusive, startDate, endDateExclusive,
+        dateBoundaryStatus: startDate && (endAgeExclusive === null || endDateExclusive) ? "resolved" : "unresolved",
+        boundary: "birthday", birthMonth: birth.month, birthDay: birth.day };
+    }),
     // Challenges have no pinnacle age intervals; zero is a valid result.
     challengeNumbers: [firstChallenge, secondChallenge, Math.abs(firstChallenge - secondChallenge), Math.abs(singleMonth - singleYear)]
       .map((value, index) => ({ stage: index + 1, value, scope: index === 2 ? "lifelong" : "life-stage-tendency" })),

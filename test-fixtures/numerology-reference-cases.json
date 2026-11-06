@@ -1,0 +1,206 @@
+{
+  "retrievedOn": "2026-11-06",
+  "harnessDefaults": {
+    "date": "2009-11-11",
+    "referenceDate": "2026-10-19"
+  },
+  "scope": "Selected arithmetic examples only. Not comprehensive independent approval, browser acceptance, or publication authorization.",
+  "cases": [
+    {
+      "id": "NUM-FULL-001",
+      "kind": "manual-derivation",
+      "input": {
+        "date": "2009-11-11",
+        "name": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "expected": {
+        "lifePath": 33,
+        "birthdayNumber": 11,
+        "attitude": 4,
+        "destiny": 9,
+        "soul": 1,
+        "personality": 8,
+        "maturity": 6,
+        "personalYear": 5,
+        "personalMonth": 6
+      },
+      "oracle": "決定10〜15・78の手計算。文字値合計36／母音10／子音26。年月日11＋11＋11。",
+      "sourceVerificationStatus": "checked-in-review",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692"
+    },
+    {
+      "id": "NUM-NAME-MISSING",
+      "kind": "normative-spec",
+      "input": {
+        "date": "2009-11-11",
+        "name": null
+      },
+      "expected": {
+        "lifePath": 33,
+        "birthdayNumber": 11,
+        "attitude": 4,
+        "destiny": null,
+        "soul": null,
+        "personality": null,
+        "maturity": null,
+        "num01Availability": "missing_input"
+      },
+      "oracle": "決定7・既存NUM-01の全8結果必須条件",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692"
+    },
+    {
+      "id": "NUM-Y-CONSONANT",
+      "kind": "normative-spec",
+      "input": {
+        "name": "RY"
+      },
+      "expected": {
+        "destiny": 7,
+        "personality": 7,
+        "soul": null,
+        "soulStatus": "missing_input"
+      },
+      "oracle": "決定9・13・16。R=9、Y=7。母音なし。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692"
+    },
+    {
+      "id": "NUM-ALL-VOWELS",
+      "kind": "normative-spec",
+      "input": {
+        "name": "AI"
+      },
+      "expected": {
+        "destiny": 1,
+        "soul": 1,
+        "personality": null
+      },
+      "oracle": "決定13・16。A=1、I=9。子音なし。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692"
+    },
+    {
+      "id": "NUM-SUPPLEMENT",
+      "kind": "normative-spec",
+      "input": {
+        "name": "TARO YAMADA"
+      },
+      "expected": {
+        "counts": {
+          "1": 4,
+          "2": 1,
+          "3": 0,
+          "4": 2,
+          "5": 0,
+          "6": 1,
+          "7": 1,
+          "8": 0,
+          "9": 1
+        },
+        "missingDigits": [
+          3,
+          5,
+          8
+        ],
+        "mostFrequentDigits": [
+          1
+        ]
+      },
+      "oracle": "決定76・英字対応表の手計算",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692"
+    },
+    {
+      "id": "NUM-PINNACLE",
+      "kind": "normative-spec",
+      "input": {
+        "date": "2009-11-11",
+        "lifePath": 33
+      },
+      "expected": {
+        "pinnacles": [
+          22,
+          22,
+          8,
+          22
+        ],
+        "secondStarts": "2039-11-11",
+        "thirdStarts": "2048-11-11",
+        "fourthStarts": "2057-11-11",
+        "challenges": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "oracle": "決定73〜75。LP33は年齢計算では6。36−6=30。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692"
+    },
+    {
+      "id": "EXTERNAL-LP-1980",
+      "kind": "external-published-example",
+      "input": {
+        "date": "1980-10-22"
+      },
+      "expected": {
+        "lifePath": 5
+      },
+      "source": "https://www.numerology.com/articles/your-numerology-chart/life-path-number-meanings/"
+    },
+    {
+      "id": "EXTERNAL-LP-1990",
+      "kind": "external-published-example",
+      "input": {
+        "date": "1990-08-12"
+      },
+      "expected": {
+        "lifePath": 3
+      },
+      "source": "https://www.worldnumerology.com/do-your-own-reading/"
+    },
+    {
+      "id": "EXTERNAL-LP-1983",
+      "kind": "external-published-example",
+      "input": {
+        "date": "1983-11-22"
+      },
+      "expected": {
+        "lifePath": 9
+      },
+      "source": "https://www.worldnumerology.com/do-your-own-reading/"
+    },
+    {
+      "id": "EXTERNAL-PINNACLE-1949",
+      "kind": "external-published-example",
+      "input": {
+        "date": "1949-05-15"
+      },
+      "expected": {
+        "pinnacles": [
+          11,
+          11,
+          22,
+          1
+        ]
+      },
+      "source": "https://www.worldnumerology.com/do-your-own-reading/"
+    },
+    {
+      "id": "EXTERNAL-YEAR-MONTH-2026",
+      "kind": "external-published-example",
+      "input": {
+        "date": "1949-05-15",
+        "referenceDate": "2026-02-03"
+      },
+      "expected": {
+        "personalYear": 3,
+        "personalMonth": 5
+      },
+      "source": "https://www.worldnumerology.com/do-your-own-reading/"
+    }
+  ]
+}
