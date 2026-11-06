@@ -54,6 +54,8 @@ assert.ok(!appSource.includes('from "./numerology-calculator.js"'), "Numerology 
 assert.ok(!appSource.includes('from "./numerology-name-input.js"'), "Name confirmation must not retain unresolved imports.");
 assert.ok(appSource.includes("numerologyNameInputs:normalizeNumerologyNameInputs(numeriaNameInputsRef.current)"), "Reading snapshots must capture the name selection and explicit confirmation.");
 assert.ok(appSource.includes("updateNumerologyNames:function(change)"), "Production navigation must expose the name-update handler.");
+assert.ok(appSource.includes("Fi=e=>withNumerologyCalculationCheckpoint({"), "Production snapshot must include the numerical result checkpoint.");
+assert.ok(!appSource.includes('from "./numerology-page-data.js"'), "Checkpoint runtime must not retain unresolved imports.");
 assert.ok(appSource.includes("NumeriaNavigationBridge.v3"), "Versioned Numeria app bundle must contain stable navigation bridge v3.");
 assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Versioned Numeria app bundle must contain syntax guard repairs.");

@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import worker from "../src/worker.js";
 import { normalizeNumerologyNameInputs, updateNumerologyNameInputs, selectedNumerologyName } from "../src/numerology-name-input.js";
+import { withNumerologyCalculationCheckpoint } from "../src/numerology-result-checkpoint.js";
 
 // Run the Worker's real D1 SQL on SQLite. Identity and D1 transport are fixtures.
 const directory = mkdtempSync(join(tmpdir(), "numeria-draft-cas-"));
@@ -60,7 +61,7 @@ savedNames = updateNumerologyNameInputs(savedNames, { role: "subject", operation
 savedNames.subject.current.romanName = "TARO SATO";
 const save = (message, expectedDraftVersion) => api("/api/appraisals/save-draft", {
   appraisalId: "session_cas", expectedDraftVersion, question: message,
-  snapshot: { ...nameIdentity, id: "session_cas", theme: message, customReportItems: [], drafts: {}, numerologyNameInputs: savedNames },
+  snapshot: withNumerologyCalculationCheckpoint({ ...nameIdentity, id: "session_cas", theme: message, customReportItems: [], drafts: {}, numerologyNameInputs: savedNames }),
 });
 try {
   for (const file of readdirSync("migrations").filter(name => name.endsWith(".sql")).sort()) sql(readFileSync(join("migrations", file), "utf8"), [], true);
@@ -71,6 +72,10 @@ try {
   assert.deepEqual((await api("/api/appraisals/status")).body.activeDraft.snapshot.numerologyNameInputs, savedNames, "Read API must restore the persisted name selection and confirmation.");
   const restoredNames = (await api("/api/appraisals/session_cas")).body.session.snapshot;
   assert.equal(selectedNumerologyName(restoredNames).romanNameConfirmed, true, "Session resume API must preserve confirmation identity.");
+  assert.equal(restoredNames.numerologyCalculation.results[0].data.lifePath, 33);
+  assert.equal(restoredNames.numerologyCalculation.source.referenceDate, "2026-11-01");
+  assert.equal(restoredNames.numerologyCalculation.status, "calculated");
+  assert.equal(restoredNames.numerologyCalculation.pageResults.length, 14);
   const version = initial.body.activeDraft.draftVersion;
   assert.ok(version);
   holdReads = true;

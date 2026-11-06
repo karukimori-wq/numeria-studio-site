@@ -16,7 +16,7 @@ export function buildNumerologyPageData({ subject, partner, referenceDate, famil
   const own = calculateNumerologySubject(subject, referenceDate);
   const other = calculateNumerologySubject(partner, referenceDate);
   const core = own.coreNumbers || {};
-  const coreData = keys => Object.fromEntries(keys.map(key => [key, core[key]]));
+  const coreData = keys => Object.fromEntries(keys.map(key => [key, core[key] ?? null]));
   const pages = [];
   const add = (id, required, data) => {
     const missing = required.filter(([, value]) => value === null || value === undefined || value === false || value === "").map(([key]) => key);
@@ -51,7 +51,7 @@ export function buildNumerologyPageData({ subject, partner, referenceDate, famil
   add("NUM-13", [["pinnacles", own.pinnacles], ["challengeNumbers", own.challengeNumbers]], { pinnacles: own.pinnacles, challengeNumbers: own.challengeNumbers });
   add("NUM-14", [["personalMonth", own.personalMonth]], { personalMonth: own.personalMonth, referenceMonth: typeof referenceDate === "string" ? referenceDate.slice(0, 7) : null });
   return { methodKey: "numerology", status: own.status, calculationVersion: own.calculationVersion, referenceDate,
-    birthday: subject?.birthday, normalizedRomanName: own.normalizedRomanName || "", pages };
+    birthday: subject?.birthday, normalizedRomanName: own.normalizedRomanName || "", coreNumbers: coreData(NUMEROLOGY_CORE_KEYS), pages };
 }
 
 // Only explicit confirmation belongs to the input. Legacy birthName alone does
@@ -88,7 +88,7 @@ export function renderNumerologyCalculationPreview(connection, definitions) {
       for (const item of values.supplements) row(labels[item.key], `本人 ${item.subject} ／ 相手 ${item.partner}`);
       if (values.familyRelation) row("関係", values.familyRelation);
     }
-    for (const item of values.pinnacles || []) row(`第${item.stage}ピーク（${item.startAge}歳〜${item.endAgeExclusive === null ? "" : `${item.endAgeExclusive}歳の誕生日前まで`}）`, item.value);
+    for (const item of values.pinnacles || []) row(`第${item.stage}ピーク（${item.startAge}歳〜${item.endAgeExclusive === null ? "" : `${item.endAgeExclusive}歳の誕生日前まで`}）`, `${item.value} ／ ${item.dateBoundaryStatus === "resolved" ? `${item.startDate}〜${item.endDateExclusive ? `${item.endDateExclusive}の前日` : ""}` : "日付境界は要確認（年齢のみ）"}`);
     for (const item of values.challengeNumbers || []) row(`第${item.stage}チャレンジ${item.scope === "lifelong" ? "（生涯の主要課題）" : "（人生段階の傾向）"}`, item.value);
     if (values.personalMonth != null) row(`${values.referenceMonth}の個人月`, values.personalMonth);
     return `<details data-numerology-page-preview="${escape(page.pageDefinitionId)}"><summary>${escape(definition.title)} · ${page.status === "calculated" ? "計算済み" : "入力不足"}</summary>${page.status === "calculated" ? `<dl>${rows.join("")}</dl>` : `<p>必要な入力・結果：${escape(page.missing.map(key => labels[key] || key).join("、"))}</p>`}</details>`;
