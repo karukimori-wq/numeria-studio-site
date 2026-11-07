@@ -28,7 +28,7 @@ results = []
 for name in ['standard-comments-off', 'standard-comments-on', 'magazine-comments-off', 'magazine-comments-on']:
     doc = fitz.open(root / (name + '.pdf'))
     assert len(doc) >= 14, name
-    text = ''.join(re.sub(r'\b\d+\s*/\s*\d+\b', '', page.get_text()).replace('九星鑑定書 ／ 未承認草案', '') for page in doc)
+    text = ''.join(page.get_text(clip=fitz.Rect(0, 50, page.rect.width, page.rect.height-40)) for page in doc)
     normalized = compact(text)
     for number in range(1, 15):
         assert f'KIG-{number:02}' in text, (name, 'missing chapter', number)
