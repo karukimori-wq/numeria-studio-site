@@ -89,7 +89,7 @@ try {
   for(const format of ['standard','magazine']) {
     const printed=await request('/api/kigaku/report-print',{draftId:'ki-test',format});
     assert.equal(printed.status,200);assert.match(printed.body.html,/@page\{size:A4/);
-    assert.equal((printed.body.html.match(/<article>/g)||[]).length,14);
+    assert.equal((printed.body.html.match(/<article\b/g)||[]).length,14);
     assert.match(printed.body.html,/未承認草案/);assert.equal(printed.body.exportAllowed,false);
   }
   assert.equal((await request('/api/kigaku/report-print',{draftId:'other',format:'standard'})).status,409);
