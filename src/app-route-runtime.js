@@ -198,12 +198,13 @@
     });
   }
 
-  async function apiJson(path) {
+  async function apiJson(path, init = {}) {
     const fetcher = typeof window.NumeriaAuthenticatedFetch === "function"
       ? window.NumeriaAuthenticatedFetch
       : window.fetch.bind(window);
     const response = await fetcher(path, {
-      headers: { "X-Workspace-Id": "ws_personal", Accept: "application/json" },
+      ...init,
+      headers: { "X-Workspace-Id": "ws_personal", Accept: "application/json", ...(init.body ? { 'Content-Type': 'application/json' } : {}) },
       cache: "no-store",
     });
     const body = await response.json().catch(() => ({}));
@@ -214,6 +215,41 @@
       throw error;
     }
     return body;
+  }
+
+  async function showCharacters(sequence) {
+    renderLoading('characters', 'キャラクター');
+    try {
+      const [official, custom, selected] = await Promise.all([
+        apiJson('/api/characters/official'), apiJson('/api/characters'), apiJson('/api/characters/selection'),
+      ]);
+      if (sequence !== dispatchSequence) return;
+      renderSurface({kind:'characters',kicker:'CHARACTERS',title:'キャラクター',body:`
+        <p role="status" id="character-feedback">${selected.selection ? `選択済み：${escapeHtml(selected.selection.characterId)}${selected.selection.available ? '' : '（現在利用できません。選び直してください）'}` : '公式キャラクターを選んでください'}</p>
+        <h2>公式キャラクター</h2><div id="character-official"></div>
+        <h2>カスタムキャラクター</h2><div id="character-custom"></div>`});
+      const feedback = document.getElementById('character-feedback');
+      const report = message => { if(sequence === dispatchSequence) feedback.textContent = message; };
+      let revision = selected.selection?.revision || 0;
+      for(const character of official.characters || []) {
+        const button = document.createElement('button');button.type='button';button.className='nr-action';button.textContent=`${character.name}（版 ${character.characterVersion}）を選択`;
+        button.onclick=async()=>{button.disabled=true;try{const saved=await apiJson('/api/characters/selection',{method:'PUT',body:JSON.stringify({characterId:character.characterId,characterVersion:character.characterVersion,expectedRevision:revision})});revision=saved.selection.revision;report(`${character.name}を選択しました`);}catch(error){report(error.status===409?'選択状態が更新されています。画面を開き直して確認してください':'選択を保存できませんでした。再試行してください');}finally{button.disabled=false;}};
+        document.getElementById('character-official').append(button);
+      }
+      if(!official.characters?.length) report('利用できる公式キャラクターがありません');
+      for(const character of custom.characters || []) {
+        const latest=character.versions.at(-1), card=document.createElement('section');card.className='nr-card';
+        const label=document.createElement('label');label.textContent='キャラクター名';
+        const input=document.createElement('input');input.value=latest.name;input.maxLength=120;label.append(input);
+        const state=document.createElement('p');state.setAttribute('role','status');state.textContent=`保存済み・版 ${latest.version}`;
+        input.oninput=()=>{state.textContent='未保存';};
+        const save=document.createElement('button');save.type='button';save.textContent='名前を保存';let expectedVersion=latest.version;
+        save.onclick=async()=>{save.disabled=true;try{const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}`,{method:'PUT',body:JSON.stringify({name:input.value,surfaceParameters:latest.surfaceParameters,expectedVersion})});expectedVersion=result.character.latestVersion;state.textContent=`保存済み・版 ${expectedVersion}`;}catch(error){state.textContent=error.status===409?'保存競合：入力は保持しています。履歴を確認し、画面を開き直して再編集してください':'保存できませんでした。入力は保持しています。再試行できます';}finally{save.disabled=false;}};
+        const history=document.createElement('button');history.type='button';history.textContent='版履歴を確認';const output=document.createElement('p');
+        history.onclick=async()=>{try{const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}/versions`);output.textContent=result.character.versions.map(v=>`版 ${v.version}：${v.name}（${v.savedAt}）`).join(' / ');}catch{output.textContent='履歴を取得できませんでした';}};
+        card.append(label,state,save,history,output);document.getElementById('character-custom').append(card);
+      }
+    } catch(error) {if(sequence===dispatchSequence) renderError('characters','キャラクター',error.status===503?'キャラクター機能は準備中です。':'読み込めませんでした。ログイン状態を確認して再試行してください。');}
   }
 
   function reportListBody(reports) {
@@ -355,6 +391,8 @@
       if (specification.kind === "reports" || specification.kind === "report-detail") {
         if (api?.go) invokeRouteApi(() => api.go("dashboard"));
         await showReports(specification.reportId || "", sequence);
+      } else if (specification.kind === 'settings' && specification.section === 'characters') {
+        await showCharacters(sequence);
       } else if (specification.kind === "readings") {
         if (api?.go) invokeRouteApi(() => api.go("dashboard"));
         await showReadings(sequence);

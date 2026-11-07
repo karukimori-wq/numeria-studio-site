@@ -1,0 +1,23 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { CharacterStore } from '../src/character-store.js';
+import { beginCharacterEdit, changeCharacterEdit, characterSaveFailed, compareCharacterEdit, rebaseCharacterEdit } from '../src/character-editor-state.js';
+test('history is owner scoped and private; editing errors/conflicts retain inputs and CAS rechecks rebases', async () => {
+  const rows=new Map(); const key=s=>s.workspaceId+':'+s.userId;
+  const repository={async read(s){return structuredClone(rows.get(key(s))||{revision:0,state:[]});},async compareAndSwap(s,revision,state){if((rows.get(key(s))?.revision||0)!==revision)return false;rows.set(key(s),{revision:revision+1,state:structuredClone(state)});return true;}};
+  const store=new CharacterStore(repository,{id:()=> 'character'}),scope={workspaceId:'ws',userId:'owner',planId:'pro'};
+  const input={name:'Original',surfaceParameters:Array(9).fill(50)};
+  const created=await store.create(scope,input,{type:'preset',status:'published',characterId:'official',characterVersion:'1',surfaceParameters:input.surfaceParameters,hiddenParameters:Array(6).fill(70)});
+  let edit=changeCharacterEdit(beginCharacterEdit(created),{...input,name:'My change'});
+  edit=characterSaveFailed(edit,'NETWORK_FAILURE'); assert.equal(edit.input.name,'My change');assert.equal(edit.unsaved,true);
+  await store.save(scope,'character',1,{...input,name:'Other change'});
+  await assert.rejects(store.save(scope,'character',edit.expectedVersion,edit.input),{code:'CHARACTER_CONFLICT'});
+  const history=await store.history(scope,'character');assert.doesNotMatch(JSON.stringify(history),/hidden|70/);
+  assert.equal(history.versions[0].name,'Original');
+  await assert.rejects(store.history({...scope,userId:'other'},'character'),{code:'CHARACTER_NOT_FOUND'});
+  edit=compareCharacterEdit(edit,history);assert.equal(edit.input.name,'My change');
+  edit=rebaseCharacterEdit(edit,edit.input);assert.equal(edit.expectedVersion,2);
+  await store.save(scope,'character',2,{...input,name:'Racing change'});
+  await assert.rejects(store.save(scope,'character',edit.expectedVersion,edit.input),{code:'CHARACTER_CONFLICT'});
+  assert.equal(edit.input.name,'My change');
+});
