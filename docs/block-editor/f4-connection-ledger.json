@@ -1,0 +1,1923 @@
+{
+  "basis": "main e791da40; Notion 05/06/08 and 86 decisions; 2026-11-08 JST",
+  "definition": "connected requires formal page result + approved text + figure path; partial means calculation/checkpoint or branch adapter only; no page independently accepted",
+  "rows": [
+    {
+      "pageId": "NUM-01",
+      "method": "numerology",
+      "title": "8つのコアナンバー",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "各コアの短い意味。全8結果が必須",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-01]"
+      ],
+      "requiredReference": "8コア全件",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RESULT"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-02",
+      "method": "numerology",
+      "title": "本質・才能・社会での役割",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "本質・才能・社会での役割を3枠へ固定",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-02]"
+      ],
+      "requiredReference": "lifePath・birthdayNumber・destiny",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RESULT"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-03",
+      "method": "numerology",
+      "title": "内面・成長・今年の流れ",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "内面・成長・今年の流れを3枠へ固定",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-03]"
+      ],
+      "requiredReference": "soul・maturity・personalYear",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RESULT"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-04",
+      "method": "numerology",
+      "title": "数字のつながりと9年サイクル",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "計算上のつながりと現在周期を説明。性格の因果線は作らない",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-04]"
+      ],
+      "requiredReference": "lifePath・destiny→maturity、personalYear",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION",
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-05",
+      "method": "numerology",
+      "title": "他のナンバーとの相関図",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "未出現と最多の意味。同率・該当なし対応。氏名必須",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-05]"
+      ],
+      "requiredReference": "nameDigitCounts・missingDigits・mostFrequentDigits",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-06",
+      "method": "numerology",
+      "title": "あなたの9年サイクル",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "9年の年別原文、当年を強調",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-06]"
+      ],
+      "requiredReference": "personalYears（基準年±4）",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-07",
+      "method": "numerology",
+      "title": "あなたの数秘マップ",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "役割別マップの読み方。全8コア確定必須",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-07]"
+      ],
+      "requiredReference": "8コア・由来区分・計算上の依存",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-MAP"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-08",
+      "method": "numerology",
+      "title": "ふたりの数秘・相性鑑定",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "2名比較の短い意味と関わり方。スコアなし",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-08]"
+      ],
+      "requiredReference": "2名のlifePath中心＋共通確定補足項目",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-09",
+      "method": "numerology",
+      "title": "恋愛・結婚の傾向",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "恋愛観・距離感・結婚観。参照項目が必要",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-09]"
+      ],
+      "requiredReference": "soul・personality・lifePath",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RESULT"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-10",
+      "method": "numerology",
+      "title": "仕事・適職・才能",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "才能・働き方・社会との関わり",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-10]"
+      ],
+      "requiredReference": "birthdayNumber・destiny・lifePath",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-11",
+      "method": "numerology",
+      "title": "金運・お金との向き合い方",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "お金の価値観と行動上の視点。金額予測なし",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-11]"
+      ],
+      "requiredReference": "soul・destiny・lifePath",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RESULT"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-12",
+      "method": "numerology",
+      "title": "家族・親子の数秘",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "本人／相手／関わり。家族全員へ拡張しない",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-12]"
+      ],
+      "requiredReference": "2名の比較結果・家族関係種別",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-13",
+      "method": "numerology",
+      "title": "人生の重要な転機",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "ピナクル期間＋期間を持たない課題一覧",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-13]"
+      ],
+      "requiredReference": "pinnacles・challengeNumbers",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME",
+        "FIG-TABLE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "NUM-14",
+      "method": "numerology",
+      "title": "今月のテーマ",
+      "requiredInput": "生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別",
+      "pageInputRule": "対象月の数とテーマ",
+      "resultKey": "core_numbers (checkpoint; page-specific confirmed adapter absent)",
+      "sourcePaths": [
+        "numerologyCalculation.pageResults[NUM-14]"
+      ],
+      "requiredReference": "personalMonth・基準年月",
+      "calculator": "src/numerology-calculator.js",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "partial: 11 fixture cases; not page acceptance",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "main e791da40; PR #81/#83/#84/#85",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-01",
+      "method": "tarot",
+      "title": "ご相談とカードの展開",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "全必要位置が確定。相談本文は短い問いのみ",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "spreadId/version・positions・cards",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-SPREAD"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-02",
+      "method": "tarot",
+      "title": "引かれたカード",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "位置順のカード固有原文。画像・原文欠落は発行阻止",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "全positionsのcardId/orientation",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-CARDS"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-03",
+      "method": "tarot",
+      "title": "過去・現在・未来の流れ",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "three-time／horseshoe-seven／celtic-crossのみ",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "past・present・future/near-future",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-SPREAD"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-04",
+      "method": "tarot",
+      "title": "カード同士のつながり",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "2枚以上。時間順・分岐・役割を示し因果を作らない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "spread定義の役割接続・確定カード",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-05",
+      "method": "tarot",
+      "title": "ご相談への答え",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "対応スプレッド表に限定。回答を組み立てる原文とコメント",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "message／future／a-outcome+b-outcome／outcome",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-06",
+      "method": "tarot",
+      "title": "これからの行動とメッセージ",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "relationship-six／horseshoe-seven／problem-solving-threeのみ",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "action／attitude",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-07",
+      "method": "tarot",
+      "title": "ふたりの相性・関係性",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "相性・関係性。氏名等の相手識別は必要、出生年月日は不要",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "relationship-sixの6位置・2名の役割",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-SPREAD"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-08",
+      "method": "tarot",
+      "title": "相手の気持ち",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "相手の立場を読む解説。事実として心理を確定しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "relationship-six.other-feeling・relationship-now",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-SPREAD"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-09",
+      "method": "tarot",
+      "title": "恋愛・結婚の行方",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "関係性の恋愛テーマ解説。対象相手あり",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "relationship-six・恋愛テーマ",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-SPREAD"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-10",
+      "method": "tarot",
+      "title": "仕事・転職の選択",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "仕事選択の過程・可能性",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "choice-five・仕事テーマ・A/B名称",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-SPREAD"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-11",
+      "method": "tarot",
+      "title": "AとBの選択",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "A/B各2位置＋比較。勝率スコアなし",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "choice-five・A/B名称",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-SPREAD"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-12",
+      "method": "tarot",
+      "title": "今後3か月の流れ",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "作成月・翌月・翌々月を年月ラベル付きで固定",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "three-months.month-0/1/2・基準年月",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "TAR-13",
+      "method": "tarot",
+      "title": "障害と解決のヒント",
+      "requiredInput": "登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称",
+      "pageInputRule": "課題・背景・行動を別原文で表示",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "problem-solving-three.problem/background/action",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-SPREAD"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-01",
+      "method": "nine-star-ki",
+      "title": "あなたの九星",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "2星必須。未確定を推測表示しない",
+      "resultKey": null,
+      "sourcePaths": [
+        "natal.mainStar",
+        "natal.monthStar"
+      ],
+      "requiredReference": "honmei・getsumei",
+      "calculator": "src/kigaku-result.js + directions/period-series",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RESULT"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-02",
+      "method": "nine-star-ki",
+      "title": "基本性格と運勢傾向",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "各星の性質を基本とし、必要な関係だけ登録原文で補足",
+      "resultKey": null,
+      "sourcePaths": [
+        "natal.mainStar",
+        "natal.monthStar"
+      ],
+      "requiredReference": "honmei・getsumei・各五行",
+      "calculator": "src/kigaku-result.js + directions/period-series",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RESULT"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-03",
+      "method": "nine-star-ki",
+      "title": "今年の運勢",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "年全体と本人回座宮のテーマ",
+      "resultKey": null,
+      "sourcePaths": [
+        "year.board",
+        "natal.mainStar"
+      ],
+      "requiredReference": "yearBoard・honmeiPosition・節年区間",
+      "calculator": "src/kigaku-result.js + directions/period-series",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-DIRECTION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-04",
+      "method": "nine-star-ki",
+      "title": "今月の運勢",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "月全体と本人回座宮。年運の長文再掲なし",
+      "resultKey": null,
+      "sourcePaths": [
+        "month.board",
+        "natal.mainStar"
+      ],
+      "requiredReference": "monthBoard・honmeiPosition・節月区間",
+      "calculator": "src/kigaku-result.js + directions/period-series",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-DIRECTION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-05",
+      "method": "nine-star-ki",
+      "title": "日々の運勢",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "採用済み日盤方式による対象日のテーマ",
+      "resultKey": null,
+      "sourcePaths": [
+        "day.board",
+        "day.date"
+      ],
+      "requiredReference": "dayBoard・基準日",
+      "calculator": "src/kigaku-result.js + directions/period-series",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-DIRECTION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-06",
+      "method": "nine-star-ki",
+      "title": "吉方位と開運行動",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "8方位の理由と年/月共通吉。日盤で上書きしない",
+      "resultKey": null,
+      "sourcePaths": [
+        "analysis.year",
+        "analysis.month",
+        "analysis.common"
+      ],
+      "requiredReference": "yearDirectionAssessment・monthDirectionAssessment",
+      "calculator": "src/kigaku-result.js + directions/period-series",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-DIRECTION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-07",
+      "method": "nine-star-ki",
+      "title": "運勢のまとめ",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "確定節年内の月別テーマ。点数折れ線なし",
+      "resultKey": null,
+      "sourcePaths": [
+        "months.rows"
+      ],
+      "requiredReference": "当年の確定年盤・12節月と本人回座宮",
+      "calculator": "src/kigaku-result.js + directions/period-series",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-08",
+      "method": "nine-star-ki",
+      "title": "ふたりの九星・相性鑑定",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "五行関係を方向付きで比較。善悪・優劣判定なし",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2名のhonmeiと五行、共通確定getsumei",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-09",
+      "method": "nine-star-ki",
+      "title": "恋愛・結婚の相性",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "距離感・関わり方。08の基本文再掲なし",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2名比較・恋愛関係種別",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-10",
+      "method": "nine-star-ki",
+      "title": "仕事・職場の人間関係",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "協力の視点。職場全体ネットワークなし",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2名比較・職場関係種別",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-11",
+      "method": "nine-star-ki",
+      "title": "転職・独立のタイミング",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "年/月の仕事テーマ比較。未来適日検索なし",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "当年・当節月の本人回座と原文",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-12",
+      "method": "nine-star-ki",
+      "title": "指定方位と目的の確認（手動8方位）",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "8方位を手動指定。住所・距離・予定日不要",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "manualDirection・目的・年/月判定",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-GEO"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-13",
+      "method": "nine-star-ki",
+      "title": "家族・親子の相性",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "星の違い・関わり方。家族全員一括なし",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2名比較・親子等の関係種別",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "KIG-14",
+      "method": "nine-star-ki",
+      "title": "9年間の運勢",
+      "requiredInput": "日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足",
+      "pageInputRule": "対象区間と9年テーマ。数秘の前後4年設定と混同しない",
+      "resultKey": null,
+      "sourcePaths": [
+        "years.rows"
+      ],
+      "requiredReference": "基準節年から9節年のyearBoards",
+      "calculator": "src/kigaku-result.js + directions/period-series",
+      "connectionStatus": "partial",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-01",
+      "method": "four-pillars",
+      "title": "あなたの命式",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "確定三柱必須。時柱不明を明記",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "確定year/month/day柱・任意hour柱",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TABLE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-02",
+      "method": "four-pillars",
+      "title": "生まれ持った本質",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "日干の性質と命式内の位置",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "dayStem・参照命式",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-03",
+      "method": "four-pillars",
+      "title": "五行のバランス",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "6字または8字の構成数。蔵干を足さない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "visibleElementCounts・includedPillars",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-BALANCE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-04",
+      "method": "four-pillars",
+      "title": "才能・仕事・人間関係",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "才能・仕事・対人の概要。日主自身を独立の通変星として誤算しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "tenGods・対象柱",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-05",
+      "method": "four-pillars",
+      "title": "人生のエネルギー",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "十二運の配置・意味。数値エネルギーへ変換しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "twelveStages・掲載柱",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TABLE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-06",
+      "method": "four-pillars",
+      "title": "10年ごとの運勢",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "起運後の大運区間を一覧表示。掲載区間を版付きで明記し、全掲載区間が対応範囲内で確定",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "yunStart・dayunIntervals",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TABLE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-07",
+      "method": "four-pillars",
+      "title": "これからの運勢",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "現在の大運と当年テーマ。大運未確定は不可",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "基準日時点の大運・節年年運",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-08",
+      "method": "four-pillars",
+      "title": "ふたりの命式・相性鑑定",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "比較概要と存在する関係だけを解説",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2名の日干・確定柱・採用干合支合冲",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TABLE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-09",
+      "method": "four-pillars",
+      "title": "恋愛・結婚の傾向",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "本人の恋愛・結婚観。性別から相手の属性を決めない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "dayStem・dayBranch・関連tenGods",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-10",
+      "method": "four-pillars",
+      "title": "仕事・適職・社会運",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "才能を働き方・社会的役割へ展開",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "tenGods・dayStem・対象柱",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-11",
+      "method": "four-pillars",
+      "title": "財運・お金との関係",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "財星に関する読み方。資産・利益の数値予測なし",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "wealthTenGods・dayStem・配置",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RELATION"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-12",
+      "method": "four-pillars",
+      "title": "家族・親子の関係",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "構成差と関わり方。相手命式の代用禁止",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2名の確定命式・親子等関係種別",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TABLE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-13",
+      "method": "four-pillars",
+      "title": "今年・来年の運勢",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "2年の違いを比較。範囲外を短縮しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "作成節年と翌節年の年運・対応大運",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "BAZ-14",
+      "method": "four-pillars",
+      "title": "人生の重要な転機",
+      "requiredInput": "出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式",
+      "pageInputRule": "次の切替を中心に解説。現在大運の一覧再掲なし",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "現在大運と次大運・境界日時・命式関係",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-01",
+      "method": "western-astrology",
+      "title": "あなたのホロスコープ",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "出生時刻・地必須の完全出生図",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "10天体の度数・ASC/MC・12ハウス",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ASTRO"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-02",
+      "method": "western-astrology",
+      "title": "太陽・月・アセンダント",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "太陽必須。月・ASCの不足を明示",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "確定Sun.sign・任意Moon.sign/ASC.sign",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-RESULT"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-03",
+      "method": "western-astrology",
+      "title": "惑星が示す個性",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "全採用天体が必要。星座のみ確定の値を度数に偽装しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "採用10天体の確定位置",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TABLE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-04",
+      "method": "western-astrology",
+      "title": "4元素のバランス",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "各1票。ASC/MCは除外、母数10を明示",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "10天体のelementCounts",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-BALANCE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-05",
+      "method": "western-astrology",
+      "title": "行動と変化のパターン",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "活動・不動・柔軟を各1票、母数10",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "10天体のmodalityCounts",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-BALANCE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-06",
+      "method": "western-astrology",
+      "title": "惑星同士の関係",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "5種類・用途別オーブ。0件は正常説明",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "出生図採用aspects",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ASTRO"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-07",
+      "method": "western-astrology",
+      "title": "人生のテーマ",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "本人・基盤・対人・社会の4領域を固定参照。時刻・地必須",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "1/4/7/10ハウス・所在天体",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ASTRO"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-08",
+      "method": "western-astrology",
+      "title": "総合ホロスコープ鑑定",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "確定結果から強み／課題を整理。参照範囲を保存",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "Sun/Moon・確定主要配置・採用aspects",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-09",
+      "method": "western-astrology",
+      "title": "ふたりのホロスコープ・相性",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "シナストリー。時刻不明で確定できない度数は対象外",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2名の確定天体・crossAspects",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ASTRO"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-10",
+      "method": "western-astrology",
+      "title": "ふたりの関係性",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "短弧中点の合成図。本人出生図と混同しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "compositePlanets・任意compositeAxes/Houses",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ASTRO"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-11",
+      "method": "western-astrology",
+      "title": "恋愛・結婚の傾向",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "恋愛傾向。必要なVenus/Mars確定、ハウス不足を代用しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "Venus/Mars・確定Moon、任意7ハウス",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ASTRO"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-12",
+      "method": "western-astrology",
+      "title": "仕事・適職・キャリア",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "MCとハウス確定必須",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "MC・2/6/10ハウス・関連天体",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ASTRO"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-13",
+      "method": "western-astrology",
+      "title": "金運・価値観",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "価値観と金銭との関わり。ハウス必須",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2/8ハウス・Venus・所在天体",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ASTRO"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-14",
+      "method": "western-astrology",
+      "title": "今後1年間の運勢",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "期間計算完了。該当0件は正常",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "出生確定度数と1暦年のtransitEvents",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-15",
+      "method": "western-astrology",
+      "title": "人生の転機",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "AST-14と同じ対象1年から長期天体イベントを抽出。独立の点数周期を作らない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "土星・天王星・海王星・冥王星の出生天体への採用イベント",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "AST-16",
+      "method": "western-astrology",
+      "title": "家族・親子の相性",
+      "requiredInput": "出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証",
+      "pageInputRule": "家族テーマへ参照対象を限定。必要天体の度数が未確定なら対応関係を確定しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2名のSun/Moon/Mercury・採用crossAspects・家族種別",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ASTRO"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-01",
+      "method": "zi-wei-dou-shu",
+      "title": "あなたの命盤",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "完全命盤。時刻必須",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "12palaces・starPlacements・soul/body・fiveElementClass",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-02",
+      "method": "zi-wei-dou-shu",
+      "title": "生まれ持った性質",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "命宮と身宮の役割を分ける。無主星を計算失敗にしない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "命宮・身宮と所属主星",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-03",
+      "method": "zi-wei-dou-shu",
+      "title": "十二宮が示す人生",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "各宮の短い基本説明。選択宮詳細と分離",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "12宮・各宮星曜",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-04",
+      "method": "zi-wei-dou-shu",
+      "title": "主星が示す才能",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "星IDごとの意味と配置。解説対象は異なる掲載主星",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "14主星の確定配置",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TABLE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-05",
+      "method": "zi-wei-dou-shu",
+      "title": "人生の変化と四化",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "生年四化を掲載。流年四化と別キー",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "natalFourTransformations",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-06",
+      "method": "zi-wei-dou-shu",
+      "title": "10年ごとの運勢",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "採用版の起限による大限区間を掲載。掲載範囲を明記し、数え年と西暦期間を併記",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "decadalIntervals",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TABLE"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-07",
+      "method": "zi-wei-dou-shu",
+      "title": "今年の運勢",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "流年命盤。旧暦年度の開始・終了を明記",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "作成基準日に属する旧暦年のannualChart/annualFourTransformations",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-08",
+      "method": "zi-wei-dou-shu",
+      "title": "ふたりの命盤・相性鑑定",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "別命盤を並列比較。架空の合盤・飛化を自動新設しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2名の命/身宮・14主星・対応人生領域",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-09",
+      "method": "zi-wei-dou-shu",
+      "title": "恋愛・結婚の傾向",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "本人傾向。相手の実際の感情を確定しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "夫妻宮・命宮・福徳宮と星曜",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-10",
+      "method": "zi-wei-dou-shu",
+      "title": "仕事・社会的な役割",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "仕事・社会・外での役割",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "官禄宮・命宮・遷移宮と星曜",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-11",
+      "method": "zi-wei-dou-shu",
+      "title": "財運・資産の傾向",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "お金・資産への姿勢。資産額予測なし",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "財帛宮・田宅宮・福徳宮と星曜",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-12",
+      "method": "zi-wei-dou-shu",
+      "title": "家族・親子の関係",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "双方の命盤を参照。本人だけで相手を代用しない",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "2名の命宮・父母宮・子女宮＋家族種別",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-13",
+      "method": "zi-wei-dou-shu",
+      "title": "人生の転機",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "大限切替と流年の参照結果を別表示",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "現在・次大限と境界年の流年",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-TIME"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    },
+    {
+      "pageId": "ZIW-14",
+      "method": "zi-wei-dou-shu",
+      "title": "重要な人生領域",
+      "requiredInput": "出生年月日・確定時辰・採用命盤入力。比較は相手命盤",
+      "pageInputRule": "宮を所定リストから選択、概要より深い解説",
+      "resultKey": null,
+      "sourcePaths": [],
+      "requiredReference": "選択宮1〜12件と各宮の星曜",
+      "calculator": null,
+      "connectionStatus": "unconnected",
+      "missingPolicy": "required; optional exceptions only per pageInputRule (detailed field schema pending)",
+      "visualType": [
+        "FIG-ZIW"
+      ],
+      "registeredText": "source-missing (approved selector unconnected)",
+      "referenceTest": "unverified",
+      "browserTest": "unverified",
+      "pdfTest": "unverified",
+      "githubEvidence": "branch codex/f4-kigaku-results; see PR",
+      "verdict": "未検証"
+    }
+  ]
+}

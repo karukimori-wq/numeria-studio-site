@@ -1,0 +1,13 @@
+import {writeFileSync} from 'node:fs';
+import {REPORT_PAGE_DEFINITIONS} from '../src/report-page-definitions.js';
+import {REPORT_RESULT_REFERENCES} from '../src/report-result-references.js';
+import {KIGAKU_PAGE_SOURCE_PATHS} from '../src/kigaku-page-data.js';
+const inputs={numerology:'生年月日・保存基準日。氏名依存結果は確認済ローマ字氏名。比較は相手入力／関係種別', 'nine-star-ki':'日本出生暦日・時計時刻または時刻不明・標準時確認・保存基準瞬間。境界不確定は不足', 'four-pillars':'出生年月日・日本時計／時差。時柱は時刻必須。大運は採用起運条件。比較は相手命式', 'western-astrology':'出生年月日。度数は確定時刻、軸／ハウスは出生地必須。時刻不明は全日区間検証', 'zi-wei-dou-shu':'出生年月日・確定時辰・採用命盤入力。比較は相手命盤', tarot:'登録スプレッド版・必要全位置の確定カードIDと正逆・テーマ／相手／A/B名称'};
+const rows=REPORT_PAGE_DEFINITIONS.map(d=>{
+ const r=REPORT_RESULT_REFERENCES.find(r=>r.pageDefinitionId===d.pageDefinitionId);
+ const num=d.methodKey==='numerology'; const kig=Object.hasOwn(KIGAKU_PAGE_SOURCE_PATHS,d.pageDefinitionId);
+ return {pageId:d.pageDefinitionId,method:d.methodKey,title:d.pageDefinitionId==='KIG-12'?'指定方位と目的の確認（手動8方位）':d.title,requiredInput:inputs[d.methodKey],pageInputRule:r.publicationRule,resultKey:num?'core_numbers (checkpoint; page-specific confirmed adapter absent)':null,sourcePaths:kig?KIGAKU_PAGE_SOURCE_PATHS[d.pageDefinitionId]:num?[`numerologyCalculation.pageResults[${d.pageDefinitionId}]`]:[],requiredReference:r.resultReference,calculator:num?'src/numerology-calculator.js':kig?'src/kigaku-result.js + directions/period-series':null,connectionStatus:num||kig?'partial':'unconnected',missingPolicy:'required; optional exceptions only per pageInputRule (detailed field schema pending)',visualType:r.figureTypes,registeredText:'source-missing (approved selector unconnected)',referenceTest:num?'partial: 11 fixture cases; not page acceptance':'unverified',browserTest:'unverified',pdfTest:'unverified',githubEvidence:num?'main e791da40; PR #81/#83/#84/#85':'branch codex/f4-kigaku-results; see PR',verdict:'未検証'};
+});
+writeFileSync('docs/block-editor/f4-connection-ledger.json',JSON.stringify({basis:'main e791da40; Notion 05/06/08 and 86 decisions; 2026-11-08 JST',definition:'connected requires formal page result + approved text + figure path; partial means calculation/checkpoint or branch adapter only; no page independently accepted',rows},null,2)+'\n');
+const headers=Object.keys(rows[0]);const esc=v=>String(Array.isArray(v)?v.join('; '):v??'unconnected').replaceAll('|','\\|').replaceAll('\n',' ');
+writeFileSync('docs/block-editor/f4-connection-ledger.md','# F4 85ページ接続台帳\n\n正式接続完了0、部分接続22（数秘14＋九星8）、未接続63。部分接続は計算用adapterまでで実画面接続を保証しない。独立検証のページ合格0、ブラウザ0、PDF0。入力欄は占術共通前提＋各ページの掲載条件。詳細な必須／任意フィールドschema未完を隠さない。Result Key nullは未接続。元manifestのunconnectedを自動昇格しない。\n\n|'+headers.join('|')+'|\n|'+headers.map(()=> '---').join('|')+'|\n'+rows.map(r=>'|'+headers.map(h=>esc(r[h])).join('|')+'|').join('\n')+'\n');
