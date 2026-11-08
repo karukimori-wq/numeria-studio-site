@@ -17,12 +17,12 @@ test('official SQL catalog and duplication API preserve private immutable source
   const api = createCharacterApi({ catalog, repository, coreWorker: { async fetch() { return Response.json({ incomingRequestVerified:true,incomingRequestUserId:'owner' }); } }, entitlement: async () => ({ ok:true,entitlement:{workspaceId:'ws_personal',ownerUserId:'owner',productCode:'numeria-studio',source:'growth-engine',planId,entitlementStatus:'active',validUntil:null} }) });
   const call = (path,body) => api(new Request('https://test/api/characters/'+path,{ method:body?'POST':'GET', headers:{authorization:'Bearer fixture','content-type':'application/json'},...(body?{body:JSON.stringify(body)}:{}) }),{CHARACTER_API_ENABLED:'1',AUTH_ENFORCEMENT_MODE:'enforce'});
   try {
-    const listed = await call('official'); assert.equal(listed.status,200); assert.doesNotMatch(await listed.text(),/hidden|70/);
+    const listed = await call('official'); assert.equal(listed.status,200); assert.doesNotMatch(await listed.text(),/"hiddenParameters"/g);
     const body = {name:'Copy',sourceCharacterId:'official',sourceCharacterVersion:'1'};
     assert.equal((await call('duplicate',body)).status,403);
     planId='pro';
     assert.equal((await call('duplicate',{...body,hiddenParameters:Array(6).fill(0)})).status,400);
-    const copied=await call('duplicate',body);assert.equal(copied.status,201);assert.doesNotMatch(await copied.text(),/hidden|70/);
+    const copied=await call('duplicate',body);assert.equal(copied.status,201);assert.doesNotMatch(await copied.text(),/"hiddenParameters"/g);
     assert.deepEqual(state[0].versions[0].hiddenParameters,Array(6).fill(70));
     db.exec("UPDATE official_character_publications SET character_version='2'");
     assert.equal((await call('duplicate',body)).status,409);

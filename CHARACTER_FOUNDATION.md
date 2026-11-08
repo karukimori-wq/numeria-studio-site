@@ -43,3 +43,5 @@ History: GET /api/characters/:id/versions returns owner-only allowlisted immutab
 
 ## Character settings screen (2026-11-08)
 /app/settings/characters now loads the authenticated official list, saved selection, and custom list. Official selection uses revision CAS. Custom names save manually and retain input on errors/conflicts; history is fetched on demand. No API flag is enabled. Surface sliders, create/duplicate controls, per-field conflict resolution, images and publication controls remain pending. Formal axis labels/order are unresolved. Existing regression/domain tests and build pass; new screen browser interaction/responsive/live identity verification are NOT RUN.
+
+Screen save race fix (2026-11-08): delayed save acknowledgements retain the unsaved indicator when the input has changed since submission. Production showCharacters handlers are executed in a minimal DOM VM fixture to verify delayed ACK, subsequent expectedVersion and conflict input retention. Browser layout/live authentication remain unverified.
