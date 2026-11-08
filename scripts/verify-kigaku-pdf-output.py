@@ -2,6 +2,7 @@
 import json
 import re
 import sys
+from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
 import fitz
@@ -32,7 +33,13 @@ for name in ['standard-comments-off', 'standard-comments-on', 'magazine-comments
     normalized = compact(text)
     for number in range(1, 15):
         assert f'KIG-{number:02}' in text, (name, 'missing chapter', number)
+    active_chapter = None
     for index, page in enumerate(doc):
+        body = page.get_text(clip=fitz.Rect(0, 50, page.rect.width, page.rect.height-40))
+        heading = re.search(r"KIG-\d{2}", body)
+        if heading: active_chapter = heading.group()
+        header = page.get_text(clip=fitz.Rect(0, 0, page.rect.width, 50))
+        assert (index == 0 and active_chapter is None) or (active_chapter and active_chapter in header), (name, "chapter header", index+1)
         assert abs(page.rect.width - 595.28) < 2 and abs(page.rect.height - 841.89) < 2, (name, 'not A4')
         assert re.search(rf'{index+1}\s*/\s*{len(doc)}', page.get_text()), (name, 'folio', index+1)
         assert '未承認草案' in page.get_text(), (name, 'draft header', index+1)
@@ -40,6 +47,9 @@ for name in ['standard-comments-off', 'standard-comments-on', 'magazine-comments
             assert word[0] >= 15 and word[1] >= 10 and word[2] <= page.rect.width-15 and word[3] <= page.rect.height-10, (name, 'outside page', index+1)
     parser = Paragraphs()
     parser.feed((root / (name + '.html')).read_text())
+    expected = Counter(compact(p) for p in parser.parts if len(compact(p)) >= 12)
+    for value, count in expected.items():
+        assert normalized.count(value) >= count, (name, "repeated paragraph missing", count, value[:50])
     checked = 0
     for paragraph in parser.parts:
         value = compact(paragraph)
