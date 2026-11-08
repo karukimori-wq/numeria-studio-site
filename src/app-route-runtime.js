@@ -235,9 +235,25 @@
         const button = document.createElement('button');button.type='button';button.className='nr-action';button.textContent=`${character.name}（版 ${character.characterVersion}）を選択`;
         button.onclick=async()=>{button.disabled=true;try{const saved=await apiJson('/api/characters/selection',{method:'PUT',body:JSON.stringify({characterId:character.characterId,characterVersion:character.characterVersion,expectedRevision:revision})});revision=saved.selection.revision;report(`${character.name}を選択しました`);}catch(error){report(error.status===409?'選択状態が更新されています。画面を開き直して確認してください':'選択を保存できませんでした。再試行してください');}finally{button.disabled=false;}};
         document.getElementById('character-official').append(button);
+        if(custom.capabilities?.canCreate === true) {
+          const label=document.createElement('label');label.textContent=`${character.name}から作るキャラクターの名前`;
+          const name=document.createElement('input');name.maxLength=120;name.value=character.name;label.append(name);
+          const duplicate=document.createElement('button');duplicate.type='button';duplicate.textContent='複製してカスタムを作成';let busy=false;
+          duplicate.onclick=async()=>{
+            if(busy)return;if(!name.value.trim()){report('キャラクター名を入力してください');return;}
+            busy=true;duplicate.disabled=true;
+            try {
+              const result=await apiJson('/api/characters/duplicate',{method:'POST',body:JSON.stringify({name:name.value,sourceCharacterId:character.characterId,sourceCharacterVersion:character.characterVersion})});
+              if(sequence!==dispatchSequence)return;
+              appendCustom(result.character);report(`${result.character.versions.at(-1).name}を作成しました`);
+            }catch(error){report(error.status===403?'カスタム作成にはProプランが必要です':error.body?.errorCode==='CHARACTER_LIMIT_REACHED'?'登録上限に達しています':error.status===409?'公式版が更新・停止されています。画面を開き直してください':'作成結果を確認できませんでした。再作成の前に画面を開き直して一覧を確認してください');}
+            finally{busy=false;duplicate.disabled=false;}
+          };
+          document.getElementById('character-official').append(label,duplicate);
+        }
       }
       if(!official.characters?.length) report('利用できる公式キャラクターがありません');
-      for(const character of custom.characters || []) {
+      function appendCustom(character) {
         const latest=character.versions.at(-1), card=document.createElement('section');card.className='nr-card';
         const label=document.createElement('label');label.textContent='キャラクター名';
         const input=document.createElement('input');input.value=latest.name;input.maxLength=120;label.append(input);
@@ -249,6 +265,7 @@
         history.onclick=async()=>{try{const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}/versions`);output.textContent=result.character.versions.map(v=>`版 ${v.version}：${v.name}（${v.savedAt}）`).join(' / ');}catch{output.textContent='履歴を取得できませんでした';}};
         card.append(label,state,save,history,output);document.getElementById('character-custom').append(card);
       }
+      for(const character of custom.characters || []) appendCustom(character);
     } catch(error) {if(sequence===dispatchSequence) renderError('characters','キャラクター',error.status===503?'キャラクター機能は準備中です。':'読み込めませんでした。ログイン状態を確認して再試行してください。');}
   }
 

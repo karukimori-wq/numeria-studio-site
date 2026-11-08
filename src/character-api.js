@@ -29,7 +29,7 @@ export function createCharacterApi({ coreWorker, entitlement = fetchGrowthSubscr
       if (request.method === 'GET' && historyMatch) return reply(200, { character: await store.history(scope, historyMatch[1]) });
       if (request.method === 'GET' && url.pathname === '/api/characters/selection') return reply(200, { selection: await new D1CharacterSelection(db).read(scope) });
       if (request.method === 'GET' && url.pathname === '/api/characters/official') return reply(200, { characters: await (catalog || new D1OfficialCharacterCatalog(db)).list() });
-      if (request.method === 'GET' && url.pathname === '/api/characters') return reply(200, { characters: await store.list(scope) });
+      if (request.method === 'GET' && url.pathname === '/api/characters') return reply(200, { characters: await store.list(scope), capabilities: { canCreate: scope.planId === 'pro', customLimit: scope.planId === 'pro' ? 10 : 0 } });
       if (!['POST', 'PUT'].includes(request.method)) return reply(405, { errorCode: 'METHOD_NOT_ALLOWED' });
       if (!request.headers.get('content-type')?.startsWith('application/json')) return reply(415, { errorCode: 'JSON_REQUIRED' });
       // Bearer authentication is required for mutations; cookie-only requests cannot mutate.
