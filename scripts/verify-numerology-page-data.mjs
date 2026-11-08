@@ -82,6 +82,7 @@ vm.runInNewContext(runtime.slice(start, end), {
   settings: { querySelector: () => false, append: item => inserted.push(item) }, data: { selectedDivination: "numerology" },
   document: { createElement: () => ({ dataset: {}, querySelector: selector => selector.includes("calculation-values") ? previewValues : nameForm }) }, window: { NumeriaNavigation: { getReadingSnapshot: () => snapshot } },
   mountNumerologyNameForm: target => assert.equal(target, nameForm),
+  mountNumerologyReviewForm: () => () => {}, headers: async () => ({}),
   adaptNumerologyConfirmedResult, refreshNumerologyResultBlocks() {},
   numerologyPageDataFromReading, renderNumerologyCalculationPreview, pageDefinitions: definitions,
 });

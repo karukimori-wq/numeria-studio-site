@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 import { handleNumerologyReviewRequest } from "../src/numerology-review-store.js";
 import { withNumerologyCalculationCheckpoint } from "../src/numerology-result-checkpoint.js";
 import secureWorker from "../src/secure-worker-entry.js";
+import { runNumerologyReviewAction } from "../src/numerology-review-client.js";
 const directory = mkdtempSync(join(tmpdir(), "numeria-review-"));
 function sql(query, args = [], script = false) {
   const result = spawnSync("python3", ["-c", "import sqlite3,json,sys\np=json.load(sys.stdin);c=sqlite3.connect(p['db']);c.row_factory=sqlite3.Row\nif p['script']: c.executescript(p['q']);r=None\nelse:\n cur=c.execute(p['q'],p['args']);r=[dict(x) for x in cur.fetchall()] if cur.description else None\nc.commit();print(json.dumps(r))"], { input: JSON.stringify({ db: join(directory, "test.sqlite"), q: query, args, script }), encoding: "utf8" });
@@ -34,6 +35,10 @@ try {
   const row = sql("SELECT * FROM numerology_review_requests")[0];
   assert.equal(JSON.parse(row.calculation_json).results[0].data.lifePath, 33);
   assert.equal(JSON.parse(row.scope_json).source.referenceDate, "2026-10-19");
+  const clientResult = await runNumerologyReviewAction({ method: "POST", snapshot: session.snapshot, getCurrentSnapshot: () => session.snapshot, getHeaders: async () => ({ "Content-Type": "application/json" }),
+    fetcher: async (path, init) => path.endsWith("numerology-review") ? handleNumerologyReviewRequest(new Request(`https://fixture.test${path}`, init), db, identity, session) : new Response(JSON.stringify({ status: "success", session })) });
+  assert.equal(clientResult.ok, true); assert.match(clientResult.message, /確認待ち/);
+  assert.equal(sql("SELECT COUNT(*) AS n FROM numerology_review_requests")[0].n, 1, "UI retry must reuse the actual persisted SQLite request.");
   for (const method of ["GET", "POST"]) {
     const response = await secureWorker.fetch(new Request("https://fixture.test/api/appraisals/reading-a/numerology-review", { method, headers: { "X-User-Id": "user-a", "X-Admin-Email": "illusionddt@gmail.com" } }), { AUTH_ENFORCEMENT_MODE: "observe" }, {});
     assert.equal(response.status, 401, "Browser identity headers cannot authorize review storage.");

@@ -59,6 +59,8 @@ assert.ok(!appSource.includes('from "./numerology-page-data.js"'), "Checkpoint r
 assert.ok(!appSource.includes('from "./numerology-result-checkpoint.js"'), "Confirmed-result adapter must not retain unresolved imports.");
 assert.ok(appSource.includes("const confirmedResultSource=()=>scopedNumerologyResultSource("), "Numeric bindings must use the current reading and approval scope.");
 assert.ok(appSource.includes("function adaptNumerologyConfirmedResult("), "Production runtime must contain the guarded numerology adapter.");
+assert.ok(appSource.includes("function mountNumerologyReviewForm("), "Production runtime must contain review request controls.");
+assert.ok(appSource.includes("const refreshReview=mountNumerologyReviewForm("), "Review controls must be mounted in the settings preview.");
 assert.ok(appSource.includes("NumeriaNavigationBridge.v3"), "Versioned Numeria app bundle must contain stable navigation bridge v3.");
 assert.ok(appSource.includes("NumeriaIOSRuntimeRecovery.v2"), "Versioned Numeria app bundle must contain the iOS runtime recovery marker.");
 assert.ok(appSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Versioned Numeria app bundle must contain syntax guard repairs.");
