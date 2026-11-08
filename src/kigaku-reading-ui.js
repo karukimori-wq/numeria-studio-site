@@ -111,7 +111,7 @@ export function createKigakuReadingComponent(R) {
         analysis?.state === 'ready' && h(R.Fragment, null, rows('year'), rows('month'), h('p', null, `年・月に共通する吉方位：${analysis.common.directions.join('・') || '該当なし'}`)),
         h('p', null, '算出結果は独立した暦との全期間照合前です。日盤を共通吉方位の判定には使用しません。')),
       step(5, '鑑定結果入力', text('占い師の独自コメント', 'practitionerComment', 20000), h('label', null, h('input', { type: 'checkbox', checked: input.commentEnabled ?? true, onChange: e => change({ commentEnabled: e.target.checked }) }), '独自コメントを掲載する'), h('p', null, 'システム解説は常時掲載します。')),
-      h('button', { type: 'button', disabled: !s.reading || s.save === 'saving', onClick: async () => { await client.current.save(); const saved = client.current.current(); if (saved.save === 'saved' && onSaved) onSaved(saved); } }, '下書きを保存'),
+      h('button', { type: 'button', disabled: !s.reading || s.completedReport || s.save === 'saving', onClick: async () => { await client.current.save(); const saved = client.current.current(); if (saved.save === 'saved' && onSaved) onSaved(saved); } }, '下書きを保存'),
       h('p', { role: 'status', 'aria-live': 'polite' }, ({ idle: '', unsaved: '未保存', saving: '保存中…', saved: 'サーバーへの保存を確認しました', error: '保存できませんでした' })[s.save]),
       s.error && h('p', { role: 'alert' }, s.error));
   };

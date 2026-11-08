@@ -2118,11 +2118,19 @@ async function handleApi(request, env = {}, ctx = null) {
     catch(error) { return json({status:"error",errorCode:error.message},{status:400}); }
   }
 
+  if(url.pathname==='/api/kigaku/report-history' && request.method==='POST') {
+    if(!auth.verified) return json({errorCode:'AUTH_REQUIRED'},{status:401});
+    const item=usageResponse(effectiveRecord).visibleCompletedAppraisals.find(item=>item.id===body.appraisalId);
+    if(!item?.reportSnapshot) return json({errorCode:'SAVED_REPORT_REQUIRED'},{status:409});
+    try {await validateKigakuReportSnapshot(item.reportSnapshot,item.snapshot);return json({status:'success',appraisal:item});}
+    catch {return json({errorCode:'KIGAKU_REPORT_INTEGRITY_INVALID'},{status:409});}
+  }
+
   if(url.pathname==='/api/kigaku/report-print' && request.method==='POST') {
     if(!auth.verified) return json({errorCode:'AUTH_REQUIRED'},{status:401});
     if(!['pro','business'].includes(effectiveRecord.planId)) return json({errorCode:'PRO_REQUIRED'},{status:403});
     try {
-      const draft=visibleKigakuDraft(record.activeDraft,effectiveRecord.planId);
+      const draft=visibleKigakuDraft(record.activeDraft?.id===body.draftId?record.activeDraft:usageResponse(effectiveRecord).visibleCompletedAppraisals.find(item=>item.id===body.draftId),effectiveRecord.planId);
       if(!draft?.reportSnapshot || body.draftId!==draft.id) return json({errorCode:'SAVED_REPORT_REQUIRED'},{status:409});
       const report=await validateKigakuReportSnapshot(draft.reportSnapshot,draft.snapshot);
       return json({status:'success',html:renderKigakuReportHtml(report,body.format),publicationStatus:'draft',exportAllowed:false});

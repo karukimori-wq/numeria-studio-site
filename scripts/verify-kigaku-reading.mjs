@@ -126,6 +126,8 @@ try {
   assert.equal(completed.body.usage.activeDraft,null);
   const historyRow=[...rows.values()][0];
   assert.deepEqual(JSON.parse(historyRow.completed_appraisals_json).at(-1).reportSnapshot,fullSaved.body.activeDraft.reportSnapshot);
+  const reopened=await request('/api/kigaku/report-history',{appraisalId:'ki-test'});assert.equal(reopened.status,200);assert.deepEqual(reopened.body.appraisal.reportSnapshot,fullSaved.body.activeDraft.reportSnapshot);
+  assert.equal((await request('/api/kigaku/report-print',{draftId:'ki-test',format:'standard'})).status,200);
   historyRow.plan_id='free';
   const history=await request('/api/usage');
   assert.ok(history.body.usage.completedAppraisals.every(item=>!item.reportSnapshot));

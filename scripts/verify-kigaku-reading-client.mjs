@@ -58,7 +58,7 @@ first = calculate(); first.call.resolve({ reading: createKigakuReading(first.cal
 save = client.save(); call = pending.shift();
 assert.equal(call.body.clientProfileId, 'customer-ki');
 call.resolve({ draftId: call.body.appraisalId, activeDraft: { snapshot: call.body.snapshot } }); await save;
-restore = client.restore('different-history'); call = pending.shift(); call.resolve({ usage: { activeDraft: { id: 'current', snapshot: stored.snapshot } } }); await restore;
+restore = client.restore('different-history'); call = pending.shift(); call.resolve({ usage: { activeDraft: { id: 'current', snapshot: stored.snapshot } } }); await Promise.resolve(); pending.shift().reject(new Error('この履歴は一致しません')); await restore;
 assert.equal(client.current().calculation, 'error');
 assert.match(client.current().error, /一致しません/);
 client.selectProfile(null); assert.equal(client.current().clientProfileId, null); assert.equal(client.current().input.birthClock, null);

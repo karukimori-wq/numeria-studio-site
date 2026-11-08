@@ -7,11 +7,11 @@ export function createKigakuReadingClient({ request, onChange, referenceInstant 
   return {
     current: () => structuredClone(state),
     subscribe(listener) { onChange = listener; },
-    change(patch) { revision++; requestId++; state = { ...state, input: { ...state.input, ...patch }, reading: null, reportSnapshot: null, periodPages: null, periodPreviewState: 'idle', calculation: 'idle', save: 'unsaved', error: '' }; emit(); },
-    name(clientName) { revision++; requestId++; state.clientName = clientName; state.reading = null; state.reportSnapshot = null; state.periodPages = null; state.periodPreviewState = 'idle'; state.calculation = 'idle'; state.save = 'unsaved'; emit(); },
+    change(patch) { revision++; requestId++; state = { ...state, draftId:state.completedReport?null:state.draftId, completedReport:false, input: { ...state.input, ...patch }, reading: null, reportSnapshot: null, periodPages: null, periodPreviewState: 'idle', calculation: 'idle', save: 'unsaved', error: '' }; emit(); },
+    name(clientName) { revision++; requestId++; if(state.completedReport)state.draftId=null;state.completedReport=false;state.clientName = clientName; state.reading = null; state.reportSnapshot = null; state.periodPages = null; state.periodPreviewState = 'idle'; state.calculation = 'idle'; state.save = 'unsaved'; emit(); },
     selectProfile(profile) {
       revision++; requestId++;
-      state = { ...state, clientProfileId: profile?.id || null, clientName: profile?.name || '', draftId: null, reading: null, reportSnapshot: null, periodPages: null, periodPreviewState: 'idle', calculation: 'idle', save: 'unsaved', error: '', input: { referenceInstant: state.input.referenceInstant, selectedDirection: null, birthPlace: '', birthClock: profile ? { date: profile.birthday || '', time: null, countryCode: 'JP', zoneId: 'Asia/Tokyo', zoneConfirmed: false } : null } };
+      state = { ...state, completedReport:false, clientProfileId: profile?.id || null, clientName: profile?.name || '', draftId: null, reading: null, reportSnapshot: null, periodPages: null, periodPreviewState: 'idle', calculation: 'idle', save: 'unsaved', error: '', input: { referenceInstant: state.input.referenceInstant, selectedDirection: null, birthPlace: '', birthClock: profile ? { date: profile.birthday || '', time: null, countryCode: 'JP', zoneId: 'Asia/Tokyo', zoneConfirmed: false } : null } };
       emit();
     },
     async calculate() {
@@ -40,7 +40,7 @@ export function createKigakuReadingClient({ request, onChange, referenceInstant 
       emit();
     },
     async save() {
-      if (!state.reading || saving) return;
+      if (!state.reading || saving || state.completedReport) return;
       saving = true;
       const version = revision, snapshot = structuredClone(state.reading);
       const appraisalId = state.draftId || `kigaku_${crypto.randomUUID()}`;
@@ -78,10 +78,16 @@ export function createKigakuReadingClient({ request, onChange, referenceInstant 
       try {
         const body = await request('/api/usage');
         if (id !== requestId || version !== revision) return;
-        const draft = body.usage?.activeDraft;
+        let draft = body.usage?.activeDraft;
+        let completedReport=false;
+        if(expectedDraftId && draft?.id!==expectedDraftId) {
+          const history=await request('/api/kigaku/report-history',{appraisalId:expectedDraftId});
+          if(id!==requestId||version!==revision)return;
+          draft=history.appraisal;completedReport=true;
+        }
         if (expectedDraftId && draft?.id !== expectedDraftId) throw new Error('この履歴は現在の保存済み下書きと一致しません');
         if (draft?.snapshot?.schemaVersion !== 'numeria.kigaku.reading.v1') throw new Error('復元できる九星の下書きはありません');
-        state = { ...state, input: draft.snapshot.input, reading: draft.snapshot, reportSnapshot: draft.reportSnapshot || null, periodPages: draft.reportSnapshot?.pages || null, periodPreviewState: draft.reportSnapshot ? 'ready' : 'idle', clientName: draft.clientName || '', clientProfileId: draft.clientProfileId || null, draftId: draft.id, calculation: 'ready', save: 'saved' };
+        state = { ...state, completedReport, input: draft.snapshot.input, reading: draft.snapshot, reportSnapshot: draft.reportSnapshot || null, periodPages: draft.reportSnapshot?.pages || null, periodPreviewState: draft.reportSnapshot ? 'ready' : 'idle', clientName: draft.clientName || '', clientProfileId: draft.clientProfileId || null, draftId: draft.id, calculation: 'ready', save: 'saved' };
       } catch (error) { if (id !== requestId || version !== revision) return; state.calculation = 'error'; fail(error); }
       emit();
     },
