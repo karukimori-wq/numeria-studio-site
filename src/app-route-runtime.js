@@ -227,10 +227,27 @@
       renderSurface({kind:'characters',kicker:'CHARACTERS',title:'キャラクター',body:`
         <p role="status" id="character-feedback">${selected.selection ? `選択済み：${escapeHtml(selected.selection.characterId)}${selected.selection.available ? '' : '（現在利用できません。選び直してください）'}` : '公式キャラクターを選んでください'}</p>
         <h2>公式キャラクター</h2><div id="character-official"></div>
-        <h2>カスタムキャラクター</h2><div id="character-custom"></div>`});
+        <h2>カスタムキャラクター</h2><div id="character-create"></div><div id="character-custom"></div>`});
       const feedback = document.getElementById('character-feedback');
       const report = message => { if(sequence === dispatchSequence) feedback.textContent = message; };
       let revision = selected.selection?.revision || 0;
+      if(custom.capabilities?.canCreate === true) {
+        const label=document.createElement('label');label.textContent='新しいキャラクターの名前';
+        const name=document.createElement('input');name.maxLength=120;label.append(name);
+        const hint=document.createElement('p');hint.textContent='性格は中立の設定で作成します。';
+        const create=document.createElement('button');create.type='button';create.textContent='白紙から作成';let busy=false;
+        create.onclick=async()=>{
+          if(busy)return;if(!name.value.trim()){report('キャラクター名を入力してください');return;}
+          const submittedName=name.value;busy=true;create.disabled=true;
+          try {
+            const result=await apiJson('/api/characters',{method:'POST',body:JSON.stringify({name:submittedName,surfaceParameters:Array(9).fill(50)})});
+            if(sequence!==dispatchSequence)return;
+            appendCustom(result.character);if(name.value===submittedName)name.value='';report(`${submittedName}を作成しました`);
+          }catch(error){report(error.status===403?'カスタム作成にはProプランが必要です':error.body?.errorCode==='CHARACTER_LIMIT_REACHED'?'登録上限に達しています':'作成結果を確認できませんでした。再作成の前に画面を開き直して一覧を確認してください');}
+          finally{busy=false;create.disabled=false;}
+        };
+        document.getElementById('character-create').append(label,hint,create);
+      }
       for(const character of official.characters || []) {
         const button = document.createElement('button');button.type='button';button.className='nr-action';button.textContent=`${character.name}（版 ${character.characterVersion}）を選択`;
         button.onclick=async()=>{button.disabled=true;try{const saved=await apiJson('/api/characters/selection',{method:'PUT',body:JSON.stringify({characterId:character.characterId,characterVersion:character.characterVersion,expectedRevision:revision})});revision=saved.selection.revision;report(`${character.name}を選択しました`);}catch(error){report(error.status===409?'選択状態が更新されています。画面を開き直して確認してください':'選択を保存できませんでした。再試行してください');}finally{button.disabled=false;}};
