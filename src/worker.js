@@ -393,7 +393,7 @@ function visibleKigakuDraft(draft,planId) {
   return legacy; // Retain frozen premium bytes in D1, withhold them after downgrade.
 }
 function usageResponse(record) {
-  const usage=createUsageSnapshot(record);
+  const usage=createUsageSnapshot({...record,completedAppraisals:(record.completedAppraisals||[]).map(item=>visibleKigakuDraft(item,record.planId))});
   usage.activeDraft=visibleKigakuDraft(usage.activeDraft,record.planId);
   return usage;
 }
@@ -2444,7 +2444,16 @@ async function handleApi(request, env = {}, ctx = null) {
     }
     const completedAt = new Date().toISOString();
     const currentDraft = record.activeDraft;
+    let completedReport;
+    const completionReading=body.snapshot && typeof body.snapshot==='object'?body.snapshot:currentDraft?.snapshot;
+    if(completionReading?.schemaVersion===KIGAKU_READING_SCHEMA) {
+      if(!auth.verified) return json({errorCode:'AUTH_REQUIRED'},{status:401});
+      if(!currentDraft?.reportSnapshot || !sameKigakuReading(completionReading,currentDraft.snapshot)) return json({errorCode:'SAVED_REPORT_REQUIRED'},{status:409});
+      try {completedReport=await validateKigakuReportSnapshot(currentDraft.reportSnapshot,completionReading);}
+      catch {return json({errorCode:'KIGAKU_REPORT_INTEGRITY_INVALID'},{status:409});}
+    }
     const completedAppraisal = {
+      ...(completedReport?{reportSnapshot:completedReport}:{}),
       id: appraisalId,
       clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
       clientProfileId: typeof body.clientProfileId === "string" ? body.clientProfileId.slice(0, 200) : Object.hasOwn(body, "clientProfileId") ? null : currentDraft?.clientProfileId || null,
@@ -2495,7 +2504,7 @@ async function handleApi(request, env = {}, ctx = null) {
     return json({
       status: "success",
       appraisalId,
-      appraisal: completedAppraisal,
+      appraisal: visibleKigakuDraft(completedAppraisal,effectiveRecord.planId),
       sessionStatus: "completed",
       eventName: "studio.session.completed.v1",
       correlationId,

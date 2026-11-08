@@ -119,6 +119,16 @@ try {
   const row = [...rows.values()][0]; row.active_draft_json = JSON.stringify({ ...saved.body.activeDraft, snapshot: bad });
   assert.equal((await request('/api/usage')).status, 409);
   assert.equal((await request('/api/appraisals/status')).status, 409);
+  row.plan_id='pro';row.active_draft_json=JSON.stringify(fullSaved.body.activeDraft);
+  const completed=await request('/api/appraisals/complete',{appraisalId:'ki-test'});
+  assert.equal(completed.status,201);
+  assert.deepEqual(completed.body.appraisal.reportSnapshot,fullSaved.body.activeDraft.reportSnapshot);
+  assert.equal(completed.body.usage.activeDraft,null);
+  const historyRow=[...rows.values()][0];
+  assert.deepEqual(JSON.parse(historyRow.completed_appraisals_json).at(-1).reportSnapshot,fullSaved.body.activeDraft.reportSnapshot);
+  historyRow.plan_id='free';
+  const history=await request('/api/usage');
+  assert.ok(history.body.usage.completedAppraisals.every(item=>!item.reportSnapshot));
 } finally { globalThis.fetch = savedFetch; }
 console.log('Pro/Business server-record period previews, downgrade, forged plans and tampered input verified with mocked D1.');
 console.log('Kigaku reading: strict inputs, all 8 DST transitions, snapshot tampering, RS256 auth, mocked D1 save/restore and server Free plan verified.');
