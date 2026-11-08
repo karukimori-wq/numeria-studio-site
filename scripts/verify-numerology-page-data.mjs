@@ -5,6 +5,7 @@ import { calculateNumerology } from "../src/numerology-calculator.js";
 import { buildNumerologyPageData, numerologyPageDataFromReading, renderNumerologyCalculationPreview } from "../src/numerology-page-data.js";
 import { reportPageDefinitionsFor } from "../src/report-page-definitions.js";
 import { validateConfirmedDivinationResult } from "../src/divination-result-contract.js";
+import { adaptNumerologyConfirmedResult } from "../src/numerology-confirmed-result.js";
 
 const subject = { birthday: "2009-11-11", romanName: "TARO YAMADA", romanNameConfirmed: true };
 const referenceDate = "2026-11-01";
@@ -81,6 +82,7 @@ vm.runInNewContext(runtime.slice(start, end), {
   settings: { querySelector: () => false, append: item => inserted.push(item) }, data: { selectedDivination: "numerology" },
   document: { createElement: () => ({ dataset: {}, querySelector: selector => selector.includes("calculation-values") ? previewValues : nameForm }) }, window: { NumeriaNavigation: { getReadingSnapshot: () => snapshot } },
   mountNumerologyNameForm: target => assert.equal(target, nameForm),
+  adaptNumerologyConfirmedResult, refreshNumerologyResultBlocks() {},
   numerologyPageDataFromReading, renderNumerologyCalculationPreview, pageDefinitions: definitions,
 });
 assert.equal(inserted.length, 1);
