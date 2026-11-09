@@ -134,7 +134,7 @@ try {
     birthClock: { date: "1990-06-15", time: null, countryCode: "JP", zoneId: "Asia/Tokyo", zoneConfirmed: true, offsetChoiceMinutes: null } };
   const kigakuSnapshot = withKigakuCalculationCheckpoint({ id: "session_kigaku_fixture", divination: "nine-star-ki", name: "架空九星", birthday: "1990-06-15", kigakuInput,
     unknownFutureField: { retained: true }, drafts: { retainedText: "既存の編集本文" } });
-  const kigakuSaved = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: null, divination: "nine-star-ki", question: "九星保存fixture", snapshot: kigakuSnapshot }, "cas_kigaku_ws");
+  const kigakuSaved = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: null, divination: "nine-star-ki", question: "九星保存fixture", snapshot: { ...kigakuSnapshot, kigakuCalculation: { tampered: true } } }, "cas_kigaku_ws");
   assert.equal(kigakuSaved.status, 201);
   const kigakuRestored = (await api("/api/appraisals/session_kigaku_fixture", null, "cas_kigaku_ws")).body.session.snapshot;
   assert.deepEqual(kigakuRestored.kigakuCalculation, kigakuSnapshot.kigakuCalculation);
