@@ -37,8 +37,10 @@ const pins = calculateNumerology({ birthday: "2009-11-11", referenceDate: "2026-
 assert.deepEqual(pins.slice(1).map(row => row.startDate), ["2039-11-11", "2048-11-11", "2057-11-11"]);
 assert.equal(pins[0].endDateExclusive, pins[1].startDate);
 const leap = calculateNumerology({ birthday: "2000-02-29", referenceDate: "2026-10-19" }).pinnacles;
-assert.ok(leap.some(row => row.dateBoundaryStatus === "unresolved"));
-assert.ok(leap.filter(row => row.dateBoundaryStatus === "unresolved").some(row => row.startDate === null || row.endDateExclusive === null));
+assert.ok(leap.every(row => row.dateBoundaryStatus === "resolved"));
+assert.equal(leap[1].startDate, "2030-03-01");
+assert.equal(leap[0].endDateExclusive, "2030-03-01");
+assert.equal(leap[3].startDate, "2048-02-29");
 const endOfRange = calculateNumerology({ birthday: "9990-01-01", referenceDate: "9999-01-01" }).pinnacles;
 assert.ok(endOfRange.some(row => row.dateBoundaryStatus === "unresolved"));
 console.log("Numerology checkpoints: deterministic capture, input provenance, missing values, isolated publication, date boundaries and unresolved anniversaries verified.");

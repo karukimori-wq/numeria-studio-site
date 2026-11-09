@@ -29,7 +29,7 @@ const report = { executedAt: new Date().toISOString(), calculationVersion: NUMER
   fixtureSha256: createHash("sha256").update(fixtureText).digest("hex"), cases,
   summary: { total: cases.length, passed: cases.length, externalPublishedExamples: cases.filter(row => row.kind === "external-published-example").length },
   coverage: "partial", publicationApproved: false,
-  limitations: ["No logged-in browser/PDF acceptance", "No external validation of all name rules or all birth dates", "Feb 29 non-leap anniversary policy unresolved", "No original text/material approval"] };
+  limitations: ["No logged-in browser/PDF acceptance", "No external validation of all name rules or all birth dates", "Mar 1 non-leap anniversary policy is a user decision, not independent numerical evidence", "No original text/material approval"] };
 const outputFlag = process.argv.indexOf("--write-evidence");
 if (outputFlag !== -1) {
   const path = process.argv[outputFlag + 1];

@@ -64,7 +64,7 @@ assert.equal(partial.results[0].data.lifePath, 33);
 assert.equal(partial.results[0].data.destiny, null);
 assert.equal(partial.pageAvailability.find(row => row.pageDefinitionId === "NUM-01").code, "PAGE_INPUT_INCOMPLETE");
 const leap = withNumerologyCalculationCheckpoint({ ...snapshot, birthday: "2000-02-29" });
-assert.equal(adaptNumerologyConfirmedResult(leap, approvalFor(leap)).record.pageAvailability.find(row => row.pageDefinitionId === "NUM-13").code, "PINNACLE_DATE_BOUNDARY_UNRESOLVED");
+assert.equal(adaptNumerologyConfirmedResult(leap, approvalFor(leap)).record.pageAvailability.find(row => row.pageDefinitionId === "NUM-13").code, "FORMAL_PAGE_CONNECTION_REQUIRED");
 const legacy = [{ ...accepted.record, inputScope: {} }, { methodKey: "tarot", status: "draft" }];
 assert.deepEqual(scopedNumerologyResultSource(snapshot, null, legacy), [legacy[1]], "Unbound legacy numerology records must never be reused.");
 assert.equal(scopedNumerologyResultSource(snapshot, approval, legacy).filter(row => row.methodKey === "numerology").length, 1);

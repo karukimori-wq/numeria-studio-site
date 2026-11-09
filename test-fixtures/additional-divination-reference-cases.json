@@ -1,0 +1,175 @@
+{
+  "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692",
+  "cases": [
+    {
+      "id": "KIG-ZERO-DIRECTIONS",
+      "method": "kigaku.direction.v1",
+      "kind": "normative-spec",
+      "input": {
+        "yearGood": [
+          "N"
+        ],
+        "monthGood": [
+          "S"
+        ]
+      },
+      "expected": {
+        "commonGood": [],
+        "state": "empty",
+        "isCalculationError": false
+      },
+      "oracle": "決定69・72",
+      "verificationStatus": "expected-defined-not-run-against-production"
+    },
+    {
+      "id": "BAZ-HOUR-MISSING",
+      "method": "bazi.input.v1",
+      "kind": "normative-spec",
+      "input": {
+        "birthDate": "2000-01-07",
+        "birthTime": null
+      },
+      "expected": {
+        "hourPillar": null,
+        "canUseDaYun": false,
+        "noNoonSubstitution": true
+      },
+      "oracle": "決定34・60",
+      "verificationStatus": "expected-defined-not-run-against-production"
+    },
+    {
+      "id": "BAZ-ELEMENT-COUNT",
+      "method": "bazi.count.v1",
+      "kind": "normative-spec",
+      "input": {
+        "pillars": [
+          "甲子",
+          "乙丑",
+          "丙寅",
+          "丁卯"
+        ]
+      },
+      "expected": {
+        "wood": 4,
+        "fire": 2,
+        "earth": 1,
+        "metal": 0,
+        "water": 1,
+        "total": 8,
+        "includeHiddenStems": false
+      },
+      "oracle": "決定56／五行対応表の手集計。実在出生の命式という意味ではない。",
+      "verificationStatus": "expected-defined-not-run-against-production"
+    },
+    {
+      "id": "AST-ORB-BOUNDARY",
+      "method": "astrology.aspects.v1",
+      "kind": "normative-spec",
+      "input": {
+        "chartKind": "natal",
+        "longitudePair": [
+          0,
+          8
+        ]
+      },
+      "expected": {
+        "aspect": "conjunction",
+        "included": true
+      },
+      "oracle": "決定46・47。合のオーブ±8度、境界を含む。",
+      "verificationStatus": "expected-defined-not-run-against-production"
+    },
+    {
+      "id": "AST-ORB-OUTSIDE",
+      "method": "astrology.aspects.v1",
+      "kind": "normative-spec",
+      "input": {
+        "chartKind": "natal",
+        "longitudePair": [
+          0,
+          8.000001
+        ]
+      },
+      "expected": {
+        "conjunctionIncluded": false
+      },
+      "oracle": "決定47。表示丸めの前に判定。",
+      "verificationStatus": "expected-defined-not-run-against-production"
+    },
+    {
+      "id": "AST-AXIS-CAP",
+      "method": "astrology.aspects.v1",
+      "kind": "normative-spec",
+      "input": {
+        "chartKind": "natal",
+        "pair": [
+          "Sun",
+          "ASC"
+        ],
+        "longitudePair": [
+          0,
+          3.000001
+        ]
+      },
+      "expected": {
+        "conjunctionIncluded": false
+      },
+      "oracle": "決定48。軸は上限±3度。",
+      "verificationStatus": "expected-defined-not-run-against-production"
+    },
+    {
+      "id": "AST-COMPOSITE-WRAP",
+      "method": "astrology.composite.v1",
+      "kind": "normative-spec",
+      "input": {
+        "pairDegrees": [
+          350,
+          10
+        ]
+      },
+      "expected": {
+        "midpointDegrees": 0,
+        "sameWhenInputOrderReversed": true
+      },
+      "oracle": "短弧中点の円周幾何。",
+      "verificationStatus": "expected-defined-not-run-against-production"
+    },
+    {
+      "id": "AST-COMPOSITE-OPPOSITION",
+      "method": "astrology.composite.v1",
+      "kind": "normative-spec",
+      "input": {
+        "pairDegrees": [
+          0,
+          180
+        ]
+      },
+      "expected": {
+        "midpointDegrees": null,
+        "status": "ambiguous"
+      },
+      "oracle": "180度で短弧が一意でない。任意の側を選ばない設計。",
+      "verificationStatus": "expected-defined-not-run-against-production"
+    },
+    {
+      "id": "ZIW-AGE-BOUNDARY",
+      "method": "ziwei.age.v1",
+      "kind": "normative-spec",
+      "input": {
+        "birthLunarYear": 2023,
+        "referenceDates": [
+          "2026-02-16",
+          "2026-02-17"
+        ]
+      },
+      "expected": {
+        "nominalAges": [
+          3,
+          4
+        ]
+      },
+      "oracle": "決定66＋HKOの2026旧暦正月2月17日。",
+      "verificationStatus": "expected-defined-not-run-against-production"
+    }
+  ]
+}
