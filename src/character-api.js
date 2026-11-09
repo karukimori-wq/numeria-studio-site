@@ -2,6 +2,7 @@ import { CharacterStore, D1CharacterRepository } from './character-store.js';
 import { fetchGrowthSubscriptionEntitlement } from './growth-subscription-source.js';
 import { D1OfficialCharacterCatalog } from './official-character-catalog.js';
 import { D1CharacterSelection } from './character-selection.js';
+import { readCharacterBody } from './character-request-body.js';
 
 const reply = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
 // Personal workspace only until verified organization membership is available.
@@ -34,7 +35,7 @@ export function createCharacterApi({ coreWorker, entitlement = fetchGrowthSubscr
       if (!request.headers.get('content-type')?.startsWith('application/json')) return reply(415, { errorCode: 'JSON_REQUIRED' });
       // Bearer authentication is required for mutations; cookie-only requests cannot mutate.
       if (!/^Bearer\s+\S+$/i.test(request.headers.get('authorization') || '')) return reply(401, { errorCode: 'BEARER_REQUIRED' });
-      const raw = await request.text(); if (raw.length > 8192) return reply(413, { errorCode: 'BODY_TOO_LARGE' });
+      const raw = await readCharacterBody(request);
       let body; try { body = JSON.parse(raw); } catch { return reply(400, { errorCode: 'INVALID_JSON' }); }
       if (request.method === 'PUT' && url.pathname === '/api/characters/selection') return reply(200, { selection: await new D1CharacterSelection(db).save(scope, body) });
       if (request.method === 'POST' && url.pathname === '/api/characters/duplicate') {
@@ -53,6 +54,8 @@ export function createCharacterApi({ coreWorker, entitlement = fetchGrowthSubscr
       return reply(404, { errorCode: 'NOT_FOUND' });
     } catch (error) {
       const code = error?.code;
+      if (code === 'BODY_TOO_LARGE') return reply(413, { errorCode: code });
+      if (code === 'INVALID_JSON') return reply(400, { errorCode: code });
       const status = code === 'CHARACTER_NOT_FOUND' ? 404 : code === 'CHARACTER_CONFLICT' ? 409 : code === 'CHARACTER_PLAN_REQUIRED' ? 403 : code === 'CHARACTER_LIMIT_REACHED' ? 409 : ['CHARACTER_INPUT_INVALID', 'CHARACTER_PARAMETERS_INVALID'].includes(code) ? 400 : 503;
       return reply(status, { errorCode: status === 503 ? 'CHARACTER_SERVICE_UNAVAILABLE' : code });
     }

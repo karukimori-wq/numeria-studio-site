@@ -33,3 +33,8 @@ test('create/list/save isolate verified owners and reject forged authority', asy
   assert.equal((await call('PUT', { ...fields, expectedVersion: 1 }, 'user1', '/api/characters/'+id)).status, 409);
   assert.equal((await call('GET', undefined, 'user1', '/api/characters?workspaceId=other')).status, 400);
 });
+test('oversized UTF-8 request is rejected before storage changes', async () => {
+  const call=setup();
+  assert.equal((await call('POST',{...fields,name:'あ'.repeat(3000)})).status,413);
+  assert.deepEqual((await (await call()).json()).characters,[]);
+});
