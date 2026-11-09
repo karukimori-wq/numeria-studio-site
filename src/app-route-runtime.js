@@ -276,11 +276,29 @@
         const input=document.createElement('input');input.value=latest.name;input.maxLength=120;label.append(input);
         const state=document.createElement('p');state.setAttribute('role','status');state.textContent=`保存済み・版 ${latest.version}`;
         input.oninput=()=>{state.textContent='未保存';};
-        const save=document.createElement('button');save.type='button';save.textContent='名前を保存';let expectedVersion=latest.version;
-        save.onclick=async()=>{const submittedName=input.value;save.disabled=true;try{const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}`,{method:'PUT',body:JSON.stringify({name:submittedName,surfaceParameters:latest.surfaceParameters,expectedVersion})});expectedVersion=result.character.latestVersion;state.textContent=input.value===submittedName?`保存済み・版 ${expectedVersion}`:`未保存（版 ${expectedVersion} 保存後に変更あり）`;}catch(error){state.textContent=error.status===409?'保存競合：入力は保持しています。履歴を確認し、画面を開き直して再編集してください':'保存できませんでした。入力は保持しています。再試行できます';}finally{save.disabled=false;}};
+        const save=document.createElement('button');save.type='button';save.textContent='名前を保存';let expectedVersion=latest.version, surfaceParameters=[...latest.surfaceParameters];
+        save.onclick=async()=>{const submittedName=input.value;save.disabled=true;try{const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}`,{method:'PUT',body:JSON.stringify({name:submittedName,surfaceParameters,expectedVersion})});expectedVersion=result.character.latestVersion;state.textContent=input.value===submittedName?`保存済み・版 ${expectedVersion}`:`未保存（版 ${expectedVersion} 保存後に変更あり）`;}catch(error){state.textContent=error.status===409?'保存競合：入力は保持しています。「最新版と比較」から採用する名前を選んでください':'保存できませんでした。入力は保持しています。再試行できます';}finally{save.disabled=false;}};
         const history=document.createElement('button');history.type='button';history.textContent='版履歴を確認';const output=document.createElement('p');
         history.onclick=async()=>{try{const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}/versions`);output.textContent=result.character.versions.map(v=>`版 ${v.version}：${v.name}（${v.savedAt}）`).join(' / ');}catch{output.textContent='履歴を取得できませんでした';}};
-        card.append(label,state,save,history,output);document.getElementById('character-custom').append(card);
+        const compare=document.createElement('button');compare.type='button';compare.textContent='最新版と比較';
+        const comparison=document.createElement('div');
+        compare.onclick=async()=>{
+          if(save.disabled)return;compare.disabled=true;
+          try {
+            const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}/versions`);
+            if(sequence!==dispatchSequence)return;
+            const current=result.character.versions.at(-1);
+            comparison.replaceChildren();
+            const summary=document.createElement('p');summary.textContent=`最新版（版 ${current.version}）：${current.name} ／ 編集中：${input.value}`;
+            const mine=document.createElement('button');mine.type='button';mine.textContent='編集中の名前を使う';
+            const theirs=document.createElement('button');theirs.type='button';theirs.textContent='最新版の名前を使う';
+            const choose=useLatest=>{if(save.disabled)return;if(useLatest)input.value=current.name;expectedVersion=current.version;surfaceParameters=[...current.surfaceParameters];state.textContent='未保存：採用内容を確認して保存してください';comparison.replaceChildren();};
+            mine.onclick=()=>choose(false);theirs.onclick=()=>choose(true);
+            comparison.append(summary,mine,theirs);
+          }catch{state.textContent='最新版を取得できませんでした。編集内容は保持しています';}
+          finally{compare.disabled=false;}
+        };
+        card.append(label,state,save,history,output,compare,comparison);document.getElementById('character-custom').append(card);
       }
       for(const character of custom.characters || []) appendCustom(character);
     } catch(error) {if(sequence===dispatchSequence) renderError('characters','キャラクター',error.status===503?'キャラクター機能は準備中です。':'読み込めませんでした。ログイン状態を確認して再試行してください。');}
