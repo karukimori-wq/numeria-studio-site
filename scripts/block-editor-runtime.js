@@ -151,6 +151,9 @@ function renderFixedPageVisualSlot(page){
 function decorateEditor(){
   if(!root?.classList.contains("open"))return;
   const settings=root.querySelector(".nbe-settings");
+  if(settings&&data.selectedDivination==="nine-star-ki"&&!settings.querySelector("[data-kigaku-input-form]")){
+    const form=document.createElement("section");form.dataset.kigakuInputForm="1";settings.append(form);mountKigakuInputForm(form);
+  }
   if(settings&&data.selectedDivination==="numerology"&&!settings.querySelector("[data-numerology-calculation-preview]")){
     const preview=document.createElement("section");preview.dataset.numerologyCalculationPreview="1";
     preview.innerHTML=`<h3>数秘術の計算プレビュー</h3><div data-numerology-name-form></div><div data-numerology-review-form></div><p data-numerology-result-readiness role="status"></p><div data-numerology-calculation-values></div>`;
