@@ -1,5 +1,6 @@
 import appWorker from "./worker-entry.js";
 import { handleNumerologyReviewRequest } from "./numerology-review-store.js";
+import { handleNumerologyReviewerRequest } from "./numerology-review-decisions.js";
 
 const ADMIN_PREVIEW_CONTRACT_VERSION = "numeria-admin-developer-preview.v3";
 
@@ -327,6 +328,12 @@ async function handleSecureAdminRequest(request, env = {}, ctx = null) {
 export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
+    const reviewerMatch = url.pathname.match(/^\/api\/admin\/numerology-reviews\/([^/]+)$/);
+    if (reviewerMatch) {
+      const identity = await resolveVerifiedClerkIdentity(request, env, ctx);
+      const reviewerIds = env.NUMERIA_NUMEROLOGY_REVIEWER_USER_IDS === undefined ? getAdminUserIds(env) : parseCsv(env.NUMERIA_NUMEROLOGY_REVIEWER_USER_IDS);
+      return handleNumerologyReviewerRequest(request, env.NUMERIA_DB || env.DB || env.D1, { ...identity, canReview: identity.verified && reviewerIds.includes(identity.userId) }, reviewerMatch[1]);
+    }
     const reviewMatch = url.pathname.match(/^\/api\/appraisals\/([^/]+)\/numerology-review$/);
     if (reviewMatch) {
       const identity = await resolveVerifiedClerkIdentity(request, env, ctx);
