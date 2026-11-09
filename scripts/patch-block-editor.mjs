@@ -6,7 +6,7 @@ const target = `${assetDirectory}/${asset}`;
 let source = readFileSync(target, "utf8");
 source = source.replace(/;\(\(\)=>\{if\(window\.__NumeriaBlockEditorV2\)[\s\S]*?\/\* block-editor-v2-end \*\/\}\)\(\);/g, "");
 source = source.replace(/;\(\(\)=>\{if\(window\.__NumeriaBlockEditorV1\)[\s\S]*?\/\* block-editor-end \*\/\}\)\(\);/g, "");
-const runtime = readFileSync("scripts/block-editor-runtime.js", "utf8");
+const runtime = readFileSync("scripts/kigaku-input-form-runtime.js", "utf8") + readFileSync("scripts/block-editor-runtime.js", "utf8");
 const pageCommentRuntime = readFileSync("src/report-page-comment.js", "utf8")
   .replace("export const ", "const ")
   .replace("export function ", "function ");

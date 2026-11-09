@@ -1,3 +1,4 @@
+import { withKigakuCalculationCheckpoint } from "./kigaku-calculation-checkpoint.js";
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 
@@ -2610,7 +2611,7 @@ async function handleApi(request, env = {}, ctx = null) {
       notes: String(body.notes ?? previousDraft?.notes ?? "").trim(),
       resultSummary: String(body.resultSummary ?? previousDraft?.resultSummary ?? "").trim(),
       snapshot: body.snapshot && typeof body.snapshot === "object"
-        ? body.snapshot
+        ? withKigakuCalculationCheckpoint(body.snapshot)
         : previousDraft?.snapshot || null,
       externalReferences: normalizeGrowthEngineExternalReferences(body) || previousDraft?.externalReferences || null,
       updatedAt: new Date().toISOString(),
