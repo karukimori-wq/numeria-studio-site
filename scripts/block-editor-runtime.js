@@ -154,7 +154,7 @@ function decorateEditor(){
   if(settings&&data.selectedDivination==="numerology"&&!settings.querySelector("[data-numerology-calculation-preview]")){
     const preview=document.createElement("section");preview.dataset.numerologyCalculationPreview="1";
     preview.innerHTML=`<h3>数秘術の計算プレビュー</h3><div data-numerology-name-form></div><div data-numerology-review-form></div><p data-numerology-result-readiness role="status"></p><div data-numerology-calculation-values></div>`;
-    const refreshReview=mountNumerologyReviewForm(preview.querySelector("[data-numerology-review-form]"),{getSnapshot:()=>window.NumeriaNavigation?.getReadingSnapshot?.(),getHeaders:headers,fetcher:(...args)=>fetch(...args)});
+    const refreshReview=mountNumerologyReviewForm(preview.querySelector("[data-numerology-review-form]"),{getSnapshot:()=>window.NumeriaNavigation?.getReadingSnapshot?.(),getHeaders:headers,fetcher:(...args)=>fetch(...args),onApproval:approval=>{window.NumeriaNumerologyResultApproval=approval;refresh()}});
     const refresh=()=>{const snapshot=window.NumeriaNavigation?.getReadingSnapshot?.();preview.querySelector("[data-numerology-calculation-values]").innerHTML=renderNumerologyCalculationPreview(numerologyPageDataFromReading(snapshot),pageDefinitions);preview.querySelector("[data-numerology-result-readiness]").textContent=adaptNumerologyConfirmedResult(snapshot,window.NumeriaNumerologyResultApproval).reason;refreshNumerologyResultBlocks()};
     refresh();mountNumerologyNameForm(preview.querySelector("[data-numerology-name-form]"),()=>{refresh();refreshReview()});
     settings.append(preview);

@@ -1,5 +1,6 @@
 import { withNumerologyCalculationCheckpoint } from "./numerology-result-checkpoint.js";
 import { numerologyApprovalScope } from "./numerology-confirmed-result.js";
+import { numerologyReviewInputHash, readNumerologyReviewDecision } from "./numerology-review-decisions.js";
 
 const response = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
 
@@ -15,8 +16,7 @@ export async function handleNumerologyReviewRequest(request, db, identity, sessi
   if (current.status !== "calculated" || JSON.stringify(current) !== JSON.stringify(snapshot.numerologyCalculation) || snapshot.exampleOnly === true) return fail("CALCULATION_CHECKPOINT_REVIEW_REQUIRED", 422);
   const scope = numerologyApprovalScope(snapshot);
   const calculation = { results: current.results, pageResults: current.pageResults };
-  const bytes = new TextEncoder().encode(JSON.stringify({ scope, calculation }));
-  const hash = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map(value => value.toString(16).padStart(2, "0")).join("");
+  const hash = await numerologyReviewInputHash(scope, calculation);
   if (request.method === "POST") {
     let body;
     try { body = await request.json(); } catch { return fail("INVALID_JSON", 400); }
@@ -25,8 +25,9 @@ export async function handleNumerologyReviewRequest(request, db, identity, sessi
     await db.prepare("INSERT OR IGNORE INTO numerology_review_requests (request_id, workspace_id, user_id, session_id, input_hash, calculation_version, scope_json, calculation_json, submitted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
       .bind(crypto.randomUUID(), identity.workspaceId, identity.userId, session.id, hash, current.calculationVersion, JSON.stringify(scope), JSON.stringify(calculation), new Date().toISOString()).run();
   }
-  const row = await db.prepare("SELECT request_id, submitted_at, calculation_version FROM numerology_review_requests WHERE workspace_id = ? AND user_id = ? AND session_id = ? AND input_hash = ? LIMIT 1")
+  const row = await db.prepare("SELECT request_id, workspace_id, submitted_at, calculation_version FROM numerology_review_requests WHERE workspace_id = ? AND user_id = ? AND session_id = ? AND input_hash = ? LIMIT 1")
     .bind(identity.workspaceId, identity.userId, session.id, hash).first();
-  return response({ status: "success", reviewRequest: row ? { requestId: row.request_id, submittedAt: row.submitted_at, calculationVersion: row.calculation_version, state: "pending" } : null,
-    approval: null, sourceOfTruth: "numeria-d1-numerology-review-requests" });
+  const decision = row ? await readNumerologyReviewDecision(db, row) : null;
+  return response({ status: "success", reviewRequest: row ? { requestId: row.request_id, submittedAt: row.submitted_at, calculationVersion: row.calculation_version, state: decision?.decision || "pending", ...(decision ? { note: decision.note, reviewedAt: decision.decided_at } : {}) } : null,
+    approval: decision?.decision === "approved" ? JSON.parse(decision.approval_json) : null, sourceOfTruth: "numeria-d1-numerology-review-requests" });
 }
