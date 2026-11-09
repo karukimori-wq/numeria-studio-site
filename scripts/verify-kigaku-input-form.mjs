@@ -29,3 +29,5 @@ fields.partnerEnabled.checked=true;fields.partnerName.value='架空の相手';fi
 await fields.save.onclick();assert.match(fields.status.textContent,/相手/);
 fields.partnerConfirm.checked=true;fields.selectedDirection.value='NE';fields.directionPurpose.value='move';resolveSave=null;
 await fields.save.onclick();assert.equal(updates.at(-1).partnerBirthClock.time,null);assert.equal(updates.at(-1).selectedDirection,'NE');assert.equal(updates.at(-1).directionPurpose,'move');
+
+assert.equal(fields.reference.readOnly,true);const count=saves;fields.reference.value='2027-01-01T00:00';await fields.save.onclick();assert.equal(saves,count);assert.match(fields.status.textContent,/新規鑑定/);

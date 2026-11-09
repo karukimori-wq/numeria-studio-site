@@ -15,6 +15,7 @@ function mountKigakuInputForm(container){
   field('partnerEnabled').checked=Boolean(prior.partnerBirthClock);field('partnerConfirm').checked=prior.partnerBirthClock?.zoneConfirmed===true;
   for(const key of ['partnerName','partnerDate','partnerTime'])field(key).oninput=()=>{field('partnerConfirm').checked=false;};
   const restoredReference=field('reference').value;
+  if(prior.referenceInstant){field('reference').readOnly=true;field('reference').title='保存済みの鑑定基準日時です。変更する場合は新規鑑定を作成してください';}
   let saving=false;
   for(const name of ['date','time','reference'])field(name).oninput=()=>{field('confirm').checked=false;field('status').textContent='入力を変更しました。内容を確認して保存してください';};
   field('save').onclick=async()=>{
@@ -22,6 +23,7 @@ function mountKigakuInputForm(container){
     const feedback=field('status');
     if(typeof api.saveReadingDraft!=="function"){feedback.textContent='保存機能を読み込めません。画面を開き直してください';return;}
     const current=api.getReadingSnapshot?.();if(current?.id!==snapshot.id||current?.divination!=="nine-star-ki"){feedback.textContent='鑑定が切り替わりました。入力画面を開き直してください';return;}
+    if(prior.referenceInstant&&field('reference').value!==restoredReference){feedback.textContent='保存済み基準日時は変更できません。新規鑑定を作成してください';return;}
     if(!field('date').value||!field('reference').value||!field('confirm').checked){feedback.textContent='生年月日・基準日時・日本時計の確認が必要です';return;}
     const input={...structuredClone(current.kigakuInput||{}),methodKey:'nine-star-ki',subjectId:snapshot.id?`${snapshot.id}:subject`:null,
       referenceInstant:prior.referenceInstant&&field('reference').value===restoredReference?prior.referenceInstant:`${field('reference').value}:00+09:00`,birthClock:{date:field('date').value,time:field('time').value||null,countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:true,offsetChoiceMinutes:null}};
