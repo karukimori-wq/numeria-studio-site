@@ -10,7 +10,7 @@
     "verify:production": "node scripts/verify-production-readiness.mjs && node scripts/verify-workspace-state-production.mjs && node scripts/verify-user-preferences-production.mjs && node scripts/verify-ai-assist-production.mjs && node scripts/verify-admin-preview-production.mjs",
     "verify:custom-domain": "node scripts/verify-custom-domain.mjs",
     "verify:auth-release": "REQUIRE_CLERK_ENFORCE_READY=1 REQUIRE_AUTH_ENFORCE_MODE=1 node scripts/verify-production-readiness.mjs",
-    "verify:f4-kigaku": "node scripts/verify-kigaku-solar-calendar.mjs && node scripts/verify-kigaku-dayboard.mjs && node scripts/verify-kigaku-result.mjs && node scripts/verify-kigaku-directions.mjs && node scripts/verify-kigaku-period-series.mjs && node scripts/verify-kigaku-page-data.mjs && node scripts/verify-kigaku-references.mjs && node scripts/verify-f4-ledger.mjs && node scripts/verify-kigaku-checkpoint.mjs && node scripts/verify-kigaku-person-relations.mjs"
+    "verify:f4-kigaku": "node scripts/verify-kigaku-solar-calendar.mjs && node scripts/verify-kigaku-dayboard.mjs && node scripts/verify-kigaku-result.mjs && node scripts/verify-kigaku-directions.mjs && node scripts/verify-kigaku-period-series.mjs && node scripts/verify-kigaku-page-data.mjs && node scripts/verify-kigaku-references.mjs && node scripts/verify-f4-ledger.mjs && node scripts/verify-kigaku-checkpoint.mjs && node scripts/verify-kigaku-person-relations.mjs && node scripts/verify-kigaku-input-form.mjs"
   },
   "dependencies": {
     "@clerk/react": "^6.14.8",
