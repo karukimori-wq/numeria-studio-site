@@ -1,4 +1,5 @@
 import appWorker from "./worker-entry.js";
+import { handleNumerologyReviewRequest } from "./numerology-review-store.js";
 
 const ADMIN_PREVIEW_CONTRACT_VERSION = "numeria-admin-developer-preview.v3";
 
@@ -326,6 +327,20 @@ async function handleSecureAdminRequest(request, env = {}, ctx = null) {
 export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
+    const reviewMatch = url.pathname.match(/^\/api\/appraisals\/([^/]+)\/numerology-review$/);
+    if (reviewMatch) {
+      const identity = await resolveVerifiedClerkIdentity(request, env, ctx);
+      if (!identity.verified) return json({ status: "error", errorCode: "AUTH_SESSION_REQUIRED" }, { status: 401 });
+      if (!["GET", "POST"].includes(request.method)) return json({ status: "error", errorCode: "METHOD_NOT_ALLOWED" }, { status: 405 });
+      const headers = authForwardHeaders(request, identity.workspaceId);
+      headers.set("X-User-Id", identity.userId);
+      const sessionUrl = new URL(`/api/appraisals/${reviewMatch[1]}`, request.url);
+      const fetched = await appWorker.fetch(new Request(sessionUrl, { headers }), env, ctx);
+      const body = await fetched.json().catch(() => ({}));
+      if (!fetched.ok) return json(body, { status: fetched.status });
+      if (body.userId !== identity.userId || body.workspaceId !== identity.workspaceId) return json({ status: "error", errorCode: "SESSION_SCOPE_MISMATCH" }, { status: 403 });
+      return handleNumerologyReviewRequest(request, env.NUMERIA_DB || env.DB || env.D1, identity, body.session);
+    }
     if (url.pathname === "/admin-preview/status" && request.method === "GET") {
       return json(adminPreviewStatus(env));
     }

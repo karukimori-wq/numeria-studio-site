@@ -5,8 +5,8 @@ const {rows}=JSON.parse(readFileSync('docs/block-editor/f4-connection-ledger.jso
 assert.equal(rows.length,85);
 assert.equal(new Set(rows.map(r=>r.pageId)).size,85);
 assert.deepEqual(rows.map(r=>r.pageId).sort(),REPORT_PAGE_DEFINITIONS.map(r=>r.pageDefinitionId).sort());
-assert.equal(rows.filter(r=>r.connectionStatus==='partial').length,22);
-assert.equal(rows.filter(r=>r.connectionStatus==='unconnected').length,63);
+assert.equal(rows.filter(r=>r.connectionStatus==='partial').length,28);
+assert.equal(rows.filter(r=>r.connectionStatus==='unconnected').length,57);
 assert(rows.every(r=>r.browserTest==='unverified'&&r.pdfTest==='unverified'));
 assert(rows.filter(r=>r.method!=='numerology').every(r=>r.resultKey===null));
-console.log('F4 ledger: 85 unique IDs; 22 partial / 63 unconnected; no fabricated formal keys or acceptance.');
+console.log('F4 ledger: 85 unique IDs; 28 partial / 57 unconnected; no fabricated formal keys or acceptance.');

@@ -1,5 +1,7 @@
 # F4 九星計算データ接続 — 初回Draft
 
+この文書は2026-11-08の実施記録。最新の14ページadapter・checkpoint・集計は [2026-11-09追補](f4-kigaku-followup-2026-11-09.md) と接続台帳を参照。
+
 基準main: e791da40a2c702eff4f3e5bc100a0a47ad2f9c0a。PR #81/#83/#84/#85 merged。F3 #80はDraft、取込・mergeなし。
 
 ## 再利用と接続範囲
