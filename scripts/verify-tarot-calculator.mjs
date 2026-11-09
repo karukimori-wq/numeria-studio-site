@@ -1,0 +1,34 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import vm from "node:vm";
+import { calculateTarot, TAROT_SPREAD_POSITIONS, TAROT_CARD_IDS } from "../src/tarot-calculator.js";
+assert.equal(TAROT_CARD_IDS.length, 78); assert.equal(new Set(TAROT_CARD_IDS).size, 78);
+const legacy = readFileSync("assets/numeria-app-Cckhajir.js", "utf8");
+const start = legacy.indexOf("Po=[["), end = legacy.indexOf(",zo=", start);
+assert.ok(start > 0 && end > start);
+assert.deepEqual(Array.from(vm.runInNewContext(`const ${legacy.slice(start, end)};Ro.map(card=>card[0])`)), TAROT_CARD_IDS, "All IDs must match the real legacy catalog, including Japanese court ranks.");
+assert.equal(Object.keys(TAROT_SPREAD_POSITIONS).length, 8);
+assert.equal(Object.values(TAROT_SPREAD_POSITIONS).flat().length, 38);
+for (const [spreadId, positions] of Object.entries(TAROT_SPREAD_POSITIONS)) {
+  const cards = positions.map((positionId, i) => ({ positionId, cardId: TAROT_CARD_IDS[i], orientation: i % 2 ? "reversed" : "upright" }));
+  const result = calculateTarot({ spreadId, cards: [...cards].reverse(), referenceDate: "2026-12-19" });
+  assert.equal(result.status, "calculated"); assert.deepEqual(result.cards.map(card => card.positionId), positions); assert.equal(result.pages.length, 13);
+  assert.equal(calculateTarot({ spreadId, cards: cards.slice(1) }).code, "CARD_POSITION_MISSING");
+  assert.equal("validationEvidence" in result, false); assert.equal("pageAvailability" in result, false);
+}
+const cards = [{ positionId: "past", cardId: "0", orientation: "upright" }, { positionId: "present", cardId: "I", orientation: "reversed" }, { positionId: "future", cardId: "II", orientation: "upright" }];
+assert.equal(calculateTarot({ spreadId: "three-time", cards: [cards[0], { ...cards[1], cardId: "0" }] }).code, "DUPLICATE_CARD");
+assert.equal(calculateTarot({ spreadId: "three-time", cards, reversalsEnabled: false }).code, "CARD_INPUT_INVALID");
+assert.equal(calculateTarot({ spreadId: "one-oracle", cards: [{ positionId: "message", cardId: "W-A", orientation: "upright" }] }).code, "CARD_INPUT_INVALID");
+assert.equal(calculateTarot({ spreadId: "one-oracle", deckSize: 78, cards: [{ positionId: "message", cardId: "W-ペイジ", orientation: "upright" }] }).status, "calculated");
+assert.equal(calculateTarot({ spreadId: "three-time", cards }).pages[11].status, "input-incomplete");
+const celtic = TAROT_SPREAD_POSITIONS["celtic-cross"].map((positionId, i) => ({ positionId, cardId: TAROT_CARD_IDS[i], orientation: "upright" }));
+assert.deepEqual(calculateTarot({ spreadId: "celtic-cross", cards: celtic }).pages[2].data.cards.map(card => card.positionId), ["past", "present", "near-future"]);
+const relation = TAROT_SPREAD_POSITIONS["relationship-six"].map((positionId, i) => ({ positionId, cardId: TAROT_CARD_IDS[i], orientation: "upright" }));
+assert.equal(calculateTarot({ spreadId: "relationship-six", cards: relation }).pages[6].data, null);
+assert.deepEqual(calculateTarot({ spreadId: "relationship-six", cards: relation, partnerRef: "partner-a", theme: "love" }).pages[7].data.cards.map(card => card.positionId), ["other-feeling", "relationship-now"]);
+const monthly = TAROT_SPREAD_POSITIONS["three-months"].map((positionId, i) => ({ positionId, cardId: TAROT_CARD_IDS[i], orientation: "upright" }));
+assert.deepEqual(calculateTarot({ spreadId: "three-months", cards: monthly, referenceDate: "2026-12-19" }).pages[11].data.months, ["2026-12", "2027-01", "2027-02"]);
+assert.equal(calculateTarot({ spreadId: "three-months", cards: monthly, referenceDate: "2026-02-30" }).pages[11].data, null);
+assert.equal(calculateTarot({ spreadId: "three-months", cards: monthly, referenceDate: "9999-12-01" }).pages[11].data, null);
+console.log("Tarot: exact 78 legacy IDs, 8 spreads/38 positions, duplicate/orientation/missing checks, ordered results and page-purpose/month isolation verified.");

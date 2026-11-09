@@ -1,0 +1,612 @@
+{
+  "executedAt": "2026-11-09T09:06:25.661Z",
+  "dependencies": {
+    "lunar": "1.8.6",
+    "astronomy": "2.1.19",
+    "ziwei": "2.6.3"
+  },
+  "moduleSha256": "733cb0c46de77ac561a12db5ba620ab18998d91db443d54f7c9b30cf0a78e855",
+  "cases": [
+    {
+      "id": "LUNAR-1",
+      "kind": "external-reference",
+      "source": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2026e.txt",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "gregorianDate": "2026-02-17",
+        "calendar": "chinese-date-mapping"
+      },
+      "expected": {
+        "year": 2026,
+        "month": 1,
+        "day": 1,
+        "isLeap": false
+      },
+      "actual": {
+        "year": 2026,
+        "month": 1,
+        "day": 1,
+        "isLeap": false
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "LUNAR-2",
+      "kind": "external-reference",
+      "source": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2023e.txt",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "gregorianDate": "2023-03-22",
+        "calendar": "chinese-date-mapping"
+      },
+      "expected": {
+        "year": 2023,
+        "month": 2,
+        "day": 1,
+        "isLeap": true
+      },
+      "actual": {
+        "year": 2023,
+        "month": 2,
+        "day": 1,
+        "isLeap": true
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "LUNAR-3",
+      "kind": "external-reference",
+      "source": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2023e.txt",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "gregorianDate": "2023-04-05",
+        "calendar": "chinese-date-mapping"
+      },
+      "expected": {
+        "year": 2023,
+        "month": 2,
+        "day": 15,
+        "isLeap": true
+      },
+      "actual": {
+        "year": 2023,
+        "month": 2,
+        "day": 15,
+        "isLeap": true
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "LUNAR-4",
+      "kind": "external-reference",
+      "source": "https://www.hko.gov.hk/en/gts/time/calendar/text/files/T2023e.txt",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "gregorianDate": "2023-04-06",
+        "calendar": "chinese-date-mapping"
+      },
+      "expected": {
+        "year": 2023,
+        "month": 2,
+        "day": 16,
+        "isLeap": true
+      },
+      "actual": {
+        "year": 2023,
+        "month": 2,
+        "day": 16,
+        "isLeap": true
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "TERM-lichun",
+      "kind": "external-reference",
+      "source": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2026/rekiyou262.html",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "year": 2026,
+        "event": "lichun",
+        "timeZone": "Asia/Tokyo"
+      },
+      "expected": {
+        "publicMinute": "2026-02-04T05:02:00+09:00",
+        "sourcePrecision": "minute",
+        "toleranceSeconds": 60
+      },
+      "actual": {
+        "event": "lichun",
+        "instantUTC": "2026-02-03T20:02:08.000Z",
+        "instantJST": "2026-02-04T05:02:08.000+09:00",
+        "errorSeconds": 8
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "TERM-summer",
+      "kind": "external-reference",
+      "source": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2026/rekiyou262.html",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "year": 2026,
+        "event": "summer",
+        "timeZone": "Asia/Tokyo"
+      },
+      "expected": {
+        "publicMinute": "2026-06-21T17:25:00+09:00",
+        "sourcePrecision": "minute",
+        "toleranceSeconds": 60
+      },
+      "actual": {
+        "event": "summer",
+        "instantUTC": "2026-06-21T08:24:30.000Z",
+        "instantJST": "2026-06-21T17:24:30.000+09:00",
+        "errorSeconds": 30
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "TERM-winter",
+      "kind": "external-reference",
+      "source": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2026/rekiyou262.html",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "year": 2026,
+        "event": "winter",
+        "timeZone": "Asia/Tokyo"
+      },
+      "expected": {
+        "publicMinute": "2026-12-22T05:50:00+09:00",
+        "sourcePrecision": "minute",
+        "toleranceSeconds": 60
+      },
+      "actual": {
+        "event": "winter",
+        "instantUTC": "2026-12-21T20:50:14.000Z",
+        "instantJST": "2026-12-22T05:50:14.000+09:00",
+        "errorSeconds": 14
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "JPL-Sun",
+      "kind": "external-reference",
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "body": "Sun",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "expected": {
+        "longitudeDegrees": 280.3689092,
+        "latitudeDegrees": 0.0002381,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Sun",
+        "longitudeDegrees": 280.3687386398185,
+        "latitudeDegrees": 0.0000011205040933117655,
+        "longitudeError": 0.00017056018151606622,
+        "latitudeError": 0.00023697949590668823
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "JPL-Moon",
+      "kind": "external-reference",
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "body": "Moon",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "expected": {
+        "longitudeDegrees": 223.323786,
+        "latitudeDegrees": 5.1707422,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Moon",
+        "longitudeDegrees": 223.32389112747416,
+        "latitudeDegrees": 5.17078933045782,
+        "longitudeError": 0.00010512747414281876,
+        "latitudeError": 0.00004713045782001046
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "JPL-Mars",
+      "kind": "external-reference",
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "body": "Mars",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "expected": {
+        "longitudeDegrees": 327.9632921,
+        "latitudeDegrees": -1.0677752,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Mars",
+        "longitudeDegrees": 327.96389907790285,
+        "latitudeDegrees": -1.068082029631237,
+        "longitudeError": 0.0006069779028621269,
+        "latitudeError": 0.00030682963123696005
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "JPL-Jupiter",
+      "kind": "external-reference",
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "body": "Jupiter",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "expected": {
+        "longitudeDegrees": 25.2530685,
+        "latitudeDegrees": -1.2621868,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Jupiter",
+        "longitudeDegrees": 25.25419984487424,
+        "latitudeDegrees": -1.2604530079556915,
+        "longitudeError": 0.0011313448742384935,
+        "latitudeError": 0.0017337920443085686
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "JPL-Neptune",
+      "kind": "external-reference",
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27899%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "body": "Neptune",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "expected": {
+        "longitudeDegrees": 303.1930007,
+        "latitudeDegrees": 0.2350026,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Neptune",
+        "longitudeDegrees": 303.1954420594734,
+        "latitudeDegrees": 0.23714822429110913,
+        "longitudeError": 0.002441359473380089,
+        "latitudeError": 0.0021456242911091217
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "JPL-Pluto",
+      "kind": "external-reference",
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27999%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "input": {
+        "body": "Pluto",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "expected": {
+        "longitudeDegrees": 251.4547644,
+        "latitudeDegrees": 10.8552605,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Pluto",
+        "longitudeDegrees": 251.4547351599136,
+        "latitudeDegrees": 10.855210704886899,
+        "longitudeError": 0.000029240086377058105,
+        "latitudeError": 0.00004979511310132523
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "KIG-ANCHOR-winter-180-0",
+      "kind": "normative-spec",
+      "source": "決定79／05の日盤手順4・5から手計算。実際の日付の転遁証明とは別。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "fixtureKind": "synthetic-anchor-interval",
+        "period": "winter",
+        "length": 180,
+        "offsetDays": 0
+      },
+      "expected": {
+        "centerStar": 1
+      },
+      "actual": {
+        "centerStar": 1
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "KIG-ANCHOR-winter-180-179",
+      "kind": "normative-spec",
+      "source": "決定79／05の日盤手順4・5から手計算。実際の日付の転遁証明とは別。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "fixtureKind": "synthetic-anchor-interval",
+        "period": "winter",
+        "length": 180,
+        "offsetDays": 179
+      },
+      "expected": {
+        "centerStar": 9
+      },
+      "actual": {
+        "centerStar": 9
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "KIG-ANCHOR-summer-180-179",
+      "kind": "normative-spec",
+      "source": "決定79／05の日盤手順4・5から手計算。実際の日付の転遁証明とは別。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "fixtureKind": "synthetic-anchor-interval",
+        "period": "summer",
+        "length": 180,
+        "offsetDays": 179
+      },
+      "expected": {
+        "centerStar": 1
+      },
+      "actual": {
+        "centerStar": 1
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "KIG-ANCHOR-winter-240-209",
+      "kind": "normative-spec",
+      "source": "決定79／05の日盤手順4・5から手計算。実際の日付の転遁証明とは別。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "fixtureKind": "synthetic-anchor-interval",
+        "period": "winter",
+        "length": 240,
+        "offsetDays": 209
+      },
+      "expected": {
+        "centerStar": 3
+      },
+      "actual": {
+        "centerStar": 3
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "KIG-ANCHOR-winter-240-210",
+      "kind": "normative-spec",
+      "source": "決定79／05の日盤手順4・5から手計算。実際の日付の転遁証明とは別。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "fixtureKind": "synthetic-anchor-interval",
+        "period": "winter",
+        "length": 240,
+        "offsetDays": 210
+      },
+      "expected": {
+        "centerStar": 3
+      },
+      "actual": {
+        "centerStar": 3
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "KIG-ANCHOR-winter-240-239",
+      "kind": "normative-spec",
+      "source": "決定79／05の日盤手順4・5から手計算。実際の日付の転遁証明とは別。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "fixtureKind": "synthetic-anchor-interval",
+        "period": "winter",
+        "length": 240,
+        "offsetDays": 239
+      },
+      "expected": {
+        "centerStar": 1
+      },
+      "actual": {
+        "centerStar": 1
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "KIG-ANCHOR-summer-240-209",
+      "kind": "normative-spec",
+      "source": "決定79／05の日盤手順4・5から手計算。実際の日付の転遁証明とは別。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "fixtureKind": "synthetic-anchor-interval",
+        "period": "summer",
+        "length": 240,
+        "offsetDays": 209
+      },
+      "expected": {
+        "centerStar": 7
+      },
+      "actual": {
+        "centerStar": 7
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "KIG-ANCHOR-summer-240-210",
+      "kind": "normative-spec",
+      "source": "決定79／05の日盤手順4・5から手計算。実際の日付の転遁証明とは別。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "fixtureKind": "synthetic-anchor-interval",
+        "period": "summer",
+        "length": 240,
+        "offsetDays": 210
+      },
+      "expected": {
+        "centerStar": 7
+      },
+      "actual": {
+        "centerStar": 7
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "KIG-ANCHOR-summer-240-239",
+      "kind": "normative-spec",
+      "source": "決定79／05の日盤手順4・5から手計算。実際の日付の転遁証明とは別。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "fixtureKind": "synthetic-anchor-interval",
+        "period": "summer",
+        "length": 240,
+        "offsetDays": 239
+      },
+      "expected": {
+        "centerStar": 9
+      },
+      "actual": {
+        "centerStar": 9
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "ZIW-LEAP-15",
+      "kind": "normative-spec",
+      "source": "HKO旧暦＋決定64＋正月寅起点、子時の命身宮手計算。全星曜の独立検証ではない。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "solarDate": "2023-04-05",
+        "standardHour": 0
+      },
+      "expected": {
+        "lunar": {
+          "year": 2023,
+          "month": 2,
+          "day": 15,
+          "isLeap": true
+        },
+        "calculationMonth": 2,
+        "soulBranch": "卯",
+        "bodyBranch": "卯"
+      },
+      "actual": {
+        "soulBranch": "卯",
+        "bodyBranch": "卯",
+        "lunar": {
+          "year": 2023,
+          "month": 2,
+          "day": 15,
+          "isLeap": true
+        }
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "ZIW-LEAP-16",
+      "kind": "normative-spec",
+      "source": "HKO旧暦＋決定64＋命身宮手計算。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "solarDate": "2023-04-06",
+        "standardHour": 0
+      },
+      "expected": {
+        "lunar": {
+          "year": 2023,
+          "month": 2,
+          "day": 16,
+          "isLeap": true
+        },
+        "calculationMonth": 3,
+        "soulBranch": "辰",
+        "bodyBranch": "辰"
+      },
+      "actual": {
+        "soulBranch": "辰",
+        "bodyBranch": "辰",
+        "lunar": {
+          "year": 2023,
+          "month": 2,
+          "day": 16,
+          "isLeap": true
+        }
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    },
+    {
+      "id": "ZIW-LATE-ZI",
+      "kind": "normative-spec",
+      "source": "決定63・64。iztro 2.6.3のcurrent設定で早子時と同配置を確認した回帰例。",
+      "sourceVerificationStatus": "expected-defined-not-run-against-production",
+      "input": {
+        "solarDate": "2023-04-06",
+        "standardHour": 23,
+        "dayDivide": "current"
+      },
+      "expected": {
+        "sameCalendarDate": true,
+        "calculationMonth": 3,
+        "soulBranch": "辰",
+        "bodyBranch": "辰"
+      },
+      "actual": {
+        "soulBranch": "辰",
+        "bodyBranch": "辰"
+      },
+      "outcome": "pass",
+      "executionScope": "local-core-module"
+    }
+  ],
+  "coverage": "partial",
+  "publicationApproved": false,
+  "limitations": [
+    "Local arithmetic only; no production UI/save/page connection",
+    "No independent verification of all stars/houses/directions/dates",
+    "Gender male supplied only by geometry test harness, never defaulted in production",
+    "No full astrology house solver or transport/DST normalization"
+  ]
+}

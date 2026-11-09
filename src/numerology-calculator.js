@@ -1,4 +1,4 @@
-export const NUMEROLOGY_CALCULATION_VERSION = "numeria-numerology-rules-2026-10-19.v1";
+export const NUMEROLOGY_CALCULATION_VERSION = "numeria-numerology-rules-2026-11-09.v2";
 const masterNumbers = new Set([11, 22, 33]);
 function reduceNumerology(value, preserveMasters = true) {
   let result = value;
@@ -46,8 +46,9 @@ export function calculateNumerology({ birthday, romanName = "", referenceDate } 
   pinnacleValues.push(reduceNumerology(pinnacleValues[0] + pinnacleValues[1]), reduceNumerology(month + year));
   const secondStartAge = 36 - reduceNumerology(lifePath, false);
   const birthdayAtAge = age => {
-    const target = `${String(birth.year + age).padStart(4, "0")}-${String(birth.month).padStart(2, "0")}-${String(birth.day).padStart(2, "0")}`;
-    // Do not silently choose Feb 28 or Mar 1 for a Feb 29 birthday.
+    const year = birth.year + age, leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    // User decision 2026-11-09: Feb 29 anniversaries fall on Mar 1 in non-leap years.
+    const target = `${String(year).padStart(4, "0")}-${birth.month === 2 && birth.day === 29 && !leap ? "03-01" : `${String(birth.month).padStart(2, "0")}-${String(birth.day).padStart(2, "0")}`}`;
     return numerologyDate(target) ? target : null;
   };
   const singleMonth = reduceNumerology(birth.month, false), singleDay = reduceNumerology(birth.day, false), singleYear = reduceNumerology(birth.year, false);
@@ -63,7 +64,7 @@ export function calculateNumerology({ birthday, romanName = "", referenceDate } 
       const startDate = birthdayAtAge(startAge), endDateExclusive = endAgeExclusive === null ? null : birthdayAtAge(endAgeExclusive);
       return { stage: index + 1, value, startAge, endAgeExclusive, startDate, endDateExclusive,
         dateBoundaryStatus: startDate && (endAgeExclusive === null || endDateExclusive) ? "resolved" : "unresolved",
-        boundary: "birthday", birthMonth: birth.month, birthDay: birth.day };
+        boundary: "birthday", nonLeapBirthdayPolicy: "march-1", birthMonth: birth.month, birthDay: birth.day };
     }),
     // Challenges have no pinnacle age intervals; zero is a valid result.
     challengeNumbers: [firstChallenge, secondChallenge, Math.abs(firstChallenge - secondChallenge), Math.abs(singleMonth - singleYear)]
