@@ -7,9 +7,10 @@ test('real screen handlers retain edits made while saving and preserve inputs on
   const start=source.indexOf('  async function showCharacters('),end=source.indexOf('  function reportListBody(',start);
   const element=()=>({children:[],append(...nodes){this.children.push(...nodes);},setAttribute(){},replaceChildren(...nodes){this.children=[...nodes];},textContent:'',disabled:false});
   const ids=Object.fromEntries(['character-feedback','character-official','character-custom','character-create'].map(id=>[id,element()]));
-  let resolveSave, rejectSave, submitted, blankFailure=false;
+  let resolveSave, rejectSave, submitted, blankFailure=false, requests=0;
   const context=vm.createContext({document:{getElementById:id=>ids[id],createElement:element},dispatchSequence:1,renderLoading(){},renderSurface(){},renderError(){throw Error('unexpected screen error');},escapeHtml:String,
     apiJson:async(path,init)=>{
+      requests++;
       if(path==='/api/characters' && init?.method==='POST'){if(blankFailure)throw {status:409,body:{errorCode:'CHARACTER_LIMIT_REACHED'}};submitted=JSON.parse(init.body);return {character:{characterId:'blank',versions:[{version:1,name:submitted.name,surfaceParameters:submitted.surfaceParameters}]}};}
       if(path==='/api/characters/duplicate'){submitted=JSON.parse(init.body);return {character:{characterId:'copy',versions:[{version:1,name:submitted.name,surfaceParameters:Array(9).fill(50)}]}};}
       if(init?.method==='PUT'){submitted=JSON.parse(init.body);return new Promise((resolve,reject)=>{resolveSave=resolve;rejectSave=reject;});}
@@ -33,4 +34,5 @@ test('real screen handlers retain edits made while saving and preserve inputs on
   const blank=ids['character-create'].children,blankName=blank[0].children[0];blankName.value='Blank';await blank[2].onclick();assert.equal(submitted.name,'Blank');assert.deepEqual(submitted.surfaceParameters,Array(9).fill(50));assert.equal(blankName.value,'');assert.equal(input.value,'Keep on conflict');
   blankFailure=true;blankName.value='Retained';await blank[2].onclick();assert.equal(blankName.value,'Retained');assert.match(ids['character-feedback'].textContent,/登録上限/);blankFailure=false;
   const official=ids['character-official'].children;const name=official[1].children[0],duplicate=official[2];name.value='My copy';await duplicate.onclick();assert.equal(submitted.sourceCharacterId,'official');assert.equal(submitted.sourceCharacterVersion,'1');assert.equal(submitted.name,'My copy');assert.equal(ids['character-custom'].children.length,3);assert.equal(ids['character-custom'].children[2].children[0].children[0].value,'My copy');
+  const pendingNavigation=save.onclick();const before=status.textContent;context.dispatchSequence=2;resolveSave({character:{latestVersion:99}});await pendingNavigation;assert.equal(status.textContent,before);const count=requests;await save.onclick();await card.children[5].onclick();await blank[2].onclick();await duplicate.onclick();assert.equal(requests,count,'detached controls must not send requests');
 });

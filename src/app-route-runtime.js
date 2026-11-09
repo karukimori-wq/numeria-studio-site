@@ -237,7 +237,7 @@
         const hint=document.createElement('p');hint.textContent='性格は中立の設定で作成します。';
         const create=document.createElement('button');create.type='button';create.textContent='白紙から作成';let busy=false;
         create.onclick=async()=>{
-          if(busy)return;if(!name.value.trim()){report('キャラクター名を入力してください');return;}
+          if(busy || sequence!==dispatchSequence)return;if(!name.value.trim()){report('キャラクター名を入力してください');return;}
           const submittedName=name.value;busy=true;create.disabled=true;
           try {
             const result=await apiJson('/api/characters',{method:'POST',body:JSON.stringify({name:submittedName,surfaceParameters:Array(9).fill(50)})});
@@ -250,14 +250,14 @@
       }
       for(const character of official.characters || []) {
         const button = document.createElement('button');button.type='button';button.className='nr-action';button.textContent=`${character.name}（版 ${character.characterVersion}）を選択`;
-        button.onclick=async()=>{button.disabled=true;try{const saved=await apiJson('/api/characters/selection',{method:'PUT',body:JSON.stringify({characterId:character.characterId,characterVersion:character.characterVersion,expectedRevision:revision})});revision=saved.selection.revision;report(`${character.name}を選択しました`);}catch(error){report(error.status===409?'選択状態が更新されています。画面を開き直して確認してください':'選択を保存できませんでした。再試行してください');}finally{button.disabled=false;}};
+        button.onclick=async()=>{if(button.disabled || sequence!==dispatchSequence)return;button.disabled=true;try{const saved=await apiJson('/api/characters/selection',{method:'PUT',body:JSON.stringify({characterId:character.characterId,characterVersion:character.characterVersion,expectedRevision:revision})});revision=saved.selection.revision;report(`${character.name}を選択しました`);}catch(error){report(error.status===409?'選択状態が更新されています。画面を開き直して確認してください':'選択を保存できませんでした。再試行してください');}finally{button.disabled=false;}};
         document.getElementById('character-official').append(button);
         if(custom.capabilities?.canCreate === true) {
           const label=document.createElement('label');label.textContent=`${character.name}から作るキャラクターの名前`;
           const name=document.createElement('input');name.maxLength=120;name.value=character.name;label.append(name);
           const duplicate=document.createElement('button');duplicate.type='button';duplicate.textContent='複製してカスタムを作成';let busy=false;
           duplicate.onclick=async()=>{
-            if(busy)return;if(!name.value.trim()){report('キャラクター名を入力してください');return;}
+            if(busy || sequence!==dispatchSequence)return;if(!name.value.trim()){report('キャラクター名を入力してください');return;}
             busy=true;duplicate.disabled=true;
             try {
               const result=await apiJson('/api/characters/duplicate',{method:'POST',body:JSON.stringify({name:name.value,sourceCharacterId:character.characterId,sourceCharacterVersion:character.characterVersion})});
@@ -277,13 +277,13 @@
         const state=document.createElement('p');state.setAttribute('role','status');state.textContent=`保存済み・版 ${latest.version}`;
         input.oninput=()=>{state.textContent='未保存';};
         const save=document.createElement('button');save.type='button';save.textContent='名前を保存';let expectedVersion=latest.version, surfaceParameters=[...latest.surfaceParameters];
-        save.onclick=async()=>{const submittedName=input.value;save.disabled=true;try{const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}`,{method:'PUT',body:JSON.stringify({name:submittedName,surfaceParameters,expectedVersion})});expectedVersion=result.character.latestVersion;state.textContent=input.value===submittedName?`保存済み・版 ${expectedVersion}`:`未保存（版 ${expectedVersion} 保存後に変更あり）`;}catch(error){state.textContent=error.status===409?'保存競合：入力は保持しています。「最新版と比較」から採用する名前を選んでください':'保存できませんでした。入力は保持しています。再試行できます';}finally{save.disabled=false;}};
-        const history=document.createElement('button');history.type='button';history.textContent='版履歴を確認';const output=document.createElement('p');
-        history.onclick=async()=>{try{const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}/versions`);output.textContent=result.character.versions.map(v=>`版 ${v.version}：${v.name}（${v.savedAt}）`).join(' / ');}catch{output.textContent='履歴を取得できませんでした';}};
+        save.onclick=async()=>{if(save.disabled || sequence!==dispatchSequence)return;const submittedName=input.value;save.disabled=true;try{const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}`,{method:'PUT',body:JSON.stringify({name:submittedName,surfaceParameters,expectedVersion})});if(sequence!==dispatchSequence)return;expectedVersion=result.character.latestVersion;state.textContent=input.value===submittedName?`保存済み・版 ${expectedVersion}`:`未保存（版 ${expectedVersion} 保存後に変更あり）`;}catch(error){if(sequence!==dispatchSequence)return;state.textContent=error.status===409?'保存競合：入力は保持しています。「最新版と比較」から採用する名前を選んでください':'保存できませんでした。入力は保持しています。再試行できます';}finally{save.disabled=false;}};
+        const history=document.createElement('button');history.type='button';history.textContent='版履歴を確認';const output=document.createElement('p');let historyRequest=0;
+        history.onclick=async()=>{if(sequence!==dispatchSequence)return;const requestId=++historyRequest;try{const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}/versions`);output.textContent=result.character.versions.map(v=>`版 ${v.version}：${v.name}（${v.savedAt}）`).join(' / ');}catch{if(sequence===dispatchSequence && requestId===historyRequest)output.textContent='履歴を取得できませんでした';}};
         const compare=document.createElement('button');compare.type='button';compare.textContent='最新版と比較';
         const comparison=document.createElement('div');
         compare.onclick=async()=>{
-          if(save.disabled)return;compare.disabled=true;
+          if(save.disabled || compare.disabled || sequence!==dispatchSequence)return;compare.disabled=true;
           try {
             const result=await apiJson(`/api/characters/${encodeURIComponent(character.characterId)}/versions`);
             if(sequence!==dispatchSequence)return;
@@ -292,10 +292,10 @@
             const summary=document.createElement('p');summary.textContent=`最新版（版 ${current.version}）：${current.name} ／ 編集中：${input.value}`;
             const mine=document.createElement('button');mine.type='button';mine.textContent='編集中の名前を使う';
             const theirs=document.createElement('button');theirs.type='button';theirs.textContent='最新版の名前を使う';
-            const choose=useLatest=>{if(save.disabled)return;if(useLatest)input.value=current.name;expectedVersion=current.version;surfaceParameters=[...current.surfaceParameters];state.textContent='未保存：採用内容を確認して保存してください';comparison.replaceChildren();};
+            const choose=useLatest=>{if(save.disabled || sequence!==dispatchSequence)return;if(useLatest)input.value=current.name;expectedVersion=current.version;surfaceParameters=[...current.surfaceParameters];state.textContent='未保存：採用内容を確認して保存してください';comparison.replaceChildren();};
             mine.onclick=()=>choose(false);theirs.onclick=()=>choose(true);
             comparison.append(summary,mine,theirs);
-          }catch{state.textContent='最新版を取得できませんでした。編集内容は保持しています';}
+          }catch{if(sequence===dispatchSequence)state.textContent='最新版を取得できませんでした。編集内容は保持しています';}
           finally{compare.disabled=false;}
         };
         card.append(label,state,save,history,output,compare,comparison);document.getElementById('character-custom').append(card);
