@@ -13,7 +13,7 @@ export const TAROT_CARD_IDS = Object.freeze([...tarotMajors, ...["W", "P", "S", 
 
 export function calculateTarot({ spreadId, cards = [], deckSize = 22, reversalsEnabled = true, referenceDate, theme = "", optionA = "", optionB = "", partnerRef = "" } = {}) {
   const fail = (code, missing = []) => ({ methodKey: "tarot", status: "input-incomplete", code, missing, calculationVersion: TAROT_CALCULATION_VERSION, pages: Array.from({ length: 13 }, (_, index) => ({ pageDefinitionId: `TAR-${String(index + 1).padStart(2, "0")}`, status: "input-incomplete", reason: code, data: null })) });
-  const positions = TAROT_SPREAD_POSITIONS[spreadId];
+  const positions = Object.hasOwn(TAROT_SPREAD_POSITIONS, spreadId) ? TAROT_SPREAD_POSITIONS[spreadId] : null;
   if (!positions) return fail("SPREAD_UNSUPPORTED");
   if (![22, 78].includes(deckSize) || typeof reversalsEnabled !== "boolean" || !Array.isArray(cards)) return fail("TAROT_INPUT_INVALID");
   const allowed = new Set(deckSize === 22 ? tarotMajors : TAROT_CARD_IDS), used = new Set(), assigned = new Set();

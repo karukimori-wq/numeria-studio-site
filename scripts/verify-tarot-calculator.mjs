@@ -9,6 +9,7 @@ assert.ok(start > 0 && end > start);
 assert.deepEqual(Array.from(vm.runInNewContext(`const ${legacy.slice(start, end)};Ro.map(card=>card[0])`)), TAROT_CARD_IDS, "All IDs must match the real legacy catalog, including Japanese court ranks.");
 assert.equal(Object.keys(TAROT_SPREAD_POSITIONS).length, 8);
 assert.equal(Object.values(TAROT_SPREAD_POSITIONS).flat().length, 38);
+for (const spreadId of ["toString", "__proto__", "constructor", "unknown"]) assert.equal(calculateTarot({ spreadId }).code, "SPREAD_UNSUPPORTED");
 for (const [spreadId, positions] of Object.entries(TAROT_SPREAD_POSITIONS)) {
   const cards = positions.map((positionId, i) => ({ positionId, cardId: TAROT_CARD_IDS[i], orientation: i % 2 ? "reversed" : "upright" }));
   const result = calculateTarot({ spreadId, cards: [...cards].reverse(), referenceDate: "2026-12-19" });
