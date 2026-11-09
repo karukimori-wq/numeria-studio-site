@@ -120,3 +120,18 @@ globalThis.window=savedWindow;
 console.log('Print retry, malformed response, stale success/failure, popup blocking and saved-only rendering verified.');
 
 }
+
+{
+ const calls=[];
+ const historyClient=createKigakuReadingClient({referenceInstant:stored.snapshot.input.referenceInstant,onChange(){},request:(path,body)=>new Promise((resolve,reject)=>calls.push({path,body,resolve,reject}))});
+ const task=historyClient.restore('finished-ki');
+ calls.shift().resolve({usage:{activeDraft:null}});await Promise.resolve();
+ const call=calls.shift();assert.equal(call.path,'/api/kigaku/report-history');
+ call.resolve({appraisal:{id:'finished-ki',snapshot:stored.snapshot,reportSnapshot:{pages:[]}}});await task;
+ assert.equal(historyClient.current().completedReport,true);
+ await historyClient.save();assert.equal(calls.length,0);
+ historyClient.change({question:'新しい相談'});
+ assert.equal(historyClient.current().draftId,null);assert.equal(historyClient.current().completedReport,false);
+ assert.equal(historyClient.current().reportSnapshot,null);
+ console.log('Completed history opens frozen report, blocks overwrite, and detaches edited drafts.');
+}
