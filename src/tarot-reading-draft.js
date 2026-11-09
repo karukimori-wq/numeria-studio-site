@@ -36,7 +36,7 @@ export function createTarotReadingSnapshot({ id, customer, editor } = {}) {
     tarotEditor: structuredClone(editor), tarotCalculation: { ...calculation, verificationState: "review-required", source: { customerId: customer?.id || null, selectionConfirmed: confirmed } } };
 }
 export async function saveTarotReadingDraft({ snapshot, fetcher, expectedDraftVersion = null } = {}) {
-  if (snapshot?.divination !== "tarot" || !snapshot.id || !snapshot.selectedCustomerId || !snapshot.name.trim() || !snapshot.birthday || !snapshot.theme.trim()) return { ok: false, message: "鑑定カルテと相談テーマを確認してください" };
+  if (snapshot?.divination !== "tarot" || ![snapshot.id, snapshot.selectedCustomerId, snapshot.name, snapshot.birthday, snapshot.theme].every(value => typeof value === "string" && value.trim())) return { ok: false, message: "鑑定カルテと相談テーマを確認してください" };
   // Recompute from captured inputs; never send an imported/stale calculation as authority.
   const editor = restoreTarotEditor(snapshot);
   if (!editor) return { ok: false, message: "タロットの入力を確認してください" };
@@ -44,7 +44,7 @@ export async function saveTarotReadingDraft({ snapshot, fetcher, expectedDraftVe
   try {
     const response = await fetcher("/api/appraisals/save-draft", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ appraisalId: captured.id, expectedDraftVersion, clientName: captured.name, birthDate: captured.birthday, divination: "tarot", question: captured.theme, notes: editor.overall, resultSummary: "", snapshot: captured }) });
     const data = await response.json();
-    if (!response.ok || data.status !== "success" || data.draftId !== captured.id) return { ok: false, message: response.status === 409 ? "保存内容が更新されています。鑑定を開き直してください" : "下書きを保存できませんでした。もう一度お試しください" };
+    if (!response.ok || data.status !== "success" || data.draftId !== captured.id || typeof data.activeDraft?.draftVersion !== "string" || !data.activeDraft.draftVersion) return { ok: false, message: response.status === 409 ? "保存内容が更新されています。鑑定を開き直してください" : "下書きを保存できませんでした。もう一度お試しください" };
     return { ok: true, snapshot: captured, draftVersion: data.activeDraft?.draftVersion ?? null };
   } catch { return { ok: false, message: "下書きを保存できませんでした。通信を確認してください" }; }
 }
