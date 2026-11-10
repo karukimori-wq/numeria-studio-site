@@ -8,11 +8,11 @@ export function calculateFourPillars(input={}){
  if(!input.time)return stop('required-missing','UNKNOWN_TIME_INTERVAL_ADAPTER_REQUIRED');
  if(!/^\d{4}-\d{2}-\d{2}$/.test(input.date||'')||!/^\d{4}-\d{2}-\d{2}$/.test(input.referenceDate||''))return stop('calculation-error','DATE_INVALID');
  const valid=d=>{const t=new Date(d+'T00:00:00Z');return Number.isFinite(t.getTime())&&t.toISOString().slice(0,10)===d;};
- if(!valid(input.date)||!valid(input.referenceDate)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(input.time))return stop('calculation-error','CLOCK_INVALID');
+ if(!valid(input.date)||!valid(input.referenceDate)||!/^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/.test(input.time))return stop('calculation-error','CLOCK_INVALID');
  if(input.date<'1901-01-01'||input.date>input.referenceDate||input.referenceDate>'2100-12-31')return stop('required-missing','DATE_OUT_OF_RANGE');
  try{
-  const [y,m,d]=input.date.split('-').map(Number),[h,min]=input.time.split(':').map(Number);
-  const eight=Solar.fromYmdHms(y,m,d,h,min,0).getLunar().getEightChar();eight.setSect(2);
+  const [y,m,d]=input.date.split('-').map(Number),[h,min,sec=0]=input.time.split(':').map(Number);
+  const eight=Solar.fromYmdHms(y,m,d,h,min,sec).getLunar().getEightChar();eight.setSect(2);
   const pillars={year:eight.getYear(),month:eight.getMonth(),day:eight.getDay(),hour:eight.getTime()};
   return{state:'available',pillars,elements:countVisiblePillarElements(pillars),calculationVersion:FOUR_PILLARS_CALCULATION_VERSION,verificationState:'review-required',publicationAllowed:false};
  }catch{return stop('calculation-error','CALCULATOR_FAILED');}

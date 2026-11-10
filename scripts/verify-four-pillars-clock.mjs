@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {fourPillarsFromBirthClock as calc} from '../src/four-pillars-birth-clock.js';
+import {calculateFourPillars} from '../src/four-pillars-calculator.js';
+const base={date:'2000-01-07',time:'23:00',countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:true,offsetChoiceMinutes:null};
+const run=patch=>calc({birthClock:{...base,...patch},referenceDate:'2026-11-11'});
+assert.equal(run({}).pillars.day,'甲子');assert.equal(run({}).pillars.hour,'丙子');
+assert.equal(run({date:'1948-05-02',time:'00:30'}).reason,'BIRTH_CLOCK_TIME_NONEXISTENT');
+assert.equal(run({date:'1948-09-12',time:'00:30'}).reason,'BIRTH_CLOCK_TIME_AMBIGUOUS');
+assert.equal(run({time:null}).pillars,null);
+assert.equal(run({zoneConfirmed:false}).state,'required-missing');
+const summer=run({date:'1948-07-01',time:'00:30:45'});
+assert.equal(summer.clockNormalization.selected.standardDate,'1948-06-30');
+assert.equal(summer.clockNormalization.selected.standardTime,'23:30:45');
+assert.deepEqual(summer.pillars,calculateFourPillars({date:'1948-06-30',time:'23:30:45',referenceDate:'2026-11-11',standardClockConfirmed:true}).pillars);
+for(const offsetChoiceMinutes of [540,600])assert.equal(run({date:'1948-09-12',time:'00:30',offsetChoiceMinutes}).state,'available');
+console.log('Shared Japan clock: DST gap/fold, explicit selection, previous standard date, seconds, unknown time and sect2 bridge PASS; internal consistency, not independent chart acceptance.');
