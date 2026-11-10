@@ -11,7 +11,8 @@ export function createNumerologySnapshot(input = {}) {
   const selectedName = confirmed && typeof input.selectedName === "string" ? input.selectedName : "";
   let calculation = calculateNumerology({ birthday: input.birthDate, referenceDate: input.referenceDate, romanName: selectedName });
   if (calculation.code === "NUMEROLOGY_NAME_INVALID") calculation = calculateNumerology({ birthday: input.birthDate, referenceDate: input.referenceDate });
-  const result = value => value === null || value === undefined ? { state: "missing_input", value: null, reason: "CONFIRMED_INPUT_REQUIRED" } : { state: "ready", value, reason: null };
+  const invalidDate = calculation.code === "NUMEROLOGY_DATE_INVALID" && Boolean(input.birthDate && input.referenceDate);
+  const result = value => value === null || value === undefined ? { state: invalidDate ? "invalid_input" : "missing_input", value: null, reason: calculation.code || "CONFIRMED_INPUT_REQUIRED" } : { state: "ready", value, reason: null };
   const results = Object.fromEntries(CORE_NUMBER_KEYS.map(key => [key, result(calculation.coreNumbers?.[key])]));
   Object.assign(results, {
     nameDigitCounts: result(calculation.nameDigitCounts ? Object.values(calculation.nameDigitCounts) : null),

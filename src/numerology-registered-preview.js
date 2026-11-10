@@ -4,6 +4,7 @@ import { NumerologyA4View, NUMEROLOGY_A4_CSS, NUMEROLOGY_PAGE_TITLES } from "./n
 export function numerologyRegisteredPageMessage(page) {
   if (page?.state === "plan_required") return "このページはProプランで確認できます。";
   const issue = page?.issues?.[0];
+  if (issue?.reason === "NUMEROLOGY_DATE_INVALID") return "生年月日と基準日の順序・日付を確認してください。";
   if (issue?.code === "missing_family_context") return "家族ページの関係を選択してください。";
   if (issue?.code === "missing_parent_direction") return "本人と相手のどちらが親かを選択してください。";
   if (["copy_missing", "copy_ambiguous", "copy_version_mismatch", "copy_not_previewable"].includes(issue?.code)) return "登録原文の不足・重複・版を確認する必要があります。";
