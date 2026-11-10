@@ -1,0 +1,2647 @@
+[
+  {
+    "id": "NSL-01",
+    "description": "全14ページ44枠を草案組立、正式発行は無効",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-02",
+    "description": "氏名なしでも9年/課題/月運は成立、8コア/補助数は不成立",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": null,
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "destiny",
+            "who": "a",
+            "reason": "NAME_REQUIRED"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "destiny",
+            "who": "a",
+            "reason": "NAME_REQUIRED"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "soul",
+            "who": "a",
+            "reason": "NAME_REQUIRED"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "destiny",
+            "who": "a",
+            "reason": "NAME_REQUIRED"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "nameDigitCounts",
+            "who": "a",
+            "reason": "NAME_REQUIRED"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "destiny",
+            "who": "a",
+            "reason": "NAME_REQUIRED"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "soul",
+            "who": "a",
+            "reason": "NAME_REQUIRED"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "destiny",
+            "who": "a",
+            "reason": "NAME_REQUIRED"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "soul",
+            "who": "a",
+            "reason": "NAME_REQUIRED"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-03",
+    "description": "母音のみ、補助集計は有効だが全8コアと恋愛は不可",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "A",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "personality",
+            "who": "a",
+            "reason": "NAME_NO_CONSONANTS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "personality",
+            "who": "a",
+            "reason": "NAME_NO_CONSONANTS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "personality",
+            "who": "a",
+            "reason": "NAME_NO_CONSONANTS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-04",
+    "description": "母音なしのsoulを0の原文で代替しない",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "RY",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "soul",
+            "who": "a",
+            "reason": "NAME_NO_VOWELS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "soul",
+            "who": "a",
+            "reason": "NAME_NO_VOWELS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "soul",
+            "who": "a",
+            "reason": "NAME_NO_VOWELS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "soul",
+            "who": "a",
+            "reason": "NAME_NO_VOWELS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "soul",
+            "who": "a",
+            "reason": "NAME_NO_VOWELS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-05",
+    "description": "最多1/9同率を全件とtie1回で表示",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "AI",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "personality",
+            "who": "a",
+            "reason": "NAME_NO_CONSONANTS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "personality",
+            "who": "a",
+            "reason": "NAME_NO_CONSONANTS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "personality",
+            "who": "a",
+            "reason": "NAME_NO_CONSONANTS"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-06",
+    "description": "未出現なし＋9同率uniform、tieを重ねない",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "ABCDEFGHI",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-07",
+    "description": "不正誕生日を補完せず、氏名補助のみ独立に成立",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-02-31",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "lifePath",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "lifePath",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "maturity",
+            "who": "a",
+            "reason": "DEPENDENCY_UNAVAILABLE"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "lifePath",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "personalYearSequence",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "lifePath",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "lifePath",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "lifePath",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "birthdayNumber",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "lifePath",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "lifePath",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "pinnacleNumbers",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "invalid_input",
+            "key": "personalMonth",
+            "who": "a",
+            "reason": "DATE_INVALID"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "NSL-08",
+    "description": "相手なしでは比較/家族不可、本人恋愛は利用可能",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "lifePath",
+            "who": "b"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_input",
+            "key": "lifePath",
+            "who": "b"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-09",
+    "description": "親子方向なしは家族不可、一般比較は成立",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_parent_direction"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-10",
+    "description": "未知家族種別を一般家族へ丸めない",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "unknown",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "missing_family_context"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-11",
+    "description": "未定義の閏日ピナクル境界はNUM13だけ停止",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2000-02-29",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "unsupported",
+            "reason": "LEAP_BIRTHDAY_BOUNDARY_UNDECIDED"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-12",
+    "description": "通常ピナクル日付3境界と課題独立",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-13",
+    "description": "9年の開始は2022、中央2026、末尾2030",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-14",
+    "description": "金銭3結果は2枠、家族は3枠",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-15",
+    "description": "必要年運原文なしはcopy_missing、月運へ代替なし",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_missing",
+            "copyId": "num.year.5.meaning"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_missing",
+            "copyId": "num.year.5.meaning"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_missing",
+            "copyId": "num.year.5.meaning"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-16",
+    "description": "同一版同一ID二重登録はcopy_ambiguous",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_ambiguous",
+            "copyId": "num.number.33.basic"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_ambiguous",
+            "copyId": "num.number.33.basic"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_ambiguous",
+            "copyId": "num.number.33.basic"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_ambiguous",
+            "copyId": "num.number.33.basic"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-17",
+    "description": "版不一致は本文を流用しない",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.number.33.basic"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.role.lifePath"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.role.soul"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.connections.maturity"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.name-digits.intro"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.year.1.meaning"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.map.reading"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.compare.intro"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.theme.love.soul.1"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.theme.work.birthdayNumber.11"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.theme.money.soul.1"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.number.33.basic"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.pinnacle.reading"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "copy_version_mismatch",
+            "copyId": "num.month.reading"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "NSL-18",
+    "description": "birthday33は範囲外、仕事原文を代替しない",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "unsupported_value",
+            "key": "birthdayNumber",
+            "who": "a"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "unsupported_value",
+            "key": "birthdayNumber",
+            "who": "a"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "unsupported_value",
+            "key": "birthdayNumber",
+            "who": "a"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "unsupported_value",
+            "key": "birthdayNumber",
+            "who": "a"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "unsupported_value",
+            "key": "birthdayNumber",
+            "who": "a"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "unsupported_value",
+            "key": "birthdayNumber",
+            "who": "a"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-19",
+    "description": "同じ8でも年short/周期/body/月bodyを別参照",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-20",
+    "description": "最多配列が空なら集計不整合として停止",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "inconsistent_counts"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "preview_ready",
+        "frameCount": 9,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  },
+  {
+    "id": "NSL-21",
+    "description": "9年が8件ならNUM06停止",
+    "input": {
+      "personA": {
+        "subjectRef": "fixture-a",
+        "birthDate": "2009-11-11",
+        "selectedName": "TARO YAMADA",
+        "referenceDate": "2026-10-19"
+      },
+      "personB": {
+        "subjectRef": "fixture-b",
+        "birthDate": "1990-01-01",
+        "selectedName": "HANAKO SATO",
+        "referenceDate": "2026-10-19"
+      },
+      "relationType": "親子",
+      "familyContext": "parent-child",
+      "parentDirection": "b-parent"
+    },
+    "expectedPages": [
+      {
+        "pageId": "NUM-01",
+        "state": "preview_ready",
+        "frameCount": 8,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-02",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-03",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-04",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-05",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-06",
+        "state": "unavailable",
+        "frameCount": 0,
+        "issues": [
+          {
+            "code": "inconsistent_year_sequence"
+          }
+        ]
+      },
+      {
+        "pageId": "NUM-07",
+        "state": "preview_ready",
+        "frameCount": 1,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-08",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-09",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-10",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-11",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-12",
+        "state": "preview_ready",
+        "frameCount": 3,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-13",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      },
+      {
+        "pageId": "NUM-14",
+        "state": "preview_ready",
+        "frameCount": 2,
+        "issues": []
+      }
+    ]
+  }
+]

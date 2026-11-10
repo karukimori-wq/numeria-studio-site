@@ -1,5 +1,6 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
+import { withNumerologyRegisteredSelection } from "./numerology-registered-draft.js";
 
 const APP_VERSION = "0.3.12-report-delivery-status";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
@@ -2610,7 +2611,7 @@ async function handleApi(request, env = {}, ctx = null) {
       notes: String(body.notes ?? previousDraft?.notes ?? "").trim(),
       resultSummary: String(body.resultSummary ?? previousDraft?.resultSummary ?? "").trim(),
       snapshot: body.snapshot && typeof body.snapshot === "object"
-        ? body.snapshot
+        ? await withNumerologyRegisteredSelection(body.snapshot, effectiveRecord.planId)
         : previousDraft?.snapshot || null,
       externalReferences: normalizeGrowthEngineExternalReferences(body) || previousDraft?.externalReferences || null,
       updatedAt: new Date().toISOString(),
