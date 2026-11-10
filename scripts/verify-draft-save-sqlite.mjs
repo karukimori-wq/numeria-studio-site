@@ -143,6 +143,18 @@ try {
   assert.equal(validateKigakuCalculationCheckpoint(kigakuRestored).ok, true);
   assert.equal(kigakuRestored.kigakuCalculation.calculation.pages.length, 14);
   assert.equal(kigakuRestored.kigakuCalculation.publicationAllowed, false);
+  const lockedVersion = kigakuSaved.body.activeDraft.draftVersion;
+  for (const changedSnapshot of [
+    { ...kigakuSnapshot, kigakuInput: { ...kigakuInput, referenceInstant: "2027-01-01T00:00:00+09:00" } },
+    { ...kigakuSnapshot, kigakuInput: null },
+  ]) {
+    const rejected = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: lockedVersion, snapshot: changedSnapshot }, "cas_kigaku_ws");
+    assert.equal(rejected.status, 409);
+    assert.equal(rejected.body.errorCode, "KIGAKU_REFERENCE_LOCKED");
+    assert.deepEqual((await api("/api/appraisals/session_kigaku_fixture", null, "cas_kigaku_ws")).body.session.snapshot, kigakuRestored);
+  }
+  const sameReference = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: lockedVersion, snapshot: { ...kigakuRestored, drafts: { retainedText: "本文だけ更新" } } }, "cas_kigaku_ws");
+  assert.equal(sameReference.status, 201);
   const retainedReport = await api("/api/reports/rep_immutable");
   assert.equal(retainedReport.body.report.reportSnapshot.resultSummary, "旧Reportの本文");
   console.log("Kigaku checkpoint: real Worker SQL/SQLite save and session restore PASS; synthetic identity/D1 transport; no production D1 or browser claim.");
