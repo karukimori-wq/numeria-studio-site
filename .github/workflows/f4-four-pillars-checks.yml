@@ -1,0 +1,18 @@
+name: F4 Four Pillars checks
+on:
+  pull_request:
+    paths:
+      - 'src/four-pillars-*.js'
+      - 'scripts/verify-four-pillars-*.mjs'
+      - '.github/workflows/f4-four-pillars-checks.yml'
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/verify-four-pillars-elements.mjs
