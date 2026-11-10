@@ -1,6 +1,7 @@
 import appWorker from "./worker-entry.js";
 import { handleNumerologyReviewRequest } from "./numerology-review-store.js";
 import { handleNumerologyReviewerRequest } from "./numerology-review-decisions.js";
+import { buildNumerologyRegisteredDraft } from "./numerology-registered-draft.js";
 
 const ADMIN_PREVIEW_CONTRACT_VERSION = "numeria-admin-developer-preview.v3";
 
@@ -328,6 +329,26 @@ async function handleSecureAdminRequest(request, env = {}, ctx = null) {
 export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
+    if (url.pathname === "/api/numerology/page-draft") {
+      const identity = await resolveVerifiedClerkIdentity(request, env, ctx);
+      if (!identity.verified) return json({ status: "error", errorCode: "AUTH_SESSION_REQUIRED" }, { status: 401 });
+      if (request.method !== "POST") return json({ status: "error", errorCode: "METHOD_NOT_ALLOWED" }, { status: 405 });
+      let body;
+      try {
+        const raw = await request.text();
+        if (raw.length > 120000) return json({ status: "error", errorCode: "INPUT_TOO_LARGE" }, { status: 413 });
+        body = JSON.parse(raw);
+      } catch { return json({ status: "error", errorCode: "INVALID_JSON" }, { status: 400 }); }
+      const headers = authForwardHeaders(request, identity.workspaceId);
+      headers.set("X-User-Id", identity.userId);
+      const usageResponse = await appWorker.fetch(new Request(new URL("/api/usage", request.url), { headers }), env, ctx);
+      const usage = await usageResponse.json().catch(() => ({}));
+      if (!usageResponse.ok || usage.userId !== identity.userId || usage.workspaceId !== identity.workspaceId) return json({ status: "error", errorCode: "PLAN_SCOPE_UNAVAILABLE" }, { status: 503 });
+      const planId = usage.usage?.planId === "pro" ? "pro" : "free";
+      const draft = await buildNumerologyRegisteredDraft(body?.snapshot, planId);
+      if (!draft) return json({ status: "error", errorCode: "NUMEROLOGY_READING_REQUIRED" }, { status: 422 });
+      return json({ status: "success", planId, draft });
+    }
     const reviewerMatch = url.pathname.match(/^\/api\/admin\/numerology-reviews\/([^/]+)$/);
     if (reviewerMatch) {
       const identity = await resolveVerifiedClerkIdentity(request, env, ctx);

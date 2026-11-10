@@ -61,7 +61,7 @@ savedNames = updateNumerologyNameInputs(savedNames, { role: "subject", operation
 savedNames.subject.current.romanName = "TARO SATO";
 const save = (message, expectedDraftVersion) => api("/api/appraisals/save-draft", {
   appraisalId: "session_cas", expectedDraftVersion, question: message,
-  snapshot: withNumerologyCalculationCheckpoint({ ...nameIdentity, id: "session_cas", theme: message, customReportItems: [], drafts: {}, numerologyNameInputs: savedNames }),
+  snapshot: withNumerologyCalculationCheckpoint({ ...nameIdentity, id: "session_cas", theme: message, customReportItems: [], drafts: {}, numerologyNameInputs: savedNames, numerologyRegisteredPagesEnabled: true }),
 });
 try {
   for (const file of readdirSync("migrations").filter(name => name.endsWith(".sql")).sort()) sql(readFileSync(join("migrations", file), "utf8"), [], true);
@@ -76,6 +76,10 @@ try {
   assert.equal(restoredNames.numerologyCalculation.source.referenceDate, "2026-11-01");
   assert.equal(restoredNames.numerologyCalculation.status, "calculated");
   assert.equal(restoredNames.numerologyCalculation.pageResults.length, 14);
+  assert.equal(restoredNames.numerologyRegisteredSelection.officialAllowed, false);
+  assert.equal(restoredNames.numerologyRegisteredSelection.pages[0].frames.length, 8);
+  assert.equal(restoredNames.numerologyRegisteredSelection.pages[0].frames[0].segments[0].copyId, "num.number.33.basic");
+  assert.equal('text' in restoredNames.numerologyRegisteredSelection.pages[0].frames[0].segments[0], false);
   const version = initial.body.activeDraft.draftVersion;
   assert.ok(version);
   holdReads = true;
