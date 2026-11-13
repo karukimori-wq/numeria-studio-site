@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - codex/site-v2-lp-v1-1-20261022
+      - codex/f1-f5-completion-20261113
 
 permissions:
   contents: read
