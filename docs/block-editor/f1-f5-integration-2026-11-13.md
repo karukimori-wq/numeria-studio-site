@@ -56,3 +56,5 @@ rollbackはmain／本番未変更のため不要。統合候補を採用しな�
 ## 検証環境の更新準備
 
 既存previewは旧SHAであり、最新候補の受入へ流用不可。preview workflowの共有D1自動migrationを削除し、認証付き既存previewへの更新だけを可能にする。新規D1 schema／本番Workerは変更しない。PR #95の既存CIは [43397550849](https://github.com/karukimori-wq/numeria-studio-site/actions/runs/43397550849) 成功。Notionは対象15行＋最新監査を更新し、全43チェックボックスおよび対象外本文の完全一致を読戻し確認。
+
+最新候補 `6d34b6aee254eee46f6c971e0dfead94e632eece` のpreview更新準備は完了。GitHub接続にはworkflow dispatch機能がなく、ChromeのGitHubも未ログインのため手動実行は未到達。候補branchのpush後に確認できたのはF4 CIで、preview配信成功は未確認。GitHubログインを依頼し、実行タブを保持。既存previewの再現手順／エラーは `evidence/2026-11-13/existing-preview-reload-repro.json`。
