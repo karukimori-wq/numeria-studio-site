@@ -1,0 +1,57 @@
+# Character foundation — P1-01
+
+Source: https://app.notion.com/p/407e71121fed81fb890cf0f4f728a680
+
+`src/character-store.js` and `migrations/0005_character_collections.sql` implement an NS-only canonical aggregate. Each immutable content version is retained in the aggregate; a conditional revision update commits quota checks and content appends together. Conflicts are returned rather than retried against a changed version. Aggregates are scoped by workspace and owner; all non-deleted custom Characters count toward the trusted plan limit. Deleting a Character preserves its versions.
+
+Run `npm run test:characters` on Node 24. The test executes the D1 repository's SQL on real SQLite, with only the result envelope adapted. This verifies SQL and domain behavior, not a remote Cloudflare binding.
+
+## Integration boundary
+
+This is a server-only storage slice, not a released Character feature. No route/UI currently calls it. Do not expose `D1CharacterRepository.read()` or serialize aggregates: they contain private inherited parameters. Only the explicit allowlisted service responses may be returned to users.
+
+The HTTP adapter must resolve authenticated workspace/user, a current GE-backed plan and a trusted published official source. Never take any of these authorities from request JSON. Official duplication accepts only a server-resolved source; it fixes both parameter sets at duplication time. New blank custom Characters have no inherited hidden settings. Official catalog management remains unimplemented.
+
+Surface values use nine positional percentages (0–100, step 10). The supplied Notion pages do not enumerate all eight surface-axis names/order; do not invent labels or connect this positional representation to APC before the stable axis catalog is recovered. The ninth axis is text length. ReadingConfig stays separate. Avatar selection/upload and its validation are deferred.
+
+`publishedVersion` denotes NS publication only. It must never be treated as NP's applied version or an existing order's pinned version. No initial publication, stop, resume, or synchronization endpoint exists in this slice. Future lifecycle writes must atomically enqueue their events and preserve audit evidence; local soft deletion must not become a production endpoint before NP stop propagation is connected.
+
+The existing generic workspace-state JSON path and report-generation normalizer still accept legacy Character data. Close those bypass paths when wiring the dedicated authenticated API. This slice deliberately does not activate Business subscriptions, change existing APC payloads, or grant new production access.
+
+## Verification / remaining acceptance
+
+- Local SQLite/domain: 9/9 PASS, including simultaneous create/save/last-slot CAS, limits, owner/workspace isolation, hidden-field rejection and non-disclosure, immutable history, fixed official duplication, deleted count exclusion.
+- Existing `npm test`: PASS after installing existing dependencies without modifying a lockfile.
+- R1–R10 remain open: authentication/API/UI, official selection, real D1 integration, APC actual-use evidence, NP fixed-version generation/delivery, events, notifications, operational approvals and staged-release evidence are still required.
+
+Full P0 inventory and Q1–Q240 traceability: `professional-platform-contracts/docs/release-readiness/character-foundation-p0-20261028.md` on the companion Draft PR branch.
+
+## 2026-10-30 API integration
+GET/POST /api/characters and PUT /api/characters/:id are wired, disabled unless CHARACTER_API_ENABLED=1 and AUTH_ENFORCEMENT_MODE=enforce. Verified Clerk subject and direct GE entitlement lookup are required. Only personal workspace and Free/Pro are supported; Business remains unavailable under the current GE contract. Mutation requires bearer auth. Official catalog, duplication endpoint, images, publication/deletion lifecycle and UI remain deferred. New API tests use injected auth/GE adapters; real Clerk/GE/D1 integration is not yet verified.
+
+Worker integration test: real JWT RS256 verification and GE adapter code, fixture JWKS/GE transport, real SQLite storage. Expired/tampered JWT, cross-owner updates, GE outage, expired entitlement and storage failure are rejected. This is offline integration evidence, not live Clerk/GE/Cloudflare D1 acceptance.
+
+## Official catalog (2026-11-02)
+GET /api/characters/official exposes only published catalog fields (no hidden settings). POST /api/characters/duplicate accepts name and source ID/version only, resolves the published server source and requires Pro. Official versions are immutable by SQL triggers; publication pointers are separate. Stale/stopped sources are rejected. Existing copies retain inherited private values. Migration 0006 is local-only; no approved catalog data is seeded. Operator catalog publishing, Free selection persistence, UI and live integration remain pending.
+
+Official selection: GET/PUT /api/characters/selection persists an owner-scoped reference for Free/Pro. PUT requires expectedRevision (0 initially). Publication validation and CAS use one SQL statement. GET reports available=false after update/stop and never silently replaces the selected version. This is a preference, not an order-fixed version or generation authorization. UI/live integration remain pending.
+
+## Free selection Worker verification (2026-11-02)
+Extended the signed-JWT/GE-adapter/SQLite Worker test through official listing and Free selection PUT/GET. Confirms private fields are omitted, custom creation remains denied, forged owner input is rejected, other owners see no selection, stale revisions return 409, storage failures preserve the previous selection, and stopping publication immediately before SQL execution rejects the save. Restoration retains the original reference/revision and reports available=false. These are offline integration results with fixture JWKS/GE responses, not live service acceptance.
+
+History: GET /api/characters/:id/versions returns owner-only allowlisted immutable history. character-editor-state.js preserves inputs on errors, compares latest history, requires an explicit choice to rebase, and retains CAS validation on the next save. No screen is wired to this state module yet.
+
+## Character settings screen (2026-11-08)
+/app/settings/characters now loads the authenticated official list, saved selection, and custom list. Official selection uses revision CAS. Custom names save manually and retain input on errors/conflicts; history is fetched on demand. No API flag is enabled. Surface sliders, create/duplicate controls, per-field conflict resolution, images and publication controls remain pending. Formal axis labels/order are unresolved. Existing regression/domain tests and build pass; new screen browser interaction/responsive/live identity verification are NOT RUN.
+
+Screen save race fix (2026-11-08): delayed save acknowledgements retain the unsaved indicator when the input has changed since submission. Production showCharacters handlers are executed in a minimal DOM VM fixture to verify delayed ACK, subsequent expectedVersion and conflict input retention. Browser layout/live authentication remain unverified.
+
+Duplicate UI (2026-11-08): server capabilities gate the Pro official-copy controls; duplication accepts a name and published source ID/version, appends the returned custom card without resetting existing unsaved edits, and preserves name input on errors. Busy guard blocks repeated clicks. Unknown outcomes instruct users to refresh the list before retrying. Screen handlers verified in VM; real browser/live verification pending.
+
+Blank-create UI: Pro capabilities expose a name field and explicit create action. Surface parameters start at the specified neutral 50% values; hidden settings are absent. Returned cards append without clearing other edits. Failed/limit responses preserve the name, and successful responses clear only the submitted unchanged name. Production screen VM covers neutral payload, card append, unsaved edit retention and limit failure. Live/browser tests remain pending.
+
+Conflict resolution UI (2026-11-09): compare current server version with the edited name, explicitly choose current input or server name, then save manually with the compared expectedVersion. Latest surface settings are preserved while resolving the name. Repeated conflicts retain input. VM production-handler test verifies comparison, choice, updated revision/surface payload and re-conflict. Browser/live acceptance remains pending.
+
+Route-lifetime guards: detached Character controls cannot initiate mutations/comparison, delayed save results do not update a departed screen, and history responses are ordered by request sequence. Production handler VM verifies navigation during save and detached controls issuing no requests. Existing CI on 44882e6 passed. Browser runner packages were absent; real browser verification remains NOT RUN.
+
+Request input protection: reads at most 8192 UTF-8 bytes from Character mutation bodies, cancels oversized streams and rejects malformed UTF-8 before JSON parsing. Byte count applies even without Content-Length. Tests cover split multibyte chunks, cancellation, header oversize and API 413 with no stored Character.
