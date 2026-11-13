@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import { withKigakuCalculationCheckpoint as attach, validateKigakuCalculationCheckpoint as validate } from '../src/kigaku-calculation-checkpoint.js';
+const input = { methodKey: 'nine-star-ki', subjectId: 'self-fixture', revision: 'r1', referenceInstant: '2026-11-09T00:00:00+09:00',
+  birthClock: { date: '1990-06-15', time: null, countryCode: 'JP', zoneId: 'Asia/Tokyo', zoneConfirmed: true, offsetChoiceMinutes: null } };
+const old = { divination: 'nine-star-ki', birthday: '1990-06-15', unknownFutureField: { keep: ['unchanged'] }, drafts: { untouched: '本人の編集文' } };
+assert.equal(attach(old), old, 'Old drafts must not acquire invented clock confirmation.');
+assert.equal(validate(old).ok, false);
+const draft = { ...old, kigakuInput: input };
+const attached = attach(draft);
+assert.equal(draft.kigakuCalculation, undefined);
+assert.deepEqual(attached.unknownFutureField, old.unknownFutureField);
+assert.deepEqual(attached.drafts, old.drafts);
+assert(validate(JSON.parse(JSON.stringify(attached))).ok);
+assert.deepEqual(attach(attached), attached);
+const changed = structuredClone(attached);
+changed.kigakuInput.referenceInstant = '2026-12-09T00:00:00+09:00';
+assert.equal(validate(changed).code, 'CHECKPOINT_SCOPE_OR_VALUES_MISMATCH');
+const tampered = structuredClone(attached);
+tampered.kigakuCalculation.calculation.pages[0].data.mainStar = 0;
+assert.equal(validate(tampered).ok, false);
+const approved = structuredClone(attached);
+approved.kigakuCalculation.publicationAllowed = true;
+assert.equal(validate(approved).ok, false);
+assert.equal(validate({ ...attached, divination: 'tarot' }).code, 'METHOD_MISMATCH');
+const foreign = { ...draft, divination: 'four-pillars' };
+assert.equal(attach(foreign), foreign);
+assert.equal(attach({ ...draft, status: 'completed' }).kigakuCalculation, undefined);
+console.log('Kigaku checkpoint: deterministic draft JSON restore, old/unknown fields retained, stale scope/tampered zero/formal flags rejected, cross-method isolation verified.');
