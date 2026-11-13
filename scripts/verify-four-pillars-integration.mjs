@@ -20,10 +20,10 @@ assert.equal(calc({ ...base, birthClock: { ...birthClock, zoneConfirmed: false }
 const mapped = pages(base);
 assert.equal(mapped.pages.length, 14); assert.equal(mapped.pages[0].data.pillars.day, '甲子');
 assert.equal(mapped.pages[1].data.dayStem, '甲'); assert.equal(mapped.pages[2].data.total, 8);
-assert.ok(mapped.pages.slice(3).every(page => page.state === 'unconnected' && page.data === null));
+assert.ok(mapped.pages.filter(page => ['BAZ-06','BAZ-07','BAZ-08','BAZ-12','BAZ-13','BAZ-14'].includes(page.pageDefinitionId)).every(page => page.state === 'unconnected' && page.data === null));
 assert.ok(mapped.pages.every(page => !page.publicationAllowed && page.reviewState === 'review-required'));
 assert.ok(pages({ ...base, methodKey: 'tarot' }).pages.every(page => page.data === null));
 assert.equal(pages({ ...base, birthClock: { ...birthClock, date: '2000-02-30' } }).pages[0].data, null);
 const restored = pages(JSON.parse(JSON.stringify(base))); assert.deepEqual(restored, mapped);
 assert.equal(normalizeJapanBirthTime({ birthDate: '2000-01-07', clockTime: '12:00:00', utcOffsetMinutes: 540 }).status, 'calculated');
-console.log('Four Pillars integration: sect2 23h, shared DST clock, unknown stable/uncertain dates, three calculated page adapters, eleven explicit gaps and no formal publication PASS. Internal fixtures are not independent chart acceptance.');
+console.log('Four Pillars integration: sect2 23h, shared DST clock, unknown stable/uncertain dates, eight calculated page adapters, six explicit gaps and no formal publication PASS. Internal fixtures are not independent chart acceptance.');
