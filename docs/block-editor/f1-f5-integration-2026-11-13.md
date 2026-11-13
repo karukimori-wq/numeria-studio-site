@@ -19,7 +19,7 @@
 
 開始時のopen PRは #43/#45/#73/#80/#82/#86/#94。mainのF1 #50–56、F2 #57–66、F3 #67–79、F4 #81/#83–85/#87–93はコード／履歴上の実装範囲であり、受入完了ではない。
 
-本番と検証サイトの `/version` はともに `0.3.12-report-delivery-status` を返したがSHAなし。GitHub接続のmain workflow/status取得は空だったため、実デプロイSHAは確認不能。mainと同一と推定しない。検証サイトはChromeでログイン画面まで到達、認証済み操作は未実施。
+本番と検証サイトの `/version` はともに `0.3.12-report-delivery-status`。追加のHEAD確認で、既存previewの `x-numeria-build-sha` は `9b9009c422add475a6fbe499e08ea9fa5f10c811`（旧#45）と判明。本番はSHAヘッダーなし。認証後はBusiness管理者プレビュー。受入専用プリセットの作成・Magazine選択・保存は成功したが、設定URLの全再読込でReact insertBefore NotFoundErrorを2回再現。最新main／今回branchの不具合と断定せず、現環境の保存復元受入を停止。
 
 ## 変更と不具合修正
 
@@ -52,3 +52,7 @@
 Standards: 文書化された規約違反0、割当重複1件（NUM-13）を修正。Spec: 具体的不具合3件を修正し再レビュー合格、受入不足1件は継続。レビュー後の図表／checkpoint／入力フォーム／Worker SQLite検査も成功。
 
 rollbackはmain／本番未変更のため不要。統合候補を採用しない場合はDraftを閉じる。後日の採用はPR単位でrevert可能にし、#45の古いruntimeは復活させない。D1 migration追加なし。
+
+## 検証環境の更新準備
+
+既存previewは旧SHAであり、最新候補の受入へ流用不可。preview workflowの共有D1自動migrationを削除し、認証付き既存previewへの更新だけを可能にする。新規D1 schema／本番Workerは変更しない。PR #95の既存CIは [43397550849](https://github.com/karukimori-wq/numeria-studio-site/actions/runs/43397550849) 成功。Notionは対象15行＋最新監査を更新し、全43チェックボックスおよび対象外本文の完全一致を読戻し確認。

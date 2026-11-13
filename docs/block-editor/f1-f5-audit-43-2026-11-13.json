@@ -5,8 +5,8 @@
   "userConfirmed": 0,
   "counts": {
     "利用者確認待ち": 1,
-    "main実装済み・証拠不足": 20,
-    "修正必要": 1,
+    "main実装済み・証拠不足": 19,
+    "修正必要": 2,
     "ブランチのみ": 13,
     "未着手": 8
   },
@@ -55,7 +55,7 @@
     {
       "id": "F1-06",
       "title": "保存後も選択保持",
-      "state": "main実装済み・証拠不足",
+      "state": "修正必要",
       "developmentConfirmed": false,
       "userConfirmed": false,
       "next": "保存→閉じる→再開→再編集を実操作"
