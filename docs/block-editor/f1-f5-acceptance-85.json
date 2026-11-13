@@ -1,0 +1,2766 @@
+{
+  "date": "2026-11-13",
+  "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+  "definition": "85 acceptance targets, not 85 accepted pages. source paths and required bindings never imply formal connection or approval.",
+  "rows": [
+    {
+      "pageId": "NUM-01",
+      "method": "numerology",
+      "title": "8つのコアナンバー",
+      "tier": "basic",
+      "requiredInput": "8コア全件",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "各コアの短い意味。全8結果が必須",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RESULT"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-02",
+      "method": "numerology",
+      "title": "本質・才能・社会での役割",
+      "tier": "basic",
+      "requiredInput": "lifePath・birthdayNumber・destiny",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "本質・才能・社会での役割を3枠へ固定",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RESULT"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-03",
+      "method": "numerology",
+      "title": "内面・成長・今年の流れ",
+      "tier": "basic",
+      "requiredInput": "soul・maturity・personalYear",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "内面・成長・今年の流れを3枠へ固定",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RESULT"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-04",
+      "method": "numerology",
+      "title": "数字のつながりと9年サイクル",
+      "tier": "additional",
+      "requiredInput": "lifePath・destiny→maturity、personalYear",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "計算上のつながりと現在周期を説明。性格の因果線は作らない",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION",
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-05",
+      "method": "numerology",
+      "title": "他のナンバーとの相関図",
+      "tier": "additional",
+      "requiredInput": "nameDigitCounts・missingDigits・mostFrequentDigits",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "未出現と最多の意味。同率・該当なし対応。氏名必須",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-06",
+      "method": "numerology",
+      "title": "あなたの9年サイクル",
+      "tier": "basic",
+      "requiredInput": "personalYears（基準年±4）",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "9年の年別原文、当年を強調",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-07",
+      "method": "numerology",
+      "title": "あなたの数秘マップ",
+      "tier": "additional",
+      "requiredInput": "8コア・由来区分・計算上の依存",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "役割別マップの読み方。全8コア確定必須",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-MAP"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-08",
+      "method": "numerology",
+      "title": "ふたりの数秘・相性鑑定",
+      "tier": "additional",
+      "requiredInput": "2名のlifePath中心＋共通確定補足項目",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "2名比較の短い意味と関わり方。スコアなし",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-09",
+      "method": "numerology",
+      "title": "恋愛・結婚の傾向",
+      "tier": "additional",
+      "requiredInput": "soul・personality・lifePath",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "恋愛観・距離感・結婚観。参照項目が必要",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RESULT"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-10",
+      "method": "numerology",
+      "title": "仕事・適職・才能",
+      "tier": "additional",
+      "requiredInput": "birthdayNumber・destiny・lifePath",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "才能・働き方・社会との関わり",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-11",
+      "method": "numerology",
+      "title": "金運・お金との向き合い方",
+      "tier": "additional",
+      "requiredInput": "soul・destiny・lifePath",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "お金の価値観と行動上の視点。金額予測なし",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RESULT"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-12",
+      "method": "numerology",
+      "title": "家族・親子の数秘",
+      "tier": "additional",
+      "requiredInput": "2名の比較結果・家族関係種別",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "本人／相手／関わり。家族全員へ拡張しない",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-13",
+      "method": "numerology",
+      "title": "人生の重要な転機",
+      "tier": "additional",
+      "requiredInput": "pinnacles・challengeNumbers",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "ピナクル期間＋期間を持たない課題一覧",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME",
+        "FIG-TABLE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "NUM-14",
+      "method": "numerology",
+      "title": "今月のテーマ",
+      "tier": "additional",
+      "requiredInput": "personalMonth・基準年月",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "対象月の数とテーマ",
+      "resultKey": [
+        "core_numbers"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "partial",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-01",
+      "method": "tarot",
+      "title": "ご相談とカードの展開",
+      "tier": "basic",
+      "requiredInput": "spreadId/version・positions・cards",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "全必要位置が確定。相談本文は短い問いのみ",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-SPREAD"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-02",
+      "method": "tarot",
+      "title": "引かれたカード",
+      "tier": "basic",
+      "requiredInput": "全positionsのcardId/orientation",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "位置順のカード固有原文。画像・原文欠落は発行阻止",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-CARDS"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-03",
+      "method": "tarot",
+      "title": "過去・現在・未来の流れ",
+      "tier": "additional",
+      "requiredInput": "past・present・future/near-future",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "three-time／horseshoe-seven／celtic-crossのみ",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-SPREAD"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-04",
+      "method": "tarot",
+      "title": "カード同士のつながり",
+      "tier": "additional",
+      "requiredInput": "spread定義の役割接続・確定カード",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "2枚以上。時間順・分岐・役割を示し因果を作らない",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-05",
+      "method": "tarot",
+      "title": "ご相談への答え",
+      "tier": "basic",
+      "requiredInput": "message／future／a-outcome+b-outcome／outcome",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "対応スプレッド表に限定。回答を組み立てる原文とコメント",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-06",
+      "method": "tarot",
+      "title": "これからの行動とメッセージ",
+      "tier": "basic",
+      "requiredInput": "action／attitude",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "relationship-six／horseshoe-seven／problem-solving-threeのみ",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-07",
+      "method": "tarot",
+      "title": "ふたりの相性・関係性",
+      "tier": "additional",
+      "requiredInput": "relationship-sixの6位置・2名の役割",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "相性・関係性。氏名等の相手識別は必要、出生年月日は不要",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-SPREAD"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-08",
+      "method": "tarot",
+      "title": "相手の気持ち",
+      "tier": "additional",
+      "requiredInput": "relationship-six.other-feeling・relationship-now",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "相手の立場を読む解説。事実として心理を確定しない",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-SPREAD"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-09",
+      "method": "tarot",
+      "title": "恋愛・結婚の行方",
+      "tier": "additional",
+      "requiredInput": "relationship-six・恋愛テーマ",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "関係性の恋愛テーマ解説。対象相手あり",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-SPREAD"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-10",
+      "method": "tarot",
+      "title": "仕事・転職の選択",
+      "tier": "additional",
+      "requiredInput": "choice-five・仕事テーマ・A/B名称",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "仕事選択の過程・可能性",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-SPREAD"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-11",
+      "method": "tarot",
+      "title": "AとBの選択",
+      "tier": "additional",
+      "requiredInput": "choice-five・A/B名称",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "A/B各2位置＋比較。勝率スコアなし",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-SPREAD"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-12",
+      "method": "tarot",
+      "title": "今後3か月の流れ",
+      "tier": "additional",
+      "requiredInput": "three-months.month-0/1/2・基準年月",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "作成月・翌月・翌々月を年月ラベル付きで固定",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "TAR-13",
+      "method": "tarot",
+      "title": "障害と解決のヒント",
+      "tier": "additional",
+      "requiredInput": "problem-solving-three.problem/background/action",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "課題・背景・行動を別原文で表示",
+      "resultKey": [
+        "spread"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-SPREAD"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-01",
+      "method": "nine-star-ki",
+      "title": "あなたの九星",
+      "tier": "basic",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed"
+      ],
+      "optionalInput": [
+        "birthClock.time (unknown allowed only when required stars are certain)"
+      ],
+      "publicationRule": "2星必須。未確定を推測表示しない",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "natal.mainStar",
+        "natal.monthStar"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RESULT"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-02",
+      "method": "nine-star-ki",
+      "title": "基本性格と運勢傾向",
+      "tier": "basic",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed"
+      ],
+      "optionalInput": [
+        "birthClock.time (unknown allowed only when required stars are certain)"
+      ],
+      "publicationRule": "各星の性質を基本とし、必要な関係だけ登録原文で補足",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "natal.mainStar",
+        "natal.monthStar"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RESULT"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-03",
+      "method": "nine-star-ki",
+      "title": "今年の運勢",
+      "tier": "basic",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed"
+      ],
+      "optionalInput": [
+        "birthClock.time (unknown allowed only when required stars are certain)"
+      ],
+      "publicationRule": "年全体と本人回座宮のテーマ",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "year.board",
+        "natal.mainStar"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-DIRECTION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-04",
+      "method": "nine-star-ki",
+      "title": "今月の運勢",
+      "tier": "basic",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed"
+      ],
+      "optionalInput": [
+        "birthClock.time (unknown allowed only when required stars are certain)"
+      ],
+      "publicationRule": "月全体と本人回座宮。年運の長文再掲なし",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "month.board",
+        "natal.mainStar"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-DIRECTION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-05",
+      "method": "nine-star-ki",
+      "title": "日々の運勢",
+      "tier": "additional",
+      "requiredInput": [
+        "referenceInstant"
+      ],
+      "optionalInput": [],
+      "publicationRule": "採用済み日盤方式による対象日のテーマ",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "day.board",
+        "day.date"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-DIRECTION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-06",
+      "method": "nine-star-ki",
+      "title": "吉方位と開運行動",
+      "tier": "additional",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed"
+      ],
+      "optionalInput": [
+        "birthClock.time (unknown allowed only when required stars are certain)"
+      ],
+      "publicationRule": "8方位の理由と年/月共通吉。日盤で上書きしない",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "analysis.year",
+        "analysis.month",
+        "analysis.common"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-DIRECTION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-07",
+      "method": "nine-star-ki",
+      "title": "運勢のまとめ",
+      "tier": "additional",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed"
+      ],
+      "optionalInput": [
+        "birthClock.time (unknown allowed only when required stars are certain)"
+      ],
+      "publicationRule": "確定節年内の月別テーマ。点数折れ線なし",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "months.rows"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-08",
+      "method": "nine-star-ki",
+      "title": "ふたりの九星・相性鑑定",
+      "tier": "additional",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed",
+        "subjectId",
+        "partnerSubjectId",
+        "partnerBirthClock.date",
+        "partnerBirthClock.countryCode",
+        "partnerBirthClock.zoneId",
+        "partnerBirthClock.zoneConfirmed"
+      ],
+      "optionalInput": [
+        "birthClock.time (boundary-dependent)",
+        "partnerBirthClock.time (boundary-dependent)",
+        "monthComparison (both month stars must be certain)"
+      ],
+      "publicationRule": "五行関係を方向付きで比較。善悪・優劣判定なし",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "natal.mainStar",
+        "partnerResult.natal.mainStar",
+        "natal.monthStar",
+        "partnerResult.natal.monthStar"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-09",
+      "method": "nine-star-ki",
+      "title": "恋愛・結婚の相性",
+      "tier": "additional",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed",
+        "subjectId",
+        "partnerSubjectId",
+        "partnerBirthClock.date",
+        "partnerBirthClock.countryCode",
+        "partnerBirthClock.zoneId",
+        "partnerBirthClock.zoneConfirmed",
+        "loveRelationship"
+      ],
+      "optionalInput": [
+        "birthClock.time (boundary-dependent)",
+        "partnerBirthClock.time (boundary-dependent)",
+        "monthComparison (both month stars must be certain)"
+      ],
+      "publicationRule": "距離感・関わり方。08の基本文再掲なし",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "natal.mainStar",
+        "partnerResult.natal.mainStar"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-10",
+      "method": "nine-star-ki",
+      "title": "仕事・職場の人間関係",
+      "tier": "additional",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed",
+        "subjectId",
+        "partnerSubjectId",
+        "partnerBirthClock.date",
+        "partnerBirthClock.countryCode",
+        "partnerBirthClock.zoneId",
+        "partnerBirthClock.zoneConfirmed",
+        "workRelationship"
+      ],
+      "optionalInput": [
+        "birthClock.time (boundary-dependent)",
+        "partnerBirthClock.time (boundary-dependent)",
+        "monthComparison (both month stars must be certain)"
+      ],
+      "publicationRule": "協力の視点。職場全体ネットワークなし",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "natal.mainStar",
+        "partnerResult.natal.mainStar"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-11",
+      "method": "nine-star-ki",
+      "title": "転職・独立のタイミング",
+      "tier": "additional",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed",
+        "workTheme"
+      ],
+      "optionalInput": [
+        "birthClock.time (unknown allowed only when required stars are certain)"
+      ],
+      "publicationRule": "年/月の仕事テーマ比較。未来適日検索なし",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "year.board",
+        "month.board",
+        "natal.mainStar"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-12",
+      "method": "nine-star-ki",
+      "title": "引越し・旅行の方位",
+      "tier": "additional",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed",
+        "selectedDirection",
+        "directionPurpose"
+      ],
+      "optionalInput": [
+        "birthClock.time (unknown allowed only when required stars are certain)"
+      ],
+      "publicationRule": "8方位を手動指定。住所・距離・予定日不要",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "analysis.selected",
+        "analysis.common"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-GEO"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-13",
+      "method": "nine-star-ki",
+      "title": "家族・親子の相性",
+      "tier": "additional",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed",
+        "subjectId",
+        "partnerSubjectId",
+        "partnerBirthClock.date",
+        "partnerBirthClock.countryCode",
+        "partnerBirthClock.zoneId",
+        "partnerBirthClock.zoneConfirmed",
+        "familyRelationship"
+      ],
+      "optionalInput": [
+        "birthClock.time (boundary-dependent)",
+        "partnerBirthClock.time (boundary-dependent)",
+        "monthComparison (both month stars must be certain)"
+      ],
+      "publicationRule": "星の違い・関わり方。家族全員一括なし",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "natal.mainStar",
+        "partnerResult.natal.mainStar"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "KIG-14",
+      "method": "nine-star-ki",
+      "title": "9年間の運勢",
+      "tier": "additional",
+      "requiredInput": [
+        "referenceInstant",
+        "birthClock.date",
+        "birthClock.countryCode",
+        "birthClock.zoneId",
+        "birthClock.zoneConfirmed"
+      ],
+      "optionalInput": [
+        "birthClock.time (unknown allowed only when required stars are certain)"
+      ],
+      "publicationRule": "対象区間と9年テーマ。数秘の前後4年設定と混同しない",
+      "resultKey": [
+        "honmei_star",
+        "getsumei_star"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "years.rows"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "See kigaku page envelope solar/day/relation versions",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-01",
+      "method": "four-pillars",
+      "title": "あなたの命式",
+      "tier": "basic",
+      "requiredInput": "確定year/month/day柱・任意hour柱",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "確定三柱必須。時柱不明を明記",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "pillars.year",
+        "pillars.month",
+        "pillars.day",
+        "pillars.hour"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TABLE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-02",
+      "method": "four-pillars",
+      "title": "生まれ持った本質",
+      "tier": "basic",
+      "requiredInput": "dayStem・参照命式",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "日干の性質と命式内の位置",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "pillars.day",
+        "pillars"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-03",
+      "method": "four-pillars",
+      "title": "五行のバランス",
+      "tier": "basic",
+      "requiredInput": "visibleElementCounts・includedPillars",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "6字または8字の構成数。蔵干を足さない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [
+        "elements.data.visibleElementCounts",
+        "elements.data.includedPillars"
+      ],
+      "calculationState": "partial",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-BALANCE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-04",
+      "method": "four-pillars",
+      "title": "才能・仕事・人間関係",
+      "tier": "basic",
+      "requiredInput": "tenGods・対象柱",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "才能・仕事・対人の概要。日主自身を独立の通変星として誤算しない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-05",
+      "method": "four-pillars",
+      "title": "人生のエネルギー",
+      "tier": "additional",
+      "requiredInput": "twelveStages・掲載柱",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "十二運の配置・意味。数値エネルギーへ変換しない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TABLE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-06",
+      "method": "four-pillars",
+      "title": "10年ごとの運勢",
+      "tier": "basic",
+      "requiredInput": "yunStart・dayunIntervals",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "起運後の大運区間を一覧表示。掲載区間を版付きで明記し、全掲載区間が対応範囲内で確定",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TABLE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-07",
+      "method": "four-pillars",
+      "title": "これからの運勢",
+      "tier": "additional",
+      "requiredInput": "基準日時点の大運・節年年運",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "現在の大運と当年テーマ。大運未確定は不可",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-08",
+      "method": "four-pillars",
+      "title": "ふたりの命式・相性鑑定",
+      "tier": "additional",
+      "requiredInput": "2名の日干・確定柱・採用干合支合冲",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "比較概要と存在する関係だけを解説",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TABLE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-09",
+      "method": "four-pillars",
+      "title": "恋愛・結婚の傾向",
+      "tier": "additional",
+      "requiredInput": "dayStem・dayBranch・関連tenGods",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "本人の恋愛・結婚観。性別から相手の属性を決めない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-10",
+      "method": "four-pillars",
+      "title": "仕事・適職・社会運",
+      "tier": "additional",
+      "requiredInput": "tenGods・dayStem・対象柱",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "才能を働き方・社会的役割へ展開",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-11",
+      "method": "four-pillars",
+      "title": "財運・お金との関係",
+      "tier": "additional",
+      "requiredInput": "wealthTenGods・dayStem・配置",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "財星に関する読み方。資産・利益の数値予測なし",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RELATION"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-12",
+      "method": "four-pillars",
+      "title": "家族・親子の関係",
+      "tier": "additional",
+      "requiredInput": "2名の確定命式・親子等関係種別",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "構成差と関わり方。相手命式の代用禁止",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TABLE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-13",
+      "method": "four-pillars",
+      "title": "今年・来年の運勢",
+      "tier": "additional",
+      "requiredInput": "作成節年と翌節年の年運・対応大運",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "2年の違いを比較。範囲外を短縮しない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "BAZ-14",
+      "method": "four-pillars",
+      "title": "人生の重要な転機",
+      "tier": "additional",
+      "requiredInput": "現在大運と次大運・境界日時・命式関係",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "次の切替を中心に解説。現在大運の一覧再掲なし",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-01",
+      "method": "western-astrology",
+      "title": "あなたのホロスコープ",
+      "tier": "basic",
+      "requiredInput": "10天体の度数・ASC/MC・12ハウス",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "出生時刻・地必須の完全出生図",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ASTRO"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-02",
+      "method": "western-astrology",
+      "title": "太陽・月・アセンダント",
+      "tier": "basic",
+      "requiredInput": "確定Sun.sign・任意Moon.sign/ASC.sign",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "太陽必須。月・ASCの不足を明示",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-RESULT"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-03",
+      "method": "western-astrology",
+      "title": "惑星が示す個性",
+      "tier": "basic",
+      "requiredInput": "採用10天体の確定位置",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "全採用天体が必要。星座のみ確定の値を度数に偽装しない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TABLE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-04",
+      "method": "western-astrology",
+      "title": "4元素のバランス",
+      "tier": "additional",
+      "requiredInput": "10天体のelementCounts",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "各1票。ASC/MCは除外、母数10を明示",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-BALANCE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-05",
+      "method": "western-astrology",
+      "title": "行動と変化のパターン",
+      "tier": "additional",
+      "requiredInput": "10天体のmodalityCounts",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "活動・不動・柔軟を各1票、母数10",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-BALANCE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-06",
+      "method": "western-astrology",
+      "title": "惑星同士の関係",
+      "tier": "additional",
+      "requiredInput": "出生図採用aspects",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "5種類・用途別オーブ。0件は正常説明",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ASTRO"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-07",
+      "method": "western-astrology",
+      "title": "人生のテーマ",
+      "tier": "additional",
+      "requiredInput": "1/4/7/10ハウス・所在天体",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "本人・基盤・対人・社会の4領域を固定参照。時刻・地必須",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ASTRO"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-08",
+      "method": "western-astrology",
+      "title": "総合ホロスコープ鑑定",
+      "tier": "basic",
+      "requiredInput": "Sun/Moon・確定主要配置・採用aspects",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "確定結果から強み／課題を整理。参照範囲を保存",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-09",
+      "method": "western-astrology",
+      "title": "ふたりのホロスコープ・相性",
+      "tier": "additional",
+      "requiredInput": "2名の確定天体・crossAspects",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "シナストリー。時刻不明で確定できない度数は対象外",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ASTRO"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-10",
+      "method": "western-astrology",
+      "title": "ふたりの関係性",
+      "tier": "additional",
+      "requiredInput": "compositePlanets・任意compositeAxes/Houses",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "短弧中点の合成図。本人出生図と混同しない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ASTRO"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-11",
+      "method": "western-astrology",
+      "title": "恋愛・結婚の傾向",
+      "tier": "additional",
+      "requiredInput": "Venus/Mars・確定Moon、任意7ハウス",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "恋愛傾向。必要なVenus/Mars確定、ハウス不足を代用しない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ASTRO"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-12",
+      "method": "western-astrology",
+      "title": "仕事・適職・キャリア",
+      "tier": "additional",
+      "requiredInput": "MC・2/6/10ハウス・関連天体",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "MCとハウス確定必須",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ASTRO"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-13",
+      "method": "western-astrology",
+      "title": "金運・価値観",
+      "tier": "additional",
+      "requiredInput": "2/8ハウス・Venus・所在天体",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "価値観と金銭との関わり。ハウス必須",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ASTRO"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-14",
+      "method": "western-astrology",
+      "title": "今後1年間の運勢",
+      "tier": "additional",
+      "requiredInput": "出生確定度数と1暦年のtransitEvents",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "期間計算完了。該当0件は正常",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-15",
+      "method": "western-astrology",
+      "title": "人生の転機",
+      "tier": "additional",
+      "requiredInput": "土星・天王星・海王星・冥王星の出生天体への採用イベント",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "AST-14と同じ対象1年から長期天体イベントを抽出。独立の点数周期を作らない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "AST-16",
+      "method": "western-astrology",
+      "title": "家族・親子の相性",
+      "tier": "additional",
+      "requiredInput": "2名のSun/Moon/Mercury・採用crossAspects・家族種別",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "家族テーマへ参照対象を限定。必要天体の度数が未確定なら対応関係を確定しない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ASTRO"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-01",
+      "method": "zi-wei-dou-shu",
+      "title": "あなたの命盤",
+      "tier": "basic",
+      "requiredInput": "12palaces・starPlacements・soul/body・fiveElementClass",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "完全命盤。時刻必須",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-02",
+      "method": "zi-wei-dou-shu",
+      "title": "生まれ持った性質",
+      "tier": "basic",
+      "requiredInput": "命宮・身宮と所属主星",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "命宮と身宮の役割を分ける。無主星を計算失敗にしない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-03",
+      "method": "zi-wei-dou-shu",
+      "title": "十二宮が示す人生",
+      "tier": "basic",
+      "requiredInput": "12宮・各宮星曜",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "各宮の短い基本説明。選択宮詳細と分離",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-04",
+      "method": "zi-wei-dou-shu",
+      "title": "主星が示す才能",
+      "tier": "additional",
+      "requiredInput": "14主星の確定配置",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "星IDごとの意味と配置。解説対象は異なる掲載主星",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TABLE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-05",
+      "method": "zi-wei-dou-shu",
+      "title": "人生の変化と四化",
+      "tier": "additional",
+      "requiredInput": "natalFourTransformations",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "生年四化を掲載。流年四化と別キー",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-06",
+      "method": "zi-wei-dou-shu",
+      "title": "10年ごとの運勢",
+      "tier": "additional",
+      "requiredInput": "decadalIntervals",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "採用版の起限による大限区間を掲載。掲載範囲を明記し、数え年と西暦期間を併記",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TABLE"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-07",
+      "method": "zi-wei-dou-shu",
+      "title": "今年の運勢",
+      "tier": "basic",
+      "requiredInput": "作成基準日に属する旧暦年のannualChart/annualFourTransformations",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "流年命盤。旧暦年度の開始・終了を明記",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-08",
+      "method": "zi-wei-dou-shu",
+      "title": "ふたりの命盤・相性鑑定",
+      "tier": "additional",
+      "requiredInput": "2名の命/身宮・14主星・対応人生領域",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "別命盤を並列比較。架空の合盤・飛化を自動新設しない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-09",
+      "method": "zi-wei-dou-shu",
+      "title": "恋愛・結婚の傾向",
+      "tier": "additional",
+      "requiredInput": "夫妻宮・命宮・福徳宮と星曜",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "本人傾向。相手の実際の感情を確定しない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-10",
+      "method": "zi-wei-dou-shu",
+      "title": "仕事・社会的な役割",
+      "tier": "additional",
+      "requiredInput": "官禄宮・命宮・遷移宮と星曜",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "仕事・社会・外での役割",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-11",
+      "method": "zi-wei-dou-shu",
+      "title": "財運・資産の傾向",
+      "tier": "additional",
+      "requiredInput": "財帛宮・田宅宮・福徳宮と星曜",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "お金・資産への姿勢。資産額予測なし",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-12",
+      "method": "zi-wei-dou-shu",
+      "title": "家族・親子の関係",
+      "tier": "additional",
+      "requiredInput": "2名の命宮・父母宮・子女宮＋家族種別",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "双方の命盤を参照。本人だけで相手を代用しない",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-13",
+      "method": "zi-wei-dou-shu",
+      "title": "人生の転機",
+      "tier": "additional",
+      "requiredInput": "現在・次大限と境界年の流年",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "大限切替と流年の参照結果を別表示",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-TIME"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    },
+    {
+      "pageId": "ZIW-14",
+      "method": "zi-wei-dou-shu",
+      "title": "重要な人生領域",
+      "tier": "additional",
+      "requiredInput": "選択宮1〜12件と各宮の星曜",
+      "optionalInput": "See per-page publication rule; not independently accepted",
+      "publicationRule": "宮を所定リストから選択、概要より深い解説",
+      "resultKey": [
+        "natal_chart"
+      ],
+      "resultKeyStatus": "binding requirement only; formal page acceptance pending",
+      "implementedSourcePaths": [],
+      "calculationState": "formal-page-unconnected",
+      "calculationVersion": "See calculator; page evidence pending",
+      "textIdVersionApproval": "not-approved; formal publication blocked",
+      "figureTypes": [
+        "FIG-ZIW"
+      ],
+      "assetIdVersionApproval": "unverified; formal publication blocked",
+      "standardScreen": "unverified",
+      "magazineScreen": "unverified",
+      "mobile": "unverified",
+      "pdf": "unverified",
+      "plan": "Free/Pro authenticated acceptance pending",
+      "abnormalCases": "Automated contracts only; per-page browser acceptance pending",
+      "baseSHA": "5d002e2818e2385f896f3a7243024c98488ddda7",
+      "developmentVerdict": "未完了",
+      "userConfirmation": "untouched; not recorded by Codex"
+    }
+  ]
+}

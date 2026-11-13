@@ -1,0 +1,106 @@
+{
+  "source": "https://app.notion.com/p/3fee71121fed81fe947cf4582d62edf3",
+  "kind": "manual-derivation-from-approved-element-and-direction-rules",
+  "scope": "81 star-pair element classifications only; not natal star or page acceptance",
+  "expectedRows": {
+    "1": [
+      "biwa",
+      "kokuga",
+      "gasei",
+      "gasei",
+      "kokuga",
+      "seiga",
+      "seiga",
+      "kokuga",
+      "gakoku"
+    ],
+    "2": [
+      "gakoku",
+      "biwa",
+      "kokuga",
+      "kokuga",
+      "biwa",
+      "gasei",
+      "gasei",
+      "biwa",
+      "seiga"
+    ],
+    "3": [
+      "seiga",
+      "gakoku",
+      "biwa",
+      "biwa",
+      "gakoku",
+      "kokuga",
+      "kokuga",
+      "gakoku",
+      "gasei"
+    ],
+    "4": [
+      "seiga",
+      "gakoku",
+      "biwa",
+      "biwa",
+      "gakoku",
+      "kokuga",
+      "kokuga",
+      "gakoku",
+      "gasei"
+    ],
+    "5": [
+      "gakoku",
+      "biwa",
+      "kokuga",
+      "kokuga",
+      "biwa",
+      "gasei",
+      "gasei",
+      "biwa",
+      "seiga"
+    ],
+    "6": [
+      "gasei",
+      "seiga",
+      "gakoku",
+      "gakoku",
+      "seiga",
+      "biwa",
+      "biwa",
+      "seiga",
+      "kokuga"
+    ],
+    "7": [
+      "gasei",
+      "seiga",
+      "gakoku",
+      "gakoku",
+      "seiga",
+      "biwa",
+      "biwa",
+      "seiga",
+      "kokuga"
+    ],
+    "8": [
+      "gakoku",
+      "biwa",
+      "kokuga",
+      "kokuga",
+      "biwa",
+      "gasei",
+      "gasei",
+      "biwa",
+      "seiga"
+    ],
+    "9": [
+      "kokuga",
+      "gasei",
+      "seiga",
+      "seiga",
+      "gasei",
+      "gakoku",
+      "gakoku",
+      "gasei",
+      "biwa"
+    ]
+  }
+}

@@ -6,7 +6,8 @@ const target = `${assetDirectory}/${asset}`;
 let source = readFileSync(target, "utf8");
 source = source.replace(/;\(\(\)=>\{if\(window\.__NumeriaBlockEditorV2\)[\s\S]*?\/\* block-editor-v2-end \*\/\}\)\(\);/g, "");
 source = source.replace(/;\(\(\)=>\{if\(window\.__NumeriaBlockEditorV1\)[\s\S]*?\/\* block-editor-end \*\/\}\)\(\);/g, "");
-const runtime = readFileSync("scripts/block-editor-runtime.js", "utf8");
+const runtime = readFileSync("scripts/kigaku-input-form-runtime.js", "utf8") + readFileSync("scripts/block-editor-runtime.js", "utf8");
+const figureRuntime = ["src/report-result-references.js", "src/report-figure-types.js", "src/report-figure-renderer.js", "src/report-page-figures.js"].map(path => readFileSync(path, "utf8").replace(/^import .*;\s*$/gm, "").replaceAll("export const ", "const ").replaceAll("export function ", "function ")).join("\n");
 const pageCommentRuntime = readFileSync("src/report-page-comment.js", "utf8")
   .replace("export const ", "const ")
   .replace("export function ", "function ");
@@ -40,5 +41,5 @@ const layoutRuntime = readFileSync("src/report-physical-page-plan.js", "utf8")
   .replace("export function ", "function ")
   + "\nwindow.NumeriaPhysicalPagePlan={createPhysicalPagePlan,A4_LAYOUT_CONTRACT_VERSION};\n";
 const tarotRuntime = ["src/tarot-calculator.js", "src/tarot-reading-draft.js"].map(path => readFileSync(path, "utf8").replace(/^import .*;\s*/gm, "").replaceAll("export const ", "const ").replaceAll("export async function ", "async function ").replaceAll("export function ", "function ")).join("\n");
-writeFileSync(target, source + layoutRuntime + pageCommentRuntime + hydrationRuntime + resultContractRuntime + availabilityRuntime + catalogViewRuntime + visualSlotRuntime + numerologyRuntime + tarotRuntime + runtime);
+writeFileSync(target, source + layoutRuntime + pageCommentRuntime + hydrationRuntime + resultContractRuntime + availabilityRuntime + catalogViewRuntime + visualSlotRuntime + numerologyRuntime + tarotRuntime + figureRuntime + runtime);
 console.log(`Block editor v2 patched into ${target}.`);

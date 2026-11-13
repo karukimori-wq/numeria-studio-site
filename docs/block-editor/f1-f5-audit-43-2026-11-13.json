@@ -1,0 +1,360 @@
+{
+  "date": "2026-11-13",
+  "main": "5d002e2818e2385f896f3a7243024c98488ddda7",
+  "developmentConfirmed": 1,
+  "userConfirmed": 0,
+  "counts": {
+    "利用者確認待ち": 1,
+    "main実装済み・証拠不足": 19,
+    "修正必要": 2,
+    "ブランチのみ": 13,
+    "未着手": 8
+  },
+  "definition": "Main implementation and branch-only changes never imply browser/PDF/approved-content acceptance. F1-01 retained from Notion; all other development gates remain unconfirmed.",
+  "rows": [
+    {
+      "id": "F1-01",
+      "title": "選択画面と保存処理の調査",
+      "state": "利用者確認待ち",
+      "developmentConfirmed": true,
+      "userConfirmed": false,
+      "next": "利用者確認用の操作手順を提示"
+    },
+    {
+      "id": "F1-02",
+      "title": "背景とレイアウトを分離",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "認証付き実画面で分離を確認"
+    },
+    {
+      "id": "F1-03",
+      "title": "スタンダード縦並び",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "長文/図表あり/なしを実画面確認"
+    },
+    {
+      "id": "F1-04",
+      "title": "マガジン左右配置",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "大図表、複数カード、全幅例外を確認"
+    },
+    {
+      "id": "F1-05",
+      "title": "大図表・図表なしで崩れない",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "代表ページとPDFを実測"
+    },
+    {
+      "id": "F1-06",
+      "title": "保存後も選択保持",
+      "state": "修正必要",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "保存→閉じる→再開→再編集を実操作"
+    },
+    {
+      "id": "F1-07",
+      "title": "Free/Pro制御",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "実Free/ProでUIとサーバー制御を確認"
+    },
+    {
+      "id": "F1-08",
+      "title": "スマホとPDFで2種確認",
+      "state": "修正必要",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "iPhone相当とアプリ生成PDFを提出"
+    },
+    {
+      "id": "F2-01",
+      "title": "85 ID/名称の正本照合",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "SHA・Notion正本・差分0を再確認"
+    },
+    {
+      "id": "F2-02",
+      "title": "6占術で対象ページ切替",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "認証画面で全6占術を操作"
+    },
+    {
+      "id": "F2-03",
+      "title": "基本/追加ページ分離",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "Free/Pro表示と件数を確認"
+    },
+    {
+      "id": "F2-04",
+      "title": "ページON/OFF",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "保存、復元、PDF除外を確認"
+    },
+    {
+      "id": "F2-05",
+      "title": "ページ並び替え",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "D1保存、再開、PDF順を確認"
+    },
+    {
+      "id": "F2-06",
+      "title": "タイトル・自由ページ編集",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "固定/自由の制約とPDFを確認"
+    },
+    {
+      "id": "F2-07",
+      "title": "不足理由と発行停止",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "不足/失敗/正常0件を実操作"
+    },
+    {
+      "id": "F2-08",
+      "title": "85ページ全表示",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "ID単位合否表を完成"
+    },
+    {
+      "id": "F3-01",
+      "title": "既存分類と正式12方式照合",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "PR #80を最新mainへ統合"
+    },
+    {
+      "id": "F3-02",
+      "title": "結果/関係/期間図",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "実結果で表示・PDF確認"
+    },
+    {
+      "id": "F3-03",
+      "title": "MAP/CARDS/SPREAD",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "タロット/数秘の実結果接続"
+    },
+    {
+      "id": "F3-04",
+      "title": "TABLE/BALANCE",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "四柱等の実結果接続"
+    },
+    {
+      "id": "F3-05",
+      "title": "ASTRO/ZIW",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "full-chart正式契約を実装"
+    },
+    {
+      "id": "F3-06",
+      "title": "DIRECTION/GEO",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "九星正式データと接続"
+    },
+    {
+      "id": "F3-07",
+      "title": "text-only",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "3ページを実画面/PDF確認"
+    },
+    {
+      "id": "F3-08",
+      "title": "12方式すべての実データ",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "12方式の証拠ギャラリーを作成"
+    },
+    {
+      "id": "F4-01",
+      "title": "85ページ結果対応表",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "最新mainと全Draftを反映し0/partial/fullを更新"
+    },
+    {
+      "id": "F4-02",
+      "title": "数秘術14ページ接続",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "正式承認、手動編集、実画面、PDF"
+    },
+    {
+      "id": "F4-03",
+      "title": "九星14ページ接続",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "PR #86統合、正式UI/原文/素材/PDF"
+    },
+    {
+      "id": "F4-04",
+      "title": "四柱14ページ接続",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "PR #94を14ページまで完成"
+    },
+    {
+      "id": "F4-05",
+      "title": "西洋占星術16ページ接続",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "ハウス等を含む正式接続と独立照合"
+    },
+    {
+      "id": "F4-06",
+      "title": "紫微斗数14ページ接続",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "固定iztro版、正式接続と独立照合"
+    },
+    {
+      "id": "F4-07",
+      "title": "タロット13ページ接続",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "登録原文、正式図表、13ページ、PDF"
+    },
+    {
+      "id": "F4-08",
+      "title": "不足/失敗時に偽結果を出さない",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "全6占術・85ページで異常系を検査"
+    },
+    {
+      "id": "F4-09",
+      "title": "正解資料と数値照合",
+      "state": "ブランチのみ",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "全占術の独立合格範囲を明記"
+    },
+    {
+      "id": "F5-01",
+      "title": "正式図表素材・画像",
+      "state": "未着手",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "ID、版、権利、承認状態を台帳化"
+    },
+    {
+      "id": "F5-02",
+      "title": "登録解説文の承認",
+      "state": "未着手",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "draft/公開無効を維持し専門承認を得る"
+    },
+    {
+      "id": "F5-03",
+      "title": "図表と解説を実ページ表示",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "6占術の正式結果へ接続"
+    },
+    {
+      "id": "F5-04",
+      "title": "数秘術の実画面/PDF",
+      "state": "main実装済み・証拠不足",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "14ページ×2レイアウトを受入"
+    },
+    {
+      "id": "F5-05",
+      "title": "九星の実画面/PDF",
+      "state": "未着手",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "14ページ×2レイアウトを受入"
+    },
+    {
+      "id": "F5-06",
+      "title": "四柱の実画面/PDF",
+      "state": "未着手",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "14ページ×2レイアウトを受入"
+    },
+    {
+      "id": "F5-07",
+      "title": "西洋占星術の実画面/PDF",
+      "state": "未着手",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "16ページ×2レイアウトを受入"
+    },
+    {
+      "id": "F5-08",
+      "title": "紫微斗数の実画面/PDF",
+      "state": "未着手",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "14ページ×2レイアウトを受入"
+    },
+    {
+      "id": "F5-09",
+      "title": "タロットの実画面/PDF",
+      "state": "未着手",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "13ページ×2レイアウトを受入"
+    },
+    {
+      "id": "F5-10",
+      "title": "全85ページのスマホ/PDF",
+      "state": "未着手",
+      "developmentConfirmed": false,
+      "userConfirmed": false,
+      "next": "全ページ合否表、欠け0、公開判定"
+    }
+  ]
+}

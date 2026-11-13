@@ -7,6 +7,8 @@ import worker from "../src/worker.js";
 import { normalizeNumerologyNameInputs, updateNumerologyNameInputs, selectedNumerologyName } from "../src/numerology-name-input.js";
 import { withNumerologyCalculationCheckpoint } from "../src/numerology-result-checkpoint.js";
 
+import { withKigakuCalculationCheckpoint, validateKigakuCalculationCheckpoint } from "../src/kigaku-calculation-checkpoint.js";
+
 // Run the Worker's real D1 SQL on SQLite. Identity and D1 transport are fixtures.
 const directory = mkdtempSync(join(tmpdir(), "numeria-draft-cas-"));
 function sql(query, args = [], script = false) {
@@ -47,10 +49,10 @@ const db = { async batch(statements) { return sql(statements.map(s => ({query:s.
   },
 }; } };
 const env = { NUMERIA_DB: db, AUTH_ENFORCEMENT_MODE: "observe" };
-async function api(path, body) {
+async function api(path, body, workspaceId = "cas_ws") {
   const response = await worker.fetch(new Request(`https://fixture.test${path}`, {
     method: body ? "POST" : "GET",
-    headers: { "Content-Type": "application/json", "X-Workspace-Id": "cas_ws", "X-User-Id": "cas_owner" },
+    headers: { "Content-Type": "application/json", "X-Workspace-Id": workspaceId, "X-User-Id": "cas_owner" },
     body: body ? JSON.stringify(body) : undefined,
   }), env, {});
   return { status: response.status, body: await response.json() };
@@ -130,5 +132,45 @@ try {
   failWrite = true;
   await assert.rejects(() => save("保存失敗の本文", persisted.draftVersion), /fixture disk failure/);
   assert.deepEqual(JSON.parse(sql("SELECT active_draft_json FROM usage_records")[0].active_draft_json), persisted);
+  failWrite = false;
+  const kigakuInput = { methodKey: "nine-star-ki", subjectId: "fixture-kigaku-self", revision: "r1",
+    referenceInstant: "2026-11-09T00:00:00+09:00",
+    birthClock: { date: "1990-06-15", time: null, countryCode: "JP", zoneId: "Asia/Tokyo", zoneConfirmed: true, offsetChoiceMinutes: null } };
+  const kigakuSnapshot = withKigakuCalculationCheckpoint({ id: "session_kigaku_fixture", divination: "nine-star-ki", name: "架空九星", birthday: "1990-06-15", kigakuInput,
+    unknownFutureField: { retained: true }, drafts: { retainedText: "既存の編集本文" } });
+  const kigakuSaved = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: null, divination: "nine-star-ki", question: "九星保存fixture", snapshot: { ...kigakuSnapshot, kigakuCalculation: { tampered: true } } }, "cas_kigaku_ws");
+  assert.equal(kigakuSaved.status, 201);
+  const kigakuRestored = (await api("/api/appraisals/session_kigaku_fixture", null, "cas_kigaku_ws")).body.session.snapshot;
+  assert.deepEqual(kigakuRestored.kigakuCalculation, kigakuSnapshot.kigakuCalculation);
+  assert.deepEqual(kigakuRestored.unknownFutureField, kigakuSnapshot.unknownFutureField);
+  assert.deepEqual(kigakuRestored.drafts, kigakuSnapshot.drafts);
+  assert.equal(validateKigakuCalculationCheckpoint(kigakuRestored).ok, true);
+  assert.equal(kigakuRestored.kigakuCalculation.calculation.pages.length, 14);
+  assert.equal(kigakuRestored.kigakuCalculation.publicationAllowed, false);
+  for (const status of ["confirmed", "completed"]) {
+    const workspace = `forged_kigaku_${status}`;
+    const saved = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: null, divination: "nine-star-ki", question: "状態偽装fixture", snapshot: { ...kigakuSnapshot, status, kigakuCalculation: { publicationAllowed: true, tampered: true } } }, workspace);
+    assert.equal(saved.status, 201);
+    const restored = (await api("/api/appraisals/session_kigaku_fixture", null, workspace)).body.session.snapshot;
+    assert.equal(restored.status, "draft");
+    assert.deepEqual(restored.kigakuCalculation, kigakuSnapshot.kigakuCalculation);
+    assert.equal(restored.kigakuCalculation.publicationAllowed, false);
+    assert.deepEqual(restored.drafts, kigakuSnapshot.drafts);
+  }
+  const lockedVersion = kigakuSaved.body.activeDraft.draftVersion;
+  for (const changedSnapshot of [
+    { ...kigakuSnapshot, kigakuInput: { ...kigakuInput, referenceInstant: "2027-01-01T00:00:00+09:00" } },
+    { ...kigakuSnapshot, kigakuInput: null },
+  ]) {
+    const rejected = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: lockedVersion, snapshot: changedSnapshot }, "cas_kigaku_ws");
+    assert.equal(rejected.status, 409);
+    assert.equal(rejected.body.errorCode, "KIGAKU_REFERENCE_LOCKED");
+    assert.deepEqual((await api("/api/appraisals/session_kigaku_fixture", null, "cas_kigaku_ws")).body.session.snapshot, kigakuRestored);
+  }
+  const sameReference = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: lockedVersion, snapshot: { ...kigakuRestored, drafts: { retainedText: "本文だけ更新" } } }, "cas_kigaku_ws");
+  assert.equal(sameReference.status, 201);
+  const retainedReport = await api("/api/reports/rep_immutable");
+  assert.equal(retainedReport.body.report.reportSnapshot.resultSummary, "旧Reportの本文");
+  console.log("Kigaku checkpoint: real Worker SQL/SQLite save and session restore PASS; synthetic identity/D1 transport; no production D1 or browser claim.");
   console.log("SQLite verified: concurrent CAS winner/409, stale version, Report/counter retention, blank fields, and write failure.");
 } finally { rmSync(directory, { recursive: true, force: true }); }

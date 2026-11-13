@@ -1,3 +1,4 @@
+import { withKigakuCalculationCheckpoint } from "./kigaku-calculation-checkpoint.js";
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 import { withNumerologyRegisteredSelection } from "./numerology-registered-draft.js";
@@ -2600,6 +2601,12 @@ async function handleApi(request, env = {}, ctx = null) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
     const previousDraft = isSameDraft ? currentDraft : null;
+    const fixedKigakuReference = previousDraft?.snapshot?.divination === "nine-star-ki"
+      ? previousDraft.snapshot.kigakuInput?.referenceInstant : null;
+    if (fixedKigakuReference && body.snapshot && body.snapshot.kigakuInput?.referenceInstant !== fixedKigakuReference) {
+      return json({ status: "error", errorCode: "KIGAKU_REFERENCE_LOCKED", message: "保存済み基準日時は変更できません。新規鑑定を作成してください。" }, { status: 409 });
+    }
+
     record.activeDraft = {
       id: appraisalId,
       draftVersion: crypto.randomUUID(),
@@ -2611,7 +2618,7 @@ async function handleApi(request, env = {}, ctx = null) {
       notes: String(body.notes ?? previousDraft?.notes ?? "").trim(),
       resultSummary: String(body.resultSummary ?? previousDraft?.resultSummary ?? "").trim(),
       snapshot: body.snapshot && typeof body.snapshot === "object"
-        ? await withNumerologyRegisteredSelection(body.snapshot, effectiveRecord.planId)
+        ? await withNumerologyRegisteredSelection(withKigakuCalculationCheckpoint(body.snapshot), effectiveRecord.planId)
         : previousDraft?.snapshot || null,
       externalReferences: normalizeGrowthEngineExternalReferences(body) || previousDraft?.externalReferences || null,
       updatedAt: new Date().toISOString(),
