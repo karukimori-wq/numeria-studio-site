@@ -4,15 +4,18 @@ export const KIGAKU_CHECKPOINT_VERSION = 'numeria.kigaku.calculation-checkpoint.
 const isObject = value => value && typeof value === 'object' && !Array.isArray(value);
 // Draft-only additive storage. No legacy birthday/time is silently promoted to a confirmed Japan clock.
 export function withKigakuCalculationCheckpoint(snapshot) {
-  if (!isObject(snapshot) || snapshot.divination !== 'nine-star-ki' || !isObject(snapshot.kigakuInput)) return snapshot;
-  if (['confirmed', 'completed'].includes(snapshot.status)) return snapshot;
-  if (snapshot.kigakuInput.methodKey !== 'nine-star-ki') return snapshot;
+  if (!isObject(snapshot) || snapshot.divination !== 'nine-star-ki') return snapshot;
+  if (!isObject(snapshot.kigakuInput) || snapshot.kigakuInput.methodKey !== 'nine-star-ki') {
+    if (!snapshot.kigakuCalculation && !['confirmed', 'completed'].includes(snapshot.status)) return snapshot;
+    const { kigakuCalculation, ...draft } = snapshot;
+    return { ...draft, status: 'draft' };
+  }
   const source = structuredClone(snapshot.kigakuInput);
   const calculation = buildKigakuPageData(source);
   const checkpoint = { schemaVersion: KIGAKU_CHECKPOINT_VERSION, methodKey: 'nine-star-ki',
     status: 'draft', verificationState: 'review-required', publicationAllowed: false,
     source, calculation };
-  return { ...snapshot, kigakuCalculation: checkpoint };
+  return { ...snapshot, status: 'draft', kigakuCalculation: checkpoint };
 }
 
 function canonical(value) {

@@ -147,6 +147,16 @@ try {
   assert.equal(validateKigakuCalculationCheckpoint(kigakuRestored).ok, true);
   assert.equal(kigakuRestored.kigakuCalculation.calculation.pages.length, 14);
   assert.equal(kigakuRestored.kigakuCalculation.publicationAllowed, false);
+  for (const status of ["confirmed", "completed"]) {
+    const workspace = `forged_kigaku_${status}`;
+    const saved = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: null, divination: "nine-star-ki", question: "状態偽装fixture", snapshot: { ...kigakuSnapshot, status, kigakuCalculation: { publicationAllowed: true, tampered: true } } }, workspace);
+    assert.equal(saved.status, 201);
+    const restored = (await api("/api/appraisals/session_kigaku_fixture", null, workspace)).body.session.snapshot;
+    assert.equal(restored.status, "draft");
+    assert.deepEqual(restored.kigakuCalculation, kigakuSnapshot.kigakuCalculation);
+    assert.equal(restored.kigakuCalculation.publicationAllowed, false);
+    assert.deepEqual(restored.drafts, kigakuSnapshot.drafts);
+  }
   const lockedVersion = kigakuSaved.body.activeDraft.draftVersion;
   for (const changedSnapshot of [
     { ...kigakuSnapshot, kigakuInput: { ...kigakuInput, referenceInstant: "2027-01-01T00:00:00+09:00" } },

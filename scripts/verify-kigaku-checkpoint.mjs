@@ -24,5 +24,10 @@ assert.equal(validate(approved).ok, false);
 assert.equal(validate({ ...attached, divination: 'tarot' }).code, 'METHOD_MISMATCH');
 const foreign = { ...draft, divination: 'four-pillars' };
 assert.equal(attach(foreign), foreign);
-assert.equal(attach({ ...draft, status: 'completed' }).kigakuCalculation, undefined);
+for (const status of ['confirmed', 'completed']) {
+ const forged = attach({ ...draft, status, kigakuCalculation: { publicationAllowed: true } });
+ assert.equal(forged.status, 'draft'); assert.deepEqual(forged.kigakuCalculation, attached.kigakuCalculation);
+ const missing = attach({ ...old, status, kigakuCalculation: { publicationAllowed: true } });
+ assert.equal(missing.status, 'draft'); assert.equal(missing.kigakuCalculation, undefined);
+}
 console.log('Kigaku checkpoint: deterministic draft JSON restore, old/unknown fields retained, stale scope/tampered zero/formal flags rejected, cross-method isolation verified.');

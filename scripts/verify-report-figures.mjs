@@ -1,3 +1,4 @@
+import { REPORT_RESULT_REFERENCES } from "../src/report-result-references.js";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { REPORT_FIGURE_TYPES, reportFigureTypesForPage } from "../src/report-figure-types.js";
@@ -74,4 +75,8 @@ assert.equal(plan.physicalPages[1].items[0].blockId, blocks[1].blockId);
 for (const type of ["FIG-ASTRO", "FIG-ZIW"]) {
   const partial = { ...fixtures.find(f => f.type === type), exampleOnly: false };
   assert.equal(validateReportFigure(partial).code, "FULL_CHART_CONTRACT_UNCONNECTED");
+}
+
+for (const definition of REPORT_PAGE_DEFINITIONS) {
+  assert.deepEqual(reportFigureTypesForPage(definition), REPORT_RESULT_REFERENCES.find(row => row.pageDefinitionId === definition.pageDefinitionId).figureTypes, definition.pageDefinitionId);
 }

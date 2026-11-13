@@ -4,7 +4,7 @@ import vm from 'node:vm';
 const source=readFileSync('scripts/kigaku-input-form-runtime.js','utf8');
 let snapshot={id:'fixture-session',divination:'nine-star-ki',kigakuInput:{referenceInstant:'2026-11-09T12:34:56+09:00',partnerSubjectId:'retained-partner',birthClock:{date:'1990-06-15',time:null,zoneConfirmed:true}}};
 let updates=[],saves=0,fail=false,resolveSave;
-const fields=Object.fromEntries(['date','time','reference','confirm','save','status','partnerEnabled','partnerName','partnerDate','partnerTime','partnerConfirm','loveRelationship','workRelationship','familyRelationship','workTheme','selectedDirection','directionPurpose'].map(key=>[key,{value:'',checked:false,textContent:'',disabled:false}]));
+const fields=Object.fromEntries(['offset','partnerOffset','date','time','reference','confirm','save','status','partnerEnabled','partnerName','partnerDate','partnerTime','partnerConfirm','loveRelationship','workRelationship','familyRelationship','workTheme','selectedDirection','directionPurpose'].map(key=>[key,{value:'',checked:false,textContent:'',disabled:false}]));
 const container={append(){},innerHTML:'',querySelector(selector){return fields[selector.match(/data-kigaku-(\w+)/)[1]];}};
 const api={getReadingSnapshot:()=>snapshot,updateKigakuInput(input){updates.push(input);return{ok:true};},async saveReadingDraft(){saves++;if(fail)throw Error('fixture');if(resolveSave)await new Promise(resolve=>{resolveSave=resolve;});}};
 const context=vm.createContext({window:{NumeriaNavigation:api},structuredClone,Date,container,document:{createElement:()=>({innerHTML:""})}});
@@ -31,3 +31,13 @@ fields.partnerConfirm.checked=true;fields.selectedDirection.value='NE';fields.di
 await fields.save.onclick();assert.equal(updates.at(-1).partnerBirthClock.time,null);assert.equal(updates.at(-1).selectedDirection,'NE');assert.equal(updates.at(-1).directionPurpose,'move');
 
 assert.equal(fields.reference.readOnly,true);const count=saves;fields.reference.value='2027-01-01T00:00';await fields.save.onclick();assert.equal(saves,count);assert.match(fields.status.textContent,/新規鑑定/);
+
+// Reopening and resaving must preserve both explicit fold choices.
+snapshot={id:'fold-session',divination:'nine-star-ki',kigakuInput:{referenceInstant:'2026-11-09T12:34:56+09:00',birthClock:{date:'1948-09-12',time:'00:30:45',zoneConfirmed:true,offsetChoiceMinutes:600},partnerName:'fixture',partnerSubjectId:'fold-partner',partnerBirthClock:{date:'1948-09-12',time:'00:30:45',zoneConfirmed:true,offsetChoiceMinutes:540}}};
+vm.runInContext('mountKigakuInputForm(container)',context);
+assert.equal(fields.offset.value,'600'); assert.equal(fields.partnerOffset.value,'540');
+fields.date.value='1948-09-12';fields.time.value='00:30:45';fields.confirm.checked=true;
+await fields.save.onclick();
+assert.equal(updates.at(-1).birthClock.offsetChoiceMinutes,600);assert.equal(updates.at(-1).partnerBirthClock.offsetChoiceMinutes,540);
+fields.time.oninput();assert.equal(fields.offset.value,'');assert.equal(fields.confirm.checked,false);
+fields.partnerTime.oninput();assert.equal(fields.partnerOffset.value,'');assert.equal(fields.partnerConfirm.checked,false);
