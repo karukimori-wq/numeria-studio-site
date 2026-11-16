@@ -12,11 +12,19 @@ class Paragraphs(HTMLParser):
         super().__init__()
         self.parts = []
         self.current = None
+        self.sources = []
+        self.source = None
     def handle_starttag(self, tag, attrs):
         if tag == 'p': self.current = []
+        if tag == 'small' and 'copy-source' in dict(attrs).get('class', '').split():
+            self.source = []
     def handle_data(self, data):
         if self.current is not None: self.current.append(data)
+        if self.source is not None: self.source.append(data)
     def handle_endtag(self, tag):
+        if tag == 'small' and self.source is not None:
+            self.sources.append(''.join(self.source))
+            self.source = None
         if tag == 'p' and self.current is not None:
             self.parts.append(''.join(self.current))
             self.current = None
@@ -50,11 +58,14 @@ for name in ['standard-comments-off', 'standard-comments-on', 'magazine-comments
     expected = Counter(compact(p) for p in parser.parts if len(compact(p)) >= 12)
     for value, count in expected.items():
         assert normalized.count(value) >= count, (name, "repeated paragraph missing", count, value[:50])
+    assert parser.sources, (name, "no provenance in fixture")
+    for value, count in Counter(compact(source) for source in parser.sources).items():
+        assert normalized.count(value) >= count, (name, "copy ID/version missing", count, value)
     checked = 0
     for paragraph in parser.parts:
         value = compact(paragraph)
         if len(value) < 12: continue
         assert value in normalized, (name, 'paragraph missing', value[:50])
         checked += 1
-    results.append({'fixture': name, 'pages': len(doc), 'paragraphs': checked, 'result': 'passed'})
+    results.append({'fixture': name, 'pages': len(doc), 'paragraphs': checked, 'provenance_blocks': len(parser.sources), 'result': 'passed'})
 print(json.dumps(results, ensure_ascii=False, indent=2))
