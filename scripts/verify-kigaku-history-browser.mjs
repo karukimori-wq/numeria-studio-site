@@ -1,12 +1,17 @@
 import worker from '../src/worker-entry.js';
 // Actual React UI with mocked authentication/API; not production Clerk/D1 acceptance.
 import assert from 'node:assert/strict';
-import {mkdir,writeFile,rm} from 'node:fs/promises';
+import {mkdir,writeFile,rm,readFile,readdir} from 'node:fs/promises';
 import {createServer} from 'vite';
 import {chromium} from 'playwright';
 import {createKigakuReading} from '../src/kigaku-reading.js';
 import {createKigakuReportSnapshot} from '../src/kigaku-report-snapshot.js';
 import {renderKigakuReportHtml} from '../src/kigaku-report-print.js';
+const runtimeFile=(await readdir('dist/assets')).find(name=>/^numeria-app-runtime-.*\.js$/.test(name));
+assert.ok(runtimeFile,'Run npm run build before browser verification');
+const runtime=await readFile('dist/assets/'+runtimeFile,'utf8');
+const historyBranch=runtime.match(/if\(t\.snapshot\?\.schemaVersion===`numeria\.kigaku\.reading\.v1`\)\{[^}]+return\}/)?.[0];
+assert.ok(historyBranch,'Built host history branch missing');
 const fixture='tmp/kigaku-ui';await mkdir(fixture,{recursive:true});
 await writeFile(`${fixture}/index.html`,`<div id="root"></div><script type="module">
 import React from 'react';import {createRoot} from 'react-dom/client';
@@ -14,8 +19,11 @@ import {createKigakuReadingClient} from '/src/kigaku-reading-client.js';
 import {createKigakuReadingComponent} from '/src/kigaku-reading-ui.js';
 window.createKigakuReadingClient=createKigakuReadingClient;
 window.Clerk={session:{getToken:async()=> 'fixture-token'}};
-window.NumeriaKigakuPendingRestore='completed-fixture';
-createRoot(document.getElementById('root')).render(React.createElement(createKigakuReadingComponent(React)));
+const Component=createKigakuReadingComponent(React);
+const routeHistory=new Function('t','u','k','re',${JSON.stringify(historyBranch)});
+function Harness(){const [route,setRoute]=React.useState('profiles');
+return route==='reading'?React.createElement(Component):React.createElement('button',{onClick:()=>routeHistory({id:'completed-fixture',snapshot:{schemaVersion:'numeria.kigaku.reading.v1'}},()=>{},setRoute,()=>{})},'完成した九星履歴を開く');}
+createRoot(document.getElementById('root')).render(React.createElement(Harness));
 </script>`);
 const reading=createKigakuReading({referenceInstant:'2026-10-24T12:00:00+09:00',birthClock:{date:'1990-06-15',time:'12:34',countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:true}});
 const keys = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1,0,1]), hash: 'SHA-256' }, true, ['sign', 'verify']);
@@ -52,6 +60,7 @@ try {
   await route.fulfill({status:response.status,json:response.body});
  });
  await page.goto('http://127.0.0.1:4179/tmp/kigaku-ui/index.html');
+ await page.getByRole('button',{name:'完成した九星履歴を開く',exact:true}).click();
  await page.getByRole('heading',{name:'あなたの九星',exact:true}).waitFor();
  assert.equal(await page.getByRole('button',{name:'下書きを保存',exact:true}).isDisabled(),true);
  const popupPromise=page.waitForEvent('popup');
