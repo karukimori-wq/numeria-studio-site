@@ -22,3 +22,4 @@ jobs:
       - run: node scripts/verify-four-pillars-page-data.mjs
       - run: node scripts/verify-four-pillars-structure.mjs
       - run: node scripts/verify-four-pillars-library-structure.mjs
+      - run: node scripts/verify-four-pillars-yun-offset.mjs
