@@ -6,7 +6,9 @@ const run=patch=>calc({birthClock:{...base,...patch},referenceDate:'2026-11-11'}
 assert.equal(run({}).pillars.day,'甲子');assert.equal(run({}).pillars.hour,'丙子');
 assert.equal(run({date:'1948-05-02',time:'00:30'}).reason,'BIRTH_CLOCK_TIME_NONEXISTENT');
 assert.equal(run({date:'1948-09-12',time:'00:30'}).reason,'BIRTH_CLOCK_TIME_AMBIGUOUS');
-assert.equal(run({time:null}).pillars,null);
+assert.equal(run({time:null}).pillars.hour,null);assert.equal(run({time:null}).elements.data.total,6);
+assert.equal(run({date:'2026-02-04',time:null}).pillars,null);
+assert.equal(run({date:'1948-07-01',time:null}).pillars,null);
 assert.equal(run({zoneConfirmed:false}).state,'required-missing');
 const summer=run({date:'1948-07-01',time:'00:30:45'});
 assert.equal(summer.clockNormalization.selected.standardDate,'1948-06-30');
