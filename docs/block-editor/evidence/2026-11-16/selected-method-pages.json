@@ -1,0 +1,229 @@
+{
+  "deploymentSHA": "6fe180ccf63ef0d7cf7cd4d80246baf02e556e29",
+  "scope": "Authenticated six-method navigation; shared titles are compared against the current catalog before identifying foreign titles. API free limits, Business administrator UI; not separate Pro or formal PDF acceptance.",
+  "checks": [
+    {
+      "label": "数秘術",
+      "prefix": "NUM",
+      "catalog": [
+        {
+          "id": "NUM-01",
+          "title": "8つのコアナンバー"
+        },
+        {
+          "id": "NUM-02",
+          "title": "本質・才能・社会での役割"
+        },
+        {
+          "id": "NUM-03",
+          "title": "内面・成長・今年の流れ"
+        },
+        {
+          "id": "NUM-06",
+          "title": "あなたの9年サイクル"
+        }
+      ],
+      "current": "鑑定書",
+      "pages": [
+        "鑑定書",
+        "F1-F5受入検証 20261116",
+        "8つのコアナンバー",
+        "本質・才能・社会での役割",
+        "内面・成長・今年の流れ",
+        "あなたの9年サイクル",
+        "鑑定のまとめ"
+      ]
+    },
+    {
+      "label": "タロット",
+      "prefix": "TAR",
+      "catalog": [
+        {
+          "id": "TAR-01",
+          "title": "ご相談とカードの展開"
+        },
+        {
+          "id": "TAR-02",
+          "title": "引かれたカード"
+        },
+        {
+          "id": "TAR-05",
+          "title": "ご相談への答え"
+        },
+        {
+          "id": "TAR-06",
+          "title": "これからの行動とメッセージ"
+        }
+      ],
+      "current": "鑑定書",
+      "pages": [
+        "鑑定書",
+        "F1-F5受入検証 20261116",
+        "ご相談とカードの展開",
+        "引かれたカード",
+        "ご相談への答え",
+        "これからの行動とメッセージ",
+        "鑑定のまとめ"
+      ]
+    },
+    {
+      "label": "九星気学",
+      "prefix": "KIG",
+      "catalog": [
+        {
+          "id": "KIG-01",
+          "title": "あなたの九星"
+        },
+        {
+          "id": "KIG-02",
+          "title": "基本性格と運勢傾向"
+        },
+        {
+          "id": "KIG-03",
+          "title": "今年の運勢"
+        },
+        {
+          "id": "KIG-04",
+          "title": "今月の運勢"
+        }
+      ],
+      "current": "鑑定書",
+      "pages": [
+        "鑑定書",
+        "F1-F5受入検証 20261116",
+        "あなたの九星",
+        "基本性格と運勢傾向",
+        "今年の運勢",
+        "今月の運勢",
+        "鑑定のまとめ"
+      ]
+    },
+    {
+      "label": "四柱推命",
+      "prefix": "BAZ",
+      "catalog": [
+        {
+          "id": "BAZ-01",
+          "title": "あなたの命式"
+        },
+        {
+          "id": "BAZ-02",
+          "title": "生まれ持った本質"
+        },
+        {
+          "id": "BAZ-03",
+          "title": "五行のバランス"
+        },
+        {
+          "id": "BAZ-04",
+          "title": "才能・仕事・人間関係"
+        },
+        {
+          "id": "BAZ-06",
+          "title": "10年ごとの運勢"
+        }
+      ],
+      "current": "鑑定書",
+      "pages": [
+        "鑑定書",
+        "F1-F5受入検証 20261116",
+        "あなたの命式",
+        "生まれ持った本質",
+        "五行のバランス",
+        "才能・仕事・人間関係",
+        "10年ごとの運勢",
+        "鑑定のまとめ"
+      ]
+    },
+    {
+      "label": "西洋占星術",
+      "prefix": "AST",
+      "catalog": [
+        {
+          "id": "AST-01",
+          "title": "あなたのホロスコープ"
+        },
+        {
+          "id": "AST-02",
+          "title": "太陽・月・アセンダント"
+        },
+        {
+          "id": "AST-03",
+          "title": "惑星が示す個性"
+        },
+        {
+          "id": "AST-08",
+          "title": "総合ホロスコープ鑑定"
+        }
+      ],
+      "current": "鑑定書",
+      "pages": [
+        "鑑定書",
+        "F1-F5受入検証 20261116",
+        "あなたのホロスコープ",
+        "太陽・月・アセンダント",
+        "惑星が示す個性",
+        "総合ホロスコープ鑑定",
+        "鑑定のまとめ"
+      ]
+    },
+    {
+      "label": "紫微斗数",
+      "prefix": "ZIW",
+      "catalog": [
+        {
+          "id": "ZIW-01",
+          "title": "あなたの命盤"
+        },
+        {
+          "id": "ZIW-02",
+          "title": "生まれ持った性質"
+        },
+        {
+          "id": "ZIW-03",
+          "title": "十二宮が示す人生"
+        },
+        {
+          "id": "ZIW-07",
+          "title": "今年の運勢"
+        }
+      ],
+      "current": "鑑定書",
+      "pages": [
+        "鑑定書",
+        "F1-F5受入検証 20261116",
+        "あなたの命盤",
+        "生まれ持った性質",
+        "十二宮が示す人生",
+        "今年の運勢",
+        "鑑定のまとめ"
+      ]
+    }
+  ],
+  "foreignLeaks": [
+    {
+      "method": "数秘術",
+      "unexpected": []
+    },
+    {
+      "method": "タロット",
+      "unexpected": []
+    },
+    {
+      "method": "九星気学",
+      "unexpected": []
+    },
+    {
+      "method": "四柱推命",
+      "unexpected": []
+    },
+    {
+      "method": "西洋占星術",
+      "unexpected": []
+    },
+    {
+      "method": "紫微斗数",
+      "unexpected": []
+    }
+  ]
+}
