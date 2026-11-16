@@ -2608,8 +2608,8 @@ async function handleApi(request, env = {}, ctx = null) {
       return json({ status: "error", errorCode: "KIGAKU_REFERENCE_LOCKED", message: "保存済み基準日時は変更できません。新規鑑定を作成してください。" }, { status: 409 });
     }
 
-    const fixedFourPillarsReference = previousDraft?.snapshot?.divination === "four-pillars"
-      ? previousDraft.snapshot.fourPillarsInput?.referenceDate : null;
+    const fixedFourPillarsReference = previousDraft?.snapshot?.fourPillarsInput?.referenceDate
+      || previousDraft?.snapshot?.fourPillarsCalculation?.source?.referenceDate || null;
     if (fixedFourPillarsReference && body.snapshot && body.snapshot.fourPillarsInput?.referenceDate !== fixedFourPillarsReference) {
       return json({ status: "error", errorCode: "FOUR_PILLARS_REFERENCE_LOCKED", message: "保存済み基準日は変更できません。新規鑑定を作成してください。" }, { status: 409 });
     }

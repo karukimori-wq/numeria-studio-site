@@ -182,8 +182,14 @@ try {
     assert.deepEqual(restored.drafts, baziSnapshot.drafts);assert.deepEqual(restored.unknownFutureField, baziSnapshot.unknownFutureField);
     assert.equal(validateFourPillarsCalculationCheckpoint(restored).ok, true);
     assert.equal(restored.fourPillarsCalculation.calculation.pages.filter(page => page.data).length, 10);
+    const switched = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: saved.body.activeDraft.draftVersion, snapshot: { ...baziSnapshot, divination: "tarot" } }, workspace);
+    assert.equal(switched.status, 201);
+    const bypass = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: switched.body.activeDraft.draftVersion, snapshot: { ...baziSnapshot, fourPillarsInput: { ...baziInput, referenceDate: "2026-11-17" } } }, workspace);
+    assert.equal(bypass.status, 409);assert.equal(bypass.body.errorCode, "FOUR_PILLARS_REFERENCE_LOCKED");
+    const reset = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: switched.body.activeDraft.draftVersion, snapshot: baziSnapshot }, workspace);
+    assert.equal(reset.status, 201);
     for (const fourPillarsInput of [null, { ...baziInput, referenceDate: "2026-11-17" }]) {
-      const rejected = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: saved.body.activeDraft.draftVersion, snapshot: { ...baziSnapshot, fourPillarsInput } }, workspace);
+      const rejected = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: reset.body.activeDraft.draftVersion, snapshot: { ...baziSnapshot, fourPillarsInput } }, workspace);
       assert.equal(rejected.status, 409);assert.equal(rejected.body.errorCode, "FOUR_PILLARS_REFERENCE_LOCKED");
       assert.deepEqual((await api("/api/appraisals/session_bazi_fixture", null, workspace)).body.session.snapshot, restored);
     }
