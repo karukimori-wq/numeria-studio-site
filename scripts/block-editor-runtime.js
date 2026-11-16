@@ -190,11 +190,11 @@ function decorateEditor(){
   const pageHeading=pagePane?.querySelector("h2");
   if(pageHeading&&!pageHeading.querySelector("[data-v3-page-limit]")){let limit=document.createElement("small");limit.dataset.v3PageLimit="1";limit.textContent=` 自由 ${data.pages.filter(isFreePage).length}/${pageLimit}`;pageHeading.append(limit)}
   const fixedPage=isFixedPage(current()),freePage=isFreePage(current()),addPageButton=pagePane?.querySelector("[data-add-page]"),deletePage=pagePane?.querySelector("[data-delete-page]");
-  if(addPageButton)addPageButton.textContent="自由ページを追加";
-  if(deletePage){deletePage.textContent="自由ページを削除";deletePage.disabled=!freePage}
+  if(addPageButton&&addPageButton.textContent!=="自由ページを追加")addPageButton.textContent="自由ページを追加";
+  if(deletePage){if(deletePage.textContent!=="自由ページを削除")deletePage.textContent="自由ページを削除";deletePage.disabled=!freePage}
   const titleField=root.querySelector("[data-title]");if(titleField){titleField.disabled=fixedPage;titleField.title=fixedPage?"固定ページのタイトルはページ台帳から変更します":""}
   const copyPage=pagePane?.querySelector("[data-copy-page]");
-  if(copyPage){copyPage.textContent="自由ページを複製";copyPage.disabled=!freePage;if(!copyPage.dataset.v3PageLimitBound){copyPage.dataset.v3PageLimitBound="1";const copy=copyPage.onclick;copyPage.onclick=()=>{if(!isFreePage(current()))return;if(data.pages.filter(isFreePage).length>=pageLimit){status=`このプランでは自由ページは${pageLimit}件までです`;render();return}copy()}}}
+  if(copyPage){if(copyPage.textContent!=="自由ページを複製")copyPage.textContent="自由ページを複製";copyPage.disabled=!freePage;if(!copyPage.dataset.v3PageLimitBound){copyPage.dataset.v3PageLimitBound="1";const copy=copyPage.onclick;copyPage.onclick=()=>{if(!isFreePage(current()))return;if(data.pages.filter(isFreePage).length>=pageLimit){status=`このプランでは自由ページは${pageLimit}件までです`;render();return}copy()}}}
   if(fixedPage){const titleBlock=current().layoutRegions.flatMap(region=>region.columnBlocks.flat()).find(block=>block.type==="page-title"),titleSection=titleBlock&&root.querySelector(`[data-block-id="${titleBlock.blockId}"]`);titleSection?.querySelectorAll("input,textarea,button").forEach(control=>control.disabled=true)}
   if(fixedPage&&!root.querySelector("[data-report-visual-slot]")){const titleBlock=current().layoutRegions.flatMap(region=>region.columnBlocks.flat()).find(block=>block.type==="page-title"),titleSection=titleBlock&&root.querySelector(`[data-block-id="${titleBlock.blockId}"]`),visualSlot=renderFixedPageVisualSlot(current());if(titleSection&&visualSlot)titleSection.insertAdjacentHTML("afterend",visualSlot)}
   if(pagePane&&!pagePane.querySelector("[data-v3-page-order]")){

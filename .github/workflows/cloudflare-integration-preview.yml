@@ -6,6 +6,7 @@ on:
     branches:
       - codex/site-v2-lp-v1-1-20261022
       - codex/f1-f5-completion-20261113
+      - codex/block-editor-observer-loop-20261116
 
 permissions:
   contents: read
