@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {buildFourPillarsPageData as build} from '../src/four-pillars-page-data.js';
+const input={methodKey:'four-pillars',subjectId:'fixture-self',revision:'r1',referenceDate:'2026-11-16',birthClock:{date:'2000-01-07',time:null,countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:true,offsetChoiceMinutes:null}};
+const before=JSON.stringify(input),result=build(input);
+assert.equal(result.pages.length,14);assert.equal(result.pages.filter(p=>p.state==='unconnected').length,11);
+assert.equal(result.pages[0].data.pillars.hour,null);assert.equal(result.pages[1].data.dayStem,'甲');assert.equal(result.pages[2].data.total,6);
+assert(result.pages.every(p=>p.publicationAllowed===false));
+assert.equal(build({...input,birthClock:{...input.birthClock,time:'23:00'}}).pages[2].data.total,8);
+assert.equal(build({...input,birthClock:{...input.birthClock,date:'2026-02-04'}}).pages[0].state,'required-missing');
+assert(build({...input,methodKey:'nine-star-ki'}).pages.every(p=>p.state==='unconnected'&&p.data===null));
+assert.equal(build({...input,birthClock:{...input.birthClock,date:'bad'}}).pages[0].data,null);
+assert.equal(JSON.stringify(input),before);assert.deepEqual(build(JSON.parse(before)),result);
+console.log('BAZ-01/02/03 calculation projections PASS; three/four pillars, missing boundary, isolation, no formal publication; remaining 11 unconnected.');
