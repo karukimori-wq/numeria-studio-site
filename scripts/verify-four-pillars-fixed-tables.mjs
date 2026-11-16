@@ -39,6 +39,6 @@ assert.equal(pages.pages.filter(page=>page.data!==null).length,8);
 assert.ok(pages.pages.every(page=>page.publicationAllowed===false));
 assert.equal(pages.pages[4].data.rows.length,3);
 const missing=buildFourPillarsPageData({...input,birthClock:{...input.birthClock,date:'2026-02-04'}});
-assert.ok(missing.pages.filter(page=>!['BAZ-06','BAZ-07','BAZ-08','BAZ-12','BAZ-13','BAZ-14'].includes(page.pageDefinitionId)).every(page=>page.state==='required-missing'&&page.data===null));
+assert.ok(missing.pages.filter(page=>!['BAZ-06','BAZ-07','BAZ-13','BAZ-14'].includes(page.pageDefinitionId)).every(page=>page.state==='required-missing'&&page.data===null));
 assert.deepEqual(pillars,{year:'甲子',month:'乙丑',day:'丙寅',hour:'丁卯'});
 console.log('Four Pillars fixed tables: 100 normative pairs, 120 library-compatible stages, explicit hidden-stem roles, day-master exclusion, wealth zero, 8 page adapters and missing-clock guards PASS. No independent chart or formal publication claim.');

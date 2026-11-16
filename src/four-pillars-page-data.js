@@ -1,3 +1,4 @@
+import { compareFourPillars, FOUR_PILLARS_COMPARISON_VERSION } from "./four-pillars-comparison.js";
 import { fixedPillarDetails, FOUR_PILLARS_TABLE_VERSION } from "./four-pillars-fixed-tables.js";
 import { fourPillarsFromBirthClock } from './four-pillars-birth-clock.js';
 
@@ -9,6 +10,8 @@ export const FOUR_PILLARS_PAGE_SOURCE_PATHS = Object.freeze({
   'BAZ-03': ['elements.data.visibleElementCounts', 'elements.data.includedPillars'],
   'BAZ-04': ['details.rows', 'details.placements'],
   'BAZ-05': ['details.rows.twelveStage'],
+  'BAZ-08': ['comparison.dayStemRelation', 'comparison.matches', 'comparison.includedPillars'],
+  'BAZ-12': ['comparison', 'familyContext', 'parentDirection'],
   'BAZ-09': ['details.dayStem', 'details.dayBranch', 'details.placements'],
   'BAZ-10': ['details.dayStem', 'details.placements'],
   'BAZ-11': ['details.dayStem', 'details.wealthPlacements'],
@@ -48,5 +51,30 @@ export function buildFourPillarsPageData(input = {}) {
   pages[9].data = { dayStem: details.data.dayStem, placements: details.data.placements };
   pages[10].data = { dayStem: details.data.dayStem, wealthPlacements: details.data.wealthPlacements };
   if (!details.data.wealthPlacements.length) pages[10].state = 'valid-zero';
+  envelope.comparisonVersion = FOUR_PILLARS_COMPARISON_VERSION;
+  // Recompute both people from their captured clocks. Never accept an imported
+  // partner chart or replace missing partner inputs with the subject's chart.
+  const partner = input.partnerBirthClock ? fourPillarsFromBirthClock({ birthClock: input.partnerBirthClock, referenceDate: input.referenceDate }) : { state: 'required-missing', reason: 'BIRTH_CLOCK_REQUIRED' };
+  envelope.partner = input.partnerSubjectId ?? null;
+  envelope.partnerClockNormalization = partner.clockNormalization ?? null;
+  let comparison;
+  if (partner.state !== 'available') comparison = { state: partner.state, reason: input.partnerBirthClock ? 'PARTNER_' + (partner.reason || 'PILLARS_REQUIRED') : 'PARTNER_BIRTH_CLOCK_REQUIRED', data: null };
+  else comparison = compareFourPillars({ subjectId: input.subjectId, partnerSubjectId: input.partnerSubjectId, subjectPillars: result.pillars, partnerPillars: partner.pillars });
+  for (const index of [7, 11]) Object.assign(pages[index], { state: comparison.state, reason: comparison.reason, data: comparison.data });
+  if (comparison.state !== 'available') return envelope;
+  // Reuse the existing explicit family context/direction convention. A/B refer
+  // to the subject/partner IDs above; gender and roles are never inferred.
+  if (!['parent-child', 'partners', 'other-family'].includes(input.familyContext)) {
+    Object.assign(pages[11], { state: 'required-missing', reason: 'FAMILY_CONTEXT_REQUIRED', data: null });
+  } else if (input.familyContext === 'parent-child' && !['a-parent', 'b-parent'].includes(input.parentDirection)) {
+    Object.assign(pages[11], { state: 'required-missing', reason: 'PARENT_DIRECTION_REQUIRED', data: null });
+  } else {
+    const family = { context: input.familyContext, parentDirection: input.familyContext === 'parent-child' ? input.parentDirection : null };
+    if (input.familyContext === 'parent-child') {
+      family.subjectRole = input.parentDirection === 'a-parent' ? 'parent' : 'child';
+      family.partnerRole = input.parentDirection === 'a-parent' ? 'child' : 'parent';
+    }
+    pages[11].data = { ...comparison.data, family };
+  }
   return envelope;
 }

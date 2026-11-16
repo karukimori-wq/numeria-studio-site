@@ -1,3 +1,4 @@
+import { withFourPillarsCalculationCheckpoint, validateFourPillarsCalculationCheckpoint } from "../src/four-pillars-calculation-checkpoint.js";
 import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -169,6 +170,24 @@ try {
   }
   const sameReference = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: lockedVersion, snapshot: { ...kigakuRestored, drafts: { retainedText: "本文だけ更新" } } }, "cas_kigaku_ws");
   assert.equal(sameReference.status, 201);
+  const baziClock = { date: "2000-01-07", time: null, countryCode: "JP", zoneId: "Asia/Tokyo", zoneConfirmed: true, offsetChoiceMinutes: null };
+  const baziInput = { methodKey: "four-pillars", subjectId: "fixture-bazi-a", partnerSubjectId: "fixture-bazi-b", birthClock: baziClock, partnerBirthClock: { ...baziClock, date: "2000-01-08" }, referenceDate: "2026-11-16", familyContext: "parent-child", parentDirection: "a-parent" };
+  const baziSnapshot = withFourPillarsCalculationCheckpoint({ id: "session_bazi_fixture", divination: "four-pillars", fourPillarsInput: baziInput, drafts: { retainedText: "四柱の編集本文" }, unknownFutureField: { retained: true } });
+  for (const status of ["confirmed", "completed"]) {
+    const workspace = `bazi_${status}`;
+    const saved = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: null, divination: "four-pillars", question: "四柱保存fixture", snapshot: { ...baziSnapshot, status, fourPillarsCalculation: { publicationAllowed: true } } }, workspace);
+    assert.equal(saved.status, 201);
+    const restored = (await api("/api/appraisals/session_bazi_fixture", null, workspace)).body.session.snapshot;
+    assert.equal(restored.status, "draft");assert.deepEqual(restored.fourPillarsCalculation, baziSnapshot.fourPillarsCalculation);
+    assert.deepEqual(restored.drafts, baziSnapshot.drafts);assert.deepEqual(restored.unknownFutureField, baziSnapshot.unknownFutureField);
+    assert.equal(validateFourPillarsCalculationCheckpoint(restored).ok, true);
+    assert.equal(restored.fourPillarsCalculation.calculation.pages.filter(page => page.data).length, 10);
+    for (const fourPillarsInput of [null, { ...baziInput, referenceDate: "2026-11-17" }]) {
+      const rejected = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: saved.body.activeDraft.draftVersion, snapshot: { ...baziSnapshot, fourPillarsInput } }, workspace);
+      assert.equal(rejected.status, 409);assert.equal(rejected.body.errorCode, "FOUR_PILLARS_REFERENCE_LOCKED");
+      assert.deepEqual((await api("/api/appraisals/session_bazi_fixture", null, workspace)).body.session.snapshot, restored);
+    }
+  }
   const retainedReport = await api("/api/reports/rep_immutable");
   assert.equal(retainedReport.body.report.reportSnapshot.resultSummary, "旧Reportの本文");
   console.log("Kigaku checkpoint: real Worker SQL/SQLite save and session restore PASS; synthetic identity/D1 transport; no production D1 or browser claim.");

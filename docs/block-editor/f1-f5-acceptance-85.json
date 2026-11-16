@@ -1671,8 +1671,12 @@
         "natal_chart"
       ],
       "resultKeyStatus": "binding requirement only; formal page acceptance pending",
-      "implementedSourcePaths": [],
-      "calculationState": "formal-page-unconnected",
+      "implementedSourcePaths": [
+        "comparison.dayStemRelation",
+        "comparison.matches",
+        "comparison.includedPillars"
+      ],
+      "calculationState": "partial",
       "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
       "textIdVersionApproval": "not-approved; formal publication blocked",
       "figureTypes": [
@@ -1801,8 +1805,12 @@
         "natal_chart"
       ],
       "resultKeyStatus": "binding requirement only; formal page acceptance pending",
-      "implementedSourcePaths": [],
-      "calculationState": "formal-page-unconnected",
+      "implementedSourcePaths": [
+        "comparison",
+        "familyContext",
+        "parentDirection"
+      ],
+      "calculationState": "partial",
       "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
       "textIdVersionApproval": "not-approved; formal publication blocked",
       "figureTypes": [
