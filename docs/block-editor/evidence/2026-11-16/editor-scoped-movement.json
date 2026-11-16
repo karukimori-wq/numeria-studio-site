@@ -1,0 +1,96 @@
+{
+  "deploymentSHA": "6fe180ccf63ef0d7cf7cd4d80246baf02e556e29",
+  "scope": "Dedicated shared test-page move-down then move-up; original order restored; no PDF-order acceptance",
+  "changed": true,
+  "restored": true,
+  "before": [
+    {
+      "id": "page_26c608bd-140a-4ddd-8bb1-cf0751d30d44",
+      "title": "1. 鑑定書"
+    },
+    {
+      "id": "page_35ab25a0-6bb3-4a2c-97c6-276bccf8fd49",
+      "title": "2. F1-F5受入検証 20261116"
+    },
+    {
+      "id": "page_5a826f0c-e3f0-4f07-a490-81096a96b5dc",
+      "title": "3. 8つのコアナンバー"
+    },
+    {
+      "id": "page_fe0da77c-fdc9-47ea-96ab-363f8ce131e4",
+      "title": "4. 本質・才能・社会での役割"
+    },
+    {
+      "id": "page_f8ed14c0-6f7c-47a6-b226-f740b8a0ef97",
+      "title": "5. 内面・成長・今年の流れ"
+    },
+    {
+      "id": "page_4a3b42eb-7151-4507-8caf-60dda82f06f4",
+      "title": "6. あなたの9年サイクル"
+    },
+    {
+      "id": "page_9e5f540d-c7c3-4962-8854-fe07abe66074",
+      "title": "7. 鑑定のまとめ"
+    }
+  ],
+  "moved": [
+    {
+      "id": "page_26c608bd-140a-4ddd-8bb1-cf0751d30d44",
+      "title": "1. 鑑定書"
+    },
+    {
+      "id": "page_5a826f0c-e3f0-4f07-a490-81096a96b5dc",
+      "title": "2. 8つのコアナンバー"
+    },
+    {
+      "id": "page_35ab25a0-6bb3-4a2c-97c6-276bccf8fd49",
+      "title": "3. F1-F5受入検証 20261116"
+    },
+    {
+      "id": "page_fe0da77c-fdc9-47ea-96ab-363f8ce131e4",
+      "title": "4. 本質・才能・社会での役割"
+    },
+    {
+      "id": "page_f8ed14c0-6f7c-47a6-b226-f740b8a0ef97",
+      "title": "5. 内面・成長・今年の流れ"
+    },
+    {
+      "id": "page_4a3b42eb-7151-4507-8caf-60dda82f06f4",
+      "title": "6. あなたの9年サイクル"
+    },
+    {
+      "id": "page_9e5f540d-c7c3-4962-8854-fe07abe66074",
+      "title": "7. 鑑定のまとめ"
+    }
+  ],
+  "after": [
+    {
+      "id": "page_26c608bd-140a-4ddd-8bb1-cf0751d30d44",
+      "title": "1. 鑑定書"
+    },
+    {
+      "id": "page_35ab25a0-6bb3-4a2c-97c6-276bccf8fd49",
+      "title": "2. F1-F5受入検証 20261116"
+    },
+    {
+      "id": "page_5a826f0c-e3f0-4f07-a490-81096a96b5dc",
+      "title": "3. 8つのコアナンバー"
+    },
+    {
+      "id": "page_fe0da77c-fdc9-47ea-96ab-363f8ce131e4",
+      "title": "4. 本質・才能・社会での役割"
+    },
+    {
+      "id": "page_f8ed14c0-6f7c-47a6-b226-f740b8a0ef97",
+      "title": "5. 内面・成長・今年の流れ"
+    },
+    {
+      "id": "page_4a3b42eb-7151-4507-8caf-60dda82f06f4",
+      "title": "6. あなたの9年サイクル"
+    },
+    {
+      "id": "page_9e5f540d-c7c3-4962-8854-fe07abe66074",
+      "title": "7. 鑑定のまとめ"
+    }
+  ]
+}

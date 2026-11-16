@@ -13,3 +13,11 @@
 実runtimeのcurrent／renderを使う回帰を先に追加。修正前は他占術のdata-pageが一覧へ漏れて失敗。修正後は共通・対象占術だけ、対象外選択の解除、対象内並び替えと隣接移動、対象0件、保存内容保持を検査PASS。全package test／production build／git diff --check PASS。
 
 PR #97依存の追加Draft。previewへ配信して6占術切替を再検査する。main／本番／D1 migration変更なし。UI復帰だけで全85ページの内容・Pro・正式PDF合格とはしない。
+
+## 認証付き配信後の確認
+
+配信ヘッダーSHA `6fe180ccf63ef0d7cf7cd4d80246baf02e556e29` 一致。6占術を切り替え、以前の固定ページを選択した状態からも次の占術へ移ると共通表紙へ戻ることを確認。各API定義カタログと左一覧が対応し、共通ページ3件＋各占術の4/4/4/5/4/4基本ページのみになった。試験用自由ページの後ろ移動→前移動で表示順が変わり、元の順序へ戻ることも確認して保存した。
+
+`evidence/2026-11-16/selected-method-pages.json`、`editor-selected-method.jpg`、`editor-scoped-movement.json` を保存。九星／紫微の「今年の運勢」のような同名ページは、現在のカタログに存在する名称を先に除外してから対象外混入を判定する。内部IDでのスコープ分離は実runtime回帰でも検査する。
+
+アカウントUIはBusiness管理者プレビュー、APIはfree制限。実Pro・85ページの本文／図表／正式PDFの受入とは別。共有D1の認証付きreport-format保存を実行し、自由ページ「F1-F5受入検証 20261116」を1件残した。既存本文は削除・編集せず、移動は元の順へ戻した。main／本番Worker／DB schemaは変更しない。
