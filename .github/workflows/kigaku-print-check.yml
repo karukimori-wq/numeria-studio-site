@@ -2,7 +2,7 @@ name: Kigaku draft PDF check
 on:
   push:
     branches: [codex/rebuild-kigaku-20261024]
-    paths: [src/kigaku-*.js, scripts/verify-kigaku-print-browser.mjs, scripts/verify-kigaku-history-browser.mjs, scripts/verify-kigaku-pdf-output.py, .github/workflows/kigaku-print-check.yml]
+    paths: [src/kigaku-*.js, scripts/verify-kigaku-print-browser.mjs, scripts/verify-kigaku-history-browser.mjs, scripts/verify-kigaku-host-browser.mjs, scripts/verify-kigaku-pdf-output.py, .github/workflows/kigaku-print-check.yml]
   workflow_dispatch:
 permissions:
   contents: read
@@ -23,6 +23,7 @@ jobs:
       - run: npm run build
       - run: node scripts/verify-kigaku-history-route.mjs
       - run: node scripts/verify-kigaku-history-browser.mjs
+      - run: node scripts/verify-kigaku-host-browser.mjs
       - run: python -m pip install PyMuPDF
       - run: python scripts/verify-kigaku-pdf-output.py tmp/kigaku-print
       - uses: actions/upload-artifact@v4
