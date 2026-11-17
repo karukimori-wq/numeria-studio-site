@@ -11,7 +11,12 @@
     "verify:custom-domain": "node scripts/verify-custom-domain.mjs",
     "verify:auth-release": "REQUIRE_CLERK_ENFORCE_READY=1 REQUIRE_AUTH_ENFORCE_MODE=1 node scripts/verify-production-readiness.mjs"
   },
-  "overrides": { "lunar-lite": "0.2.8", "dayjs": "1.11.23", "i18next": "23.16.8", "@babel/runtime": "7.29.10" },
+  "overrides": {
+    "lunar-lite": "0.2.8",
+    "dayjs": "1.11.23",
+    "i18next": "23.16.8",
+    "@babel/runtime": "7.29.10"
+  },
   "dependencies": {
     "@clerk/react": "^6.14.8",
     "@vitejs/plugin-react": "^6.1.1",
