@@ -1,10 +1,6 @@
+import {parseYunInstant as instant} from './four-pillars-yun-instant.js';
 export const FOUR_PILLARS_YUN_OFFSET_VERSION='ns.bazi.yun-offset.floor-total-minutes.v1';
-function instant(value){
- if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.000)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/.test(value))throw Error('SECOND_PRECISION_INSTANT_REQUIRED');
- const civil=value.slice(0,10),d=new Date(civil+'T00:00:00Z');
- if(!Number.isFinite(d.getTime())||d.toISOString().slice(0,10)!==civil)throw Error('DATE_INVALID');
- const ms=Date.parse(value);if(!Number.isFinite(ms))throw Error('INSTANT_INVALID');return ms;
-}
+
 // Adopted decision 86 only. Caller must supply the correctly selected solar term.
 // No gender/direction choice, calendar addition, start date or DaYun is inferred here.
 export function calculateYunOffset({birthInstant,solarTermInstant}={}){

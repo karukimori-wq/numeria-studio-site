@@ -1,12 +1,8 @@
+import {parseYunInstant as instant} from './four-pillars-yun-instant.js';
 import {calculateYunOffset} from './four-pillars-yun-offset.js';
 const stems='甲乙丙丁戊己庚辛壬癸';
 const names=new Set(['小寒','立春','惊蛰','清明','立夏','芒种','小暑','立秋','白露','寒露','立冬','大雪']);
-function instant(value){
- if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.000)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/.test(value))throw Error('SECOND_PRECISION_INSTANT_REQUIRED');
- const date=new Date(value.slice(0,10)+'T00:00:00Z');
- if(!Number.isFinite(date.getTime())||date.toISOString().slice(0,10)!==value.slice(0,10))throw Error('DATE_INVALID');
- const ms=Date.parse(value);if(!Number.isFinite(ms))throw Error('INSTANT_INVALID');return ms;
-}
+
 // terms must be a complete, canonical UTC/offset-aware Jie calendar supplied by the caller.
 // This helper does not reinterpret library civil dates as Japan or China standard time.
 export function selectYunSolarTerm({yearStem,calculationSex,birthInstant,terms,calendarVersion}={}){

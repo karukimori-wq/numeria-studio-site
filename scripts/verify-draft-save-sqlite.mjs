@@ -199,6 +199,8 @@ try {
   assert.equal(yunSaved.status,201);
   const yunRestored = (await api("/api/appraisals/session_bazi_yun",null,"bazi_yun_ws")).body.session.snapshot;
   assert.equal(yunRestored.fourPillarsCalculation.calculation.yun.state,"available");
+  assert.equal(yunRestored.fourPillarsCalculation.calculation.yun.start.state,"available");
+  assert.equal(yunRestored.fourPillarsCalculation.calculation.yun.start.standardOffsetMinutes,540);
   assert.notEqual(yunRestored.fourPillarsCalculation.calculation.yun.direction,"forged");
   assert.equal(validateFourPillarsCalculationCheckpoint(yunRestored).ok,true);
   assert.deepEqual(yunRestored.drafts,baziSnapshot.drafts);

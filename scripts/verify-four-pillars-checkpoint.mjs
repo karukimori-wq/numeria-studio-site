@@ -35,3 +35,7 @@ const noSex=attach({...original,fourPillarsInput:{...timedInput,calculationSex:n
 assert.equal(noSex.fourPillarsCalculation.calculation.yun.reason,'CALCULATION_SEX_REQUIRED');
 assert.equal(noSex.fourPillarsCalculation.calculation.pages.filter(page=>page.data).length,10);
 console.log('Yun checkpoint: explicit calculation sex, stale direction/offset rejection, no profile inference and independent subject pages PASS.');
+
+assert.equal(timed.fourPillarsCalculation.calculation.yun.start.state,'available');
+const forgedStart=structuredClone(timed);forgedStart.fourPillarsCalculation.calculation.yun.start.startInstant='2000-01-01T00:00:00.000Z';assert.equal(validate(forgedStart).ok,false);
+assert.equal(validate(JSON.parse(JSON.stringify(timed))).ok,true);
