@@ -1,0 +1,8 @@
+{
+  "id": "NAOJ-2026-LICHUN-MINUTE",
+  "input": {"year": 2026, "term": "立春"},
+  "expected": {"instant": "2026-02-04T05:02:00+09:00", "toleranceSeconds": 60},
+  "source": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692",
+  "sourceDescription": "Notion確定fixtureの国立天文台公表分精度。秒の正解資料ではない。",
+  "scope": "One solar-term instant only; not a complete natal chart or Yun reference."
+}

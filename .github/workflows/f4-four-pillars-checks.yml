@@ -4,6 +4,7 @@ on:
     paths:
       - 'src/four-pillars-*.js'
       - 'scripts/verify-four-pillars-*.mjs'
+      - 'test-fixtures/four-pillars-*.json'
       - '.github/workflows/f4-four-pillars-checks.yml'
 permissions:
   contents: read
@@ -16,6 +17,8 @@ jobs:
         with:
           node-version: 22
       - run: npm install --ignore-scripts
+      - run: npm test
+      - run: npm run build
       - run: node scripts/verify-four-pillars-elements.mjs
       - run: node scripts/verify-four-pillars-calculator.mjs
       - run: node scripts/verify-four-pillars-clock.mjs
@@ -24,3 +27,5 @@ jobs:
       - run: node scripts/verify-four-pillars-library-structure.mjs
       - run: node scripts/verify-four-pillars-yun-offset.mjs
       - run: node scripts/verify-four-pillars-yun-term.mjs
+      - run: node scripts/verify-four-pillars-jie-calendar.mjs
+      - run: node scripts/verify-four-pillars-yun-calendar.mjs

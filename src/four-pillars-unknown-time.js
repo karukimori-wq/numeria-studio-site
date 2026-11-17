@@ -16,7 +16,7 @@ export function threePillarsForUnknownTime(clock,referenceDate){
   for(const y of [year-1,year,year+1]){
    const terms=Solar.fromYmd(y,1,1).getLunar().getJieQiTable();
    for(const term of Object.values(terms)){
-    const ms=Date.parse(term.toYmdHms().replace(' ','T')+'+09:00');
+    const ms=Date.parse(term.toYmdHms().replace(' ','T')+'+08:00');
     if(start<=ms&&ms<end)return stop('SOLAR_TERM_BOUNDARY_UNCERTAIN');
    }
   }

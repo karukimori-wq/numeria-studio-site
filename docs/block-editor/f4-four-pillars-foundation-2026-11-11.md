@@ -41,3 +41,15 @@ lunar-typescript 1.8.6を固定依存へ追加。明示的に正規化済みと�
 ## 順逆・節選択helper
 
 決定36/58/59に沿い明示計算用性別と確定年干から順逆を決定。呼出側が完全な正本節暦（時差付き瞬間・版）を渡したとき、前後節を選び決定86換算へ接続。中国暦ライブラリのcivil時刻を無検証でJST瞬間へ変換しないため、実暦生成adapterは後続。4通りの順逆・前後節・秒差・不足／不正／重複を合成fixtureで検査。出生と節の完全一致は採用規則未確定としてreview-required。実天文照合・暦加算・大運・正式ページは未接続。
+
+## 2026-11-17：実節暦と起運の接続・既存API保全
+
+main `5d002e2818e2385f896f3a7243024c98488ddda7` の既存 `calculateFourPillarsCore`／`calculateFourPillarsFromClock`／`countPillarElements` を保持し、F4投影は既存coreを呼ぶ。mainの年柱・月柱のUTC+8境界処理と、日柱・時柱のJST／sect2を再利用。#94旧adapterのAPI置換で全体テストが失敗する問題を修正した。mainに時差バグがあるという判定ではない。
+
+節暦adapterは固定lunar-typescript 1.8.6の前年〜翌年36節をUTCへ変換。一次実装 `dist/lib/ShouXingUtil.mjs` の `qiAccurate` が加える `ONE_THIRD`（8時間）を確認。unknown-time区間の節判定もUTC+8へ合わせた。正規化出生時計→既存命式→計算用性別→前後節→決定86差分換算が接続済み。出生時刻／性別不足・未確認時計・DST gapは結果を返さず、節との完全一致はreview-required。実暦の結果はreview-required／publicationAllowed=falseを維持する。
+
+独立参照はNotion確定のNAOJ 2026立春05:02 JST（分精度、許容60秒）1件のみ。実値 `2026-02-03T20:02:08.000Z`（JST05:02:08）、PASS。fixture SHA256 `0a111b599af1582e9ee12bcdbfe304aa70db695e609d6c782a0cfb5a2421bbfd`、calendar版 `ns.bazi.jie.lunar-typescript-1.8.6.utc8.v1`。他節・起運全体・全命式の独立検証へ拡大解釈しない。実暦の前後判定は回帰テストであり、1秒精度の天文正解とは扱わない。
+
+検査：四柱専用10スクリプト、既存npm test、npm run build。暦加算／起運開始日／大運／正式Result Key／登録原文／F3正式図表／UI保存／実D1／Browser／PDFは未受入。DB schema・顧客データへの書き込みなし。
+
+Notionの最新表には別系統の#95／#96（四柱8ページ）もある。#94の5ページという数と合算しない。本書の暫定85件集計は古い枝の棚卸しで、最新main＋全Draftの再監査が必要。#94をmainや#96へ丸ごと置換しない。統合時は既存APIと版付きadapterの差分だけをレビューし、既存命式・保存経路・未接続状態を再検査する。
