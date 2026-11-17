@@ -194,6 +194,19 @@ try {
       assert.deepEqual((await api("/api/appraisals/session_bazi_fixture", null, workspace)).body.session.snapshot, restored);
     }
   }
+  const yunSnapshot = { ...baziSnapshot, id: "session_bazi_yun", fourPillarsInput: { ...baziInput, birthClock: { ...baziClock, time: "12:00:00" }, calculationSex: "male" }, fourPillarsCalculation: { calculation: { yun: { direction: "forged", offset: { totalMinutes: 0 } } }, publicationAllowed: true } };
+  const yunSaved = await api("/api/appraisals/save-draft", { appraisalId: yunSnapshot.id, expectedDraftVersion: null, divination: "four-pillars", snapshot: yunSnapshot }, "bazi_yun_ws");
+  assert.equal(yunSaved.status,201);
+  const yunRestored = (await api("/api/appraisals/session_bazi_yun",null,"bazi_yun_ws")).body.session.snapshot;
+  assert.equal(yunRestored.fourPillarsCalculation.calculation.yun.state,"available");
+  assert.notEqual(yunRestored.fourPillarsCalculation.calculation.yun.direction,"forged");
+  assert.equal(validateFourPillarsCalculationCheckpoint(yunRestored).ok,true);
+  assert.deepEqual(yunRestored.drafts,baziSnapshot.drafts);
+  const sexChangedYun = await api("/api/appraisals/save-draft", { appraisalId:yunSnapshot.id, expectedDraftVersion:yunSaved.body.activeDraft.draftVersion, snapshot: { ...yunRestored, fourPillarsInput: { ...yunRestored.fourPillarsInput, calculationSex: "female" } } },"bazi_yun_ws");
+  assert.equal(sexChangedYun.status,201);
+  const changedYunRestored = (await api("/api/appraisals/session_bazi_yun",null,"bazi_yun_ws")).body.session.snapshot;
+  assert.notEqual(changedYunRestored.fourPillarsCalculation.calculation.yun.direction,yunRestored.fourPillarsCalculation.calculation.yun.direction);
+  assert.deepEqual(changedYunRestored.drafts,baziSnapshot.drafts);
   const retainedReport = await api("/api/reports/rep_immutable");
   assert.equal(retainedReport.body.report.reportSnapshot.resultSummary, "旧Reportの本文");
   console.log("Kigaku checkpoint: real Worker SQL/SQLite save and session restore PASS; synthetic identity/D1 transport; no production D1 or browser claim.");

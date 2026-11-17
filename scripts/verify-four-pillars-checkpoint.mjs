@@ -23,3 +23,15 @@ const lostPartner=attach({...original,fourPillarsInput:{...fourPillarsInput,part
 assert.equal(lostPartner.fourPillarsCalculation.calculation.pages[0].state,'available');assert.equal(lostPartner.fourPillarsCalculation.calculation.pages[7].state,'required-missing');assert.equal(lostPartner.fourPillarsCalculation.calculation.pages[7].data,null);
 const foreign={...original,divination:'tarot'};assert.equal(attach(foreign),foreign);assert.equal(validate(foreign).code,'METHOD_MISMATCH');
 console.log('Four Pillars checkpoint: clock/pair/family/identity tampering, stale approvals, forged status, JSON restore and unknown-field/body retention PASS; draft only.');
+
+const timedInput={...fourPillarsInput,birthClock:{...clock,time:'12:00:00'},calculationSex:'male'};
+const timed=attach({...original,fourPillarsInput:timedInput});
+assert.equal(timed.fourPillarsCalculation.calculation.yun.state,'available');
+const sexChanged=structuredClone(timed);sexChanged.fourPillarsInput.calculationSex='female';assert.equal(validate(sexChanged).ok,false);
+const recalculated=attach(sexChanged);assert.notEqual(recalculated.fourPillarsCalculation.calculation.yun.direction,timed.fourPillarsCalculation.calculation.yun.direction);
+assert.deepEqual(recalculated.drafts,old.drafts);
+const forgedYun=structuredClone(timed);forgedYun.fourPillarsCalculation.calculation.yun.offset.totalMinutes=0;assert.equal(validate(forgedYun).ok,false);
+const noSex=attach({...original,fourPillarsInput:{...timedInput,calculationSex:null,gender:'male'}});
+assert.equal(noSex.fourPillarsCalculation.calculation.yun.reason,'CALCULATION_SEX_REQUIRED');
+assert.equal(noSex.fourPillarsCalculation.calculation.pages.filter(page=>page.data).length,10);
+console.log('Yun checkpoint: explicit calculation sex, stale direction/offset rejection, no profile inference and independent subject pages PASS.');

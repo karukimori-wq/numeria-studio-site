@@ -1,3 +1,4 @@
+import { fourPillarsYunFromBirthClock } from "./four-pillars-yun-calendar.js";
 import { compareFourPillars, FOUR_PILLARS_COMPARISON_VERSION } from "./four-pillars-comparison.js";
 import { fixedPillarDetails, FOUR_PILLARS_TABLE_VERSION } from "./four-pillars-fixed-tables.js";
 import { fourPillarsFromBirthClock } from './four-pillars-birth-clock.js';
@@ -28,6 +29,7 @@ export function buildFourPillarsPageData(input = {}) {
     return envelope;
   }
   const result = fourPillarsFromBirthClock(input);
+  envelope.yun = fourPillarsYunFromBirthClock(input);
   envelope.calculationVersion = result.calculationVersion ?? null;
   envelope.clockNormalization = result.clockNormalization ?? null;
   for (const page of pages.filter(page => Object.hasOwn(FOUR_PILLARS_PAGE_SOURCE_PATHS, page.pageDefinitionId))) {
