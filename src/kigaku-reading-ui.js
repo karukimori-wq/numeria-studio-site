@@ -39,10 +39,10 @@ export function createKigakuReadingComponent(R) {
         if (!window.confirm('未保存の九星入力があります。画面を離れますか？')) { event.preventDefault(); event.stopImmediatePropagation(); }
       };
       window.addEventListener('beforeunload', beforeUnload);
-      window.addEventListener('click', navigation, true);
+      document.addEventListener('click', navigation, true);
       const pending = window.NumeriaKigakuPendingRestore;
       if (pending) { delete window.NumeriaKigakuPendingRestore; client.current.restore(pending); }
-      return () => { window.removeEventListener('beforeunload', beforeUnload); window.removeEventListener('click', navigation, true); };
+      return () => { window.removeEventListener('beforeunload', beforeUnload); document.removeEventListener('click', navigation, true); };
     }, []);
     const s = state || client.current.current(), input = s.input, clock = input.birthClock || { date: '', time: null, countryCode: 'JP', zoneId: 'Asia/Tokyo', zoneConfirmed: false };
     const change = patch => client.current.change(patch);

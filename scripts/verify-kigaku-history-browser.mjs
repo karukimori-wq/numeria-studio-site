@@ -79,7 +79,7 @@ try {
  await page.evaluate(()=>{window.__leavePrompts=0;window.confirm=()=>{window.__leavePrompts++;return false;};});
  await page.getByRole('button',{name:'カルテ一覧へ戻る',exact:true}).click();
  assert.equal(await page.evaluate(()=>window.__leavePrompts),1,'Unsaved navigation must request confirmation');
- assert.equal(await page.getByLabel('相談文',{exact:true}).inputValue(),'新しい相談');
+ assert.equal(await page.getByLabel(/^相談文/).inputValue(),'新しい相談');
  assert.equal(await page.locator('.history-list').count(),0);
  assert.equal(await page.getByRole('button',{name:'スタンダード A4草案／PDF',exact:true}).isDisabled(),true);
  assert.equal(await page.locator('article').count(),0);assert.equal(saves,0);
