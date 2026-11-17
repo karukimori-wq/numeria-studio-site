@@ -11,7 +11,7 @@ assert.ok(file,'Build first');
 const testModule=assets+'/kigaku-host-fixture.js';
 await writeFile(testModule,(await readFile(assets+'/'+file,'utf8'))+'\nexport {us as FixtureHost,i as FixtureReact};');
 await mkdir('tmp/kigaku-host',{recursive:true});
-await writeFile('tmp/kigaku-host/index.html',`<div id="root"></div><script type="module">
+await writeFile('tmp/kigaku-host/index.html',`<meta charset="utf-8"><div id="root"></div><script type="module">
 import {FixtureHost,FixtureReact as React} from '/dist/assets/kigaku-host-fixture.js';
 import {t as domFactory} from '/dist/assets/framework-client-7951bef0cc41.js';
 localStorage.setItem('numeria-onboarding-seen:fixture%40example.test','1');
@@ -31,6 +31,7 @@ try{
  page.on('console',m=>{if(m.type()==='error')console.error('Browser:',m.text());});
  await page.route('**/api/**',r=>r.fulfill({json:{planId:'pro',subscription:{planId:'pro'},activeDraft:null,completedAppraisals:[]}}));
  await page.goto('http://127.0.0.1:4181/tmp/kigaku-host/index.html');
+ await page.getByText('クラウド同期済み',{exact:true}).waitFor({timeout:15000});
  await page.getByRole('button',{name:/鑑定カルテ$/}).first().click({timeout:15000});
  await page.getByText('通し検査の相談者',{exact:true}).first().waitFor({timeout:15000});
  await page.getByText('通し検査の相談者',{exact:true}).first().click();
