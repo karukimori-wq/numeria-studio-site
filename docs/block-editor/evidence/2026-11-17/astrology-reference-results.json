@@ -1,0 +1,234 @@
+{
+  "main": "5d002e2818e2385f896f3a7243024c98488ddda7",
+  "cases": [
+    {
+      "id": "JPL-Sun",
+      "input": {
+        "body": "Sun",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "transportInput": {
+        "methodKey": "western-astrology",
+        "subjectId": "jpl-fictional-fixture",
+        "birthDate": "2000-01-01",
+        "clockTime": "21:00:00",
+        "countryCode": "JP",
+        "zoneConfirmed": true,
+        "referenceDate": "2026-11-17"
+      },
+      "expected": {
+        "longitudeDegrees": 280.3689092,
+        "latitudeDegrees": 0.0002381,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Sun",
+        "longitudeDegrees": 280.3687386398185,
+        "latitudeDegrees": 0.0000011205040933117655,
+        "sign": "Capricorn",
+        "element": "earth",
+        "modality": "cardinal"
+      },
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "calculatorVersion": "astronomy-engine@2.1.19",
+      "adapterVersion": "ns.astrology.page-data.v1",
+      "fixtureSha256": "05532adcadafc2945217e9b0c3fb4440ab8f007713365c22a0a595891a36e8cd",
+      "result": "PASS"
+    },
+    {
+      "id": "JPL-Moon",
+      "input": {
+        "body": "Moon",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "transportInput": {
+        "methodKey": "western-astrology",
+        "subjectId": "jpl-fictional-fixture",
+        "birthDate": "2000-01-01",
+        "clockTime": "21:00:00",
+        "countryCode": "JP",
+        "zoneConfirmed": true,
+        "referenceDate": "2026-11-17"
+      },
+      "expected": {
+        "longitudeDegrees": 223.323786,
+        "latitudeDegrees": 5.1707422,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Moon",
+        "longitudeDegrees": 223.32389112747416,
+        "latitudeDegrees": 5.17078933045782,
+        "sign": "Scorpio",
+        "element": "water",
+        "modality": "fixed"
+      },
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "calculatorVersion": "astronomy-engine@2.1.19",
+      "adapterVersion": "ns.astrology.page-data.v1",
+      "fixtureSha256": "05532adcadafc2945217e9b0c3fb4440ab8f007713365c22a0a595891a36e8cd",
+      "result": "PASS"
+    },
+    {
+      "id": "JPL-Mars",
+      "input": {
+        "body": "Mars",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "transportInput": {
+        "methodKey": "western-astrology",
+        "subjectId": "jpl-fictional-fixture",
+        "birthDate": "2000-01-01",
+        "clockTime": "21:00:00",
+        "countryCode": "JP",
+        "zoneConfirmed": true,
+        "referenceDate": "2026-11-17"
+      },
+      "expected": {
+        "longitudeDegrees": 327.9632921,
+        "latitudeDegrees": -1.0677752,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Mars",
+        "longitudeDegrees": 327.96389907790285,
+        "latitudeDegrees": -1.068082029631237,
+        "sign": "Aquarius",
+        "element": "air",
+        "modality": "fixed"
+      },
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "calculatorVersion": "astronomy-engine@2.1.19",
+      "adapterVersion": "ns.astrology.page-data.v1",
+      "fixtureSha256": "05532adcadafc2945217e9b0c3fb4440ab8f007713365c22a0a595891a36e8cd",
+      "result": "PASS"
+    },
+    {
+      "id": "JPL-Jupiter",
+      "input": {
+        "body": "Jupiter",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "transportInput": {
+        "methodKey": "western-astrology",
+        "subjectId": "jpl-fictional-fixture",
+        "birthDate": "2000-01-01",
+        "clockTime": "21:00:00",
+        "countryCode": "JP",
+        "zoneConfirmed": true,
+        "referenceDate": "2026-11-17"
+      },
+      "expected": {
+        "longitudeDegrees": 25.2530685,
+        "latitudeDegrees": -1.2621868,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Jupiter",
+        "longitudeDegrees": 25.254199844874247,
+        "latitudeDegrees": -1.2604530079556928,
+        "sign": "Aries",
+        "element": "fire",
+        "modality": "cardinal"
+      },
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "calculatorVersion": "astronomy-engine@2.1.19",
+      "adapterVersion": "ns.astrology.page-data.v1",
+      "fixtureSha256": "05532adcadafc2945217e9b0c3fb4440ab8f007713365c22a0a595891a36e8cd",
+      "result": "PASS"
+    },
+    {
+      "id": "JPL-Neptune",
+      "input": {
+        "body": "Neptune",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "transportInput": {
+        "methodKey": "western-astrology",
+        "subjectId": "jpl-fictional-fixture",
+        "birthDate": "2000-01-01",
+        "clockTime": "21:00:00",
+        "countryCode": "JP",
+        "zoneConfirmed": true,
+        "referenceDate": "2026-11-17"
+      },
+      "expected": {
+        "longitudeDegrees": 303.1930007,
+        "latitudeDegrees": 0.2350026,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Neptune",
+        "longitudeDegrees": 303.1954420594734,
+        "latitudeDegrees": 0.23714822429110913,
+        "sign": "Aquarius",
+        "element": "air",
+        "modality": "fixed"
+      },
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27899%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "calculatorVersion": "astronomy-engine@2.1.19",
+      "adapterVersion": "ns.astrology.page-data.v1",
+      "fixtureSha256": "05532adcadafc2945217e9b0c3fb4440ab8f007713365c22a0a595891a36e8cd",
+      "result": "PASS"
+    },
+    {
+      "id": "JPL-Pluto",
+      "input": {
+        "body": "Pluto",
+        "instant": "2000-01-01T12:00:00Z",
+        "center": "geocentric",
+        "frame": "apparent true ecliptic of date"
+      },
+      "transportInput": {
+        "methodKey": "western-astrology",
+        "subjectId": "jpl-fictional-fixture",
+        "birthDate": "2000-01-01",
+        "clockTime": "21:00:00",
+        "countryCode": "JP",
+        "zoneConfirmed": true,
+        "referenceDate": "2026-11-17"
+      },
+      "expected": {
+        "longitudeDegrees": 251.4547644,
+        "latitudeDegrees": 10.8552605,
+        "toleranceDegrees": 0.02
+      },
+      "actual": {
+        "body": "Pluto",
+        "longitudeDegrees": 251.4547351599136,
+        "latitudeDegrees": 10.855210704886899,
+        "sign": "Sagittarius",
+        "element": "fire",
+        "modality": "mutable"
+      },
+      "source": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27999%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272000-01-01+12%3A00%27&STOP_TIME=%272000-01-01+12%3A01%27&STEP_SIZE=%271m%27&QUANTITIES=%2731%27&CSV_FORMAT=%27YES%27&EXTRA_PREC=%27YES%27&APPARENT=%27AIRLESS%27",
+      "sourceVerificationStatus": "checked-in-review",
+      "calculatorVersion": "astronomy-engine@2.1.19",
+      "adapterVersion": "ns.astrology.page-data.v1",
+      "fixtureSha256": "05532adcadafc2945217e9b0c3fb4440ab8f007713365c22a0a595891a36e8cd",
+      "result": "PASS"
+    }
+  ],
+  "pageIndependentAccepted": 0,
+  "publicationAllowed": false,
+  "limitations": [
+    "Six pre-existing independent JPL fixtures reused; no new live Horizons request",
+    "Four other planets, houses, axes, all-date coverage and full-page acceptance unverified",
+    "JSON roundtrip is not D1 or browser acceptance"
+  ]
+}

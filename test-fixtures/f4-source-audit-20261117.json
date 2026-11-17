@@ -1,0 +1,324 @@
+{
+  "auditDate": "2026-11-17",
+  "main": "5d002e2818e2385f896f3a7243024c98488ddda7",
+  "kigaku": {
+    "sha": "5c6675399a74c5779c67a8caacdd4e653af183d1",
+    "pr": 86,
+    "pages": {
+      "KIG-01": {
+        "sourcePaths": [
+          "natal.mainStar",
+          "natal.monthStar"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed"
+        ],
+        "optionalInput": [
+          "birthClock.time (unknown allowed only when required stars are certain)"
+        ]
+      },
+      "KIG-02": {
+        "sourcePaths": [
+          "natal.mainStar",
+          "natal.monthStar"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed"
+        ],
+        "optionalInput": [
+          "birthClock.time (unknown allowed only when required stars are certain)"
+        ]
+      },
+      "KIG-03": {
+        "sourcePaths": [
+          "year.board",
+          "natal.mainStar"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed"
+        ],
+        "optionalInput": [
+          "birthClock.time (unknown allowed only when required stars are certain)"
+        ]
+      },
+      "KIG-04": {
+        "sourcePaths": [
+          "month.board",
+          "natal.mainStar"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed"
+        ],
+        "optionalInput": [
+          "birthClock.time (unknown allowed only when required stars are certain)"
+        ]
+      },
+      "KIG-05": {
+        "sourcePaths": [
+          "day.board",
+          "day.date"
+        ],
+        "requiredInput": [
+          "referenceInstant"
+        ],
+        "optionalInput": []
+      },
+      "KIG-06": {
+        "sourcePaths": [
+          "analysis.year",
+          "analysis.month",
+          "analysis.common"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed"
+        ],
+        "optionalInput": [
+          "birthClock.time (unknown allowed only when required stars are certain)"
+        ]
+      },
+      "KIG-07": {
+        "sourcePaths": [
+          "months.rows"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed"
+        ],
+        "optionalInput": [
+          "birthClock.time (unknown allowed only when required stars are certain)"
+        ]
+      },
+      "KIG-08": {
+        "sourcePaths": [
+          "natal.mainStar",
+          "partnerResult.natal.mainStar",
+          "natal.monthStar",
+          "partnerResult.natal.monthStar"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed",
+          "subjectId",
+          "partnerSubjectId",
+          "partnerBirthClock.date",
+          "partnerBirthClock.countryCode",
+          "partnerBirthClock.zoneId",
+          "partnerBirthClock.zoneConfirmed"
+        ],
+        "optionalInput": [
+          "birthClock.time (boundary-dependent)",
+          "partnerBirthClock.time (boundary-dependent)",
+          "monthComparison (both month stars must be certain)"
+        ]
+      },
+      "KIG-09": {
+        "sourcePaths": [
+          "natal.mainStar",
+          "partnerResult.natal.mainStar"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed",
+          "subjectId",
+          "partnerSubjectId",
+          "partnerBirthClock.date",
+          "partnerBirthClock.countryCode",
+          "partnerBirthClock.zoneId",
+          "partnerBirthClock.zoneConfirmed",
+          "loveRelationship"
+        ],
+        "optionalInput": [
+          "birthClock.time (boundary-dependent)",
+          "partnerBirthClock.time (boundary-dependent)",
+          "monthComparison (both month stars must be certain)"
+        ]
+      },
+      "KIG-10": {
+        "sourcePaths": [
+          "natal.mainStar",
+          "partnerResult.natal.mainStar"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed",
+          "subjectId",
+          "partnerSubjectId",
+          "partnerBirthClock.date",
+          "partnerBirthClock.countryCode",
+          "partnerBirthClock.zoneId",
+          "partnerBirthClock.zoneConfirmed",
+          "workRelationship"
+        ],
+        "optionalInput": [
+          "birthClock.time (boundary-dependent)",
+          "partnerBirthClock.time (boundary-dependent)",
+          "monthComparison (both month stars must be certain)"
+        ]
+      },
+      "KIG-11": {
+        "sourcePaths": [
+          "year.board",
+          "month.board",
+          "natal.mainStar"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed",
+          "workTheme"
+        ],
+        "optionalInput": [
+          "birthClock.time (unknown allowed only when required stars are certain)"
+        ]
+      },
+      "KIG-12": {
+        "sourcePaths": [
+          "analysis.selected",
+          "analysis.common"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed",
+          "selectedDirection",
+          "directionPurpose"
+        ],
+        "optionalInput": [
+          "birthClock.time (unknown allowed only when required stars are certain)"
+        ]
+      },
+      "KIG-13": {
+        "sourcePaths": [
+          "natal.mainStar",
+          "partnerResult.natal.mainStar"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed",
+          "subjectId",
+          "partnerSubjectId",
+          "partnerBirthClock.date",
+          "partnerBirthClock.countryCode",
+          "partnerBirthClock.zoneId",
+          "partnerBirthClock.zoneConfirmed",
+          "familyRelationship"
+        ],
+        "optionalInput": [
+          "birthClock.time (boundary-dependent)",
+          "partnerBirthClock.time (boundary-dependent)",
+          "monthComparison (both month stars must be certain)"
+        ]
+      },
+      "KIG-14": {
+        "sourcePaths": [
+          "years.rows"
+        ],
+        "requiredInput": [
+          "referenceInstant",
+          "birthClock.date",
+          "birthClock.countryCode",
+          "birthClock.zoneId",
+          "birthClock.zoneConfirmed"
+        ],
+        "optionalInput": [
+          "birthClock.time (unknown allowed only when required stars are certain)"
+        ]
+      }
+    }
+  },
+  "fourPillars": {
+    "sha": "a09a3da6437a3f305d7bf1f8c1efd9c4eaa62592",
+    "pr": 99,
+    "pages": {
+      "BAZ-01": [
+        "pillars.year",
+        "pillars.month",
+        "pillars.day",
+        "pillars.hour"
+      ],
+      "BAZ-02": [
+        "pillars.day",
+        "pillars"
+      ],
+      "BAZ-03": [
+        "elements.data.visibleElementCounts",
+        "elements.data.includedPillars"
+      ],
+      "BAZ-04": [
+        "details.rows",
+        "details.placements"
+      ],
+      "BAZ-05": [
+        "details.rows.twelveStage"
+      ],
+      "BAZ-08": [
+        "comparison.dayStemRelation",
+        "comparison.matches",
+        "comparison.includedPillars"
+      ],
+      "BAZ-12": [
+        "comparison",
+        "familyContext",
+        "parentDirection"
+      ],
+      "BAZ-09": [
+        "details.dayStem",
+        "details.dayBranch",
+        "details.placements"
+      ],
+      "BAZ-10": [
+        "details.dayStem",
+        "details.placements"
+      ],
+      "BAZ-11": [
+        "details.dayStem",
+        "details.wealthPlacements"
+      ]
+    }
+  },
+  "yun": {
+    "sha": "4761c21ea8b0dccc2cd77bd25b28bed94b52798d",
+    "pr": 94,
+    "pageConnection": "none; no start date or DaYun"
+  },
+  "caveat": "Cross-branch inventory only; these branches are not merged together. Source paths are not formal Result Keys. Browser result previews in PR99 are not approved final pages."
+}

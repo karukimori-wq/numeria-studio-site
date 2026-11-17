@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {REPORT_PAGE_DEFINITIONS} from '../src/report-page-definitions.js';
+import {REPORT_RESULT_REFERENCES} from '../src/report-result-references.js';
+import {ASTROLOGY_PAGE_SOURCE_PATHS} from '../src/astrology-page-data.js';
+const audit=JSON.parse(readFileSync('test-fixtures/f4-source-audit-20261117.json'));
+const rows=REPORT_PAGE_DEFINITIONS.map(d=>{
+ const id=d.pageDefinitionId,r=REPORT_RESULT_REFERENCES.find(x=>x.pageDefinitionId===id);
+ const row={pageId:id,method:d.methodKey,title:d.title,requiredInput:d.availabilityCondition,optionalInput:null,resultKey:null,declaredGenericKeys:d.requiredResultKeys,sourcePaths:[],calculator:null,connectionStatus:'unconnected',missingPolicy:'required; see pageInputRule',pageInputRule:r.publicationRule,requiredReference:r.resultReference,visualType:r.figureTypes,registeredText:'source-missing: approved text selector not accepted',referenceTest:'unverified',browserTest:'unverified',pdfTest:'unverified',githubEvidence:`main ${audit.main}`,verdict:'未検証'};
+ if(d.methodKey==='numerology')Object.assign(row,{connectionStatus:'partial',resultKey:'core_numbers',sourcePaths:[`numerologyCalculation.pageResults[${id}]`],calculator:'src/numerology-calculator.js',referenceTest:'11 recorded fixtures; partial; not full-page acceptance'});
+ if(d.methodKey==='tarot')Object.assign(row,{connectionStatus:'partial',sourcePaths:[`calculateTarot(...).pages[${Number(id.slice(4))-1}].data`],calculator:'src/tarot-calculator.js',requiredInput:'確定Draw・登録spread/位置・カードID/正逆・ページ別用途／相手／選択肢／基準日。'+d.availabilityCondition,referenceTest:'78 IDs / 8 spread mapping and save harness; full-page independently unverified',missingPolicy:'required: missing Draw/positions/purpose blocks; sample cards never used'});
+ const kig=audit.kigaku.pages[id];
+ if(kig)Object.assign(row,{...kig,connectionStatus:'partial',calculator:'src/kigaku-result.js + page/direction/period adapters',referenceTest:'3 solar events + 81 manual pairs; partial',githubEvidence:`PR #86 ${audit.kigaku.sha}`,missingPolicy:'page required/optional inputs; no inferred star/direction'});
+ if(audit.fourPillars.pages[id])Object.assign(row,{connectionStatus:'partial',sourcePaths:audit.fourPillars.pages[id],calculator:'src/four-pillars-page-data.js (#99)',requiredInput:'日本出生時計確認・日付・必要時刻／offset。比較は相手の独立出生時計・ID。家族は明示関係／親子方向。'+d.availabilityCondition,optionalInput:['BAZ-01','BAZ-03'].includes(id)?'確定三柱のみの場合hour=null':null,referenceTest:'Notion tables / fixed-library / normative comparison tests; full-chart independently unverified',browserTest:'partial development preview only: PR99 input/save/restore; final text/figure page unverified',githubEvidence:`PR #99 ${audit.fourPillars.sha}; #94 Yun separate and not counted`,missingPolicy:'unknown hour never generated; missing partner affects comparison only; missing wealth placements valid-zero'});
+ if(ASTROLOGY_PAGE_SOURCE_PATHS[id])Object.assign(row,{connectionStatus:'partial',sourcePaths:ASTROLOGY_PAGE_SOURCE_PATHS[id],calculator:'src/astrology-page-data.js -> existing calculatePlanetPositions/calculateAspect',requiredInput:'日本出生確認・出生年月日・明示時計時刻・DST重複時のoffset選択・保存基準日。座標なし地心計算のみ。',optionalInput:id==='AST-02'?'ASC optional-missing: axis solver unconnected':null,referenceTest:'6 recorded JPL body fixtures at one instant; other bodies/all-date/full-page unverified',githubEvidence:'codex/f4-astrology-results (this PR)',missingPolicy:'unknown-time interval adapter unconnected; no noon; ASC/MC/houses never inferred; 0 vote preserved'});
+ return row;
+});
+assert.equal(rows.length,85);assert.equal(new Set(rows.map(r=>r.pageId)).size,85);
+const counts=Object.fromEntries(['connected','partial','unconnected'].map(s=>[s,rows.filter(r=>r.connectionStatus===s).length]));
+assert.deepEqual(counts,{connected:0,partial:56,unconnected:29});
+const report={basis:audit,definition:'partial = an implemented page calculation projection on its stated branch; connected requires formal Result Key + approved text + figure + acceptance. Not an integrated build.',counts,independentVerifiedPages:0,browserVerifiedFinalPages:0,pdfVerifiedPages:0,rows};
+writeFileSync('docs/block-editor/f4-cross-branch-ledger-20261117.json',JSON.stringify(report,null,2)+'\n');
+const keys=Object.keys(rows[0]),esc=v=>String(Array.isArray(v)?v.join('; '):v??'unconnected').replaceAll('|','\\|').replaceAll('\n',' ');
+writeFileSync('docs/block-editor/f4-cross-branch-ledger-20261117.md','# F4 85ページ接続台帳（2026-11-17）\n\nconnected 0 / partial 56 / unconnected 29。独立・Browser・PDFの正式ページ受入0。partialは各枝の計算投影で、統合済みや正式Result接続済みを意味しない。#99の10ページと#94の起運helperを合算しない。旧台帳の33/52を更新し、main既存タロット13ページも棚卸しへ追加。一般的なnatal_chart宣言だけでは正式Result Key接続へ昇格しない。\n\n|'+keys.join('|')+'|\n|'+keys.map(()=> '---').join('|')+'|\n'+rows.map(r=>'|'+keys.map(k=>esc(r[k])).join('|')+'|').join('\n')+'\n');
+console.log('85 distinct pages audited: connected 0 / partial 56 / unconnected 29; final-page independent/browser/PDF acceptance 0.');

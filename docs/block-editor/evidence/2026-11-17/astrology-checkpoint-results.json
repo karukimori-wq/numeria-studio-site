@@ -1,0 +1,24 @@
+{
+  "executedAt": "2026-11-17T14:41:12.652Z",
+  "checkpointVersion": "ns.astrology.calculation-checkpoint.v1",
+  "calculatorVersion": "astronomy-engine@2.1.19",
+  "moduleSha256": "f08c3484691813d8a882b8b94528dfd3f5148c8376d3910e9a7276c5a308aead",
+  "workerSql": "Executed actual production Worker D1 SQL on local SQLite with migrations",
+  "checks": [
+    "recompute forged values/status",
+    "scope binding",
+    "SQL save and Session API restore",
+    "unknown fields/body retained",
+    "missing-time stale result invalidation",
+    "legacy no-key and snapshot-less notes update",
+    "CAS stale version 409",
+    "failed write preserves existing row",
+    "wrong ACK scope/version/content and offline rejected"
+  ],
+  "outcome": "PASS",
+  "authTransport": "fixture",
+  "liveD1Verified": false,
+  "browserVerified": false,
+  "pdfVerified": false,
+  "publicationAllowed": false
+}
