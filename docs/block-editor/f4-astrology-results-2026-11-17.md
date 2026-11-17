@@ -21,7 +21,7 @@ main `5d002e2818e2385f896f3a7243024c98488ddda7` 起点の `codex/f4-astrology-re
 - 16ページschema、5投影／11未接続、票数10、0区分、サイン半開境界、異占術隔離、入力非破壊、JSON保存復元の等価性。
 - 不正度数・天体不足／重複・sample・座標系違いの拒否。出生／基準日範囲、時刻不明、日本確認不足、DST gap/foldを検査。
 - 既存独立JPL fixture6例（Sun/Moon/Mars/Jupiter/Neptune/Pluto、2000-01-01T12:00Z）を出生時計→計算→AST-03データ経路で再照合。入力・期待値・実値・出典・計算版・fixture SHA256・PASSは `evidence/2026-11-17/astrology-reference-results.json`。今回新規にJPLへ問い合わせたものではない。残4天体／全期間／完全出生図／完全ページの正解確認には加算しない。
-- 四柱や九星の計算結果を読み込まない。持込のresult/confirmed値を参照せず入力から再計算。DB schemaと保存APIを変更せず顧客データへ書き込まない。
+- 四柱や九星の計算結果を読み込まない。持込のresult/confirmed値を参照せず入力から再計算。DB schemaは変更せず、後続checkpointで既存保存APIに再計算を追加。実顧客データへの書き込みなし。
 - npm test / npm run buildを実行。実D1保存・実ブラウザ・アプリPDFは未検証。JSON等価性をD1受入の代用にしない。
 
 ## 85行再棚卸し
@@ -34,4 +34,12 @@ main `5d002e2818e2385f896f3a7243024c98488ddda7` 起点の `codex/f4-astrology-re
 
 本枝checkout後、`npm install --ignore-scripts`、`node scripts/verify-astrology-page-data.mjs`、`node scripts/verify-astrology-references.mjs`、`node scripts/generate-f4-cross-branch-ledger.mjs`。現時点でこのadapterの配信preview URLはない。UIへ未接続のため、既存previewで確認済みと記録しない。
 
-次は版付き計算checkpoint／既存Session保存経路、時刻不明区間保証、独立照合済みPlacidus/ASC/MCの接続。原文・F3図表・Browser/PDF受入は別途必要。main反映／本番公開なし。
+次は保存helperを呼ぶ入力／再開UI、時刻不明区間保証、独立照合済みPlacidus/ASC/MCの接続。原文・F3図表・Browser/PDF受入は別途必要。main反映／本番公開なし。
+
+## 追記：版付きcheckpointとSession保存境界
+
+`astrology-calculation-checkpoint.js` を追加。入力・Session ID・対象ID・出生年月日・保存基準日を束ね、入力からページ結果を再計算する。トップstatusはdraft／publicationAllowed=false、checkpointとページもreview-required／publicationAllowed=false。対象ID・日付の不一致はrequired-missingにし、古い計算を残さない。未知フィールドと本文はspreadで保持し、他占術を再計算しない。新入力なしの旧下書きは維持し、古い西洋checkpointやconfirmed/completed状態が持ち込まれた場合だけ既知の計算権限を取り除く。
+
+Worker `/api/appraisals/save-draft` は西洋snapshotの外側Session ID／占術／出生年月日との一致を確認し、既存数秘処理後に西洋を再計算。古い形式のsnapshotなし本文更新は維持。DB migrationなし。client helperはcaptured snapshotを一度だけ計算し、既存CAS版を送付。保存応答のSession ID／版／checkpoint再現／本文・未知フィールド一致を検査し、偽ACK・欠落・409・通信失敗で成功扱いにしない。UIからの呼出は未接続で、連打／編集途中の画面制御は受入未完。
+
+`verify-astrology-checkpoint.mjs` は実WorkerのD1 SQLをローカルSQLiteで実行。偽計算→サーバー再計算→保存→Session API復元、未知フィールド／本文／他占術値保持、時刻解除による古い計算消去、旧下書き／本文だけの更新、Session/占術不一致400、古い版409、書込失敗時の既存行保全、client保存ACK・通信失敗を検査。認証とD1 transportはfixtureであり、実D1／ブラウザ合格ではない。85件のconnected/partial/unconnectedは0/56/29を維持する。

@@ -1,6 +1,7 @@
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 import { withNumerologyRegisteredSelection } from "./numerology-registered-draft.js";
+import { withAstrologyCalculationCheckpoint } from "./astrology-calculation-checkpoint.js";
 
 const APP_VERSION = "0.3.12-report-delivery-status";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
@@ -2600,6 +2601,14 @@ async function handleApi(request, env = {}, ctx = null) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
     const previousDraft = isSameDraft ? currentDraft : null;
+    if (!body.snapshot && previousDraft?.snapshot?.divination === "western-astrology" && Object.hasOwn(body, "birthDate") && String(body.birthDate).trim() !== previousDraft.snapshot.birthday) {
+      return json({ status: "error", errorCode: "ASTROLOGY_SNAPSHOT_SCOPE_MISMATCH" }, { status: 400 });
+    }
+    if (body.snapshot && typeof body.snapshot === "object" && (body.divination === "western-astrology" || body.snapshot.divination === "western-astrology")) {
+      if ((body.divination ?? previousDraft?.divination) !== "western-astrology" || body.snapshot.divination !== "western-astrology" || body.snapshot.id !== appraisalId || body.snapshot.birthday !== String(body.birthDate ?? previousDraft?.birthDate ?? "").trim()) {
+        return json({ status: "error", errorCode: "ASTROLOGY_SNAPSHOT_SCOPE_MISMATCH" }, { status: 400 });
+      }
+    }
     record.activeDraft = {
       id: appraisalId,
       draftVersion: crypto.randomUUID(),
@@ -2611,7 +2620,7 @@ async function handleApi(request, env = {}, ctx = null) {
       notes: String(body.notes ?? previousDraft?.notes ?? "").trim(),
       resultSummary: String(body.resultSummary ?? previousDraft?.resultSummary ?? "").trim(),
       snapshot: body.snapshot && typeof body.snapshot === "object"
-        ? await withNumerologyRegisteredSelection(body.snapshot, effectiveRecord.planId)
+        ? withAstrologyCalculationCheckpoint(await withNumerologyRegisteredSelection(body.snapshot, effectiveRecord.planId))
         : previousDraft?.snapshot || null,
       externalReferences: normalizeGrowthEngineExternalReferences(body) || previousDraft?.externalReferences || null,
       updatedAt: new Date().toISOString(),
