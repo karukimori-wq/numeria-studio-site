@@ -55,6 +55,10 @@ replaceAllExactly(
   "validated draft ACKs",
 );
 
+// Keep the server-derived Four Pillars checkpoint in the same saved history
+// entry used by the legacy reopen path, rather than the pre-save snapshot.
+replaceExactly('f(n=>n.find(e=>e.id===t)?n.map(n=>{', 'if(r.divination===`four-pillars`&&a.data.draftId===e&&a.data.activeDraft?.snapshot?.id===e)i.snapshot=structuredClone(a.data.activeDraft.snapshot);f(n=>n.find(e=>e.id===t)?n.map(n=>{', 'Four Pillars acknowledged history snapshot');
+
 const saveStatusRuntime = `;(()=>{if(window.__NumeriaDraftSaveStatusV1)return;window.__NumeriaDraftSaveStatusV1=true;
 window.NumeriaDraftVersions=window.NumeriaDraftVersions||new Map();window.addEventListener("numeria-session-restored",event=>{let session=event.detail?.session;if(session?.id)window.NumeriaDraftVersions.set(session.id,session.draftVersion||null)});
 let status="idle";const labels={dirty:"保存中に変更があります。もう一度保存してください",saving:"鑑定の下書きを保存中…",saved:"鑑定の下書きを保存しました",error:"保存できませんでした。内容を確認して再試行してください"};
