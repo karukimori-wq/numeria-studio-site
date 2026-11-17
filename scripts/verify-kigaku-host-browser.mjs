@@ -2,7 +2,8 @@
 // This does not verify the outer Clerk login/boot wrapper or real D1.
 import assert from 'node:assert/strict';
 import {readFile,readdir,writeFile,rm,mkdir} from 'node:fs/promises';
-import {createServer} from 'vite';
+import {createServer} from 'node:http';
+import {resolve,extname} from 'node:path';
 import {chromium} from 'playwright';
 const assets='dist/assets';
 const file=(await readdir(assets)).find(n=>/^numeria-app-runtime-.*\.js$/.test(n));
@@ -20,11 +21,12 @@ window.NumeriaD1WorkspaceLoad=async()=>({data:{appraisal_profiles:[{id:'fixture-
 window.NumeriaD1WorkspaceSave=async data=>({data,error:null});
 domFactory().createRoot(document.getElementById('root')).render(React.createElement(FixtureHost,{user:{displayName:'検証者',email:'fixture@example.test',primaryDivination:'nine-star-ki'},userId:'fixture-user',onSignOut:()=>{}}));
 </script>`);
-const server=await createServer({server:{host:'127.0.0.1',port:4181,strictPort:true}});await server.listen();
+const server=createServer(async(req,res)=>{try{const path=resolve('.'+new URL(req.url,'http://localhost').pathname);assert.ok(path.startsWith(process.cwd()+'/'));const data=await readFile(path);res.setHeader('Content-Type',({'.js':'text/javascript','.html':'text/html','.css':'text/css'})[extname(path)]||'application/octet-stream');res.end(data);}catch{res.writeHead(404);res.end();}});await new Promise(r=>server.listen(4181,'127.0.0.1',r));
 const browser=await chromium.launch({headless:true});
 try{
  const page=await browser.newPage({viewport:{width:390,height:844}});
  page.on('pageerror',e=>console.error('Host page error:',e.message));
+ page.on('console',m=>{if(m.type()==='error')console.error('Browser:',m.text());});
  await page.route('**/api/**',r=>r.fulfill({json:{planId:'pro',subscription:{planId:'pro'},activeDraft:null,completedAppraisals:[]}}));
  await page.goto('http://127.0.0.1:4181/tmp/kigaku-host/index.html');
  await page.getByRole('button',{name:/カルテ/}).first().click({timeout:15000});
@@ -33,4 +35,4 @@ try{
  await page.getByRole('heading',{name:'鑑定履歴・鑑定書',exact:true}).waitFor({timeout:15000});
  await page.screenshot({path:'tmp/kigaku-print/host-profile-mobile.png',fullPage:true});
  console.log('Full authenticated host: fixture workspace loaded, profile list selected, history section opened. Outer login is not covered.');
-}finally{await browser.close();await server.close();await rm(testModule,{force:true});await rm('tmp/kigaku-host',{recursive:true,force:true});}
+}finally{await browser.close();await new Promise(r=>server.close(r));await rm(testModule,{force:true});await rm('tmp/kigaku-host',{recursive:true,force:true});}
