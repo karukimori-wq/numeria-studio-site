@@ -159,6 +159,9 @@ function decorateEditor(){
   if(!document.querySelector("[data-report-figure-css]")){const style=document.createElement("style");style.dataset.reportFigureCss="1";style.textContent=REPORT_FIGURE_CSS;document.head.append(style)}
   if(!root?.classList.contains("open"))return;
   const settings=root.querySelector(".nbe-settings");
+  if(settings&&data.selectedDivination==="four-pillars"&&!settings.querySelector("[data-bazi-input-form]")){
+    const form=document.createElement("section");form.dataset.baziInputForm="1";settings.append(form);mountFourPillarsInputForm(form);
+  }
   if(settings&&data.selectedDivination==="nine-star-ki"&&!settings.querySelector("[data-kigaku-input-form]")){
     const form=document.createElement("section");form.dataset.kigakuInputForm="1";settings.append(form);mountKigakuInputForm(form);
   }

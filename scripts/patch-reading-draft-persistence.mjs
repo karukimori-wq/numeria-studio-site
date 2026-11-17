@@ -46,7 +46,7 @@ replaceAllExactly(savingAnchor, saveEvent("saving") + ";" + persistedSavingAncho
 replaceExactly(profileFailureAnchor, "if(!a.ok){" + saveEvent("error") + ";B(a.data.message||`途中保存できませんでした`);return}", "profile draft failure");
 replaceExactly(readingFailureAnchor, "if(!a.ok){" + saveEvent("error") + ";R(a.data.message||`途中保存できませんでした`),window.setTimeout(()=>R(``),3200);return}", "reading draft failure");
 replaceExactly(profileSuccessAnchor, saveEvent("saved") + ";" + profileSuccessAnchor, "profile draft success");
-replaceExactly(readingSuccessAnchor, 'window.dispatchEvent(new CustomEvent("numeria-reading-draft-save-status",{detail:{state:"saved",sessionId:e,snapshot:r}}))' + ";" + readingSuccessAnchor, "reading draft success");
+replaceExactly(readingSuccessAnchor, 'window.dispatchEvent(new CustomEvent("numeria-reading-draft-save-status",{detail:{state:"saved",sessionId:e,snapshot:r,acknowledgedDraftId:a.data.draftId,serverSnapshot:a.data.activeDraft?.snapshot}}))' + ";" + readingSuccessAnchor, "reading draft success");
 // An HTTP 2xx with an unreadable/error body is not a draft persistence ACK.
 replaceAllExactly(
   '.then(async e=>({ok:e.ok,data:await e.json().catch(()=>({message:`途中保存に失敗しました`}))}))',

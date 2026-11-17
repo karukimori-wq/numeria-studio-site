@@ -67,8 +67,8 @@ assert.ok(appSource.includes("NumeriaAppBundleSyntaxGuards.v1"), "Versioned Nume
 assert.ok(appSource.includes("numeria-navigation-ready"), "Versioned Numeria app bundle must signal navigation readiness.");
 assert.ok(!appSource.includes('from "./divination-result-contract.js"'), "Injected report availability runtime must not retain an unresolved ESM import.");
 assert.equal((appSource.match(/detail:\{state:"saving"\}/g) || []).length, 2, "Both draft-save entry points must publish saving state.");
-assert.equal((appSource.match(/detail:\{state:"saved"(?:,sessionId:e,snapshot:r)?\}/g) || []).length, 2, "Both successful draft-save paths must publish saved state.");
-assert.ok(appSource.includes('detail:{state:"saved",sessionId:e,snapshot:r}'), "Editor ACK must identify the captured snapshot and Session.");
+assert.equal((appSource.match(/detail:\{state:"saved"(?:,sessionId:e,snapshot:r,acknowledgedDraftId:a\.data\.draftId,serverSnapshot:a\.data\.activeDraft\?\.snapshot)?\}/g) || []).length, 2, "Both successful draft-save paths must publish saved state.");
+assert.ok(appSource.includes('detail:{state:"saved",sessionId:e,snapshot:r,acknowledgedDraftId:a.data.draftId,serverSnapshot:a.data.activeDraft?.snapshot}'), "Editor ACK must identify the captured snapshot and Session.");
 assert.equal((appSource.match(/detail:\{state:"error"\}/g) || []).length, 2, "Both failed draft-save paths must publish error state.");
 assert.ok(!appSource.includes("タロットは現在、管理者確認用です。命術を選択してください。"), "Released tarot users must not be redirected back to numerology when starting a reading.");
 assert.ok(!appSource.includes("if(l===`tarot`&&tr!==`admin`){u(`numerology`)"), "Released tarot reading start must not force numerology for non-admin users.");
@@ -121,3 +121,7 @@ assert.ok(!extensionlessHtml.includes("ensureMobileReportQuickbar()"), "Extensio
 assert.ok(!extensionlessHtml.includes("途中保存は画面上部または下部"), "Extensionless Production HTML must not inject the removed draft-save instruction.");
 
 console.log(`Versioned runtime assets, stale-route recovery, native navigation fallback, and scroll-safe mobile menu verified: ${indexMatch[1]} -> ${appMatch[1]}`);
+
+assert.ok(appSource.includes("function mountFourPillarsInputForm(container)"));
+assert.ok(appSource.includes("updateFourPillarsInput:function(input)"));
+assert.ok(appSource.includes("fourPillarsInput:l===\"four-pillars\""));
