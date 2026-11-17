@@ -12,17 +12,25 @@ assert.ok(runtimeFile,'Run npm run build before browser verification');
 const runtime=await readFile('dist/assets/'+runtimeFile,'utf8');
 const historyBranch=runtime.match(/if\(t\.snapshot\?\.schemaVersion===`numeria\.kigaku\.reading\.v1`\)\{[^}]+return\}/)?.[0];
 assert.ok(historyBranch,'Built host history branch missing');
+const listStart=runtime.indexOf('(0,Z.jsx)(`div`,{className:`history-list`');
+const listEnd=runtime.indexOf(',(0,Z.jsxs)(`div`,{className:`repeat-action`',listStart);
+assert.ok(listStart>=0&&listEnd>listStart,'Built profile history list missing');
+const historyList=runtime.slice(listStart,listEnd);
+const historyLabels=runtime.slice(runtime.indexOf('function qo('),runtime.indexOf('function Yo('));
 const fixture='tmp/kigaku-ui';await mkdir(fixture,{recursive:true});
 await writeFile(`${fixture}/index.html`,`<div id="root"></div><script type="module">
-import React from 'react';import {createRoot} from 'react-dom/client';
+import React from 'react';import {createRoot} from 'react-dom/client';import * as JSX from 'react/jsx-runtime';
 import {createKigakuReadingClient} from '/src/kigaku-reading-client.js';
 import {createKigakuReadingComponent} from '/src/kigaku-reading-ui.js';
 window.createKigakuReadingClient=createKigakuReadingClient;
 window.Clerk={session:{getToken:async()=> 'fixture-token'}};
 const Component=createKigakuReadingComponent(React);
 const routeHistory=new Function('t','u','k','re',${JSON.stringify(historyBranch)});
+const renderList=new Function('G','ar','tr','na','Y','Z','vi',${JSON.stringify(historyLabels+';return '+historyList)});
 function Harness(){const [route,setRoute]=React.useState('profiles');
-return route==='reading'?React.createElement(Component):React.createElement('button',{onClick:()=>routeHistory({id:'completed-fixture',snapshot:{schemaVersion:'numeria.kigaku.reading.v1'}},()=>{},setRoute,()=>{})},'完成した九星履歴を開く');}
+const open=(_,record)=>routeHistory(record,()=>{},setRoute,()=>{});
+return route==='reading'?React.createElement(React.Fragment,null,React.createElement('button',{onClick:()=>setRoute('profiles')},'カルテ一覧へ戻る'),React.createElement(Component)):renderList({id:'profile-fixture',history:[{id:'completed-fixture',date:'2026.10.24',theme:'検証用の完成九星履歴',status:'完成',divination:'nine-star-ki',snapshot:{schemaVersion:'numeria.kigaku.reading.v1'}}]},'pro','user',[{id:'nine-star-ki',name:'九星気学',symbol:'九'}],open,JSX,()=>{});}
+
 createRoot(document.getElementById('root')).render(React.createElement(Harness));
 </script>`);
 const reading=createKigakuReading({referenceInstant:'2026-10-24T12:00:00+09:00',birthClock:{date:'1990-06-15',time:'12:34',countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:true}});
@@ -60,7 +68,7 @@ try {
   await route.fulfill({status:response.status,json:response.body});
  });
  await page.goto('http://127.0.0.1:4179/tmp/kigaku-ui/index.html');
- await page.getByRole('button',{name:'完成した九星履歴を開く',exact:true}).click();
+ await page.getByRole('button',{name:/検証用の完成九星履歴/}).click();
  await page.getByRole('heading',{name:'あなたの九星',exact:true}).waitFor();
  assert.equal(await page.getByRole('button',{name:'下書きを保存',exact:true}).isDisabled(),true);
  const popupPromise=page.waitForEvent('popup');
@@ -68,6 +76,10 @@ try {
  const popup=await popupPromise;await popup.getByText('未承認草案・確認用PDF／正式発行不可',{exact:true}).waitFor();
  assert.equal(await popup.locator('article').count(),14);await popup.close();
  await page.getByLabel('相談文',{exact:true}).fill('新しい相談');
+ page.once('dialog',dialog=>dialog.dismiss());
+ await page.getByRole('button',{name:'カルテ一覧へ戻る',exact:true}).click();
+ assert.equal(await page.getByLabel('相談文',{exact:true}).inputValue(),'新しい相談');
+ assert.equal(await page.locator('.history-list').count(),0);
  assert.equal(await page.getByRole('button',{name:'スタンダード A4草案／PDF',exact:true}).isDisabled(),true);
  assert.equal(await page.locator('article').count(),0);assert.equal(saves,0);
  await page.getByRole('button',{name:'入力内容で計算する',exact:true}).click();
