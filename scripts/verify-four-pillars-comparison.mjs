@@ -57,7 +57,7 @@ assert.equal(find(badPartner,'BAZ-01').state,'available');assert.equal(find(badP
 assert.equal(find(buildFourPillarsPageData({...pageInput,partnerBirthClock:null}),'BAZ-08').state,'required-missing');
 assert.equal(family.pages.filter(row=>row.data!==null).length,10);
 assert.ok(family.pages.every(row=>row.publicationAllowed===false&&row.reviewState==='review-required'));
-assert.ok(family.pages.filter(row=>['BAZ-06','BAZ-07','BAZ-13','BAZ-14'].includes(row.pageDefinitionId)).every(row=>row.state==='unconnected'));
+assert.ok(family.pages.filter(row=>['BAZ-06','BAZ-07','BAZ-13','BAZ-14'].includes(row.pageDefinitionId)).every(row=>row.state==='required-missing'));
 assert.deepEqual(buildFourPillarsPageData(JSON.parse(JSON.stringify({...pageInput,familyContext:'parent-child',parentDirection:'a-parent'}))),family);
 assert.deepEqual(basePillars,{year:'甲子',month:'甲子',day:'甲子',hour:null});
 console.log('Four Pillars comparison: 17 adopted pairs, corresponding columns only, direction reversal, partial hour, zero matches, partner isolation and 10 guarded page adapters PASS; no formal publication.');

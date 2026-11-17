@@ -209,6 +209,13 @@ try {
   const changedYunRestored = (await api("/api/appraisals/session_bazi_yun",null,"bazi_yun_ws")).body.session.snapshot;
   assert.notEqual(changedYunRestored.fourPillarsCalculation.calculation.yun.direction,yunRestored.fourPillarsCalculation.calculation.yun.direction);
   assert.deepEqual(changedYunRestored.drafts,baziSnapshot.drafts);
+  const periodInput = { ...baziInput, birthClock: { ...baziClock, date: "1948-09-12", time: "00:30:45", offsetChoiceMinutes: 600 }, calculationSex: "female" };
+  const periodSaved = await api("/api/appraisals/save-draft", { appraisalId: "session_bazi_period", expectedDraftVersion: null, snapshot: { ...baziSnapshot, id: "session_bazi_period", fourPillarsInput: periodInput, fourPillarsCalculation: { publicationAllowed: true } } }, "bazi_period_ws");
+  assert.equal(periodSaved.status,201);
+  const periodRestored = (await api("/api/appraisals/session_bazi_period",null,"bazi_period_ws")).body.session.snapshot;
+  assert.equal(periodRestored.fourPillarsCalculation.calculation.pages.filter(page=>page.data).length,14);
+  assert.equal(periodRestored.fourPillarsCalculation.calculation.pages[5].data.intervals.length,10);
+  assert.equal(validateFourPillarsCalculationCheckpoint(periodRestored).ok,true);assert.deepEqual(periodRestored.drafts,baziSnapshot.drafts);
   const retainedReport = await api("/api/reports/rep_immutable");
   assert.equal(retainedReport.body.report.reportSnapshot.resultSummary, "旧Reportの本文");
   console.log("Kigaku checkpoint: real Worker SQL/SQLite save and session restore PASS; synthetic identity/D1 transport; no production D1 or browser claim.");

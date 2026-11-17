@@ -1611,8 +1611,11 @@
         "natal_chart"
       ],
       "resultKeyStatus": "binding requirement only; formal page acceptance pending",
-      "implementedSourcePaths": [],
-      "calculationState": "formal-page-unconnected",
+      "implementedSourcePaths": [
+        "periods.pages.BAZ-06.data.yunStart",
+        "periods.pages.BAZ-06.data.intervals"
+      ],
+      "calculationState": "partial",
       "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
       "textIdVersionApproval": "not-approved; formal publication blocked",
       "figureTypes": [
@@ -1641,8 +1644,11 @@
         "natal_chart"
       ],
       "resultKeyStatus": "binding requirement only; formal page acceptance pending",
-      "implementedSourcePaths": [],
-      "calculationState": "formal-page-unconnected",
+      "implementedSourcePaths": [
+        "periods.pages.BAZ-07.data.currentDayun",
+        "periods.pages.BAZ-07.data.annual"
+      ],
+      "calculationState": "partial",
       "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
       "textIdVersionApproval": "not-approved; formal publication blocked",
       "figureTypes": [
@@ -1839,8 +1845,10 @@
         "natal_chart"
       ],
       "resultKeyStatus": "binding requirement only; formal page acceptance pending",
-      "implementedSourcePaths": [],
-      "calculationState": "formal-page-unconnected",
+      "implementedSourcePaths": [
+        "periods.pages.BAZ-13.data.years"
+      ],
+      "calculationState": "partial",
       "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
       "textIdVersionApproval": "not-approved; formal publication blocked",
       "figureTypes": [
@@ -1869,8 +1877,13 @@
         "natal_chart"
       ],
       "resultKeyStatus": "binding requirement only; formal page acceptance pending",
-      "implementedSourcePaths": [],
-      "calculationState": "formal-page-unconnected",
+      "implementedSourcePaths": [
+        "periods.pages.BAZ-14.data.currentDayun",
+        "periods.pages.BAZ-14.data.nextDayun",
+        "periods.pages.BAZ-14.data.boundaryInstant",
+        "periods.pages.BAZ-14.data.age"
+      ],
+      "calculationState": "partial",
       "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
       "textIdVersionApproval": "not-approved; formal publication blocked",
       "figureTypes": [

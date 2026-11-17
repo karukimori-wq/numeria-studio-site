@@ -39,3 +39,9 @@ console.log('Yun checkpoint: explicit calculation sex, stale direction/offset re
 assert.equal(timed.fourPillarsCalculation.calculation.yun.start.state,'available');
 const forgedStart=structuredClone(timed);forgedStart.fourPillarsCalculation.calculation.yun.start.startInstant='2000-01-01T00:00:00.000Z';assert.equal(validate(forgedStart).ok,false);
 assert.equal(validate(JSON.parse(JSON.stringify(timed))).ok,true);
+
+const periodInput={...fourPillarsInput,birthClock:{...clock,date:'1948-09-12',time:'00:30:45',offsetChoiceMinutes:600},calculationSex:'female'};
+const period=attach({...original,fourPillarsInput:periodInput});
+assert.equal(period.fourPillarsCalculation.calculation.pages.filter(page=>page.data).length,14);
+const altered=structuredClone(period);altered.fourPillarsCalculation.calculation.pages[5].data.intervals[0].ganzhi='甲子';assert.equal(validate(altered).ok,false);
+assert.equal(validate(JSON.parse(JSON.stringify(period))).ok,true);

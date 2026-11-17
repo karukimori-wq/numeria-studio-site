@@ -1,3 +1,4 @@
+import { buildFourPillarsPeriodData } from "./four-pillars-period-data.js";
 import { fourPillarsYunFromBirthClock } from "./four-pillars-yun-calendar.js";
 import { compareFourPillars, FOUR_PILLARS_COMPARISON_VERSION } from "./four-pillars-comparison.js";
 import { fixedPillarDetails, FOUR_PILLARS_TABLE_VERSION } from "./four-pillars-fixed-tables.js";
@@ -11,6 +12,10 @@ export const FOUR_PILLARS_PAGE_SOURCE_PATHS = Object.freeze({
   'BAZ-03': ['elements.data.visibleElementCounts', 'elements.data.includedPillars'],
   'BAZ-04': ['details.rows', 'details.placements'],
   'BAZ-05': ['details.rows.twelveStage'],
+  'BAZ-06': ['periods.pages.BAZ-06.data.yunStart', 'periods.pages.BAZ-06.data.intervals'],
+  'BAZ-07': ['periods.pages.BAZ-07.data.currentDayun', 'periods.pages.BAZ-07.data.annual'],
+  'BAZ-13': ['periods.pages.BAZ-13.data.years'],
+  'BAZ-14': ['periods.pages.BAZ-14.data.currentDayun', 'periods.pages.BAZ-14.data.nextDayun', 'periods.pages.BAZ-14.data.boundaryInstant', 'periods.pages.BAZ-14.data.age'],
   'BAZ-08': ['comparison.dayStemRelation', 'comparison.matches', 'comparison.includedPillars'],
   'BAZ-12': ['comparison', 'familyContext', 'parentDirection'],
   'BAZ-09': ['details.dayStem', 'details.dayBranch', 'details.placements'],
@@ -37,6 +42,8 @@ export function buildFourPillarsPageData(input = {}) {
     page.reason = result.reason ?? null;
   }
   if (result.state !== 'available') return envelope;
+  envelope.periods = buildFourPillarsPeriodData({pillars:result.pillars,yun:envelope.yun,referenceDate:input.referenceDate});
+  for(const page of pages){const period=envelope.periods.pages[page.pageDefinitionId];if(period)Object.assign(page,{state:period.state,reason:period.reason,data:period.data});}
   const includedPillars = result.elements.data.includedPillars;
   pages[0].data = { pillars: result.pillars, includedPillars, hourState: result.pillars.hour ? 'available' : 'optional-missing' };
   pages[1].data = { dayStem: result.pillars.day[0], pillars: result.pillars };
