@@ -23,7 +23,7 @@ function mountFourPillarsInputForm(container){
     const pages=checkpoint?.calculation?.pages;
     if(!Array.isArray(pages)){field('result').textContent='保存すると計算結果を表示します。';return;}
     const labels={available:'計算済み', 'valid-zero':'計算済み（該当0件）','required-missing':'入力不足','calculation-error':'計算できません','unconnected':'未接続'};
-    field('result').innerHTML=`<h4>保存された計算結果（下書き）</h4><ul>${pages.map(page=>`<li>${escape(page.pageDefinitionId)}：${escape(labels[page.state]||'未確認')}</li>`).join('')}</ul><p>本人の柱：${escape(Object.values(pages.find(page=>page.pageDefinitionId==='BAZ-01')?.data?.pillars||{}).filter(Boolean).join('・')||'未計算')}</p><p>対応柱の合・冲：${escape(pages.find(page=>page.pageDefinitionId==='BAZ-08')?.data?.matches?.length??'未計算')}件</p><p>計算済みでも文章・素材・発行の承認は未完了です。</p>`;
+    field('result').innerHTML=`<h4>保存された計算結果（下書き）</h4><ul>${pages.map(page=>`<li>${escape(page.pageDefinitionId)}：${escape(labels[page.state]||'未確認')}</li>`).join('')}</ul><p>本人の柱：${escape(Object.values(pages.find(page=>page.pageDefinitionId==='BAZ-01')?.data?.pillars||{}).filter(Boolean).join('・')||'未計算')}</p><p>対応柱の合・冲：${escape(pages.find(page=>page.pageDefinitionId==='BAZ-08')?.data?.matches ? pages.find(page=>page.pageDefinitionId==='BAZ-08').data.matches.length+'件' : '未計算')}</p><p>計算済みでも文章・素材・発行の承認は未完了です。</p>`;
   };
   render(snapshot.fourPillarsCalculation);
   const readClock=prefix=>({date:field(prefix+'date').value,time:field(prefix+'time').value||null,countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:field(prefix+'confirm').checked,offsetChoiceMinutes:field(prefix+'offset').value===''?null:Number(field(prefix+'offset').value)});
