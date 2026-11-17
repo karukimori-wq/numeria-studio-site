@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import {buildAstrologyPageData as build,projectAstrologyPositions,astrologySign,ASTROLOGY_PAGE_SOURCE_PATHS} from '../src/astrology-page-data.js';
+import {calculatePlanetPositions} from '../src/calendar-calculators.js';
+const input={methodKey:'western-astrology',subjectId:'fixture-subject',revision:1,birthDate:'2000-01-01',clockTime:'21:00:00',countryCode:'JP',zoneConfirmed:true,referenceDate:'2026-11-17',unknownFuture:{retain:true},result:{confirmed:true,planets:[]}};
+const original=JSON.stringify(input),result=build(input);
+assert.equal(result.pages.length,16);assert.equal(result.instantUTC,'2000-01-01T12:00:00.000Z');
+assert.equal(result.pages.filter(p=>p.state==='available').length,5);
+assert.equal(result.pages.filter(p=>p.state==='unconnected').length,11);
+assert.equal(result.pages[1].data.sun.sign,'Capricorn');assert.equal(result.pages[1].data.moon.sign,'Scorpio');
+for(const i of [3,4])assert.equal(Object.values(result.pages[i].data.counts).reduce((a,b)=>a+b),10);
+assert.equal(result.pages[1].data.ascState,'optional-missing');assert.equal(result.pages[1].data.asc,null);
+assert.equal(result.pages[0].data,null);assert.equal(result.pages[5].data.axesState,'unconnected');
+assert.equal(JSON.stringify(input),original);assert.equal(result.publicationAllowed,false);
+assert(result.pages.every(p=>!p.publicationAllowed&&p.copyState==='source-missing'&&p.reviewState==='review-required'));
+assert.deepEqual(build(JSON.parse(original)),result);
+for(const methodKey of ['numerology','tarot','four-pillars'])assert(build({...input,methodKey}).pages.every(p=>p.state==='unconnected'));
+for(const patch of [{clockTime:null},{zoneConfirmed:false},{countryCode:'US'},{birthDate:'2026-11-18'},{birthDate:'1900-12-31'},{referenceDate:'2101-01-01'},{birthDate:'2000-02-30'}])assert.equal(build({...input,...patch}).pages[1].state,'required-missing');
+assert.equal(build({...input,birthDate:'1948-05-02',clockTime:'00:30:00'}).pages[1].state,'calculation-error');
+assert.equal(build({...input,birthDate:'1948-09-12',clockTime:'00:30:00'}).pages[1].state,'required-missing');
+const folds=[540,600].map(utcOffsetMinutes=>build({...input,birthDate:'1948-09-12',clockTime:'00:30:00',utcOffsetMinutes}));
+assert.notEqual(folds[0].instantUTC,folds[1].instantUTC);
+assert.equal(astrologySign(0).sign,'Aries');assert.equal(astrologySign(30).sign,'Taurus');assert.equal(astrologySign(359.999).sign,'Pisces');
+for(const bad of [-1,360,NaN,Infinity,'0',null])assert.throws(()=>astrologySign(bad));
+const core=calculatePlanetPositions('2000-01-01T12:00:00Z');
+for(const bad of [{...core,sample:true},{...core,center:'heliocentric'},{...core,planets:core.planets.slice(1)},{...core,planets:[core.planets[0],...core.planets.slice(0,9)]},{...core,planets:core.planets.map(p=>({...p,longitudeDegrees:NaN}))}])assert.throws(()=>projectAstrologyPositions(bad));
+const allAries={...core,planets:core.planets.map(p=>({...p,longitudeDegrees:0}))};
+assert.deepEqual(projectAstrologyPositions(allAries).elementCounts,{fire:10,earth:0,air:0,water:0});
+assert.equal(Object.keys(ASTROLOGY_PAGE_SOURCE_PATHS).length,5);
+for(const paths of Object.values(ASTROLOGY_PAGE_SOURCE_PATHS))for(const path of paths){
+ const value=path.replaceAll('[','.').replaceAll(']','').split('.').reduce((obj,key)=>obj?.[key],result);
+ assert.notEqual(value,undefined,`source path must exist: ${path}`);
+}
+console.log('Astrology: 16-page schema; 5 projections/11 unconnected; 10-vote counts/valid zero; missing inputs/DST/ranges; invalid-result rejection; isolation and JSON roundtrip PASS. No formal publication, interval or house acceptance.');
