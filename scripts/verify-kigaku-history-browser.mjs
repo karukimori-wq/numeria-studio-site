@@ -76,9 +76,10 @@ try {
  const popup=await popupPromise;await popup.getByText('未承認草案・確認用PDF／正式発行不可',{exact:true}).waitFor();
  assert.equal(await popup.locator('article').count(),14);await popup.close();
  await page.getByLabel('相談文',{exact:true}).fill('新しい相談');
- await page.evaluate(()=>{window.__leavePrompts=0;window.confirm=()=>{window.__leavePrompts++;return false;};});
+ let cancelled=false;
+ page.once('dialog',async dialog=>{assert.equal(dialog.type(),'confirm');assert.match(dialog.message(),/未保存の九星入力/);cancelled=true;await dialog.dismiss();});
  await page.getByRole('button',{name:'カルテ一覧へ戻る',exact:true}).click();
- assert.equal(await page.evaluate(()=>window.__leavePrompts),1,'Unsaved navigation must request confirmation');
+ assert.equal(cancelled,true,'Unsaved navigation must request confirmation');
  assert.equal(await page.getByLabel(/^相談文/).inputValue(),'新しい相談');
  assert.equal(await page.locator('.history-list').count(),0);
  assert.equal(await page.getByRole('button',{name:'スタンダード A4草案／PDF',exact:true}).isDisabled(),true);
@@ -95,5 +96,16 @@ try {
  const magazine=await magazinePromise;await magazine.locator('body.magazine').waitFor();
  assert.equal(await magazine.locator('article').count(),14);await magazine.close();
  await page.screenshot({path:'tmp/kigaku-print/history-edit-mobile.png',fullPage:true});
+ await page.getByLabel(/^相談文/).fill('保存せず破棄する相談');
+ let accepted=false;
+ page.once('dialog',async dialog=>{assert.equal(dialog.type(),'confirm');accepted=true;await dialog.accept();});
+ await page.getByRole('button',{name:'カルテ一覧へ戻る',exact:true}).click();
+ await page.locator('.history-list').waitFor();assert.equal(accepted,true);assert.equal(saves,1);
+ await page.getByRole('button',{name:/検証用の完成九星履歴/}).click();
+ await page.getByRole('heading',{name:'あなたの九星',exact:true}).waitFor();
+ assert.equal(await page.getByLabel(/^相談文/).inputValue(),reading.input.question||'');
+ assert.equal(await page.getByRole('button',{name:'下書きを保存',exact:true}).isDisabled(),true);
+ assert.equal(saves,1);
+ await page.screenshot({path:'tmp/kigaku-print/history-reopened-mobile.png',fullPage:true});
  console.log('Real React mobile UI: completed history, disabled overwrite, print popup and edit invalidation passed through the real Worker with test JWT and mocked D1.');
 }finally{globalThis.fetch=savedFetch;await browser.close();await server.close();await rm(fixture,{recursive:true,force:true});}
