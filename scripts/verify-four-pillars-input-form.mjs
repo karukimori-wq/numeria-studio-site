@@ -12,9 +12,9 @@ const container={innerHTML:'',querySelector:selector=>fields[selector.match(/dat
 const listeners=new Set();let updates=[],saves=0,fail=false,noAck=false,wrongId=false,release=null;
 const bridgeSource=readFileSync('scripts/patch-numerology-name-input.mjs','utf8');
 const adoptSource=bridgeSource.slice(bridgeSource.indexOf('adoptFourPillarsSavedSnapshot:function(saved){'),bridgeSource.indexOf('},updateKigakuInput:function(input){`);')).replace('adoptFourPillarsSavedSnapshot:function(saved){','function adopt(saved){')+'}';
-const window={NumeriaNavigation:{adoptFourPillarsSavedSnapshot(saved){const ref={current:snapshot.fourPillarsCalculation};const result=vm.runInNewContext(adoptSource+';adopt(saved)',{l:snapshot.divination,Dn:snapshot.id,saved,numeriaFourPillarsInputRef:{current:updates.at(-1)||snapshot.fourPillarsInput},numeriaFourPillarsCalculationRef:ref,structuredClone});if(result.ok)snapshot={...snapshot,fourPillarsInput:updates.at(-1),fourPillarsCalculation:ref.current};return result;},getReadingSnapshot:()=>snapshot,updateFourPillarsInput(input){updates.push(structuredClone(input));return{ok:true};},async saveReadingDraft(){saves++;if(release)await new Promise(resolve=>release=resolve);if(fail)throw Error('fixture');if(!noAck){const persisted=attach({...snapshot,id:wrongId?'wrong-session':snapshot.id,fourPillarsInput:updates.at(-1)});for(const fn of listeners)fn({detail:{state:'saved',sessionId:snapshot.id,acknowledgedDraftId:wrongId?'wrong-session':snapshot.id,serverSnapshot:persisted}});}}},addEventListener:(name,fn)=>listeners.add(fn),removeEventListener:(name,fn)=>listeners.delete(fn)};
+const window={NumeriaNavigation:{adoptFourPillarsSavedSnapshot(saved){const ref={current:snapshot.fourPillarsCalculation};const result=vm.runInNewContext(adoptSource+';adopt(saved)',{l:snapshot.divination,Dn:snapshot.id,saved,numeriaFourPillarsInputRef:{current:updates.at(-1)||snapshot.fourPillarsInput},numeriaFourPillarsCalculationRef:ref,structuredClone});if(result.ok)snapshot={...snapshot,fourPillarsInput:updates.at(-1),fourPillarsCalculation:ref.current};return result;},getReadingSnapshot:()=>snapshot,updateFourPillarsInput(input){updates.push(structuredClone(input));snapshot={...snapshot,fourPillarsInput:structuredClone(input),fourPillarsCalculation:null};return{ok:true};},async saveReadingDraft(){saves++;const captured=structuredClone(snapshot),capturedInput=structuredClone(updates.at(-1));if(release)await new Promise(resolve=>release=resolve);if(fail)throw Error('fixture');if(!noAck){const persisted=attach({...captured,id:wrongId?'wrong-session':captured.id,fourPillarsInput:capturedInput});for(const fn of listeners)fn({detail:{state:'saved',sessionId:captured.id,acknowledgedDraftId:wrongId?'wrong-session':captured.id,serverSnapshot:persisted}});}}},addEventListener:(name,fn)=>listeners.add(fn),removeEventListener:(name,fn)=>listeners.delete(fn)};
 const context=vm.createContext({window,container,structuredClone});
-const mount=()=>vm.runInContext(source+';mountFourPillarsInputForm(container)',context);mount();
+vm.runInContext(source,context);const mount=()=>vm.runInContext('mountFourPillarsInputForm(container)',context);mount();
 assert.equal(fields.sex.value,'male');assert(fields.result.innerHTML.includes('起運の時間差換算'));assert(fields.result.innerHTML.includes('大運表（10区間）'));assert(fields.result.innerHTML.includes('次の大運の境界'));
 assert.equal(fields.time.value,'00:30:45');assert.equal(fields.offset.value,'600');assert.equal(fields.partneroffset.value,'540');assert.equal(fields.reference.readOnly,true);
 assert(fields.result.innerHTML.includes('保存された計算結果'));await fields.save.onclick();
@@ -32,3 +32,36 @@ fields.partnerEnabled.checked=false;fields.time.value='';await fields.save.oncli
 snapshot={...snapshot,id:'another-session'};await fields.save.onclick();assert(fields.status.textContent.includes('切り替わりました'));assert.equal(saves,pendingCount+1);
 snapshot={id:'new-session',divination:'four-pillars'};mount();fields.date.value='2000-01-07';fields.reference.value='2026-11-17';fields.confirm.checked=true;fields.partnerEnabled.checked=true;fields.partnerdate.value='2000-01-08';fields.partnerconfirm.checked=false;await fields.save.onclick();assert(fields.status.textContent.includes('比較相手'));fields.partnerconfirm.checked=true;fields.family.value='partners';await fields.save.onclick();assert.equal(updates.at(-1).subjectId,'bazi:new-session:subject');assert.equal(updates.at(-1).partnerSubjectId,'bazi:new-session:partner');assert.equal(updates.at(-1).parentDirection,null);
 console.log('Four Pillars form: explicit clocks, restored folds/identities, unknown time, partner removal, family direction, immutable date, server ACK, failure, session switch and concurrent guard PASS; browser acceptance pending.');
+
+// The catalog response may replace the editor while the save ACK is pending.
+// Use a fresh container as the real editor does, not reused fixture controls.
+release=true;const remountPending=fields.save.onclick();
+const replacementFields=Object.fromEntries(keys.map(key=>[key,{value:'',checked:false,disabled:false,textContent:'',innerHTML:''}]));
+const replacementControls=keys.filter(key=>!['save','status','result'].includes(key)).map(key=>replacementFields[key]);
+context.replacementContainer={innerHTML:'',isConnected:true,querySelector:selector=>replacementFields[selector.match(/data-bazi-([\w]+)/)[1]],querySelectorAll:()=>replacementControls};
+container.isConnected=false;vm.runInContext('mountFourPillarsInputForm(replacementContainer)',context);
+assert(replacementFields.save.disabled);assert(replacementControls.every(control=>control.disabled));
+const countBeforeRemountClick=saves;await replacementFields.save.onclick();assert.equal(saves,countBeforeRemountClick);
+release();await remountPending;release=null;
+assert(replacementFields.result.innerHTML.includes('保存された計算結果'),'ACK must update the replacement form');
+assert(replacementFields.status.textContent.includes('下書きを保存しました'));assert.equal(replacementFields.save.disabled,false);assert(replacementControls.every(control=>!control.disabled));
+fail=true;release=true;const failedRemount=replacementFields.save.onclick();
+const failedFields=Object.fromEntries(keys.map(key=>[key,{value:'',checked:false,disabled:false,textContent:'',innerHTML:''}]));
+const failedControls=keys.filter(key=>!['save','status','result'].includes(key)).map(key=>failedFields[key]);
+context.failedContainer={innerHTML:'',isConnected:true,querySelector:selector=>failedFields[selector.match(/data-bazi-([\w]+)/)[1]],querySelectorAll:()=>failedControls};
+context.replacementContainer.isConnected=false;vm.runInContext('mountFourPillarsInputForm(failedContainer)',context);
+release();await failedRemount;release=null;fail=false;
+assert(failedFields.status.textContent.includes('保存できません'));assert.equal(failedFields.save.disabled,false);assert(failedControls.every(control=>!control.disabled));assert.equal(listeners.size,0);
+console.log('Four Pillars save/remount race: pending lock survives replacement, ACK updates current form, failed save restores input controls and retry message PASS.');
+
+release=true;const switchedPending=failedFields.save.onclick();
+snapshot={...snapshot,id:'session-b',fourPillarsCalculation:null,fourPillarsInput:{...snapshot.fourPillarsInput,subjectId:'subject-b'}};
+const otherFields=Object.fromEntries(keys.map(key=>[key,{value:'',checked:false,disabled:false,textContent:'',innerHTML:''}]));
+const otherControls=keys.filter(key=>!['save','status','result'].includes(key)).map(key=>otherFields[key]);
+context.otherContainer={innerHTML:'',isConnected:true,querySelector:selector=>otherFields[selector.match(/data-bazi-([\w]+)/)[1]],querySelectorAll:()=>otherControls};
+context.failedContainer.isConnected=false;vm.runInContext('mountFourPillarsInputForm(otherContainer)',context);
+assert(otherFields.status.textContent.includes('別の鑑定'));assert(otherFields.save.disabled);
+release();await switchedPending;release=null;
+assert.equal(otherFields.status.textContent,'');assert.equal(otherFields.save.disabled,false);assert(otherControls.every(control=>!control.disabled));
+assert.equal(otherFields.result.innerHTML,'');assert.equal(snapshot.fourPillarsCalculation,null,'Old-session ACK must never populate the new session.');
+console.log('Four Pillars cross-session remount: other-session pending message clears, controls release, old ACK cannot replace new results PASS.');

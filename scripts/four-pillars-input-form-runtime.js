@@ -1,3 +1,4 @@
+let numeriaBaziActiveForm=null,numeriaBaziPendingSave=null;
 function mountFourPillarsInputForm(container){
   const api=window.NumeriaNavigation,snapshot=api?.getReadingSnapshot?.();
   if(!container)return;
@@ -34,32 +35,40 @@ function mountFourPillarsInputForm(container){
   };
   render(snapshot.fourPillarsCalculation);
   const readClock=prefix=>({date:field(prefix+'date').value,time:field(prefix+'time').value||null,countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:field(prefix+'confirm').checked,offsetChoiceMinutes:field(prefix+'offset').value===''?null:Number(field(prefix+'offset').value)});
-  let saving=false;
+  let saving=false,disabledControls=null;
+  const setStatus=message=>{field('status').textContent=message;const active=numeriaBaziActiveForm;if(active?.sessionId===snapshot.id&&active.container!==container&&active.container.isConnected!==false)active.setStatus(message);};
+  const setSaving=value=>{
+    saving=value;
+    if(value&&!disabledControls){const controls=Array.from(container.querySelectorAll('input,select'));disabledControls=controls.map(control=>[control,control.disabled]);controls.forEach(control=>control.disabled=true);}
+    if(!value&&disabledControls){disabledControls.forEach(([control,disabled])=>control.disabled=disabled);disabledControls=null;}
+    field('save').disabled=value;
+  };
+  const mounted={sessionId:snapshot.id,container,setSaving,setStatus:message=>{field('status').textContent=message;},accept:saved=>{render(saved.fourPillarsCalculation);prior.referenceDate=saved.fourPillarsInput.referenceDate;field('reference').readOnly=true;field('status').textContent='下書きを保存しました。計算結果は未承認です。';}};
+  numeriaBaziActiveForm=mounted;
+  if(numeriaBaziPendingSave){setSaving(true);field('status').textContent=numeriaBaziPendingSave.sessionId===snapshot.id?'下書きを保存しています。':'別の鑑定の保存完了を待っています。';}
   field('save').onclick=async()=>{
-    if(saving)return;
+    if(saving||numeriaBaziPendingSave)return;
     const current=api.getReadingSnapshot?.();
-    if(current?.divination!=='four-pillars'||current.id!==snapshot.id){field('status').textContent='鑑定が切り替わりました。入力画面を開き直してください。';return;}
-    if(!field('date').value||!field('reference').value||!field('confirm').checked){field('status').textContent='本人の生年月日・基準日・出生時計の確認が必要です。';return;}
-    if(prior.referenceDate&&field('reference').value!==prior.referenceDate){field('status').textContent='保存済み基準日は変更できません。新規鑑定を作成してください。';return;}
-    if(field('partnerEnabled').checked&&(!field('partnerdate').value||!field('partnerconfirm').checked)){field('status').textContent='比較相手の生年月日と出生時計を確認してください。';return;}
+    if(current?.divination!=='four-pillars'||current.id!==snapshot.id){setStatus('鑑定が切り替わりました。入力画面を開き直してください。');return;}
+    if(!field('date').value||!field('reference').value||!field('confirm').checked){setStatus('本人の生年月日・基準日・出生時計の確認が必要です。');return;}
+    if(prior.referenceDate&&field('reference').value!==prior.referenceDate){setStatus('保存済み基準日は変更できません。新規鑑定を作成してください。');return;}
+    if(field('partnerEnabled').checked&&(!field('partnerdate').value||!field('partnerconfirm').checked)){setStatus('比較相手の生年月日と出生時計を確認してください。');return;}
     const subjectId=prior.subjectId||`bazi:${snapshot.id}:subject`,partnerSubjectId=prior.partnerSubjectId||`bazi:${snapshot.id}:partner`;
     const input={...prior,methodKey:'four-pillars',subjectId,partnerSubjectId:field('partnerEnabled').checked?partnerSubjectId:null,birthClock:readClock(''),partnerBirthClock:field('partnerEnabled').checked?readClock('partner'):null,referenceDate:field('reference').value,calculationSex:field('sex').value||null,familyContext:field('family').value||null,parentDirection:field('family').value==='parent-child'?field('direction').value||null:null};
     const updated=api.updateFourPillarsInput?.(input);
-    if(!updated?.ok){field('status').textContent=updated?.message||'四柱推命の鑑定を開き直してください。';return;}
-    saving=true;const controls=Array.from(container.querySelectorAll('input,select'));const disabled=controls.map(control=>control.disabled);controls.forEach(control=>control.disabled=true);field('save').disabled=true;field('status').textContent='下書きを保存しています。';
+    if(!updated?.ok){setStatus(updated?.message||'四柱推命の鑑定を開き直してください。');return;}
+    numeriaBaziPendingSave={sessionId:snapshot.id};setSaving(true);setStatus('下書きを保存しています。');
     let acknowledged=false;
     const onStatus=event=>{
       if(event.detail?.sessionId!==snapshot.id)return;
       if(event.detail.state==='saved'&&event.detail.acknowledgedDraftId===snapshot.id&&event.detail.serverSnapshot?.id===snapshot.id&&event.detail.serverSnapshot?.divination==='four-pillars'&&JSON.stringify(event.detail.serverSnapshot?.fourPillarsInput)===JSON.stringify(input)&&event.detail.serverSnapshot?.fourPillarsCalculation?.schemaVersion==='numeria.bazi.calculation-checkpoint.v1'&&event.detail.serverSnapshot?.fourPillarsCalculation?.publicationAllowed===false){
         if(!api.adoptFourPillarsSavedSnapshot?.(event.detail.serverSnapshot)?.ok)return;
-        acknowledged=true;render(event.detail.serverSnapshot?.fourPillarsCalculation);
-        prior.referenceDate=input.referenceDate;field('reference').readOnly=true;
-        field('status').textContent='下書きを保存しました。計算結果は未承認です。';
+        acknowledged=true;const active=numeriaBaziActiveForm;if(active?.sessionId===snapshot.id&&active.container.isConnected!==false)active.accept(event.detail.serverSnapshot);
       }
     };
     window.addEventListener('numeria-reading-draft-save-status',onStatus);
-    try{await api.saveReadingDraft();if(!acknowledged)field('status').textContent='保存を確認できませんでした。入力を保持しています。保存状態を確認して再試行してください。';}
-    catch{field('status').textContent='下書きを保存できませんでした。入力を保持しています。再試行してください。';}
-    finally{window.removeEventListener('numeria-reading-draft-save-status',onStatus);saving=false;controls.forEach((control,index)=>control.disabled=disabled[index]);field('save').disabled=false;}
+    try{await api.saveReadingDraft();if(!acknowledged)setStatus('保存を確認できませんでした。入力を保持しています。保存状態を確認して再試行してください。');}
+    catch{setStatus('下書きを保存できませんでした。入力を保持しています。再試行してください。');}
+    finally{window.removeEventListener('numeria-reading-draft-save-status',onStatus);numeriaBaziPendingSave=null;setSaving(false);const active=numeriaBaziActiveForm;if(active!==mounted){active?.setSaving(false);if(active?.sessionId!==snapshot.id)active?.setStatus('');}}
   };
 }
