@@ -50,10 +50,11 @@ export function renderFourPillarsDraftPage(model,pageDefinitionId){
  if(!model?.available)return `<p role="status">${baziPreviewEscape(model?.reason||'計算結果を保存してください。')}</p>`;
  const page=model.pages.find(item=>item.definition.pageDefinitionId===pageDefinitionId);
  if(!page)return '<p role="status">このプランで利用可能なページを選択してください。</p>';
+ const wideTable=['BAZ-06','BAZ-07','BAZ-13'].includes(pageDefinitionId);
  const {definition,projection}=page,ready=['available','valid-zero'].includes(projection.state)&&projection.data;
  let content='<p>必要な計算結果が確定していません。入力不足・対応年代・境界日を確認してください。</p>';
  if(ready){try{content=baziPreviewContent(definition.pageDefinitionId,projection.data);}catch{content='<p>計算ページの保存値を確認できません。再保存してください。</p>';}}
- return `<article class="nbdp-sheet nbdp-${model.layoutId}" data-bazi-preview-page="${baziPreviewEscape(definition.pageDefinitionId)}"><header><p class="nbdp-watermark">計算確認用・未承認</p><h1>${baziPreviewEscape(definition.pageDefinitionId)} ${baziPreviewEscape(definition.title)}</h1><p>保存基準日 ${baziPreviewEscape(model.referenceDate)}</p></header><div class="nbdp-columns"><section class="nbdp-data">${content}</section><aside class="nbdp-copy"><h2>解説・素材の確認</h2><p>解説文章：未承認</p><p>正式図表・素材：未承認</p><p>正式発行：不可</p></aside></div><footer>下書きの計算確認画面です。独立正解資料との照合・正式ページ・PDFの受入は未完了です。</footer></article>`;
+ return `<article class="nbdp-sheet nbdp-${model.layoutId}${wideTable?' nbdp-wide-table':''}" data-bazi-preview-page="${baziPreviewEscape(definition.pageDefinitionId)}"><header><p class="nbdp-watermark">計算確認用・未承認</p><h1>${baziPreviewEscape(definition.pageDefinitionId)} ${baziPreviewEscape(definition.title)}</h1><p>保存基準日 ${baziPreviewEscape(model.referenceDate)}</p></header><div class="nbdp-columns"><section class="nbdp-data">${content}</section><aside class="nbdp-copy"><h2>解説・素材の確認</h2><p>解説文章：未承認</p><p>正式図表・素材：未承認</p><p>正式発行：不可</p></aside></div><footer>下書きの計算確認画面です。独立正解資料との照合・正式ページ・PDFの受入は未完了です。</footer></article>`;
 }
 export const FOUR_PILLARS_DRAFT_PREVIEW_CSS=`
 [data-bazi-draft-preview]{position:fixed;inset:0;z-index:2147483645;background:#eee9e2;color:#292330;overflow:auto;font:14px/1.6 system-ui,sans-serif;padding:0 16px 32px;box-sizing:border-box}
@@ -63,7 +64,7 @@ export const FOUR_PILLARS_DRAFT_PREVIEW_CSS=`
 .nbdp-controls label{display:flex;gap:8px;align-items:center;min-width:0;flex-wrap:wrap}.nbdp-controls p{margin:0}
 .nbdp-sheet{width:min(794px,100%);min-height:1123px;margin:auto;background:white;box-shadow:0 4px 24px #0002;padding:48px;overflow-wrap:anywhere}
 .nbdp-sheet h1{font-size:25px;line-height:1.4;margin:10px 0 18px}.nbdp-sheet h2{font-size:16px;margin:16px 0 8px}.nbdp-sheet p{margin:10px 0}.nbdp-watermark{color:#835f32;font-weight:bold;letter-spacing:.12em}.nbdp-sheet header{border-bottom:2px solid #c9b28b;margin-bottom:24px}.nbdp-sheet footer{border-top:1px solid #c9b28b;margin-top:32px;padding-top:12px;color:#665c6d;font-size:12px}
-.nbdp-columns{display:grid;gap:24px;min-width:0}.nbdp-magazine .nbdp-columns{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}.nbdp-data,.nbdp-copy{min-width:0}.nbdp-copy{padding:16px;background:#f7f3ec;border:1px dashed #c9b28b}
+.nbdp-columns{display:grid;gap:24px;min-width:0}.nbdp-magazine .nbdp-columns{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}.nbdp-magazine.nbdp-wide-table .nbdp-columns{grid-template-columns:1fr}.nbdp-data,.nbdp-copy{min-width:0}.nbdp-copy{padding:16px;background:#f7f3ec;border:1px dashed #c9b28b}
 .nbdp-sheet table{border-collapse:collapse;table-layout:fixed;width:100%;font-size:12px}.nbdp-sheet th,.nbdp-sheet td{border:1px solid #d8d1c6;padding:7px;text-align:left;vertical-align:top;overflow-wrap:anywhere}.nbdp-sheet th{background:#f4eee3}.nbdp-sheet tr{break-inside:avoid}
 .nbdp-elements{list-style:none;padding:0}.nbdp-elements li{display:grid;grid-template-columns:2em minmax(0,1fr) 2em;gap:12px;margin:12px 0}.nbdp-elements meter{width:100%;height:24px}.nbdp-transition{display:flex;gap:24px;flex-wrap:wrap;padding:20px;list-style:none;background:#f4eee3}
 @media(max-width:600px){.nbdp-sheet{padding:20px;min-height:calc((100vw - 32px)*1.414)}.nbdp-sheet h1{font-size:21px}.nbdp-magazine .nbdp-columns{grid-template-columns:1fr}.nbdp-sheet th,.nbdp-sheet td{padding:4px;font-size:11px}}
