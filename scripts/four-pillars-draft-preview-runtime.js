@@ -9,7 +9,7 @@ function openFourPillarsDraftPreview({snapshot,definitions,layoutId}={}){
  const select=overlay.querySelector('[data-bazi-preview-select]'),content=overlay.querySelector('[data-bazi-preview-content]');
  const refresh=()=>{content.innerHTML=renderFourPillarsDraftPage(model,select.value);};
  const close=()=>{document.removeEventListener('keydown',onKey,true);overlay.remove();numeriaBaziPreviewClose=null;if(returnFocus?.isConnected)returnFocus.focus();};
- const onKey=event=>{if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();close();}else if(event.key==='Tab'){const items=Array.from(overlay.querySelectorAll('button,select'));const first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}};
+ const onKey=event=>{if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();close();}else if(event.key==='Tab'){const items=Array.from(overlay.querySelectorAll('button,select,summary'));const first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}};
  select.onchange=refresh;overlay.querySelector('[data-bazi-preview-close]').onclick=close;
  document.body.append(overlay);refresh();numeriaBaziPreviewClose=close;document.addEventListener('keydown',onKey,true);overlay.querySelector('[data-bazi-preview-close]').focus();
  return{ok:true};

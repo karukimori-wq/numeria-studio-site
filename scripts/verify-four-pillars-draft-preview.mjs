@@ -30,11 +30,12 @@ for(const value of [undefined,null,{}]){
  const output=render(build(malformed,defs),'BAZ-08');assert(output.includes('比較の計算結果が揃っていません'));assert(!output.includes('0件'));
 }
 const {readFileSync}=await import('node:fs');const vm=await import('node:vm');
-const source=readFileSync('src/four-pillars-draft-preview.js','utf8').replaceAll('export function ','function ').replaceAll('export const ','const ')+readFileSync('scripts/four-pillars-draft-preview-runtime.js','utf8');
+const source=readFileSync('src/four-pillars-copy-data.js','utf8').replaceAll('export const ','const ')+readFileSync('src/four-pillars-page-copy.js','utf8').replace(/^import .*;\n/gm,'').replaceAll('export function ','function ')+readFileSync('src/four-pillars-draft-preview.js','utf8').replace(/^import .*;\n/gm,'').replaceAll('export function ','function ').replaceAll('export const ','const ')+readFileSync('scripts/four-pillars-draft-preview-runtime.js','utf8');
 const listeners=new Set(),overlays=[];
 const document={activeElement:null,createElement(){
  const close={isConnected:true,focus(){document.activeElement=this;}},select={value:'BAZ-01',isConnected:true,focus(){document.activeElement=this;}},content={innerHTML:''};
- const node={dataset:{},innerHTML:'',isConnected:true,setAttribute(){},querySelector:selector=>({'[data-bazi-preview-close]':close,'[data-bazi-preview-select]':select,'[data-bazi-preview-content]':content})[selector],querySelectorAll:()=>[close,select],remove(){this.isConnected=false;},close,select,content};overlays.push(node);return node;
+ const summary={isConnected:true,focus(){document.activeElement=this;}};
+ const node={dataset:{},innerHTML:'',isConnected:true,setAttribute(){},querySelector:selector=>({'[data-bazi-preview-close]':close,'[data-bazi-preview-select]':select,'[data-bazi-preview-content]':content})[selector],querySelectorAll:()=>content.innerHTML.includes('<summary>')?[close,select,summary]:[close,select],remove(){this.isConnected=false;},close,select,summary,content};overlays.push(node);return node;
 },body:{append(){}},addEventListener(type,listener,capture){assert.equal(capture,true);listeners.add(listener);},removeEventListener(type,listener,capture){assert.equal(capture,true);listeners.delete(listener);}};
 const origin={isConnected:true,focus(){document.activeElement=this;}};document.activeElement=origin;
 const context=vm.createContext({document,snapshot,definitions:reportPageDefinitionsFor('four-pillars','free')});vm.runInContext(source,context);
@@ -42,8 +43,9 @@ assert.equal(vm.runInContext('openFourPillarsDraftPreview({snapshot,definitions,
 let active=overlays.at(-1);assert(active.content.innerHTML.includes('BAZ-01'));assert.equal(document.activeElement,active.close);
 active.select.value='BAZ-06';active.select.onchange();assert(active.content.innerHTML.includes('2049-12-24'));
 let prevented=false,stopped=false;const key=event=>[...listeners][0](event);
-key({key:'Tab',shiftKey:true,preventDefault(){prevented=true;}});assert(prevented);assert.equal(document.activeElement,active.select);
+key({key:'Tab',shiftKey:true,preventDefault(){prevented=true;}});assert(prevented);assert.equal(document.activeElement,active.summary);
 key({key:'Tab',shiftKey:false,preventDefault(){}});assert.equal(document.activeElement,active.close);
+document.activeElement=active.select;let pageSelectPrevented=false;key({key:'Tab',shiftKey:false,preventDefault(){pageSelectPrevented=true;}});assert.equal(pageSelectPrevented,false); // Native Tab can reach the first source summary.
 key({key:'Escape',preventDefault(){},stopImmediatePropagation(){stopped=true;}});assert(stopped);assert.equal(active.isConnected,false);assert.equal(listeners.size,0);assert.equal(document.activeElement,origin);
 vm.runInContext('openFourPillarsDraftPreview({snapshot,definitions})',context);vm.runInContext('openFourPillarsDraftPreview({snapshot,definitions})',context);assert.equal(overlays.filter(node=>node.isConnected).length,1);assert.equal(listeners.size,1);overlays.at(-1).close.onclick();assert.equal(listeners.size,0);
 console.log('Draft overlay runtime: actual renderer, page selection, single overlay/listener, focus loop, Escape isolation and return focus PASS.');
