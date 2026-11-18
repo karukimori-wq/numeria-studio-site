@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-19",
+  "build": "73f20e12ca16d34b7d948f0b76c01ee84e8d19bc",
+  "plan": "free (Business admin preview UI)",
+  "checks": [
+    {
+      "classes": "nbdp-sheet nbdp-magazine nbdp-wide-table",
+      "client": 1280,
+      "copyTop": 919.6953125,
+      "dataBottom": 895.6953125,
+      "page": "BAZ-06",
+      "rows": 10,
+      "scroll": 1280,
+      "tableWidth": 698
+    },
+    {
+      "copyLeft": 719.3984375,
+      "copyTop": 284.1953125,
+      "dataRight": 695.3984375,
+      "dataTop": 284.1953125,
+      "page": "BAZ-03"
+    },
+    {
+      "client": 320,
+      "rows": 10,
+      "scroll": 320,
+      "width": 320
+    },
+    {
+      "client": 390,
+      "rows": 10,
+      "scroll": 390,
+      "width": 390
+    },
+    {
+      "client": 768,
+      "rows": 10,
+      "scroll": 768,
+      "width": 768
+    }
+  ]
+}
