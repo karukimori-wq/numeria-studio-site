@@ -5,10 +5,10 @@ import {withFourPillarsCalculationCheckpoint as attach} from '../src/four-pillar
 const source=readFileSync('scripts/four-pillars-input-form-runtime.js','utf8');
 const clock={date:'1948-09-12',time:'00:30:45',countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:true,offsetChoiceMinutes:600};
 let snapshot=attach({id:'fixture-bazi-session',divination:'four-pillars',fourPillarsInput:{methodKey:'four-pillars',subjectId:'retained-a',partnerSubjectId:'retained-b',birthClock:clock,partnerBirthClock:{...clock,offsetChoiceMinutes:540},referenceDate:'2026-11-17',familyContext:'parent-child',parentDirection:'a-parent',calculationSex:'male'}});
-const keys=['sex','date','time','offset','confirm','partnerdate','partnertime','partneroffset','partnerconfirm','reference','partnerEnabled','family','direction','save','status','result'];
+const keys=['preview-open','sex','date','time','offset','confirm','partnerdate','partnertime','partneroffset','partnerconfirm','reference','partnerEnabled','family','direction','save','status','result'];
 const fields=Object.fromEntries(keys.map(key=>[key,{value:'',checked:false,disabled:false,textContent:'',innerHTML:''}]));
-const controls=keys.filter(key=>!['save','status','result'].includes(key)).map(key=>fields[key]);
-const container={innerHTML:'',querySelector:selector=>fields[selector.match(/data-bazi-([\w]+)/)[1]],querySelectorAll:()=>controls};
+const controls=keys.filter(key=>!['save','preview-open','status','result'].includes(key)).map(key=>fields[key]);
+const container={innerHTML:'',querySelector:selector=>fields[selector.match(/data-bazi-([\w-]+)/)[1]],querySelectorAll:()=>controls};
 const listeners=new Set();let updates=[],saves=0,fail=false,noAck=false,wrongId=false,release=null;
 const bridgeSource=readFileSync('scripts/patch-numerology-name-input.mjs','utf8');
 const adoptSource=bridgeSource.slice(bridgeSource.indexOf('adoptFourPillarsSavedSnapshot:function(saved){'),bridgeSource.indexOf('},updateKigakuInput:function(input){`);')).replace('adoptFourPillarsSavedSnapshot:function(saved){','function adopt(saved){')+'}';
@@ -37,8 +37,8 @@ console.log('Four Pillars form: explicit clocks, restored folds/identities, unkn
 // Use a fresh container as the real editor does, not reused fixture controls.
 release=true;const remountPending=fields.save.onclick();
 const replacementFields=Object.fromEntries(keys.map(key=>[key,{value:'',checked:false,disabled:false,textContent:'',innerHTML:''}]));
-const replacementControls=keys.filter(key=>!['save','status','result'].includes(key)).map(key=>replacementFields[key]);
-context.replacementContainer={innerHTML:'',isConnected:true,querySelector:selector=>replacementFields[selector.match(/data-bazi-([\w]+)/)[1]],querySelectorAll:()=>replacementControls};
+const replacementControls=keys.filter(key=>!['save','preview-open','status','result'].includes(key)).map(key=>replacementFields[key]);
+context.replacementContainer={innerHTML:'',isConnected:true,querySelector:selector=>replacementFields[selector.match(/data-bazi-([\w-]+)/)[1]],querySelectorAll:()=>replacementControls};
 container.isConnected=false;vm.runInContext('mountFourPillarsInputForm(replacementContainer)',context);
 assert(replacementFields.save.disabled);assert(replacementControls.every(control=>control.disabled));
 const countBeforeRemountClick=saves;await replacementFields.save.onclick();assert.equal(saves,countBeforeRemountClick);
@@ -47,8 +47,8 @@ assert(replacementFields.result.innerHTML.includes('保存された計算結果'
 assert(replacementFields.status.textContent.includes('下書きを保存しました'));assert.equal(replacementFields.save.disabled,false);assert(replacementControls.every(control=>!control.disabled));
 fail=true;release=true;const failedRemount=replacementFields.save.onclick();
 const failedFields=Object.fromEntries(keys.map(key=>[key,{value:'',checked:false,disabled:false,textContent:'',innerHTML:''}]));
-const failedControls=keys.filter(key=>!['save','status','result'].includes(key)).map(key=>failedFields[key]);
-context.failedContainer={innerHTML:'',isConnected:true,querySelector:selector=>failedFields[selector.match(/data-bazi-([\w]+)/)[1]],querySelectorAll:()=>failedControls};
+const failedControls=keys.filter(key=>!['save','preview-open','status','result'].includes(key)).map(key=>failedFields[key]);
+context.failedContainer={innerHTML:'',isConnected:true,querySelector:selector=>failedFields[selector.match(/data-bazi-([\w-]+)/)[1]],querySelectorAll:()=>failedControls};
 context.replacementContainer.isConnected=false;vm.runInContext('mountFourPillarsInputForm(failedContainer)',context);
 release();await failedRemount;release=null;fail=false;
 assert(failedFields.status.textContent.includes('保存できません'));assert.equal(failedFields.save.disabled,false);assert(failedControls.every(control=>!control.disabled));assert.equal(listeners.size,0);
@@ -57,8 +57,8 @@ console.log('Four Pillars save/remount race: pending lock survives replacement, 
 release=true;const switchedPending=failedFields.save.onclick();
 snapshot={...snapshot,id:'session-b',fourPillarsCalculation:null,fourPillarsInput:{...snapshot.fourPillarsInput,subjectId:'subject-b'}};
 const otherFields=Object.fromEntries(keys.map(key=>[key,{value:'',checked:false,disabled:false,textContent:'',innerHTML:''}]));
-const otherControls=keys.filter(key=>!['save','status','result'].includes(key)).map(key=>otherFields[key]);
-context.otherContainer={innerHTML:'',isConnected:true,querySelector:selector=>otherFields[selector.match(/data-bazi-([\w]+)/)[1]],querySelectorAll:()=>otherControls};
+const otherControls=keys.filter(key=>!['save','preview-open','status','result'].includes(key)).map(key=>otherFields[key]);
+context.otherContainer={innerHTML:'',isConnected:true,querySelector:selector=>otherFields[selector.match(/data-bazi-([\w-]+)/)[1]],querySelectorAll:()=>otherControls};
 context.failedContainer.isConnected=false;vm.runInContext('mountFourPillarsInputForm(otherContainer)',context);
 assert(otherFields.status.textContent.includes('別の鑑定'));assert(otherFields.save.disabled);
 release();await switchedPending;release=null;

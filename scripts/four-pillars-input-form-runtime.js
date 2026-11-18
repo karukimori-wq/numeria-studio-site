@@ -1,12 +1,12 @@
 let numeriaBaziActiveForm=null,numeriaBaziPendingSave=null;
-function mountFourPillarsInputForm(container){
+function mountFourPillarsInputForm(container,previewOptions={}){
   const api=window.NumeriaNavigation,snapshot=api?.getReadingSnapshot?.();
   if(!container)return;
   if(snapshot?.divination!=='four-pillars'||typeof snapshot.id!=='string'||!snapshot.id){container.textContent='四柱推命の鑑定画面で下書きを保存してから、この入力画面を開き直してください。';return;}
   const prior=snapshot.fourPillarsInput||{},escape=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const offsetOptions='<option value="">自動判定（重複時刻は選択）</option><option value="540">標準時 UTC+09:00</option><option value="600">夏時間 UTC+10:00</option>';
   const clockFields=(prefix,label)=>`<fieldset><legend>${label}</legend><label>生年月日<input data-bazi-${prefix}date type="date" min="1901-01-01" max="2100-12-31"></label><label>出生時刻（不明は空欄）<input data-bazi-${prefix}time type="time" step="1"></label><label>重複時刻の時差<select data-bazi-${prefix}offset>${offsetOptions}</select></label><label><input data-bazi-${prefix}confirm type="checkbox">日本の出生時計であることを確認</label></fieldset>`;
-  container.innerHTML=`<h3>四柱推命の計算入力</h3><p>日本での出生時計を入力します。時刻不明では時柱を作りません。文章・素材は未承認のため、この計算だけでは発行できません。</p>${clockFields('','本人')}<label>固定する鑑定基準日<input data-bazi-reference type="date"></label><label>起運・大運の計算用性別<select data-bazi-sex><option value="">未指定</option><option value="male">男性区分</option><option value="female">女性区分</option></select></label><p>プロフィールとは別の計算用区分です。未指定でも本人の命式や比較は保存できます。</p><label><input data-bazi-partnerEnabled type="checkbox">比較相手を入力する</label>${clockFields('partner','比較相手')}<label>家族の関係<select data-bazi-family><option value="">未指定</option><option value="parent-child">親子</option><option value="partners">パートナー</option><option value="other-family">その他の家族</option></select></label><label>親子の方向<select data-bazi-direction><option value="">未指定</option><option value="a-parent">本人が親</option><option value="b-parent">相手が親</option></select></label><button type="button" data-bazi-save>入力を反映して下書きを保存</button><p data-bazi-status role="status"></p><div data-bazi-result></div>`;
+  container.innerHTML=`<h3>四柱推命の計算入力</h3><p>日本での出生時計を入力します。時刻不明では時柱を作りません。文章・素材は未承認のため、この計算だけでは発行できません。</p>${clockFields('','本人')}<label>固定する鑑定基準日<input data-bazi-reference type="date"></label><label>起運・大運の計算用性別<select data-bazi-sex><option value="">未指定</option><option value="male">男性区分</option><option value="female">女性区分</option></select></label><p>プロフィールとは別の計算用区分です。未指定でも本人の命式や比較は保存できます。</p><label><input data-bazi-partnerEnabled type="checkbox">比較相手を入力する</label>${clockFields('partner','比較相手')}<label>家族の関係<select data-bazi-family><option value="">未指定</option><option value="parent-child">親子</option><option value="partners">パートナー</option><option value="other-family">その他の家族</option></select></label><label>親子の方向<select data-bazi-direction><option value="">未指定</option><option value="a-parent">本人が親</option><option value="b-parent">相手が親</option></select></label><button type="button" data-bazi-save>入力を反映して下書きを保存</button><button type="button" data-bazi-preview-open>計算データのページ見本を開く</button><p data-bazi-status role="status"></p><div data-bazi-result></div>`;
   const field=key=>container.querySelector(`[data-bazi-${key}]`);
   for(const [prefix,clock] of [['',prior.birthClock||{}],['partner',prior.partnerBirthClock||{}]]){
     field(prefix+'date').value=clock.date||'';field(prefix+'time').value=clock.time||'';
@@ -46,6 +46,13 @@ function mountFourPillarsInputForm(container){
   const mounted={sessionId:snapshot.id,container,setSaving,setStatus:message=>{field('status').textContent=message;},accept:saved=>{render(saved.fourPillarsCalculation);prior.referenceDate=saved.fourPillarsInput.referenceDate;field('reference').readOnly=true;field('status').textContent='下書きを保存しました。計算結果は未承認です。';}};
   numeriaBaziActiveForm=mounted;
   if(numeriaBaziPendingSave){setSaving(true);field('status').textContent=numeriaBaziPendingSave.sessionId===snapshot.id?'下書きを保存しています。':'別の鑑定の保存完了を待っています。';}
+  field('preview-open').onclick=()=>{
+    if(numeriaBaziPendingSave){setStatus('保存完了後に計算ページを開いてください。');return;}
+    const current=api.getReadingSnapshot?.();
+    if(current?.id!==snapshot.id||current?.divination!=='four-pillars'){setStatus('鑑定が切り替わりました。入力画面を開き直してください。');return;}
+    const result=openFourPillarsDraftPreview({snapshot:current,definitions:previewOptions.getDefinitions?.()||[],layoutId:previewOptions.getLayout?.()||'standard'});
+    if(!result.ok)setStatus(result.message);
+  };
   field('save').onclick=async()=>{
     if(saving||numeriaBaziPendingSave)return;
     const current=api.getReadingSnapshot?.();

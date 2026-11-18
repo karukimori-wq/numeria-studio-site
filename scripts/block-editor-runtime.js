@@ -160,7 +160,7 @@ function decorateEditor(){
   if(!root?.classList.contains("open"))return;
   const settings=root.querySelector(".nbe-settings");
   if(settings&&data.selectedDivination==="four-pillars"&&!settings.querySelector("[data-bazi-input-form]")){
-    const form=document.createElement("section");form.dataset.baziInputForm="1";settings.append(form);mountFourPillarsInputForm(form);
+    const form=document.createElement("section");form.dataset.baziInputForm="1";settings.append(form);mountFourPillarsInputForm(form,{getDefinitions:()=>pageDefinitions,getLayout:()=>window.NumeriaReportTemplate?.read?.().layoutId||"standard"});
   }
   if(settings&&data.selectedDivination==="nine-star-ki"&&!settings.querySelector("[data-kigaku-input-form]")){
     const form=document.createElement("section");form.dataset.kigakuInputForm="1";settings.append(form);mountKigakuInputForm(form);

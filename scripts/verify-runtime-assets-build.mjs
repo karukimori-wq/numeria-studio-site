@@ -122,6 +122,6 @@ assert.ok(!extensionlessHtml.includes("途中保存は画面上部または下�
 
 console.log(`Versioned runtime assets, stale-route recovery, native navigation fallback, and scroll-safe mobile menu verified: ${indexMatch[1]} -> ${appMatch[1]}`);
 
-assert.ok(appSource.includes("function mountFourPillarsInputForm(container)"));
+assert.ok(appSource.includes("function mountFourPillarsInputForm(container,previewOptions={})"));
 assert.ok(appSource.includes("updateFourPillarsInput:function(input)"));
 assert.ok(appSource.includes("fourPillarsInput:l===\"four-pillars\""));

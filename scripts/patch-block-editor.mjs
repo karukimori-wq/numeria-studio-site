@@ -6,7 +6,8 @@ const target = `${assetDirectory}/${asset}`;
 let source = readFileSync(target, "utf8");
 source = source.replace(/;\(\(\)=>\{if\(window\.__NumeriaBlockEditorV2\)[\s\S]*?\/\* block-editor-v2-end \*\/\}\)\(\);/g, "");
 source = source.replace(/;\(\(\)=>\{if\(window\.__NumeriaBlockEditorV1\)[\s\S]*?\/\* block-editor-end \*\/\}\)\(\);/g, "");
-const runtime = readFileSync("scripts/four-pillars-input-form-runtime.js", "utf8") + readFileSync("scripts/kigaku-input-form-runtime.js", "utf8") + readFileSync("scripts/block-editor-runtime.js", "utf8");
+const baziPreviewRuntime = readFileSync("src/four-pillars-draft-preview.js", "utf8").replaceAll("export const ","const ").replaceAll("export function ","function ") + readFileSync("scripts/four-pillars-draft-preview-runtime.js","utf8");
+const runtime = baziPreviewRuntime + readFileSync("scripts/four-pillars-input-form-runtime.js", "utf8") + readFileSync("scripts/kigaku-input-form-runtime.js", "utf8") + readFileSync("scripts/block-editor-runtime.js", "utf8");
 const figureRuntime = ["src/report-result-references.js", "src/report-figure-types.js", "src/report-figure-renderer.js", "src/report-page-figures.js"].map(path => readFileSync(path, "utf8").replace(/^import .*;\s*$/gm, "").replaceAll("export const ", "const ").replaceAll("export function ", "function ")).join("\n");
 const pageCommentRuntime = readFileSync("src/report-page-comment.js", "utf8")
   .replace("export const ", "const ")
