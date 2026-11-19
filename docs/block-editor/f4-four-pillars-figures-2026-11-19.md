@@ -13,3 +13,11 @@ src/four-pillars-figures.jsは保存済み下書き計算のページを入力�
 全体は計算確認用・未承認で、原文と素材の承認状態をそのまま表示する。正式鑑定書/アプリ生成PDFの受入、専門確認、全命式/起運の独立正解、実Proアカウントは別の未完ゲートである。
 
 スマホでは関係図のSVGを640px未満に縮小せず、図だけを枠内で横スクロールする。枠にregion名とキーボードフォーカスを付け、Tab循環対象にも含めた。本文・対応表は画面幅内で折り返す。レビューでモバイル規則のCSS詳細度不足を修正し、共通図表のmin-width:0より優先させた。実ブラウザではcomputed min-widthと枠内スクロールを別途測定する。
+
+## 検証環境での確認
+
+91bf67bの配信をHTTPヘッダーで確認し、認証済み架空Sessionを完全再読込。実API free（Business管理者プレビューUI）のBAZ-01/02/03/04/06だけを選択し、標準/マガジンの5件ずつを確認。TABLE/RELATION/BALANCEの3方式がreadyで、計算値と登録原文が同じページに表示された。五行0/1/2/2/3、己日主と実際の掲載位置からの通変星、大運10区間を確認。全14ページの4方式（TIMEを含む）は自動検査であり、実Pro/全12方式の実画面合格ではない。
+
+390pxで図のviewportは318px、SVG幅/計算後min-widthは640px。Tabで図枠へ入り、ArrowRightでscrollLeftが0→80pxになった。320/390pxで図だけを枠内スクロール、768/1280pxで枠幅内に収まり、全4幅でoverlay clientWidth=scrollWidth。画像を目視確認済み。開始時の標準へ戻し、プリセット/鑑定本文の保存変更はなし。
+
+証拠はevidence/2026-11-19/figures-live-proof.json、figures-relation-standard.png、figures-relation-mobile-390.png、figures-balance-magazine.png。figures-adapter-proof.jsonは独立した合否ではなく、架空入力で実計算した14投影の型/値/出所SHA256を保存した自動検査記録。原文/素材の専門承認、独立全命式・起運、アプリ生成PDF・A4最終組版は未完。正式受入0/85・開発完了1/43・利用者確認0/43を維持する。
