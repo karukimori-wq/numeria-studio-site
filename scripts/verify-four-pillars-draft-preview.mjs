@@ -19,18 +19,19 @@ const confirmed=structuredClone(snapshot);confirmed.fourPillarsCalculation.statu
 const permitted=structuredClone(snapshot);permitted.fourPillarsCalculation.publicationAllowed=true;assert.equal(build(permitted,defs).available,false);
 const wrong=structuredClone(snapshot);wrong.fourPillarsCalculation.calculation.subject='different';assert.equal(build(wrong,defs).available,false);
 const escaped=structuredClone(snapshot);escaped.fourPillarsCalculation.calculation.pages[0].data.pillars.year='<img src=x onerror=alert(1)>';
-const html=render(build(escaped,[{...defs[0],title:'<script>alert(1)</script>'}]),'BAZ-01');assert(!html.includes('<script'));assert(!html.includes('<img'));assert(html.includes('&lt;img'));
-const noData=structuredClone(snapshot);noData.fourPillarsCalculation.calculation.pages[2].data={};assert(render(build(noData,defs),'BAZ-03').includes('構成数が揃っていません'));
+const html=render(build(escaped,[{...defs[0],title:'<script>alert(1)</script>'}]),'BAZ-01');assert(!html.includes('<script'));assert(!html.includes('<img'));assert(html.includes('図表の計算結果が揃っていません'));assert(html.includes('&lt;script'));
+const noData=structuredClone(snapshot);noData.fourPillarsCalculation.calculation.pages[2].data={};assert(render(build(noData,defs),'BAZ-03').includes('図表の計算結果が揃っていません'));
 const missing=attach({...snapshot,fourPillarsInput:{...snapshot.fourPillarsInput,calculationSex:null}});assert(render(build(missing,defs),'BAZ-06').includes('必要な計算結果が確定していません'));
 const reordered=structuredClone(snapshot);reordered.fourPillarsInput=Object.fromEntries(Object.entries(reordered.fourPillarsInput).reverse());assert.equal(build(reordered,defs).available,true);
 assert(FOUR_PILLARS_DRAFT_PREVIEW_CSS.includes('@media print'));assert(FOUR_PILLARS_DRAFT_PREVIEW_CSS.includes('未承認の計算確認画面は正式発行できません'));
 console.log('Four Pillars draft page preview: 14x2 layouts, Free five-definition filtering, saved-source scope, no approval promotion, missing/zero, interval facts, escaping and native-print suppression PASS; formal report/PDF pending.');
 for(const value of [undefined,null,{}]){
  const malformed=structuredClone(snapshot);malformed.fourPillarsCalculation.calculation.pages[7].data.matches=value;
- const output=render(build(malformed,defs),'BAZ-08');assert(output.includes('比較の計算結果が揃っていません'));assert(!output.includes('0件'));
+ const output=render(build(malformed,defs),'BAZ-08');assert(output.includes('図表の計算結果が揃っていません'));assert(!output.includes('0件'));
 }
 const {readFileSync}=await import('node:fs');const vm=await import('node:vm');
-const source=readFileSync('src/four-pillars-copy-data.js','utf8').replaceAll('export const ','const ')+readFileSync('src/four-pillars-page-copy.js','utf8').replace(/^import .*;\n/gm,'').replaceAll('export function ','function ')+readFileSync('src/four-pillars-draft-preview.js','utf8').replace(/^import .*;\n/gm,'').replaceAll('export function ','function ').replaceAll('export const ','const ')+readFileSync('scripts/four-pillars-draft-preview-runtime.js','utf8');
+const figureSource=['src/report-result-references.js','src/report-figure-types.js','src/report-figure-renderer.js','src/four-pillars-figures.js'].map(path=>readFileSync(path,'utf8').replace(/^import .*;\n/gm,'').replaceAll('export const ','const ').replaceAll('export function ','function ')).join('\n');
+const source=figureSource+readFileSync('src/four-pillars-copy-data.js','utf8').replaceAll('export const ','const ')+readFileSync('src/four-pillars-page-copy.js','utf8').replace(/^import .*;\n/gm,'').replaceAll('export function ','function ')+readFileSync('src/four-pillars-draft-preview.js','utf8').replace(/^import .*;\n/gm,'').replaceAll('export function ','function ').replaceAll('export const ','const ')+readFileSync('scripts/four-pillars-draft-preview-runtime.js','utf8');
 const listeners=new Set(),overlays=[];
 const document={activeElement:null,createElement(){
  const close={isConnected:true,focus(){document.activeElement=this;}},select={value:'BAZ-01',isConnected:true,focus(){document.activeElement=this;}},content={innerHTML:''};
@@ -38,7 +39,7 @@ const document={activeElement:null,createElement(){
  const node={dataset:{},innerHTML:'',isConnected:true,setAttribute(){},querySelector:selector=>({'[data-bazi-preview-close]':close,'[data-bazi-preview-select]':select,'[data-bazi-preview-content]':content})[selector],querySelectorAll:()=>content.innerHTML.includes('<summary>')?[close,select,summary]:[close,select],remove(){this.isConnected=false;},close,select,summary,content};overlays.push(node);return node;
 },body:{append(){}},addEventListener(type,listener,capture){assert.equal(capture,true);listeners.add(listener);},removeEventListener(type,listener,capture){assert.equal(capture,true);listeners.delete(listener);}};
 const origin={isConnected:true,focus(){document.activeElement=this;}};document.activeElement=origin;
-const context=vm.createContext({document,snapshot,definitions:reportPageDefinitionsFor('four-pillars','free')});vm.runInContext(source,context);
+const context=vm.createContext({document,snapshot,structuredClone,definitions:reportPageDefinitionsFor('four-pillars','free')});vm.runInContext(source,context);
 assert.equal(vm.runInContext('openFourPillarsDraftPreview({snapshot,definitions,layoutId:"magazine"}).ok',context),true);
 let active=overlays.at(-1);assert(active.content.innerHTML.includes('BAZ-01'));assert.equal(document.activeElement,active.close);
 active.select.value='BAZ-06';active.select.onchange();assert(active.content.innerHTML.includes('2049-12-24'));
