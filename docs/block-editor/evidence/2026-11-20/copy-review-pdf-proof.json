@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-20",
+  "pages": 35,
+  "recordCount": 128,
+  "pageAssignments": 14,
+  "allBodiesAndShortsOnExpectedPage": true,
+  "allPagesMarkedUnapproved": true,
+  "allReviewFieldsBlank": true,
+  "textWithinBounds": true,
+  "applicationOfficialPDFAcceptance": false,
+  "datasetSHA256": "42b091c10321576fef5ac8eae7030345b196bb8364f5f7fe272f47c445a1fede"
+}
