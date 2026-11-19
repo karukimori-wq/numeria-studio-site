@@ -35,13 +35,15 @@ const source=figureSource+readFileSync('src/four-pillars-copy-data.js','utf8').r
 const listeners=new Set(),overlays=[];
 const document={activeElement:null,createElement(){
  const close={isConnected:true,focus(){document.activeElement=this;}},select={value:'BAZ-01',isConnected:true,focus(){document.activeElement=this;}},content={innerHTML:''};
+ const graph={isConnected:true,focus(){document.activeElement=this;}};
  const summary={isConnected:true,focus(){document.activeElement=this;}};
- const node={dataset:{},innerHTML:'',isConnected:true,setAttribute(){},querySelector:selector=>({'[data-bazi-preview-close]':close,'[data-bazi-preview-select]':select,'[data-bazi-preview-content]':content})[selector],querySelectorAll:()=>content.innerHTML.includes('<summary>')?[close,select,summary]:[close,select],remove(){this.isConnected=false;},close,select,summary,content};overlays.push(node);return node;
+ const node={dataset:{},innerHTML:'',isConnected:true,setAttribute(){},querySelector:selector=>({'[data-bazi-preview-close]':close,'[data-bazi-preview-select]':select,'[data-bazi-preview-content]':content})[selector],querySelectorAll:()=>[close,select,...(content.innerHTML.includes('nbdp-graph-viewport')?[graph]:[]),...(content.innerHTML.includes('<summary>')?[summary]:[])],remove(){this.isConnected=false;},close,select,graph,summary,content};overlays.push(node);return node;
 },body:{append(){}},addEventListener(type,listener,capture){assert.equal(capture,true);listeners.add(listener);},removeEventListener(type,listener,capture){assert.equal(capture,true);listeners.delete(listener);}};
 const origin={isConnected:true,focus(){document.activeElement=this;}};document.activeElement=origin;
 const context=vm.createContext({document,snapshot,structuredClone,definitions:reportPageDefinitionsFor('four-pillars','free')});vm.runInContext(source,context);
 assert.equal(vm.runInContext('openFourPillarsDraftPreview({snapshot,definitions,layoutId:"magazine"}).ok',context),true);
 let active=overlays.at(-1);assert(active.content.innerHTML.includes('BAZ-01'));assert.equal(document.activeElement,active.close);
+active.select.value='BAZ-04';active.select.onchange();assert(active.content.innerHTML.includes('nbdp-graph-viewport'));assert(active.querySelectorAll().includes(active.graph));
 active.select.value='BAZ-06';active.select.onchange();assert(active.content.innerHTML.includes('2049-12-24'));
 let prevented=false,stopped=false;const key=event=>[...listeners][0](event);
 key({key:'Tab',shiftKey:true,preventDefault(){prevented=true;}});assert(prevented);assert.equal(document.activeElement,active.summary);
