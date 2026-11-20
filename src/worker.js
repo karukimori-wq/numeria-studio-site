@@ -1,3 +1,4 @@
+import { withFourPillarsCalculationCheckpoint } from "./four-pillars-calculation-checkpoint.js";
 import { withKigakuCalculationCheckpoint } from "./kigaku-calculation-checkpoint.js";
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
@@ -2607,6 +2608,12 @@ async function handleApi(request, env = {}, ctx = null) {
       return json({ status: "error", errorCode: "KIGAKU_REFERENCE_LOCKED", message: "保存済み基準日時は変更できません。新規鑑定を作成してください。" }, { status: 409 });
     }
 
+    const fixedFourPillarsReference = previousDraft?.snapshot?.fourPillarsInput?.referenceDate
+      || previousDraft?.snapshot?.fourPillarsCalculation?.source?.referenceDate || null;
+    if (fixedFourPillarsReference && body.snapshot && body.snapshot.fourPillarsInput?.referenceDate !== fixedFourPillarsReference) {
+      return json({ status: "error", errorCode: "FOUR_PILLARS_REFERENCE_LOCKED", message: "保存済み基準日は変更できません。新規鑑定を作成してください。" }, { status: 409 });
+    }
+
     record.activeDraft = {
       id: appraisalId,
       draftVersion: crypto.randomUUID(),
@@ -2618,7 +2625,7 @@ async function handleApi(request, env = {}, ctx = null) {
       notes: String(body.notes ?? previousDraft?.notes ?? "").trim(),
       resultSummary: String(body.resultSummary ?? previousDraft?.resultSummary ?? "").trim(),
       snapshot: body.snapshot && typeof body.snapshot === "object"
-        ? await withNumerologyRegisteredSelection(withKigakuCalculationCheckpoint(body.snapshot), effectiveRecord.planId)
+        ? await withNumerologyRegisteredSelection(withFourPillarsCalculationCheckpoint(withKigakuCalculationCheckpoint(body.snapshot)), effectiveRecord.planId)
         : previousDraft?.snapshot || null,
       externalReferences: normalizeGrowthEngineExternalReferences(body) || previousDraft?.externalReferences || null,
       updatedAt: new Date().toISOString(),

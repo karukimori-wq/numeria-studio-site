@@ -46,7 +46,7 @@ replaceAllExactly(savingAnchor, saveEvent("saving") + ";" + persistedSavingAncho
 replaceExactly(profileFailureAnchor, "if(!a.ok){" + saveEvent("error") + ";B(a.data.message||`途中保存できませんでした`);return}", "profile draft failure");
 replaceExactly(readingFailureAnchor, "if(!a.ok){" + saveEvent("error") + ";R(a.data.message||`途中保存できませんでした`),window.setTimeout(()=>R(``),3200);return}", "reading draft failure");
 replaceExactly(profileSuccessAnchor, saveEvent("saved") + ";" + profileSuccessAnchor, "profile draft success");
-replaceExactly(readingSuccessAnchor, 'window.dispatchEvent(new CustomEvent("numeria-reading-draft-save-status",{detail:{state:"saved",sessionId:e,snapshot:r}}))' + ";" + readingSuccessAnchor, "reading draft success");
+replaceExactly(readingSuccessAnchor, 'window.dispatchEvent(new CustomEvent("numeria-reading-draft-save-status",{detail:{state:"saved",sessionId:e,snapshot:r,acknowledgedDraftId:a.data.draftId,serverSnapshot:a.data.activeDraft?.snapshot}}))' + ";" + readingSuccessAnchor, "reading draft success");
 // An HTTP 2xx with an unreadable/error body is not a draft persistence ACK.
 replaceAllExactly(
   '.then(async e=>({ok:e.ok,data:await e.json().catch(()=>({message:`途中保存に失敗しました`}))}))',
@@ -54,6 +54,10 @@ replaceAllExactly(
   2,
   "validated draft ACKs",
 );
+
+// Keep the server-derived Four Pillars checkpoint in the same saved history
+// entry used by the legacy reopen path, rather than the pre-save snapshot.
+replaceExactly('f(n=>n.find(e=>e.id===t)?n.map(n=>{', 'if(r.divination===`four-pillars`&&a.data.draftId===e&&a.data.activeDraft?.snapshot?.id===e)i.snapshot=structuredClone(a.data.activeDraft.snapshot);f(n=>n.find(e=>e.id===t)?n.map(n=>{', 'Four Pillars acknowledged history snapshot');
 
 const saveStatusRuntime = `;(()=>{if(window.__NumeriaDraftSaveStatusV1)return;window.__NumeriaDraftSaveStatusV1=true;
 window.NumeriaDraftVersions=window.NumeriaDraftVersions||new Map();window.addEventListener("numeria-session-restored",event=>{let session=event.detail?.session;if(session?.id)window.NumeriaDraftVersions.set(session.id,session.draftVersion||null)});

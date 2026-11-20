@@ -8,6 +8,7 @@ on:
       - codex/f1-f5-completion-20261113
       - codex/block-editor-observer-loop-20261116
       - codex/editor-method-page-list-20261116
+      - codex/f4-four-pillars-comparison-20261116
 
 permissions:
   contents: read

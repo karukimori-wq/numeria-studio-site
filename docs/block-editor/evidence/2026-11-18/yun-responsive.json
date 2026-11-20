@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-18",
+  "build": "976ccf5b2dc0556ad10972b65479d1d4a332ba67",
+  "measurements": [
+    {
+      "formScrollWidth": 278,
+      "formWidth": 278,
+      "resultScrollWidth": 278,
+      "resultWidth": 278,
+      "viewport": 320
+    },
+    {
+      "formScrollWidth": 333,
+      "formWidth": 333,
+      "resultScrollWidth": 333,
+      "resultWidth": 333,
+      "viewport": 375
+    },
+    {
+      "formScrollWidth": 348,
+      "formWidth": 348,
+      "resultScrollWidth": 348,
+      "resultWidth": 348,
+      "viewport": 390
+    },
+    {
+      "formScrollWidth": 184,
+      "formWidth": 184,
+      "resultScrollWidth": 184,
+      "resultWidth": 184,
+      "viewport": 768
+    },
+    {
+      "formScrollWidth": 184,
+      "formWidth": 184,
+      "resultScrollWidth": 184,
+      "resultWidth": 184,
+      "viewport": 1280
+    }
+  ]
+}

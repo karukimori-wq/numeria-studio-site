@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import {createDayunSchedule,FOUR_PILLARS_DAYUN_POLICY} from '../src/four-pillars-dayun.js';
+import {buildFourPillarsPeriodData} from '../src/four-pillars-period-data.js';
+import {buildFourPillarsPageData} from '../src/four-pillars-page-data.js';
+const policy=FOUR_PILLARS_DAYUN_POLICY;
+const yun={state:'available',direction:'forward',start:{state:'available',startInstant:'2000-02-29T03:00:45.000Z',standardDateTime:'2000-02-29T12:00:45+09:00',birthInstant:'1990-01-01T00:00:00.000Z'}};
+const schedule=createDayunSchedule({monthPillar:'甲子',dayStem:'甲',yun,policy});
+assert.equal(schedule.state,'available');assert.equal(schedule.table.data.intervals.length,10);
+assert.equal(schedule.interval(0).data.ganzhi,'乙丑');assert.equal(schedule.interval(1).data.ganzhi,'丙寅');assert.equal(schedule.interval(0).data.stemTenGod,'劫財');
+assert.equal(schedule.interval(1).data.startStandard,'2010-02-28T12:00:45+09:00');assert.equal(schedule.interval(2).data.startStandard,'2020-02-29T12:00:45+09:00');
+const backward=createDayunSchedule({monthPillar:'甲子',dayStem:'甲',yun:{...yun,direction:'backward'},policy});assert.equal(backward.interval(0).data.ganzhi,'癸亥');assert.equal(backward.interval(1).data.ganzhi,'壬戌');
+const sequential=createDayunSchedule({monthPillar:'甲子',dayStem:'甲',yun,policy:{intervalCount:10,boundaryBasis:'previous-boundary'}});assert.equal(sequential.state,'unconnected');
+assert.equal(schedule.at('2000-02-29T02:59:59Z').reason,'REFERENCE_BEFORE_YUN_START');
+assert.equal(schedule.at('2010-02-28T03:00:44Z').data.index,1);assert.equal(schedule.at('2010-02-28T03:00:45Z').data.index,2);
+const pillars={year:'庚午',month:'甲子',day:'甲子',hour:'甲子'};
+const periods=date=>buildFourPillarsPeriodData({pillars,yun,referenceDate:date});
+assert.equal(periods('2026-11-18').pages['BAZ-07'].data.annual.ganzhi,'丙午');assert.equal(periods('2026-11-18').pages['BAZ-13'].data.years[1].ganzhi,'丁未');
+assert.equal(periods('2026-02-03').pages['BAZ-07'].data.annual.year,2025);
+assert.equal(periods('2026-02-04').pages['BAZ-07'].reason,'REFERENCE_SOLAR_YEAR_BOUNDARY_TIME_REQUIRED');assert.equal(periods('2026-02-04').pages['BAZ-13'].state,'required-missing');assert.equal(periods('2026-02-04').pages['BAZ-14'].state,'available');
+const boundary=periods('2010-02-28');assert.equal(boundary.pages['BAZ-07'].reason,'REFERENCE_DAYUN_BOUNDARY_TIME_REQUIRED');assert.equal(boundary.pages['BAZ-14'].state,'required-missing');assert.equal(boundary.pages['BAZ-13'].data.years[0].correspondingDayun.length,2);
+const before=periods('1999-11-18');assert.equal(before.pages['BAZ-07'].reason,'REFERENCE_BEFORE_YUN_START');assert.equal(before.pages['BAZ-14'].data,null);
+const transition=periods('2026-11-18').pages['BAZ-14'].data;assert.equal(transition.nextDayun.index,4);assert.equal(transition.boundaryStandard,'2030-02-28T12:00:45+09:00');assert.equal(transition.age.fullYears,40);
+assert.equal(periods('2100-11-18').pages['BAZ-13'].state,'required-missing');
+const young={...yun,start:{...yun.start,startInstant:'2020-01-01T00:00:00Z',standardDateTime:'2020-01-01T09:00:00+09:00'}};
+const beyond=createDayunSchedule({monthPillar:'甲子',dayStem:'甲',yun:young,policy});assert.equal(beyond.table.reason,'DAYUN_INTERVAL_OUT_OF_RANGE');assert.equal(beyond.table.data,null);assert.equal(beyond.at('2026-11-18T00:00:00Z').state,'available');
+const input={methodKey:'four-pillars',subjectId:'synthetic-a',partnerSubjectId:'synthetic-b',birthClock:{date:'1948-09-12',time:'00:30:45',countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:true,offsetChoiceMinutes:600},partnerBirthClock:{date:'2000-01-08',time:null,countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:true,offsetChoiceMinutes:null},referenceDate:'2026-11-18',calculationSex:'female',familyContext:'parent-child',parentDirection:'a-parent'};
+const pages=buildFourPillarsPageData(input);assert.equal(pages.pages.filter(page=>page.data).length,14);assert.equal(pages.pages[5].data.intervals.length,10);assert.equal(pages.pages[12].data.years.length,2);assert.equal(pages.pages[13].data.age.fullYears,81);
+assert(pages.pages.every(page=>!page.publicationAllowed&&page.reviewState==='review-required'));
+const noSex=buildFourPillarsPageData({...input,calculationSex:null});assert.equal(noSex.pages.filter(page=>page.data).length,10);assert.equal(noSex.pages[5].reason,'CALCULATION_SEX_REQUIRED');
+const noTime=buildFourPillarsPageData({...input,birthClock:{...input.birthClock,date:'2000-01-07',time:null,offsetChoiceMinutes:null}});assert.equal(noTime.pages[0].state,'available');assert.equal(noTime.pages[5].data,null);
+assert.deepEqual(buildFourPillarsPageData(JSON.parse(JSON.stringify(input))),pages);
+console.log('Dayun periods: adopted 10 anchored decades, forward/backward, leap recovery, exclusive boundaries, pre-Yun refusal, reference-day uncertainty, annual overlaps, no range shortening and 14 draft page projections PASS; no independent/formal acceptance.');
+
+assert.equal(buildFourPillarsPageData({...input,dayunPolicy:{intervalCount:8,boundaryBasis:'previous-boundary'}}).pages[5].data.intervals.length,10);
+
+assert.equal(schedule.covering('2026-01-01T00:00:00Z','2025-01-01T00:00:00Z').reason,'DAYUN_COVERAGE_INTERVAL_INVALID');

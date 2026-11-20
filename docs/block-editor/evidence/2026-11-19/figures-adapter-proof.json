@@ -1,0 +1,992 @@
+{
+  "date": "2026-11-19",
+  "kind": "automated-synthetic-calculation-projection-not-browser-or-independent-acceptance",
+  "sourceInput": {
+    "methodKey": "four-pillars",
+    "subjectId": "adapter-synthetic-a",
+    "partnerSubjectId": "adapter-synthetic-b",
+    "birthClock": {
+      "date": "1948-09-12",
+      "time": "00:30:45",
+      "countryCode": "JP",
+      "zoneId": "Asia/Tokyo",
+      "zoneConfirmed": true,
+      "offsetChoiceMinutes": 600
+    },
+    "partnerBirthClock": {
+      "date": "1948-09-12",
+      "time": "00:30:45",
+      "countryCode": "JP",
+      "zoneId": "Asia/Tokyo",
+      "zoneConfirmed": true,
+      "offsetChoiceMinutes": 540
+    },
+    "referenceDate": "2026-11-19",
+    "calculationSex": "female",
+    "familyContext": "parent-child",
+    "parentDirection": "a-parent"
+  },
+  "sourceCalculationSHA256": "c0a8e21a4280532ae932504f094009cf4e1ce4583c13f380f78a262fbf95d43b",
+  "pages": [
+    {
+      "page": "BAZ-01",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-01:draft",
+          "pageId": "BAZ-01",
+          "type": "FIG-TABLE",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "確定4柱の命式",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "columns": [
+              {
+                "key": "pillar",
+                "label": "柱"
+              },
+              {
+                "key": "ganzhi",
+                "label": "干支"
+              }
+            ],
+            "rows": [
+              {
+                "pillar": "年柱",
+                "ganzhi": "戊子"
+              },
+              {
+                "pillar": "月柱",
+                "ganzhi": "辛酉"
+              },
+              {
+                "pillar": "日柱",
+                "ganzhi": "己亥"
+              },
+              {
+                "pillar": "時柱",
+                "ganzhi": "丙子"
+              }
+            ]
+          },
+          "sourceDataSHA256": "d24c167a9329ad3395d449cf1173b5b861a8e5791c00ff5a335b2feba2eac15b"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-02",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-02:draft",
+          "pageId": "BAZ-02",
+          "type": "FIG-RELATION",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "日干と参照する確定命式",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "nodes": [
+              {
+                "id": "年柱",
+                "value": "戊子"
+              },
+              {
+                "id": "月柱",
+                "value": "辛酉"
+              },
+              {
+                "id": "日柱",
+                "value": "己亥"
+              },
+              {
+                "id": "時柱",
+                "value": "丙子"
+              }
+            ],
+            "edges": [],
+            "legend": [
+              {
+                "kind": "日主",
+                "label": "日柱の天干 己。各柱を参照する配置であり、柱間の合冲を計算した線は追加していません。"
+              }
+            ],
+            "scoreAxis": false
+          },
+          "sourceDataSHA256": "ae77b2a0c85bb9d2ef1523e6b9a229eecebfdca48b41dcf0928bc900509c0846"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-03",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-03:draft",
+          "pageId": "BAZ-03",
+          "type": "FIG-BALANCE",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "確定三柱6字または四柱8字の五行構成。0も表示",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "denominator": 8,
+            "unit": "字",
+            "measure": "天干・地支の表面文字の構成数。蔵干・健康・吉凶の点数を含みません",
+            "items": [
+              {
+                "label": "木",
+                "value": 0
+              },
+              {
+                "label": "火",
+                "value": 1
+              },
+              {
+                "label": "土",
+                "value": 2
+              },
+              {
+                "label": "金",
+                "value": 2
+              },
+              {
+                "label": "水",
+                "value": 3
+              }
+            ]
+          },
+          "sourceDataSHA256": "34ea435c48e3617a9245f7ecb44416df0de73801c684caed72f1471059812c48"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-04",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-04:draft",
+          "pageId": "BAZ-04",
+          "type": "FIG-RELATION",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "本人の日干を基準に、掲載位置の天干・蔵干に対応する通変星を整理",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "nodes": [
+              {
+                "id": "日主",
+                "value": "己"
+              },
+              {
+                "id": "劫財",
+                "value": "戊"
+              },
+              {
+                "id": "偏財",
+                "value": "癸"
+              },
+              {
+                "id": "食神",
+                "value": "辛"
+              },
+              {
+                "id": "正財",
+                "value": "壬"
+              },
+              {
+                "id": "正官",
+                "value": "甲"
+              },
+              {
+                "id": "印綬",
+                "value": "丙"
+              }
+            ],
+            "edges": [
+              {
+                "from": "日主",
+                "to": "劫財",
+                "kind": "劫財"
+              },
+              {
+                "from": "日主",
+                "to": "偏財",
+                "kind": "偏財"
+              },
+              {
+                "from": "日主",
+                "to": "食神",
+                "kind": "食神"
+              },
+              {
+                "from": "日主",
+                "to": "正財",
+                "kind": "正財"
+              },
+              {
+                "from": "日主",
+                "to": "正官",
+                "kind": "正官"
+              },
+              {
+                "from": "日主",
+                "to": "印綬",
+                "kind": "印綬"
+              }
+            ],
+            "legend": [
+              {
+                "kind": "線の意味",
+                "label": "日干を基準とする通変星の対応。配置・強弱・相性の点数や因果関係を表す線ではありません。"
+              }
+            ],
+            "scoreAxis": false
+          },
+          "sourceDataSHA256": "96d0c01186f00bebb405bd2ac577120ba297bcdcf1ed7cee040dd2b495c36157"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-05",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-05:draft",
+          "pageId": "BAZ-05",
+          "type": "FIG-TABLE",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "各掲載地支と日干の固定表による十二運。活力・健康・運勢点数ではありません",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "columns": [
+              {
+                "key": "pillar",
+                "label": "柱"
+              },
+              {
+                "key": "branch",
+                "label": "支"
+              },
+              {
+                "key": "stage",
+                "label": "十二運"
+              }
+            ],
+            "rows": [
+              {
+                "pillar": "年柱",
+                "branch": "子",
+                "stage": "絶"
+              },
+              {
+                "pillar": "月柱",
+                "branch": "酉",
+                "stage": "長生"
+              },
+              {
+                "pillar": "日柱",
+                "branch": "亥",
+                "stage": "胎"
+              },
+              {
+                "pillar": "時柱",
+                "branch": "子",
+                "stage": "絶"
+              }
+            ]
+          },
+          "sourceDataSHA256": "b369b7f27cae1d59694037940e4b61113fbdaa44755776d10a0c7ed0b104bd2d"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-06",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-06:draft",
+          "pageId": "BAZ-06",
+          "type": "FIG-TABLE",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "起運から全10区間の大運。日本標準時、開始を含み終了を含まない",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "columns": [
+              {
+                "key": "index",
+                "label": "区間"
+              },
+              {
+                "key": "ganzhi",
+                "label": "干支"
+              },
+              {
+                "key": "god",
+                "label": "通変星"
+              },
+              {
+                "key": "start",
+                "label": "開始"
+              },
+              {
+                "key": "end",
+                "label": "終了"
+              }
+            ],
+            "rows": [
+              {
+                "index": 1,
+                "ganzhi": "庚申",
+                "god": "傷官",
+                "start": "1949-12-24T01:30:45+09:00",
+                "end": "1959-12-24T01:30:45+09:00"
+              },
+              {
+                "index": 2,
+                "ganzhi": "己未",
+                "god": "比肩",
+                "start": "1959-12-24T01:30:45+09:00",
+                "end": "1969-12-24T01:30:45+09:00"
+              },
+              {
+                "index": 3,
+                "ganzhi": "戊午",
+                "god": "劫財",
+                "start": "1969-12-24T01:30:45+09:00",
+                "end": "1979-12-24T01:30:45+09:00"
+              },
+              {
+                "index": 4,
+                "ganzhi": "丁巳",
+                "god": "偏印",
+                "start": "1979-12-24T01:30:45+09:00",
+                "end": "1989-12-24T01:30:45+09:00"
+              },
+              {
+                "index": 5,
+                "ganzhi": "丙辰",
+                "god": "印綬",
+                "start": "1989-12-24T01:30:45+09:00",
+                "end": "1999-12-24T01:30:45+09:00"
+              },
+              {
+                "index": 6,
+                "ganzhi": "乙卯",
+                "god": "偏官",
+                "start": "1999-12-24T01:30:45+09:00",
+                "end": "2009-12-24T01:30:45+09:00"
+              },
+              {
+                "index": 7,
+                "ganzhi": "甲寅",
+                "god": "正官",
+                "start": "2009-12-24T01:30:45+09:00",
+                "end": "2019-12-24T01:30:45+09:00"
+              },
+              {
+                "index": 8,
+                "ganzhi": "癸丑",
+                "god": "偏財",
+                "start": "2019-12-24T01:30:45+09:00",
+                "end": "2029-12-24T01:30:45+09:00"
+              },
+              {
+                "index": 9,
+                "ganzhi": "壬子",
+                "god": "正財",
+                "start": "2029-12-24T01:30:45+09:00",
+                "end": "2039-12-24T01:30:45+09:00"
+              },
+              {
+                "index": 10,
+                "ganzhi": "辛亥",
+                "god": "食神",
+                "start": "2039-12-24T01:30:45+09:00",
+                "end": "2049-12-24T01:30:45+09:00"
+              }
+            ]
+          },
+          "sourceDataSHA256": "c1f5139a39408bd59967ad9b2731d422d57f43fdb33fc1705d6fc176e97940c8"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-07",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-07:draft",
+          "pageId": "BAZ-07",
+          "type": "FIG-TIME",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "基準日が属する大運と節年。それぞれの完全な区間",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "items": [
+              {
+                "id": "current-dayun",
+                "label": "現在の大運",
+                "value": "癸丑（偏財）",
+                "start": "2019-12-24T01:30:45+09:00",
+                "end": "2029-12-24T01:30:45+09:00"
+              },
+              {
+                "id": "current-year",
+                "label": "2026節年",
+                "value": "丙午（印綬）",
+                "start": "2026-02-04T05:02:08+09:00",
+                "end": "2027-02-04T10:46:18+09:00"
+              }
+            ],
+            "unit": "大運・節年（別々の期間）",
+            "timeZone": "Asia/Tokyo",
+            "scoreAxis": false
+          },
+          "sourceDataSHA256": "c6db8ec7d9fec3995aed03238309e8e4f3c782a5323970113b9c71f52d4fde42"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-08",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-08:draft",
+          "pageId": "BAZ-08",
+          "type": "FIG-TABLE",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "2名の確定した対応4柱だけの比較。時柱を含む。採用合冲0件",
+          "subjectRefs": [
+            "adapter-synthetic-a",
+            "adapter-synthetic-b"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "columns": [
+              {
+                "key": "pillar",
+                "label": "対応柱"
+              },
+              {
+                "key": "subject",
+                "label": "本人"
+              },
+              {
+                "key": "partner",
+                "label": "相手"
+              },
+              {
+                "key": "matches",
+                "label": "採用合冲"
+              }
+            ],
+            "rows": [
+              {
+                "pillar": "年柱",
+                "subject": "戊子",
+                "partner": "戊子",
+                "matches": "採用合冲なし"
+              },
+              {
+                "pillar": "月柱",
+                "subject": "辛酉",
+                "partner": "辛酉",
+                "matches": "採用合冲なし"
+              },
+              {
+                "pillar": "日柱",
+                "subject": "己亥",
+                "partner": "庚子",
+                "matches": "採用合冲なし"
+              },
+              {
+                "pillar": "時柱",
+                "subject": "丙子",
+                "partner": "丙子",
+                "matches": "採用合冲なし"
+              }
+            ]
+          },
+          "sourceDataSHA256": "5b6cfcbfd1dca6e68e3db35a8fe437648763df0efd1264b47f3ac6d4ddd3917e"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-09",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-09:draft",
+          "pageId": "BAZ-09",
+          "type": "FIG-RELATION",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "本人の日干を基準に、掲載位置の天干・蔵干に対応する通変星を整理",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "nodes": [
+              {
+                "id": "日主",
+                "value": "己"
+              },
+              {
+                "id": "劫財",
+                "value": "戊"
+              },
+              {
+                "id": "偏財",
+                "value": "癸"
+              },
+              {
+                "id": "食神",
+                "value": "辛"
+              },
+              {
+                "id": "正財",
+                "value": "壬"
+              },
+              {
+                "id": "正官",
+                "value": "甲"
+              },
+              {
+                "id": "印綬",
+                "value": "丙"
+              }
+            ],
+            "edges": [
+              {
+                "from": "日主",
+                "to": "劫財",
+                "kind": "劫財"
+              },
+              {
+                "from": "日主",
+                "to": "偏財",
+                "kind": "偏財"
+              },
+              {
+                "from": "日主",
+                "to": "食神",
+                "kind": "食神"
+              },
+              {
+                "from": "日主",
+                "to": "正財",
+                "kind": "正財"
+              },
+              {
+                "from": "日主",
+                "to": "正官",
+                "kind": "正官"
+              },
+              {
+                "from": "日主",
+                "to": "印綬",
+                "kind": "印綬"
+              }
+            ],
+            "legend": [
+              {
+                "kind": "線の意味",
+                "label": "日干を基準とする通変星の対応。配置・強弱・相性の点数や因果関係を表す線ではありません。"
+              }
+            ],
+            "scoreAxis": false
+          },
+          "sourceDataSHA256": "dcba370d369ec394a0857101595b57c8ba16d96eaf58e722d6504e9de3ef0767"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-10",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-10:draft",
+          "pageId": "BAZ-10",
+          "type": "FIG-RELATION",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "本人の日干を基準に、掲載位置の天干・蔵干に対応する通変星を整理",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "nodes": [
+              {
+                "id": "日主",
+                "value": "己"
+              },
+              {
+                "id": "劫財",
+                "value": "戊"
+              },
+              {
+                "id": "偏財",
+                "value": "癸"
+              },
+              {
+                "id": "食神",
+                "value": "辛"
+              },
+              {
+                "id": "正財",
+                "value": "壬"
+              },
+              {
+                "id": "正官",
+                "value": "甲"
+              },
+              {
+                "id": "印綬",
+                "value": "丙"
+              }
+            ],
+            "edges": [
+              {
+                "from": "日主",
+                "to": "劫財",
+                "kind": "劫財"
+              },
+              {
+                "from": "日主",
+                "to": "偏財",
+                "kind": "偏財"
+              },
+              {
+                "from": "日主",
+                "to": "食神",
+                "kind": "食神"
+              },
+              {
+                "from": "日主",
+                "to": "正財",
+                "kind": "正財"
+              },
+              {
+                "from": "日主",
+                "to": "正官",
+                "kind": "正官"
+              },
+              {
+                "from": "日主",
+                "to": "印綬",
+                "kind": "印綬"
+              }
+            ],
+            "legend": [
+              {
+                "kind": "線の意味",
+                "label": "日干を基準とする通変星の対応。配置・強弱・相性の点数や因果関係を表す線ではありません。"
+              }
+            ],
+            "scoreAxis": false
+          },
+          "sourceDataSHA256": "6d80621bc8ed66dba80d2282e322bb78486825d5463b99dd3b5b117a00aeb502"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-11",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-11:draft",
+          "pageId": "BAZ-11",
+          "type": "FIG-RELATION",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "財星の対応。掲載範囲：年柱・月柱・日柱・時柱。未計算を0件としていません",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "nodes": [
+              {
+                "id": "日主",
+                "value": "己"
+              },
+              {
+                "id": "偏財",
+                "value": "癸"
+              },
+              {
+                "id": "正財",
+                "value": "壬"
+              }
+            ],
+            "edges": [
+              {
+                "from": "日主",
+                "to": "偏財",
+                "kind": "偏財"
+              },
+              {
+                "from": "日主",
+                "to": "正財",
+                "kind": "正財"
+              }
+            ],
+            "legend": [
+              {
+                "kind": "線の意味",
+                "label": "日干を基準とする通変星の対応。配置・強弱・相性の点数や因果関係を表す線ではありません。"
+              }
+            ],
+            "scoreAxis": false
+          },
+          "sourceDataSHA256": "2c91509811c0b954d822901eb86a4bc98f00d5faf74823072c00f1b8c46214e6"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-12",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-12:draft",
+          "pageId": "BAZ-12",
+          "type": "FIG-TABLE",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "2名の確定した対応4柱だけの比較。時柱を含む。採用合冲0件。家族関係：親子／本人：親・相手：子",
+          "subjectRefs": [
+            "adapter-synthetic-a",
+            "adapter-synthetic-b"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "columns": [
+              {
+                "key": "pillar",
+                "label": "対応柱"
+              },
+              {
+                "key": "subject",
+                "label": "本人"
+              },
+              {
+                "key": "partner",
+                "label": "相手"
+              },
+              {
+                "key": "matches",
+                "label": "採用合冲"
+              }
+            ],
+            "rows": [
+              {
+                "pillar": "年柱",
+                "subject": "戊子",
+                "partner": "戊子",
+                "matches": "採用合冲なし"
+              },
+              {
+                "pillar": "月柱",
+                "subject": "辛酉",
+                "partner": "辛酉",
+                "matches": "採用合冲なし"
+              },
+              {
+                "pillar": "日柱",
+                "subject": "己亥",
+                "partner": "庚子",
+                "matches": "採用合冲なし"
+              },
+              {
+                "pillar": "時柱",
+                "subject": "丙子",
+                "partner": "丙子",
+                "matches": "採用合冲なし"
+              }
+            ]
+          },
+          "sourceDataSHA256": "a477e331cdd456846393baa8a53d4b79a2c5e979067b11a3e558eae7d40cf1ab"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-13",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-13:draft",
+          "pageId": "BAZ-13",
+          "type": "FIG-TIME",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "今年・来年の節年と各年に重なる全大運。大運の区間は節年に切り詰めません",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "items": [
+              {
+                "id": "annual-2026",
+                "label": "2026節年",
+                "value": "丙午（印綬）",
+                "start": "2026-02-04T05:02:08+09:00",
+                "end": "2027-02-04T10:46:18+09:00"
+              },
+              {
+                "id": "annual-2026-dayun-0",
+                "label": "2026節年に重なる大運",
+                "value": "癸丑（偏財）",
+                "start": "2019-12-24T01:30:45+09:00",
+                "end": "2029-12-24T01:30:45+09:00"
+              },
+              {
+                "id": "annual-2027",
+                "label": "2027節年",
+                "value": "丁未（偏印）",
+                "start": "2027-02-04T10:46:18+09:00",
+                "end": "2028-02-04T16:31:13+09:00"
+              },
+              {
+                "id": "annual-2027-dayun-0",
+                "label": "2027節年に重なる大運",
+                "value": "癸丑（偏財）",
+                "start": "2019-12-24T01:30:45+09:00",
+                "end": "2029-12-24T01:30:45+09:00"
+              }
+            ],
+            "unit": "2節年と各節年に対応する大運",
+            "timeZone": "Asia/Tokyo",
+            "scoreAxis": false
+          },
+          "sourceDataSHA256": "3c768432a277a767ddb43fc7f92e677684867d73cb3e60dc5e339cdce6a6bf1a"
+        }
+      ]
+    },
+    {
+      "page": "BAZ-14",
+      "available": true,
+      "figures": [
+        {
+          "schemaVersion": "ns.figure.v1",
+          "adapterVersion": "ns.bazi.draft-figures.2026-11-19.v1",
+          "figureId": "adapter-synthetic:BAZ-14:draft",
+          "pageId": "BAZ-14",
+          "type": "FIG-TIME",
+          "state": "ready",
+          "exampleOnly": false,
+          "alt": "次の切替境界を挟む2大運。境界日に出来事が起こる予測ではありません",
+          "subjectRefs": [
+            "adapter-synthetic-a"
+          ],
+          "calculationVersion": "ns.bazi-pillars-lunar-typescript-1.8.6.v1",
+          "publicationAllowed": false,
+          "verificationState": "review-required",
+          "data": {
+            "items": [
+              {
+                "id": "before-transition",
+                "label": "切替前の大運",
+                "value": "癸丑（偏財）",
+                "start": "2019-12-24T01:30:45+09:00",
+                "end": "2029-12-24T01:30:45+09:00"
+              },
+              {
+                "id": "after-transition",
+                "label": "切替後の大運",
+                "value": "壬子（正財）",
+                "start": "2029-12-24T01:30:45+09:00",
+                "end": "2039-12-24T01:30:45+09:00"
+              }
+            ],
+            "unit": "境界 2029-12-24T01:30:45+09:00・満81歳",
+            "timeZone": "Asia/Tokyo",
+            "scoreAxis": false
+          },
+          "sourceDataSHA256": "261c5e0f31d5c3f39baa2ef7dedc03da7f9f4201c0e590a88fc52663f75f1702"
+        }
+      ]
+    }
+  ]
+}
