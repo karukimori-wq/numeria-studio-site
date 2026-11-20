@@ -1,0 +1,776 @@
+{
+  "synthetic": true,
+  "accountAcceptance": false,
+  "results": [
+    {
+      "id": "BAZ-01",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-02",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-03",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.3671875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 742.9375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-04",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-05",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 743.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-06",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 653.8984375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 678.9453125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-07",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 700.46875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-08",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 712.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-09",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 337.7734375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-10",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 758.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 783.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 707.1328125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-11",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 739.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-12",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 729.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 608.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-13",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 741.96875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-14",
+      "layout": "standard",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 728.0625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-01",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 780.7265625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-02",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-03",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 650.75,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 580.953125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-04",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-05",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.1484375,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-06",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 653.8984375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 678.9453125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-07",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 700.46875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-08",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 611.3515625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-09",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 337.7734375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-10",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 758.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 783.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 707.1328125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-11",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 739.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-12",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.5390625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 505.15625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-13",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 741.96875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "id": "BAZ-14",
+      "layout": "magazine",
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 740.3203125,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    }
+  ]
+}

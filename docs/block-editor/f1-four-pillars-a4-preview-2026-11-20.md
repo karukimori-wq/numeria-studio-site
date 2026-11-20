@@ -21,3 +21,11 @@ integration-preview の bae3ba50e6fcfe46a0dc6e041cdc35a9e2c53aa2 を認証済み
 正しい操作後のマガジン5ページも2/2/2/4/3枚で、原文段落・tbody行の完全一致、本文枠以内、計測DOM残留0を確認。BAZ-01/03は初頁2列・続頁全幅、BAZ-02/04/06は幅例外の全幅。BAZ-01の320/390/768/1280pxでも794×1123pxと同一改ページ・初頁2列を維持し、画面全体の横はみ出し0。a4-browser-proof.jsonのmagazineとa4-magazine-desktop.pngへ記録。
 
 Pro限定9ページはHTML内容保持の自動検査のみで、認証付き実画面の幾何検査は未実施。正式PDF・内容承認・85ページ受入の完了を意味しない。
+
+## 全14ページのローカル組版検査
+
+`node scripts/build-four-pillars-a4-lab.mjs` で `output/a4-lab/index.html` を生成する。架空入力を計算checkpointへ通し、既存のmodel/renderer/CSSとA4 runtime/plannerをそのまま用いて14ページ×2配置を検査する。アプリへ同梱せず、APIやアカウント権限、承認storeには接続しない。出力先だけをlocalhostで一時配信する。
+
+デスクトップと320pxで各28/28 PASS。すべて794×1123px、本文高さ以内、原文段落/表tbody行/SVG数を保持、計測DOM残留0。期間図を含む全14方式割当をブラウザで実測した。BAZ-14の境界日時・満81歳・Asia/Tokyoも画面で確認。証拠は `a4-all14-local-proof.json`、`a4-all14-local-mobile-proof.json`、`a4-local-baz14-desktop.png` とmobile画像。
+
+これは既存rendererを単独ホストした組版検査で、アプリ全体の継承CSSや認証/APIを経る受入とは別。例えばBAZ-04は単独ホストで5枚、認証付きpreviewでは4枚となる。Pro限定9ページの実アプリ上の検証、正式PDF、独立計算正解・原文/素材承認は未完了。正式受入0/85、開発確認済1/43・利用者確認0/43を維持する。
