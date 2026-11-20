@@ -15,3 +15,7 @@
 追加回帰は実POST経路で修正前 `free restoration must obey current page limit: 200 !== 400` を再現。修正後Free3/Pro30は成功、Free4/Pro31は理由付き拒否し、拒否時D1書込0を確認。通常保存と復元の上限を一致させる修正で、利用者の契約や管理者権限を変えない。
 
 両修正後の全npm test/build成功。仕様軸・規約/セキュリティ軸の再レビューとも残る指摘なし。
+
+## 配信復旧・実画面確認
+
+利用者がGitHubの配信用トークンを更新した後、Actions run 44694939907の失敗ジョブを再実行しattempt 2が成功。検証サイトのx-numeria-build-shaは7936370a82ea958e590220cd05429d1db95f1f75へ一致、noindex/no-storeも維持。認証済みChromeで既存架空Sessionを開き、ビルダー・カタログ読込・A4検査を確認。現アカウントのAPIはFree5件のまま（管理者Business UI投影と区別）。BAZ-06は全10行、3物理ページ、各794×1123px、本文枠内、計測DOM残留0。証拠はevidence/2026-11-20/scope-plan-deployed.jsonと.png。実Proの認証受入・復元超過の実D1書込試験は行っていない。トークン値は取得・保存していない。

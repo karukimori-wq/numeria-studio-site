@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-20",
+  "sha": "7936370a82ea958e590220cd05429d1db95f1f75",
+  "actionsRun": "https://github.com/karukimori-wq/numeria-studio-site/actions/runs/44694939907",
+  "attempt": 2,
+  "actualAccountCatalog": "free",
+  "adminBusinessUiIsSeparate": true,
+  "measureResidue": 0,
+  "options": 5,
+  "pages": [
+    {
+      "body": 786,
+      "content": 653.8984375,
+      "height": 1123,
+      "width": 794
+    },
+    {
+      "body": 786,
+      "content": 711.3359375,
+      "height": 1123,
+      "width": 794
+    },
+    {
+      "body": 786,
+      "content": 678.9453125,
+      "height": 1123,
+      "width": 794
+    }
+  ],
+  "rows": 10,
+  "status": "A4検査 3ページ／出所の詳細は通常表示で確認できます"
+}
