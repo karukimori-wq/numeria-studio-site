@@ -167,7 +167,7 @@ async function resolveAuthenticatedScope(request, env, ctx, requestedWorkspaceId
     scope: {
       workspaceId: usageBody.workspaceId || requestedWorkspaceId || "ws_personal",
       userId: usageBody.userId || "anonymous",
-      planId: usageBody.planId || "free",
+      planId: usageBody.usage?.planId === "pro" ? "pro" : "free",
     },
   };
 }
