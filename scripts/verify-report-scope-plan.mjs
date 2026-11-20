@@ -23,4 +23,14 @@ for(const usageBody of [{planId:'pro',usage:{planId:'free'}},{planId:'pro'},{usa
  const body=await(await context.entry.fetch(request,{usageBody})).json();assert.equal(body.planId,'free');assert.equal(body.definitions.length,5);
 }
 const denied=await context.entry.fetch(request,{usageStatus:401,usageBody:{errorCode:'AUTH_SESSION_REQUIRED'}});assert.equal(denied.status,401);
+for(const [plan,count,expectedStatus] of [['free',3,200],['free',4,400],['pro',30,200],['pro',31,400]]){
+ const backupFormat={schemaVersion:3,pages:Array.from({length:count},(_,i)=>({pageId:`free-${i}`,pageKind:'free',layoutRegions:[]}))};
+ let writes=0;
+ const state={app_settings:{report_format_blocks_v3_meta:{revision:1},report_format_blocks_v3_backups:[{backupId:'pro-backup',format:backupFormat}]}};
+ const db={prepare:()=>({bind:()=>({first:async()=>({workspace_state_json:JSON.stringify(state)}),run:async()=>{writes++;return{success:true};}})})};
+ const env={usageBody:{workspaceId:'ws_personal',userId:'verified-user',usage:{planId:plan}},NUMERIA_DB:db};
+ const response=await context.entry.fetch(new Request('https://example.test/api/report-formats/default',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({backupId:'pro-backup',expectedRevision:1})}),env);
+ assert.equal(response.status,expectedStatus,`${plan} restoration must obey current page limit`);assert.equal(writes,expectedStatus===200?1:0);
+ if(expectedStatus===400)assert.equal((await response.json()).errorCode,'REPORT_FORMAT_PAGE_LIMIT_EXCEEDED');
+}
 console.log('Report scope: nested verified usage plan controls actual catalog; Free 5 / Pro 14, top-level/headers cannot elevate, unknown plan fails closed, auth failure retained PASS.');
