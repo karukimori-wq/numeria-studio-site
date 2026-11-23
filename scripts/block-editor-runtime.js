@@ -160,7 +160,7 @@ function decorateEditor(){
   if(!root?.classList.contains("open"))return;
   const settings=root.querySelector(".nbe-settings");
   if(settings&&data.selectedDivination==="four-pillars"&&!settings.querySelector("[data-bazi-input-form]")){
-    const form=document.createElement("section");form.dataset.baziInputForm="1";settings.append(form);mountFourPillarsInputForm(form,{getDefinitions:()=>pageDefinitions,getLayout:()=>window.NumeriaReportTemplate?.read?.().layoutId||"standard"});
+    const form=document.createElement("section");form.dataset.baziInputForm="1";settings.append(form);mountFourPillarsInputForm(form,{getDefinitions:()=>pageDefinitions,getLayout:()=>window.NumeriaReportTemplate?.read?.().layoutId||"standard",...(window.NumeriaNavigation?.getRole?.()==="admin"?{getAdminDefinitions:async()=>{const response=await fetch("/api/admin/four-pillars-draft-definitions",{headers:await headers()}),body=await response.json();if(!response.ok||body.previewOnly!==true||body.publicationAllowed!==false||!Array.isArray(body.definitions))throw Error("ADMIN_PREVIEW_UNAVAILABLE");return body.definitions;}}:{})});
   }
   if(settings&&data.selectedDivination==="nine-star-ki"&&!settings.querySelector("[data-kigaku-input-form]")){
     const form=document.createElement("section");form.dataset.kigakuInputForm="1";settings.append(form);mountKigakuInputForm(form);

@@ -2,6 +2,7 @@ import appWorker from "./worker-entry.js";
 import { handleNumerologyReviewRequest } from "./numerology-review-store.js";
 import { handleNumerologyReviewerRequest } from "./numerology-review-decisions.js";
 import { buildNumerologyRegisteredDraft } from "./numerology-registered-draft.js";
+import { reportPageDefinitionsFor } from "./report-page-definitions.js";
 
 const ADMIN_PREVIEW_CONTRACT_VERSION = "numeria-admin-developer-preview.v3";
 
@@ -85,19 +86,10 @@ function authForwardHeaders(request, workspaceId) {
   const headers = new Headers();
   const authorization = request.headers.get("Authorization");
   const publishableKey = request.headers.get("X-Clerk-Publishable-Key");
-  const clientEmail = request.headers.get("X-Numeria-Clerk-Client-Email");
   if (authorization) headers.set("Authorization", authorization);
   if (publishableKey) headers.set("X-Clerk-Publishable-Key", publishableKey);
-  if (clientEmail) headers.set("X-Numeria-Clerk-Client-Email", clientEmail);
   headers.set("X-Workspace-Id", workspaceId || "ws_personal");
   return headers;
-}
-
-function verifiedClientEmailFromRequest(request) {
-  const email = String(request.headers.get("X-Numeria-Clerk-Client-Email") || "")
-    .trim()
-    .toLowerCase();
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : "";
 }
 
 async function resolveVerifiedClerkIdentity(request, env = {}, ctx = null) {
@@ -189,6 +181,7 @@ async function getClerkUserEmails(env = {}, userId = "") {
     const body = await response.json();
     const emails = Array.isArray(body.email_addresses)
       ? body.email_addresses
+        .filter((entry) => entry?.verification?.status === "verified")
         .map((entry) => String(entry?.email_address || "").trim().toLowerCase())
         .filter(Boolean)
       : [];
@@ -220,7 +213,6 @@ async function resolveSecureAdminAccess(request, env = {}, ctx = null) {
   const adminEmails = getAdminEmails(env);
   const adminUserIds = getAdminUserIds(env);
   const verifiedEmail = String(identity.email || "").trim().toLowerCase();
-  const verifiedClientEmail = verifiedClientEmailFromRequest(request);
 
   if (adminUserIds.includes(identity.userId)) {
     return {
@@ -237,15 +229,6 @@ async function resolveSecureAdminAccess(request, env = {}, ctx = null) {
       adminMode: true,
       adminEmail: verifiedEmail,
       identitySource: "clerk-jwt-email-allowlist",
-    };
-  }
-
-  if (verifiedClientEmail && adminEmails.includes(verifiedClientEmail)) {
-    return {
-      ...identity,
-      adminMode: true,
-      adminEmail: verifiedClientEmail,
-      identitySource: "clerk-client-email-allowlist",
     };
   }
 
@@ -329,6 +312,13 @@ async function handleSecureAdminRequest(request, env = {}, ctx = null) {
 export default {
   async fetch(request, env = {}, ctx = null) {
     const url = new URL(request.url);
+    if (url.pathname === "/api/admin/four-pillars-draft-definitions") {
+      const access = await resolveSecureAdminAccess(request, env, ctx);
+      if (!access.verified) return json({ status: "error", errorCode: "AUTH_SESSION_REQUIRED" }, { status: 401 });
+      if (!access.adminMode) return json({ status: "error", errorCode: "ADMIN_REQUIRED" }, { status: 403 });
+      if (request.method !== "GET") return json({ status: "error", errorCode: "METHOD_NOT_ALLOWED" }, { status: 405 });
+      return json({ status: "success", previewOnly: true, publicationAllowed: false, subscriptionPlanUnaffected: true, definitions: reportPageDefinitionsFor("four-pillars", "pro") });
+    }
     if (url.pathname === "/api/numerology/page-draft") {
       const identity = await resolveVerifiedClerkIdentity(request, env, ctx);
       if (!identity.verified) return json({ status: "error", errorCode: "AUTH_SESSION_REQUIRED" }, { status: 401 });
