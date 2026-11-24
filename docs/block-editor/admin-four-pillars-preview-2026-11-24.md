@@ -15,3 +15,11 @@ GET `/api/admin/four-pillars-draft-definitions` は既存のサーバー認証�
 利用者の再ログイン後、同一previewの既存認証診断UIで署名検証成功とログイン中userIdを確認。一方でサーバーの管理者認識は否定され、専用ボタンは表示されない。JWT emailはnull、Backend照合用secretも未設定で、現在IDが既存allowlistに一致していない。本人IDそのものやsessionIdは公開リポジトリへ記録しない。
 
 登録の準備として、preview workflowに追加変数NUMERIA_PREVIEW_ADMIN_USER_IDSを設け、既存NUMERIA_ADMIN_USER_IDSを保持してカンマ追記する差分を用意。PREVIEW_WORKERのsecretだけへ反映する。bash構文と空/既存のみ/追加のみ/両方の4ケースを確認。新変数値の登録と再配信は管理者権限付与になるため利用者の最終承認待ちで、まだ実行していない。契約、本番Worker、DB schemaは変更しない。
+
+## 承認後の登録・実画面確認
+
+利用者の「はい」を受け、署名検証済み本人IDだけをpreview追加変数へ登録。既存GitHub vars/secretsの管理者IDは保持する。初回ジョブは変数保存前に開始して値が空だったため、保存確認後に再実行。run45371042900 attempt2が成功し、配信SHA1f71bee289b83d96cbe7f65cd369abacd8f60abc一致、noindex/no-storeを維持。本人はBusiness UI管理者プレビューとして認識され、専用ボタンから14件を表示できた。実契約はFreeのまま、通常の見本は5件であることも確認。
+
+認証済みの架空Sessionで14ページ×2配置を実検査し、全28ケースで原文段落・表tbody行・期間/関係リスト項目・SVG数の改ページ前後一致を確認。全ページ794×1123px、本文高さ以内、計測DOM残留0。BAZ-14の境界2029-12-24 01:30:45+09:00・満81歳・Asia/Tokyoも保持。マガジンは対応ページの初頁2列/続頁全幅、幅例外は初頁から全幅。BAZ-14の320/390/768/1280pxは固定A4と同じ改ページを維持し、画面全体の横はみ出し0。検証後に元のスタンダードへ戻した。証拠: evidence/2026-11-24/admin-all14-live-proof.json、admin-live-responsive.json、admin-baz14-*.png。
+
+これは管理者の下書き閲覧であり、実Proアカウントの課金/利用制限受入、正式PDF、原文・素材の専門承認とは別。正式85ページ受入0/85、開発確認済1/43・利用者確認済0/43を維持する。

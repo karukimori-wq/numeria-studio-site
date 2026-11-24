@@ -1,0 +1,877 @@
+{
+  "date": "2026-11-24",
+  "sha": "1f71bee289b83d96cbe7f65cd369abacd8f60abc",
+  "adminPreview": true,
+  "actualPlanUnchanged": "free",
+  "formalApproval": false,
+  "results": [
+    {
+      "id": "BAZ-01",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 8,
+      "rowCount": 4,
+      "flowCount": 0,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 759.7265625,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 360.171875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-02",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 3,
+      "rowCount": 4,
+      "flowCount": 1,
+      "svgCount": 1,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 776.09375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 647.546875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-03",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 12,
+      "rowCount": 0,
+      "flowCount": 5,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 780.3671875,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 742.9375,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-04",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 36,
+      "rowCount": 4,
+      "flowCount": 7,
+      "svgCount": 1,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 784.5,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 770.5234375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 716.53125,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 742.734375,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 4ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-05",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 10,
+      "rowCount": 4,
+      "flowCount": 0,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 743.9375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 418.765625,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-06",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 22,
+      "rowCount": 10,
+      "flowCount": 0,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 653.8984375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 711.3359375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 678.9453125,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 3ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-07",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 6,
+      "rowCount": 0,
+      "flowCount": 2,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 695,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 215.1875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-08",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 7,
+      "rowCount": 4,
+      "flowCount": 0,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 712.9375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 360.171875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-09",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 17,
+      "rowCount": 8,
+      "flowCount": 7,
+      "svgCount": 1,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 784.5,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 773.921875,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 669.7421875,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 215.1875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 4ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-10",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 26,
+      "rowCount": 8,
+      "flowCount": 7,
+      "svgCount": 1,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 784.5,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 722.328125,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 783.7265625,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 707.1328125,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 4ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-11",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 7,
+      "rowCount": 3,
+      "flowCount": 3,
+      "svgCount": 1,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 769.703125,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 697.3359375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 215.1875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 3ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-12",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 13,
+      "rowCount": 4,
+      "flowCount": 0,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 729.9375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 608.546875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-13",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 5,
+      "rowCount": 0,
+      "flowCount": 4,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 735.03125,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 215.1875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-14",
+      "layout": "standard",
+      "equal": true,
+      "copyCount": 11,
+      "rowCount": 0,
+      "flowCount": 2,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 722.59375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 418.765625,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-01",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 8,
+      "rowCount": 4,
+      "flowCount": 0,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "2",
+          "content": 780.7265625,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 215.1875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-02",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 3,
+      "rowCount": 4,
+      "flowCount": 1,
+      "svgCount": 1,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 776.09375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 647.546875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-03",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 12,
+      "rowCount": 0,
+      "flowCount": 5,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "2",
+          "content": 650.75,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 580.953125,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-04",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 36,
+      "rowCount": 4,
+      "flowCount": 7,
+      "svgCount": 1,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 784.5,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 770.5234375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 716.53125,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 742.734375,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 4ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-05",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 10,
+      "rowCount": 4,
+      "flowCount": 0,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "2",
+          "content": 687.1484375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 418.765625,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-06",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 22,
+      "rowCount": 10,
+      "flowCount": 0,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 653.8984375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 711.3359375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 678.9453125,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 3ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-07",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 6,
+      "rowCount": 0,
+      "flowCount": 2,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 695,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 215.1875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-08",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 7,
+      "rowCount": 4,
+      "flowCount": 0,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "2",
+          "content": 611.3515625,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 360.171875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-09",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 17,
+      "rowCount": 8,
+      "flowCount": 7,
+      "svgCount": 1,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 784.5,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 773.921875,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 669.7421875,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 215.1875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 4ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-10",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 26,
+      "rowCount": 8,
+      "flowCount": 7,
+      "svgCount": 1,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 784.5,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 722.328125,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 783.7265625,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 707.1328125,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 4ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-11",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 7,
+      "rowCount": 3,
+      "flowCount": 3,
+      "svgCount": 1,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 769.703125,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 697.3359375,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 215.1875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 3ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-12",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 13,
+      "rowCount": 4,
+      "flowCount": 0,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "2",
+          "content": 776.5390625,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 505.15625,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-13",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 5,
+      "rowCount": 0,
+      "flowCount": 4,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 735.03125,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 215.1875,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    },
+    {
+      "id": "BAZ-14",
+      "layout": "magazine",
+      "equal": true,
+      "copyCount": 11,
+      "rowCount": 0,
+      "flowCount": 2,
+      "svgCount": 0,
+      "pages": [
+        {
+          "body": 786,
+          "columns": "2",
+          "content": 740.3203125,
+          "height": 1123,
+          "width": 794
+        },
+        {
+          "body": 786,
+          "columns": "1",
+          "content": 418.765625,
+          "height": 1123,
+          "width": 794
+        }
+      ],
+      "measure": 0,
+      "status": "A4検査 2ページ／出所の詳細は通常表示で確認できます"
+    }
+  ]
+}
