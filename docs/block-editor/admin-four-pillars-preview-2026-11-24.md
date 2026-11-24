@@ -11,3 +11,7 @@ GET `/api/admin/four-pillars-draft-definitions` は既存のサーバー認証�
 実helperを使った回帰は、一般の認証済みユーザー＋管理者メールヘッダーが修正前200→修正後403。正規ID/署名メール/verified Backendは200、unverified Backend403、未認証401を確認した。専用フォーム検査では遅延応答・鑑定切替・閉エディタ・失敗時の制御復帰を確認。全npm test/buildと、修正後の仕様/規約・セキュリティレビューが成功。実Free/Pro別受入・正式PDF・専門承認と混同しない。main/本番Worker/DB schemaは変更しない。
 
 配信run45281961439成功、preview SHA13766aa10921c40950dbcfc5ad468fe3fe170531一致。noindex/no-store、未ログインの専用API401 AUTH_SESSION_REQUIREDも確認。Chromeの既存ログインが失効していたため、管理者の14件表示とA4実画面は利用者の再ログイン待ち。実画面合格には加算していない。
+
+利用者の再ログイン後、同一previewの既存認証診断UIで署名検証成功とログイン中userIdを確認。一方でサーバーの管理者認識は否定され、専用ボタンは表示されない。JWT emailはnull、Backend照合用secretも未設定で、現在IDが既存allowlistに一致していない。本人IDそのものやsessionIdは公開リポジトリへ記録しない。
+
+登録の準備として、preview workflowに追加変数NUMERIA_PREVIEW_ADMIN_USER_IDSを設け、既存NUMERIA_ADMIN_USER_IDSを保持してカンマ追記する差分を用意。PREVIEW_WORKERのsecretだけへ反映する。bash構文と空/既存のみ/追加のみ/両方の4ケースを確認。新変数値の登録と再配信は管理者権限付与になるため利用者の最終承認待ちで、まだ実行していない。契約、本番Worker、DB schemaは変更しない。

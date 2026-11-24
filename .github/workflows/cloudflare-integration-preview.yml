@@ -27,6 +27,7 @@ env:
   VITE_ADMIN_EMAILS: illusionddt@gmail.com
   CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
   NUMERIA_ADMIN_USER_IDS: ${{ vars.NUMERIA_ADMIN_USER_IDS || secrets.NUMERIA_ADMIN_USER_IDS }}
+  NUMERIA_PREVIEW_ADMIN_USER_IDS: ${{ vars.NUMERIA_PREVIEW_ADMIN_USER_IDS }}
   PLATFORM_SUBSCRIPTION_INTEGRATION_SECRET: ${{ secrets.PLATFORM_SUBSCRIPTION_INTEGRATION_SECRET }}
 
 jobs:
@@ -73,8 +74,12 @@ jobs:
           if [ -n "$CLERK_SECRET_KEY" ]; then
             printf '%s' "$CLERK_SECRET_KEY" | npx wrangler secret put CLERK_SECRET_KEY --name "$PREVIEW_WORKER"
           fi
-          if [ -n "$NUMERIA_ADMIN_USER_IDS" ]; then
-            printf '%s' "$NUMERIA_ADMIN_USER_IDS" | npx wrangler secret put NUMERIA_ADMIN_USER_IDS --name "$PREVIEW_WORKER"
+          preview_admin_ids="$NUMERIA_ADMIN_USER_IDS"
+          if [ -n "$NUMERIA_PREVIEW_ADMIN_USER_IDS" ]; then
+            preview_admin_ids="${preview_admin_ids:+${preview_admin_ids},}${NUMERIA_PREVIEW_ADMIN_USER_IDS}"
+          fi
+          if [ -n "$preview_admin_ids" ]; then
+            printf '%s' "$preview_admin_ids" | npx wrangler secret put NUMERIA_ADMIN_USER_IDS --name "$PREVIEW_WORKER"
           fi
           if [ -n "$PLATFORM_SUBSCRIPTION_INTEGRATION_SECRET" ]; then
             printf '%s' "$PLATFORM_SUBSCRIPTION_INTEGRATION_SECRET" | npx wrangler secret put PLATFORM_SUBSCRIPTION_INTEGRATION_SECRET --name "$PREVIEW_WORKER"
