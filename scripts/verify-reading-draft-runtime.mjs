@@ -100,3 +100,16 @@ assert.equal(nodes.get("numeria-draft-save-status").dataset.state, "dirty", "An 
 statusListener({ detail: { state: "saved", sessionId: "fixture", snapshot: { message: "保存中に追記" } } });
 assert.equal(nodes.get("numeria-draft-save-status").dataset.state, "saved");
 console.log("Save feedback distinguishes an older ACK from the current editor snapshot.");
+
+statusListener({ detail: { state: "error", errorCode: "DRAFT_SAVE_CONFLICT" } });
+assert.match(nodes.get("numeria-draft-save-status").textContent, /別の保存/);
+statusListener({ detail: { state: "error", errorCode: "FREE_IN_PROGRESS_APPRAISAL_LIMIT" } });
+assert.match(nodes.get("numeria-draft-save-status").textContent, /未完了案件は1件/);
+statusListener({ detail: { state: "error", errorCode: "<script>untrusted</script>" } });
+assert.equal(nodes.get("numeria-draft-save-status").textContent, "保存できませんでした。内容を確認して再試行してください");
+console.log("Save feedback maps known errors to actionable text and never displays unknown server content.");
+
+for (const errorCode of ['constructor', 'toString', '__proto__']) {
+  statusListener({ detail: { state: 'error', errorCode } });
+  assert.equal(nodes.get('numeria-draft-save-status').textContent, '保存できませんでした。内容を確認して再試行してください');
+}
