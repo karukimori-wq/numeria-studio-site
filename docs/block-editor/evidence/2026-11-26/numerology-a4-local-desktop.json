@@ -1,0 +1,3116 @@
+{
+  "synthetic": true,
+  "accountAcceptance": false,
+  "publicationAllowed": false,
+  "provenance": {
+    "sourceHead": "758f0edcc5ac87204ce4748040ab1ad63c86463b",
+    "sourceHashes": {
+      "scripts/build-numerology-a4-lab.mjs": "258e0de7c069c8a5b134986bdb080f01704f249325c8344631bd79aba87ce837",
+      "scripts/numerology-a4-lab-runtime.js": "8a5f7cd0667a4f1a2d5cd50af8eea189cea9a1d999aec7894c699d360d6bc4bc",
+      "src/report-page-definitions.js": "d1bed5ce8a194db8715d4240ea2e8c800ab60184b3ce5f73992e6cb93225736b",
+      "package.json": "ad1f051a1936977bf7fb95167fa850f32de67892feb56b701ce55a5dd344729d",
+      "src/numerology-a4.js": "95ee423d6ba2053303dae2be0d8d091dcf30b0e4b891f646925ebd1b2a7a032c",
+      "src/numerology-calculator.js": "0785e01a519a10b33f6d3423603460a65f4bbe2e01e7008c14ff3fc3b154edc9",
+      "src/numerology-confirmed-result.js": "37ff8cb7ce5fe889efbf0a0a755de85fa8795af2c6206bdd28e7600882bf9643",
+      "src/numerology-copy-calculation.js": "5728081266d3bd728233f338cf5acf2a0e3637cca20f14ee05954a93fa358b45",
+      "src/numerology-copy-data.js": "97f29912f76b67b68a858cf053e6b8f6601d39cf7dbf5200bf84666d6427946a",
+      "src/numerology-figure-renderer.js": "1b0e7192e95ef0383ba615d2d676cb49303292d4ab6a0e6e8cd9a69b38fdaa67",
+      "src/numerology-figures.js": "6f20891809b0ac837755114b4aaec764bcca562a43346a90e7b44571df78071d",
+      "src/numerology-name-input.js": "5bc217f0961be50e61b5fbfe6ba82e352d2016be4b9a6c42d42904059c6d2ba9",
+      "src/numerology-page-copy.js": "072c99e3f31b79f91e5ed30a06693d052dd309c813e0c6414b8cb5d1a9539f28",
+      "src/numerology-page-data.js": "1178c1981f5f89ab33fef4d989b5ac1576a3343d8b59dbc988875c94d162e658",
+      "src/numerology-registered-draft.js": "a2ee662602852c7ff76896baae7bc82cc3d5737ddc4d9b95bda2164b2b4d0b42",
+      "src/numerology-registered-preview.js": "222e3d8b66d9b444f78f870755ed2452bbfd79517c288b3e82c21d5c33a73c47",
+      "src/numerology-result-checkpoint.js": "66958cc0fec0096771b7f6bba03f30c7baf4da0560f7c26a059264c02619332e",
+      "src/numerology-review-client.js": "80a5d9c218451aa42912a5d566bc8d05abdbb1ea62654c2b9c776df91589a012",
+      "src/numerology-review-decisions.js": "15c532722c59ef83d2fe47f75b995b98ec3789ec52c22f741e39677b64ad098b",
+      "src/numerology-review-store.js": "cf90b07a7e689221fb164ed105a578ea49a37d54ceee2ca83f80f428bf4574da"
+    },
+    "casesSha256": "317ed6dbe0cc7e1763d958a37365654ac4ee092ba8c7576d006b0e8766da4808",
+    "dependencies": {
+      "react": "19.3.1",
+      "react-dom": "19.3.1",
+      "vite": "8.3.5"
+    }
+  },
+  "detectorChecks": {
+    "oversizedSvgRejected": true,
+    "negativeOffsetRejected": true,
+    "clippedSvgChildRejected": true
+  },
+  "viewport": {
+    "width": 1280,
+    "height": 1300,
+    "scrollWidth": 1280
+  },
+  "results": [
+    {
+      "scenario": "complete",
+      "id": "NUM-01",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-02",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-03",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-04",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-05",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-06",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-07",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-08",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 3,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-09",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-10",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-11",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-12",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 3,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-13",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-14",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-01",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-02",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-03",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-04",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-05",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-06",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-07",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-08",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-09",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-10",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-11",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-12",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-13",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "complete",
+      "id": "NUM-14",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "168e9030a8f091ba86719e232ba7e58ac549bdc1561715a27fa32d82e770d39c",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-01",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-02",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-03",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-04",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-05",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-06",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-07",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-08",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-09",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-10",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-11",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-12",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-13",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-14",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-01",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-02",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-03",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-04",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-05",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-06",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-07",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-08",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-09",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-10",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-11",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-12",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-13",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "unconfirmed-name",
+      "id": "NUM-14",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "1c22bcb24b84fc571d797377d0640ac2bfa5b5118b67bb5bab4a41aa2a6f08e8",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-01",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-02",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-03",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-04",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-05",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-06",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-07",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-08",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-09",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-10",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-11",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-12",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-13",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-14",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-01",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-02",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-03",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-04",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-05",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-06",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-07",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-08",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-09",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-10",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-11",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-12",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-13",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-partner",
+      "id": "NUM-14",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "64bd4ca3f9a596ef38faa5b9c1db5c88ee351fa388a404e3f671781b24ac0f98",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-01",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-02",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-03",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-04",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-05",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-06",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-07",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-08",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 3,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-09",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-10",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-11",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-12",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-13",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-14",
+      "layout": "standard",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-01",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-02",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-03",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-04",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-05",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-06",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-07",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-08",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-09",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-10",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-11",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-12",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-13",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 2,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "no-parent-direction",
+      "id": "NUM-14",
+      "layout": "magazine",
+      "state": "preview_ready",
+      "draftSha256": "75e95aef5a6c3376572108f0c5b19054c8ad54d50fe2df30d8a02e802a5bff3b",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 1,
+      "geometry": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 888,
+          "overflow": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "scroll": 0
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-01",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-02",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-03",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-04",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-05",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-06",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-07",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-08",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-09",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-10",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-11",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-12",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-13",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-14",
+      "layout": "standard",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-01",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-02",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-03",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-04",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-05",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-06",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-07",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-08",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-09",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-10",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-11",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-12",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-13",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    },
+    {
+      "scenario": "invalid-date",
+      "id": "NUM-14",
+      "layout": "magazine",
+      "state": "unavailable",
+      "draftSha256": "32a09748d9bdae284dcff06bd10f487330f6b34e2e497f244d21d95ad634c41d",
+      "ok": true,
+      "preserved": true,
+      "physicalPages": 0,
+      "geometry": []
+    }
+  ]
+}
