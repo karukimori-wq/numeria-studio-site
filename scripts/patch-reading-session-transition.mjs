@@ -14,6 +14,10 @@ replaceOne('return(0,Z.jsxs)(`button`,{onClick:()=>hi(e.id),children:[',
 // A customer-only / legacy history entry starts a new session. Clear all
 // person-specific writing and comparison input before selecting that customer.
 replaceOne('hi=e=>{', 'hi=e=>{ut(``);ft(``);Rt([]);le(!1);ue(``);fe(``);me(``);ge(``);ve(`パートナー`);Fe(``);Le({points:``,realization:``,encouragement:``});ze([`人生全体`]);Ve({});Ge({overview:``,balance:``,relation:``});Ue({meishiki:``,elements:``,tenGods:``,twelveStages:``,timing:``,guidance:``});qe({intro:``,calculation:``,aspects:``,elementQuality:``,personality:``,themes:``,timing:``,action:``,glossary:``});je(``);Ne(``);De(`未定`);ke(`引越し・旅行・仕事など`);');
+// The mantic preparation button used to allocate a new ID even after resume.
+// Reuse the complete editor save path (ID, version, full snapshot, ACK) instead.
+replaceOne('Ci=async()=>{', 'Ci=async()=>{if(Dn)return Ii();');
+
 // Restore blank/missing personal values as blank, never as the previous person.
 const resumeStart = source.indexOf('Y=(e,t)=>{');
 const resumeEnd = source.indexOf(',Li=', resumeStart);

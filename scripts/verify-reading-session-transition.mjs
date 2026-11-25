@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
 let source = readFileSync('assets/numeria-app-Cckhajir.js', 'utf8');
+const legacyPatch = readFileSync('scripts/patch-legacy-static-assets.mjs', 'utf8').replace(/^import .*;\n/, '');
+vm.runInNewContext(legacyPatch, { readFileSync: () => source, writeFileSync: (_p, value) => { source = value; }, console: { log() {} } });
 const patch = readFileSync('scripts/patch-reading-session-transition.mjs', 'utf8').replace(/^import .*;\n/, '');
 vm.runInNewContext(patch, { readdirSync: () => ['numeria-app-fixture.js'], readFileSync: () => source, writeFileSync: (_p, value) => { source = value; }, console: { log() {} } });
 const start = source.indexOf('onClick:()=>{if(n?.snapshot?.id){window.NumeriaAppRoutes.navigate(');
@@ -32,7 +34,7 @@ console.log('Actual dashboard handler restores saved snapshots; customer-only tr
 const resumeOffset = source.indexOf('Y=(e,t)=>{');
 const resumeHandler = source.slice(resumeOffset + 2, source.indexOf(',Li=', resumeOffset));
 for (const saved of [{}, { intro: undefined, advice: undefined, customReportItems: undefined }, { manticBirthTime: '', manticBirthPlace: '', fourPillarsComments: { meishiki: 'saved comment' }, manticReadingText: 'saved body' }]) {
-  const restored = {}, restoreContext = { ar: 'pro', tr: 'admin', window: { setTimeout() {} }, Ie: { points: 'old' }, We: { overview: 'old' }, He: { elements: 'old' }, Ke: { intro: 'old' } };
+  const restored = {}, restoreContext = { d: [], ar: 'pro', tr: 'admin', window: { setTimeout() {} }, Ie: { points: 'old' }, We: { overview: 'old' }, He: { elements: 'old' }, Ke: { intro: 'old' } };
   for (const name of ['Bt','V','ie','oe','se','ye','ut','ft','mt','ht','_t','yt','xt','Ct','Tt','Dt','L','At','Mt','Pt','It','Rt','le','ue','fe','me','ge','ve','Zt','xe','Ce','Te','u','je','Ne','De','ke','Fe','Le','ze','Ve','Ge','Ye','Ze','$e','tt','rt','at','Ue','qe','Sn','wn','Tn','k','re','R']) restoreContext[name] = value => { restored[name] = value; };
   const snapshot = { id: 'saved', name: 'saved name', divination: 'numerology', intro: 'saved intro', advice: 'saved advice', drafts: { overview: 'saved section' }, customReportItems: [], reportTypography: {}, ...saved };
   vm.runInNewContext(`(${resumeHandler})('target', session)`, { ...restoreContext, session: { snapshot, date: '2026.11.25' } });
@@ -43,3 +45,9 @@ for (const saved of [{}, { intro: undefined, advice: undefined, customReportItem
   assert.equal(restored.le, false);assert.equal(restored.mt.overview, 'saved section');assert.equal(restored.V, 'saved');
 }
 console.log('Actual saved-session restore preserves saved writing and clears blank/missing birth inputs and partial comments.');
+
+const prepareStart = source.indexOf('Ci=async()=>{');
+const prepareHandler = source.slice(prepareStart + 3, source.indexOf(',wi=', prepareStart));
+let savedExisting = 0;
+await vm.runInNewContext(`(${prepareHandler})()`, { Dn: 'restored-id', Ii: () => { savedExisting++; return 'saved'; } });
+assert.equal(savedExisting, 1, 'Resumed mantic save must use the existing-ID editor path, not allocate a new appraisal.');
