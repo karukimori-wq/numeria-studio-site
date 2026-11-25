@@ -486,6 +486,9 @@ function withRestorableSnapshot(record = {}, session = {}) {
       menuName: "数秘術鑑定",
       price: 0,
       ...existing,
+      // The authenticated Session record owns identity. Old snapshots may omit
+      // it or contain a local draft ID; never reopen those as a new appraisal.
+      id: session.id,
       selectedCustomerId: existing.selectedCustomerId || clientRef,
       name: existing.name || session.clientName || client?.clientName || "",
       birthday: existing.birthday || session.birthDate || client?.birthDate || "",
