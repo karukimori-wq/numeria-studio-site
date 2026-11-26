@@ -1,0 +1,2 @@
+# Generated PDF evidence is binary; never apply text whitespace conversions.
+*.pdf binary

@@ -2605,8 +2605,8 @@ async function handleApi(request, env = {}, ctx = null) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
     const previousDraft = isSameDraft ? currentDraft : null;
-    const fixedKigakuReference = previousDraft?.snapshot?.divination === "nine-star-ki"
-      ? previousDraft.snapshot.kigakuInput?.referenceInstant : null;
+    const fixedKigakuReference = previousDraft?.snapshot?.kigakuInput?.referenceInstant
+      || previousDraft?.snapshot?.kigakuCalculation?.source?.referenceInstant || null;
     if (fixedKigakuReference && body.snapshot && body.snapshot.kigakuInput?.referenceInstant !== fixedKigakuReference) {
       return json({ status: "error", errorCode: "KIGAKU_REFERENCE_LOCKED", message: "保存済み基準日時は変更できません。新規鑑定を作成してください。" }, { status: 409 });
     }

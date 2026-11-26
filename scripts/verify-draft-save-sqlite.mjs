@@ -170,6 +170,22 @@ try {
   }
   const sameReference = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: lockedVersion, snapshot: { ...kigakuRestored, drafts: { retainedText: "本文だけ更新" } } }, "cas_kigaku_ws");
   assert.equal(sameReference.status, 201);
+  const switchWorkspace = "cas_kigaku_switch_ws";
+  const switchSeed = await api("/api/appraisals/save-draft", { appraisalId: kigakuSnapshot.id, expectedDraftVersion: null, snapshot: kigakuSnapshot }, switchWorkspace);
+  assert.equal(switchSeed.status, 201);
+  const methodSwitched = await api("/api/appraisals/save-draft", { appraisalId: kigakuSnapshot.id, expectedDraftVersion: switchSeed.body.activeDraft.draftVersion, snapshot: { ...kigakuSnapshot, divination: "tarot" } }, switchWorkspace);
+  assert.equal(methodSwitched.status, 201);
+  const switchedVersion = methodSwitched.body.activeDraft.draftVersion;
+  const switchedRestored = (await api(`/api/appraisals/${kigakuSnapshot.id}`, null, switchWorkspace)).body.session.snapshot;
+  for (const kigakuInputAfterSwitch of [{ ...kigakuInput, referenceInstant: "2027-01-01T00:00:00+09:00" }, null]) {
+    const rejected = await api("/api/appraisals/save-draft", { appraisalId: kigakuSnapshot.id, expectedDraftVersion: switchedVersion, snapshot: { ...kigakuSnapshot, kigakuInput: kigakuInputAfterSwitch } }, switchWorkspace);
+    assert.equal(rejected.status, 409, "A method flag switch must not unlock the saved Kigaku reference.");
+    assert.equal(rejected.body.errorCode, "KIGAKU_REFERENCE_LOCKED");
+    assert.deepEqual((await api(`/api/appraisals/${kigakuSnapshot.id}`, null, switchWorkspace)).body.session.snapshot, switchedRestored);
+  }
+  const switchBack = await api("/api/appraisals/save-draft", { appraisalId: kigakuSnapshot.id, expectedDraftVersion: switchedVersion, snapshot: { ...kigakuSnapshot, drafts: { retainedText: "占術切替後も本文を保持" } } }, switchWorkspace);
+  assert.equal(switchBack.status, 201);
+  assert.equal(switchBack.body.activeDraft.snapshot.kigakuCalculation.source.referenceInstant, kigakuInput.referenceInstant);
   const baziClock = { date: "2000-01-07", time: null, countryCode: "JP", zoneId: "Asia/Tokyo", zoneConfirmed: true, offsetChoiceMinutes: null };
   const baziInput = { methodKey: "four-pillars", subjectId: "fixture-bazi-a", partnerSubjectId: "fixture-bazi-b", birthClock: baziClock, partnerBirthClock: { ...baziClock, date: "2000-01-08" }, referenceDate: "2026-11-16", familyContext: "parent-child", parentDirection: "a-parent" };
   const baziSnapshot = withFourPillarsCalculationCheckpoint({ id: "session_bazi_fixture", divination: "four-pillars", fourPillarsInput: baziInput, drafts: { retainedText: "四柱の編集本文" }, unknownFutureField: { retained: true } });
