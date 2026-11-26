@@ -89,6 +89,23 @@ assert.equal(restoredDraft.body.clientRef, clientRef);
 assert.equal(restoredDraft.body.session.snapshot.theme, "保存再開の確認");
 assert.equal(restoredDraft.body.sessionState, "draft");
 
+// Legacy/local snapshots cannot replace the canonical server Session ID.
+for (const snapshotId of [undefined, "old-local-id"]) {
+  const update = await api("/api/appraisals/save-draft", { method: "POST", body: {
+    appraisalId: sessionId, snapshot: { ...snapshot, id: snapshotId },
+  } });
+  assert.equal(update.response.status, 201);
+  const reopened = await api(`/api/appraisals/${sessionId}`);
+  assert.equal(reopened.body.session.snapshot.id, sessionId);
+  const resaved = await api("/api/appraisals/save-draft", { method: "POST", body: {
+    appraisalId: reopened.body.session.snapshot.id,
+    expectedDraftVersion: reopened.body.session.draftVersion,
+    snapshot: reopened.body.session.snapshot,
+  } });
+  assert.equal(resaved.response.status, 201, "Restored identity must update the existing Free draft.");
+  assert.equal(resaved.body.draftId, sessionId);
+}
+
 const completed = await api("/api/appraisals/complete", {
   method: "POST",
   body: { appraisalId: sessionId },

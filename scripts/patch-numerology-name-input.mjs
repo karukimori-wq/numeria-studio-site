@@ -19,5 +19,32 @@ replaceOne('getReadingSnapshot:function(sessionId){return Fi(sessionId||Dn)}', `
   return result;
 },saveReadingDraft:function(){return Ii()}`);
 replaceOne('getReadingSnapshot:function(){return call(`getReadingSnapshot`,arguments)}', 'getReadingSnapshot:function(){return call(`getReadingSnapshot`,arguments)},updateNumerologyNames:function(){return call(`updateNumerologyNames`,arguments)},saveReadingDraft:function(){return call(`saveReadingDraft`,arguments)}');
+// Nine-star input stays explicit; legacy birth fields never imply clock confirmation.
+replaceOne('numeriaNameInputsRef=(0,i.useRef)', 'numeriaKigakuInputRef=(0,i.useRef)(null),numeriaNameInputsRef=(0,i.useRef)');
+replaceOne('numerologyNameInputs:normalizeNumerologyNameInputs(numeriaNameInputsRef.current),', 'kigakuInput:l==="nine-star-ki"?structuredClone(numeriaKigakuInputRef.current):null,numerologyNameInputs:normalizeNumerologyNameInputs(numeriaNameInputsRef.current),');
+replaceOne('di=()=>{numeriaNameInputsRef.current=normalizeNumerologyNameInputs(null);', 'di=()=>{numeriaNameInputsRef.current=normalizeNumerologyNameInputs(null);numeriaKigakuInputRef.current=null;');
+replaceOne('hi=e=>{numeriaNameInputsRef.current=normalizeNumerologyNameInputs(null);', 'hi=e=>{numeriaNameInputsRef.current=normalizeNumerologyNameInputs(null);numeriaKigakuInputRef.current=null;');
+replaceOne('let n=t.snapshot;numeriaNameInputsRef.current=', 'let n=t.snapshot;numeriaKigakuInputRef.current=n.divination==="nine-star-ki"&&n.kigakuInput?.methodKey==="nine-star-ki"?structuredClone(n.kigakuInput):null;numeriaNameInputsRef.current=');
+replaceOne('updateNumerologyNames:function(change){', `updateKigakuInput:function(input){
+  if(l!=="nine-star-ki"||!input||typeof input!=="object"||Array.isArray(input)||input.methodKey!=="nine-star-ki")return{ok:false,message:"九星気学の入力を確認してください"};
+  numeriaKigakuInputRef.current=structuredClone(input);
+  window.dispatchEvent(new CustomEvent("numeria-reading-draft-save-status",{detail:{state:"dirty"}}));
+  return{ok:true};
+},updateNumerologyNames:function(change){`);
+replaceOne('updateNumerologyNames:function(){return call(`updateNumerologyNames`,arguments)}', 'updateKigakuInput:function(){return call(`updateKigakuInput`,arguments)},updateNumerologyNames:function(){return call(`updateNumerologyNames`,arguments)}');
+// Four Pillars clocks are captured explicitly and restored with their server draft calculation.
+replaceOne('numeriaKigakuInputRef=(0,i.useRef)', 'numeriaFourPillarsInputRef=(0,i.useRef)(null),numeriaFourPillarsCalculationRef=(0,i.useRef)(null),numeriaKigakuInputRef=(0,i.useRef)');
+replaceOne('kigakuInput:l===', 'fourPillarsInput:l==="four-pillars"?structuredClone(numeriaFourPillarsInputRef.current):null,fourPillarsCalculation:l==="four-pillars"?structuredClone(numeriaFourPillarsCalculationRef.current):null,kigakuInput:l===');
+for(const reset of ['di=()=>{numeriaNameInputsRef.current=normalizeNumerologyNameInputs(null);numeriaKigakuInputRef.current=null;','hi=e=>{numeriaNameInputsRef.current=normalizeNumerologyNameInputs(null);numeriaKigakuInputRef.current=null;'])replaceOne(reset,reset+'numeriaFourPillarsInputRef.current=null;numeriaFourPillarsCalculationRef.current=null;');
+replaceOne('let n=t.snapshot;numeriaKigakuInputRef.current=', 'let n=t.snapshot;numeriaFourPillarsInputRef.current=n.divination==="four-pillars"&&n.fourPillarsInput?.methodKey==="four-pillars"?structuredClone(n.fourPillarsInput):null;numeriaFourPillarsCalculationRef.current=n.divination==="four-pillars"?structuredClone(n.fourPillarsCalculation||null):null;numeriaKigakuInputRef.current=');
+replaceOne('updateKigakuInput:function(input){', `updateFourPillarsInput:function(input){
+  if(l!=="four-pillars"||!input||typeof input!=="object"||Array.isArray(input)||input.methodKey!=="four-pillars")return{ok:false,message:"四柱推命の入力を確認してください"};
+  numeriaFourPillarsInputRef.current=structuredClone(input);numeriaFourPillarsCalculationRef.current=null;
+  window.dispatchEvent(new CustomEvent("numeria-reading-draft-save-status",{detail:{state:"dirty"}}));return{ok:true};
+},adoptFourPillarsSavedSnapshot:function(saved){
+  if(l!=="four-pillars"||!saved||saved.id!==Dn||saved.divination!=="four-pillars"||JSON.stringify(saved.fourPillarsInput)!==JSON.stringify(numeriaFourPillarsInputRef.current)||saved.fourPillarsCalculation?.schemaVersion!=="numeria.bazi.calculation-checkpoint.v1"||saved.fourPillarsCalculation?.publicationAllowed!==false)return{ok:false};
+  numeriaFourPillarsCalculationRef.current=structuredClone(saved.fourPillarsCalculation);return{ok:true};
+},updateKigakuInput:function(input){`);
+replaceOne('updateKigakuInput:function(){return call(`updateKigakuInput`,arguments)}', 'adoptFourPillarsSavedSnapshot:function(){return call(`adoptFourPillarsSavedSnapshot`,arguments)},updateFourPillarsInput:function(){return call(`updateFourPillarsInput`,arguments)},updateKigakuInput:function(){return call(`updateKigakuInput`,arguments)}');
 writeFileSync(path, source);
 console.log("Numerology name selection and explicit confirmation connected to reading snapshots, draft save, restore and reset.");

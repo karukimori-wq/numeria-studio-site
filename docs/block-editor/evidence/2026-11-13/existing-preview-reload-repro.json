@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-13",
+  "url": "https://integration-preview.numeria-studio.com/app/settings/report-formats",
+  "deploymentSHA": "9b9009c422add475a6fbe499e08ea9fa5f10c811",
+  "deploymentSHASource": "HEAD /app/home, x-numeria-build-sha",
+  "planContext": "Authenticated administrator Business UI preview; not real Free/Pro acceptance",
+  "steps": [
+    "Open Home and select template settings.",
+    "Create isolated test preset F1-F5受入専用 20261113; choose Magazine; save.",
+    "Observe saved confirmation.",
+    "Reload /app/settings/report-formats."
+  ],
+  "expected": "Settings mounts and saved preset/layout can be verified.",
+  "actual": "Boot failure UI. React insertBefore NotFoundError.",
+  "reproductions": "2/2 full reload attempts",
+  "error": "NotFoundError: Failed to execute 'insertBefore' on 'Node': The node before which the new node is to be inserted is not a child of this node.",
+  "stackAsset": "https://integration-preview.numeria-studio.com/assets/framework-client-7951bef0cc41.js:8:93983",
+  "recovery": "Direct Home navigation mounts again.",
+  "scope": "Stale preview only. Not established on current main or PR95.",
+  "hypothesesNotYetTested": [
+    "Settings normalization reparents React-owned nodes before a later render.",
+    "Display/footer normalization replaces React-owned text nodes.",
+    "Boot recovery replaces an app-owned root while settings is mounting."
+  ],
+  "next": "Deploy PR95 to authenticated preview without shared D1 migrations, verify build SHA, repeat the same reload loop. Do not change runtime speculatively based solely on this stale deployment.",
+  "acceptance": "failed; no completion promotion"
+}

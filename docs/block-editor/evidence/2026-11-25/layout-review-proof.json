@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-25",
+  "pdfPages": 74,
+  "capturedPages": 72,
+  "cases": 28,
+  "embeddedSourcePixelEquality": 72,
+  "fullScreenshotCropPixelEquality": 72,
+  "allPagesA4": true,
+  "bodyImageBased": true,
+  "publicationAllowed": false,
+  "pdfSha256": "266b55d58fcab7a70588b9ef8a7d665c6237b9667a26878544607cefbe39c675",
+  "visualReview": {
+    "renderedPages": 74,
+    "contactSheetsReviewed": 7,
+    "detailPagesReviewed": [
+      1,
+      2,
+      15,
+      73
+    ],
+    "pointerInsidePaper": false,
+    "captureClippingOrOverlapFound": false,
+    "paginationWhitespace": "Original draft continuation pages retained; not formal design approval."
+  }
+}

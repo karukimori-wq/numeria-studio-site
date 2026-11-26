@@ -1,0 +1,750 @@
+[
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "架空例の8コアナンバー一覧",
+    "data": {
+      "items": [
+        {
+          "key": "lifePath",
+          "label": "lifePath",
+          "value": 33,
+          "unit": "number"
+        },
+        {
+          "key": "birthdayNumber",
+          "label": "birthdayNumber",
+          "value": 11,
+          "unit": "number"
+        },
+        {
+          "key": "attitude",
+          "label": "attitude",
+          "value": 4,
+          "unit": "number"
+        },
+        {
+          "key": "destiny",
+          "label": "destiny",
+          "value": 9,
+          "unit": "number"
+        },
+        {
+          "key": "soul",
+          "label": "soul",
+          "value": 1,
+          "unit": "number"
+        },
+        {
+          "key": "personality",
+          "label": "personality",
+          "value": 8,
+          "unit": "number"
+        },
+        {
+          "key": "maturity",
+          "label": "maturity",
+          "value": 6,
+          "unit": "number"
+        },
+        {
+          "key": "personalYear",
+          "label": "personalYear",
+          "value": 5,
+          "unit": "number"
+        }
+      ],
+      "order": "declared"
+    },
+    "type": "FIG-RESULT"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "ライフパスとデスティニーからマチュリティを求める計算上の関係",
+    "data": {
+      "nodes": [
+        {
+          "id": "lifePath",
+          "value": 33
+        },
+        {
+          "id": "destiny",
+          "value": 9
+        },
+        {
+          "id": "maturity",
+          "value": 6
+        }
+      ],
+      "edges": [
+        {
+          "from": "lifePath",
+          "to": "maturity",
+          "kind": "calculation-input"
+        },
+        {
+          "from": "destiny",
+          "to": "maturity",
+          "kind": "calculation-input"
+        }
+      ],
+      "legend": [
+        {
+          "kind": "calculation-input",
+          "label": "計算の入力。性格の因果関係ではない"
+        }
+      ]
+    },
+    "type": "FIG-RELATION"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "2022年から2030年の数秘9年サイクル",
+    "data": {
+      "timeZone": "Asia/Tokyo",
+      "intervalMode": "start-inclusive-end-exclusive",
+      "items": [
+        {
+          "id": "year-2022",
+          "start": "2022-01-01",
+          "end": "2023-01-01",
+          "value": 1,
+          "label": "2022年",
+          "highlight": false
+        },
+        {
+          "id": "year-2023",
+          "start": "2023-01-01",
+          "end": "2024-01-01",
+          "value": 2,
+          "label": "2023年",
+          "highlight": false
+        },
+        {
+          "id": "year-2024",
+          "start": "2024-01-01",
+          "end": "2025-01-01",
+          "value": 3,
+          "label": "2024年",
+          "highlight": false
+        },
+        {
+          "id": "year-2025",
+          "start": "2025-01-01",
+          "end": "2026-01-01",
+          "value": 4,
+          "label": "2025年",
+          "highlight": false
+        },
+        {
+          "id": "year-2026",
+          "start": "2026-01-01",
+          "end": "2027-01-01",
+          "value": 5,
+          "label": "2026年",
+          "highlight": true
+        },
+        {
+          "id": "year-2027",
+          "start": "2027-01-01",
+          "end": "2028-01-01",
+          "value": 6,
+          "label": "2027年",
+          "highlight": false
+        },
+        {
+          "id": "year-2028",
+          "start": "2028-01-01",
+          "end": "2029-01-01",
+          "value": 7,
+          "label": "2028年",
+          "highlight": false
+        },
+        {
+          "id": "year-2029",
+          "start": "2029-01-01",
+          "end": "2030-01-01",
+          "value": 8,
+          "label": "2029年",
+          "highlight": false
+        },
+        {
+          "id": "year-2030",
+          "start": "2030-01-01",
+          "end": "2031-01-01",
+          "value": 9,
+          "label": "2030年",
+          "highlight": false
+        }
+      ],
+      "unit": "calendar-year",
+      "scoreAxis": false
+    },
+    "type": "FIG-TIME"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "役割別に配置した数秘8コア",
+    "data": {
+      "coordinateSystem": "normalized",
+      "items": [
+        {
+          "key": "lifePath",
+          "value": 33,
+          "x": 0.2,
+          "y": 0.2
+        },
+        {
+          "key": "birthdayNumber",
+          "value": 11,
+          "x": 0.5,
+          "y": 0.2
+        },
+        {
+          "key": "attitude",
+          "value": 4,
+          "x": 0.8,
+          "y": 0.2
+        },
+        {
+          "key": "destiny",
+          "value": 9,
+          "x": 0.2,
+          "y": 0.5
+        },
+        {
+          "key": "soul",
+          "value": 1,
+          "x": 0.5,
+          "y": 0.5
+        },
+        {
+          "key": "personality",
+          "value": 8,
+          "x": 0.8,
+          "y": 0.5
+        },
+        {
+          "key": "maturity",
+          "value": 6,
+          "x": 0.35,
+          "y": 0.8
+        },
+        {
+          "key": "personalYear",
+          "value": 5,
+          "x": 0.65,
+          "y": 0.8
+        }
+      ],
+      "edges": [],
+      "layoutVersion": "num-eight-role-map.v1",
+      "tradition": "NS結果整理図。生命の樹ではない"
+    },
+    "type": "FIG-MAP"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "過去・現在・未来の3枚を位置順に表示",
+    "data": {
+      "cards": [
+        {
+          "positionId": "past",
+          "cardId": "0",
+          "name": "愚者",
+          "orientation": "upright",
+          "assetRef": null
+        },
+        {
+          "positionId": "present",
+          "cardId": "I",
+          "name": "魔術師",
+          "orientation": "reversed",
+          "assetRef": null
+        },
+        {
+          "positionId": "future",
+          "cardId": "II",
+          "name": "女教皇",
+          "orientation": "upright",
+          "assetRef": null
+        }
+      ],
+      "renderMode": "labelled-card",
+      "assetState": "manifest-pending",
+      "orientationPresentation": "explicit-label",
+      "order": [
+        "past",
+        "present",
+        "future"
+      ]
+    },
+    "type": "FIG-CARDS"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "3カードの過去・現在・未来の配置",
+    "data": {
+      "spreadId": "three-time",
+      "spreadVersion": "v1",
+      "coordinateSystem": "normalized",
+      "positions": [
+        {
+          "positionId": "past",
+          "cardId": "0",
+          "name": "愚者",
+          "orientation": "upright",
+          "assetRef": null,
+          "x": 0.25,
+          "y": 0.5,
+          "rotationDegrees": 0
+        },
+        {
+          "positionId": "present",
+          "cardId": "I",
+          "name": "魔術師",
+          "orientation": "reversed",
+          "assetRef": null,
+          "x": 0.5,
+          "y": 0.5,
+          "rotationDegrees": 0
+        },
+        {
+          "positionId": "future",
+          "cardId": "II",
+          "name": "女教皇",
+          "orientation": "upright",
+          "assetRef": null,
+          "x": 0.75,
+          "y": 0.5,
+          "rotationDegrees": 0
+        }
+      ],
+      "orientationIsSeparateFromLayoutRotation": true
+    },
+    "type": "FIG-SPREAD"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "契約説明用の架空命式一覧",
+    "data": {
+      "fixtureKind": "synthetic-contract-only",
+      "columns": [
+        {
+          "key": "pillar",
+          "label": "柱"
+        },
+        {
+          "key": "stem",
+          "label": "天干"
+        },
+        {
+          "key": "branch",
+          "label": "地支"
+        }
+      ],
+      "rows": [
+        {
+          "pillar": "年",
+          "stem": "甲",
+          "branch": "子"
+        },
+        {
+          "pillar": "月",
+          "stem": "乙",
+          "branch": "丑"
+        },
+        {
+          "pillar": "日",
+          "stem": "丙",
+          "branch": "寅"
+        },
+        {
+          "pillar": "時",
+          "stem": "丁",
+          "branch": "卯"
+        }
+      ],
+      "repeatHeaderOnContinuation": true
+    },
+    "type": "FIG-TABLE"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "架空8字の五行構成数。強弱・吉凶を示すものではありません",
+    "data": {
+      "fixtureKind": "synthetic-contract-only",
+      "measure": "visible-character-count",
+      "unit": "字",
+      "denominator": 8,
+      "weighted": false,
+      "items": [
+        {
+          "key": "wood",
+          "label": "木",
+          "value": 4
+        },
+        {
+          "key": "fire",
+          "label": "火",
+          "value": 2
+        },
+        {
+          "key": "earth",
+          "label": "土",
+          "value": 1
+        },
+        {
+          "key": "metal",
+          "label": "金",
+          "value": 0
+        },
+        {
+          "key": "water",
+          "label": "水",
+          "value": 1
+        }
+      ],
+      "includeZero": true
+    },
+    "type": "FIG-BALANCE"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "2000年1月1日12時UTCの6天体配置の検証例。完全な出生図ではありません",
+    "data": {
+      "chartKind": "planet-positions",
+      "coordinateFrame": "geocentric-apparent-true-ecliptic-of-date",
+      "instant": "2000-01-01T12:00:00Z",
+      "unit": "degree",
+      "coverage": "partial",
+      "planets": [
+        {
+          "body": "Sun",
+          "longitude": 280.3689092,
+          "latitude": 0.0002381,
+          "sourceFixture": "JPL-Sun"
+        },
+        {
+          "body": "Moon",
+          "longitude": 223.323786,
+          "latitude": 5.1707422,
+          "sourceFixture": "JPL-Moon"
+        },
+        {
+          "body": "Mars",
+          "longitude": 327.9632921,
+          "latitude": -1.0677752,
+          "sourceFixture": "JPL-Mars"
+        },
+        {
+          "body": "Jupiter",
+          "longitude": 25.2530685,
+          "latitude": -1.2621868,
+          "sourceFixture": "JPL-Jupiter"
+        },
+        {
+          "body": "Neptune",
+          "longitude": 303.1930007,
+          "latitude": 0.2350026,
+          "sourceFixture": "JPL-Neptune"
+        },
+        {
+          "body": "Pluto",
+          "longitude": 251.4547644,
+          "latitude": 10.8552605,
+          "sourceFixture": "JPL-Pluto"
+        }
+      ],
+      "axes": null,
+      "houses": null,
+      "aspects": [],
+      "uncomputedBodies": [
+        "Mercury",
+        "Venus",
+        "Saturn",
+        "Uranus"
+      ],
+      "neverSubstituteForFullNatal": true
+    },
+    "type": "FIG-ASTRO"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "2026年2月17日子時のライブラリ回帰例。独立検証済み命盤ではありません",
+    "data": {
+      "sourceKind": "iztro-2.6.3-regression",
+      "coverage": "major-stars-only",
+      "lunarDate": {
+        "year": 2026,
+        "month": 1,
+        "day": 1,
+        "isLeap": false
+      },
+      "soulBranch": "寅",
+      "bodyBranch": "寅",
+      "palaces": [
+        {
+          "label": "命宮",
+          "branch": "寅",
+          "majorStars": [
+            "貪狼"
+          ]
+        },
+        {
+          "label": "父母宮",
+          "branch": "卯",
+          "majorStars": [
+            "天機",
+            "巨門"
+          ]
+        },
+        {
+          "label": "福徳宮",
+          "branch": "辰",
+          "majorStars": [
+            "紫微",
+            "天相"
+          ]
+        },
+        {
+          "label": "田宅宮",
+          "branch": "巳",
+          "majorStars": [
+            "天梁"
+          ]
+        },
+        {
+          "label": "官禄宮",
+          "branch": "午",
+          "majorStars": [
+            "七殺"
+          ]
+        },
+        {
+          "label": "交友宮",
+          "branch": "未",
+          "majorStars": []
+        },
+        {
+          "label": "遷移宮",
+          "branch": "申",
+          "majorStars": [
+            "廉貞"
+          ]
+        },
+        {
+          "label": "疾厄宮",
+          "branch": "酉",
+          "majorStars": []
+        },
+        {
+          "label": "財帛宮",
+          "branch": "戌",
+          "majorStars": [
+            "破軍"
+          ]
+        },
+        {
+          "label": "子女宮",
+          "branch": "亥",
+          "majorStars": [
+            "天同"
+          ]
+        },
+        {
+          "label": "夫妻宮",
+          "branch": "子",
+          "majorStars": [
+            "武曲",
+            "天府"
+          ]
+        },
+        {
+          "label": "兄弟宮",
+          "branch": "丑",
+          "majorStars": [
+            "太陽",
+            "太陰"
+          ]
+        }
+      ],
+      "natalFourTransformations": null,
+      "neverSubstituteForFullVerifiedChart": true
+    },
+    "type": "FIG-ZIW"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "2026節年の年盤。南が五黄殺、北が暗剣殺と歳破",
+    "data": {
+      "periodKind": "year",
+      "start": "2026-02-04T05:01:54.541+09:00",
+      "end": null,
+      "endState": "uncomputed",
+      "boardCoverage": "center-and-flight-pattern",
+      "northPresentation": "explicit-compass-label",
+      "cells": [
+        {
+          "direction": "center",
+          "star": 1
+        },
+        {
+          "direction": "NW",
+          "star": 2
+        },
+        {
+          "direction": "W",
+          "star": 3
+        },
+        {
+          "direction": "NE",
+          "star": 4
+        },
+        {
+          "direction": "S",
+          "star": 5
+        },
+        {
+          "direction": "N",
+          "star": 6
+        },
+        {
+          "direction": "SW",
+          "star": 7
+        },
+        {
+          "direction": "E",
+          "star": 8
+        },
+        {
+          "direction": "SE",
+          "star": 9
+        }
+      ],
+      "badDirections": [
+        {
+          "direction": "S",
+          "reasons": [
+            "goou"
+          ]
+        },
+        {
+          "direction": "N",
+          "reasons": [
+            "anken",
+            "year-break"
+          ]
+        }
+      ]
+    },
+    "type": "FIG-DIRECTION"
+  },
+  {
+    "schemaVersion": "ns.figure.v1",
+    "exampleOnly": true,
+    "subjectRefs": [
+      "fixture-person-a"
+    ],
+    "resultRevision": "fixture-r1",
+    "calculationVersion": "ns.spec.2026-10-19.v1",
+    "state": "ready",
+    "alt": "出発地から見た北を手動指定した確認図。地理的な地図や距離の表示ではありません",
+    "data": {
+      "mode": "manual-direction",
+      "originLabel": "出発地・転居元",
+      "destinationLabel": "目的地・転居先",
+      "direction": "N",
+      "coordinateSource": "not-used",
+      "latitude": null,
+      "longitude": null,
+      "distance": null,
+      "assessment": {
+        "year": "inauspicious",
+        "yearReasons": [
+          "anken",
+          "year-break"
+        ],
+        "month": "uncomputed"
+      },
+      "showGeographicalMap": false
+    },
+    "type": "FIG-GEO"
+  }
+]

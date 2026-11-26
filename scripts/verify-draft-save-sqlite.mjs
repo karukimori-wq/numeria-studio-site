@@ -1,3 +1,4 @@
+import { withFourPillarsCalculationCheckpoint, validateFourPillarsCalculationCheckpoint } from "../src/four-pillars-calculation-checkpoint.js";
 import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -6,6 +7,8 @@ import { spawnSync } from "node:child_process";
 import worker from "../src/worker.js";
 import { normalizeNumerologyNameInputs, updateNumerologyNameInputs, selectedNumerologyName } from "../src/numerology-name-input.js";
 import { withNumerologyCalculationCheckpoint } from "../src/numerology-result-checkpoint.js";
+
+import { withKigakuCalculationCheckpoint, validateKigakuCalculationCheckpoint } from "../src/kigaku-calculation-checkpoint.js";
 
 // Run the Worker's real D1 SQL on SQLite. Identity and D1 transport are fixtures.
 const directory = mkdtempSync(join(tmpdir(), "numeria-draft-cas-"));
@@ -47,10 +50,10 @@ const db = { async batch(statements) { return sql(statements.map(s => ({query:s.
   },
 }; } };
 const env = { NUMERIA_DB: db, AUTH_ENFORCEMENT_MODE: "observe" };
-async function api(path, body) {
+async function api(path, body, workspaceId = "cas_ws") {
   const response = await worker.fetch(new Request(`https://fixture.test${path}`, {
     method: body ? "POST" : "GET",
-    headers: { "Content-Type": "application/json", "X-Workspace-Id": "cas_ws", "X-User-Id": "cas_owner" },
+    headers: { "Content-Type": "application/json", "X-Workspace-Id": workspaceId, "X-User-Id": "cas_owner" },
     body: body ? JSON.stringify(body) : undefined,
   }), env, {});
   return { status: response.status, body: await response.json() };
@@ -130,5 +133,107 @@ try {
   failWrite = true;
   await assert.rejects(() => save("保存失敗の本文", persisted.draftVersion), /fixture disk failure/);
   assert.deepEqual(JSON.parse(sql("SELECT active_draft_json FROM usage_records")[0].active_draft_json), persisted);
+  failWrite = false;
+  const kigakuInput = { methodKey: "nine-star-ki", subjectId: "fixture-kigaku-self", revision: "r1",
+    referenceInstant: "2026-11-09T00:00:00+09:00",
+    birthClock: { date: "1990-06-15", time: null, countryCode: "JP", zoneId: "Asia/Tokyo", zoneConfirmed: true, offsetChoiceMinutes: null } };
+  const kigakuSnapshot = withKigakuCalculationCheckpoint({ id: "session_kigaku_fixture", divination: "nine-star-ki", name: "架空九星", birthday: "1990-06-15", kigakuInput,
+    unknownFutureField: { retained: true }, drafts: { retainedText: "既存の編集本文" } });
+  const kigakuSaved = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: null, divination: "nine-star-ki", question: "九星保存fixture", snapshot: { ...kigakuSnapshot, kigakuCalculation: { tampered: true } } }, "cas_kigaku_ws");
+  assert.equal(kigakuSaved.status, 201);
+  const kigakuRestored = (await api("/api/appraisals/session_kigaku_fixture", null, "cas_kigaku_ws")).body.session.snapshot;
+  assert.deepEqual(kigakuRestored.kigakuCalculation, kigakuSnapshot.kigakuCalculation);
+  assert.deepEqual(kigakuRestored.unknownFutureField, kigakuSnapshot.unknownFutureField);
+  assert.deepEqual(kigakuRestored.drafts, kigakuSnapshot.drafts);
+  assert.equal(validateKigakuCalculationCheckpoint(kigakuRestored).ok, true);
+  assert.equal(kigakuRestored.kigakuCalculation.calculation.pages.length, 14);
+  assert.equal(kigakuRestored.kigakuCalculation.publicationAllowed, false);
+  for (const status of ["confirmed", "completed"]) {
+    const workspace = `forged_kigaku_${status}`;
+    const saved = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: null, divination: "nine-star-ki", question: "状態偽装fixture", snapshot: { ...kigakuSnapshot, status, kigakuCalculation: { publicationAllowed: true, tampered: true } } }, workspace);
+    assert.equal(saved.status, 201);
+    const restored = (await api("/api/appraisals/session_kigaku_fixture", null, workspace)).body.session.snapshot;
+    assert.equal(restored.status, "draft");
+    assert.deepEqual(restored.kigakuCalculation, kigakuSnapshot.kigakuCalculation);
+    assert.equal(restored.kigakuCalculation.publicationAllowed, false);
+    assert.deepEqual(restored.drafts, kigakuSnapshot.drafts);
+  }
+  const lockedVersion = kigakuSaved.body.activeDraft.draftVersion;
+  for (const changedSnapshot of [
+    { ...kigakuSnapshot, kigakuInput: { ...kigakuInput, referenceInstant: "2027-01-01T00:00:00+09:00" } },
+    { ...kigakuSnapshot, kigakuInput: null },
+  ]) {
+    const rejected = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: lockedVersion, snapshot: changedSnapshot }, "cas_kigaku_ws");
+    assert.equal(rejected.status, 409);
+    assert.equal(rejected.body.errorCode, "KIGAKU_REFERENCE_LOCKED");
+    assert.deepEqual((await api("/api/appraisals/session_kigaku_fixture", null, "cas_kigaku_ws")).body.session.snapshot, kigakuRestored);
+  }
+  const sameReference = await api("/api/appraisals/save-draft", { appraisalId: "session_kigaku_fixture", expectedDraftVersion: lockedVersion, snapshot: { ...kigakuRestored, drafts: { retainedText: "本文だけ更新" } } }, "cas_kigaku_ws");
+  assert.equal(sameReference.status, 201);
+  const switchWorkspace = "cas_kigaku_switch_ws";
+  const switchSeed = await api("/api/appraisals/save-draft", { appraisalId: kigakuSnapshot.id, expectedDraftVersion: null, snapshot: kigakuSnapshot }, switchWorkspace);
+  assert.equal(switchSeed.status, 201);
+  const methodSwitched = await api("/api/appraisals/save-draft", { appraisalId: kigakuSnapshot.id, expectedDraftVersion: switchSeed.body.activeDraft.draftVersion, snapshot: { ...kigakuSnapshot, divination: "tarot" } }, switchWorkspace);
+  assert.equal(methodSwitched.status, 201);
+  const switchedVersion = methodSwitched.body.activeDraft.draftVersion;
+  const switchedRestored = (await api(`/api/appraisals/${kigakuSnapshot.id}`, null, switchWorkspace)).body.session.snapshot;
+  for (const kigakuInputAfterSwitch of [{ ...kigakuInput, referenceInstant: "2027-01-01T00:00:00+09:00" }, null]) {
+    const rejected = await api("/api/appraisals/save-draft", { appraisalId: kigakuSnapshot.id, expectedDraftVersion: switchedVersion, snapshot: { ...kigakuSnapshot, kigakuInput: kigakuInputAfterSwitch } }, switchWorkspace);
+    assert.equal(rejected.status, 409, "A method flag switch must not unlock the saved Kigaku reference.");
+    assert.equal(rejected.body.errorCode, "KIGAKU_REFERENCE_LOCKED");
+    assert.deepEqual((await api(`/api/appraisals/${kigakuSnapshot.id}`, null, switchWorkspace)).body.session.snapshot, switchedRestored);
+  }
+  const switchBack = await api("/api/appraisals/save-draft", { appraisalId: kigakuSnapshot.id, expectedDraftVersion: switchedVersion, snapshot: { ...kigakuSnapshot, drafts: { retainedText: "占術切替後も本文を保持" } } }, switchWorkspace);
+  assert.equal(switchBack.status, 201);
+  assert.equal(switchBack.body.activeDraft.snapshot.kigakuCalculation.source.referenceInstant, kigakuInput.referenceInstant);
+  const baziClock = { date: "2000-01-07", time: null, countryCode: "JP", zoneId: "Asia/Tokyo", zoneConfirmed: true, offsetChoiceMinutes: null };
+  const baziInput = { methodKey: "four-pillars", subjectId: "fixture-bazi-a", partnerSubjectId: "fixture-bazi-b", birthClock: baziClock, partnerBirthClock: { ...baziClock, date: "2000-01-08" }, referenceDate: "2026-11-16", familyContext: "parent-child", parentDirection: "a-parent" };
+  const baziSnapshot = withFourPillarsCalculationCheckpoint({ id: "session_bazi_fixture", divination: "four-pillars", fourPillarsInput: baziInput, drafts: { retainedText: "四柱の編集本文" }, unknownFutureField: { retained: true } });
+  for (const status of ["confirmed", "completed"]) {
+    const workspace = `bazi_${status}`;
+    const saved = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: null, divination: "four-pillars", question: "四柱保存fixture", snapshot: { ...baziSnapshot, status, fourPillarsCalculation: { publicationAllowed: true } } }, workspace);
+    assert.equal(saved.status, 201);
+    const restored = (await api("/api/appraisals/session_bazi_fixture", null, workspace)).body.session.snapshot;
+    assert.equal(restored.status, "draft");assert.deepEqual(restored.fourPillarsCalculation, baziSnapshot.fourPillarsCalculation);
+    assert.deepEqual(restored.drafts, baziSnapshot.drafts);assert.deepEqual(restored.unknownFutureField, baziSnapshot.unknownFutureField);
+    assert.equal(validateFourPillarsCalculationCheckpoint(restored).ok, true);
+    assert.equal(restored.fourPillarsCalculation.calculation.pages.filter(page => page.data).length, 10);
+    const switched = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: saved.body.activeDraft.draftVersion, snapshot: { ...baziSnapshot, divination: "tarot" } }, workspace);
+    assert.equal(switched.status, 201);
+    const bypass = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: switched.body.activeDraft.draftVersion, snapshot: { ...baziSnapshot, fourPillarsInput: { ...baziInput, referenceDate: "2026-11-17" } } }, workspace);
+    assert.equal(bypass.status, 409);assert.equal(bypass.body.errorCode, "FOUR_PILLARS_REFERENCE_LOCKED");
+    const reset = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: switched.body.activeDraft.draftVersion, snapshot: baziSnapshot }, workspace);
+    assert.equal(reset.status, 201);
+    for (const fourPillarsInput of [null, { ...baziInput, referenceDate: "2026-11-17" }]) {
+      const rejected = await api("/api/appraisals/save-draft", { appraisalId: baziSnapshot.id, expectedDraftVersion: reset.body.activeDraft.draftVersion, snapshot: { ...baziSnapshot, fourPillarsInput } }, workspace);
+      assert.equal(rejected.status, 409);assert.equal(rejected.body.errorCode, "FOUR_PILLARS_REFERENCE_LOCKED");
+      assert.deepEqual((await api("/api/appraisals/session_bazi_fixture", null, workspace)).body.session.snapshot, restored);
+    }
+  }
+  const yunSnapshot = { ...baziSnapshot, id: "session_bazi_yun", fourPillarsInput: { ...baziInput, birthClock: { ...baziClock, time: "12:00:00" }, calculationSex: "male" }, fourPillarsCalculation: { calculation: { yun: { direction: "forged", offset: { totalMinutes: 0 } } }, publicationAllowed: true } };
+  const yunSaved = await api("/api/appraisals/save-draft", { appraisalId: yunSnapshot.id, expectedDraftVersion: null, divination: "four-pillars", snapshot: yunSnapshot }, "bazi_yun_ws");
+  assert.equal(yunSaved.status,201);
+  const yunRestored = (await api("/api/appraisals/session_bazi_yun",null,"bazi_yun_ws")).body.session.snapshot;
+  assert.equal(yunRestored.fourPillarsCalculation.calculation.yun.state,"available");
+  assert.equal(yunRestored.fourPillarsCalculation.calculation.yun.start.state,"available");
+  assert.equal(yunRestored.fourPillarsCalculation.calculation.yun.start.standardOffsetMinutes,540);
+  assert.notEqual(yunRestored.fourPillarsCalculation.calculation.yun.direction,"forged");
+  assert.equal(validateFourPillarsCalculationCheckpoint(yunRestored).ok,true);
+  assert.deepEqual(yunRestored.drafts,baziSnapshot.drafts);
+  const sexChangedYun = await api("/api/appraisals/save-draft", { appraisalId:yunSnapshot.id, expectedDraftVersion:yunSaved.body.activeDraft.draftVersion, snapshot: { ...yunRestored, fourPillarsInput: { ...yunRestored.fourPillarsInput, calculationSex: "female" } } },"bazi_yun_ws");
+  assert.equal(sexChangedYun.status,201);
+  const changedYunRestored = (await api("/api/appraisals/session_bazi_yun",null,"bazi_yun_ws")).body.session.snapshot;
+  assert.notEqual(changedYunRestored.fourPillarsCalculation.calculation.yun.direction,yunRestored.fourPillarsCalculation.calculation.yun.direction);
+  assert.deepEqual(changedYunRestored.drafts,baziSnapshot.drafts);
+  const periodInput = { ...baziInput, birthClock: { ...baziClock, date: "1948-09-12", time: "00:30:45", offsetChoiceMinutes: 600 }, calculationSex: "female" };
+  const periodSaved = await api("/api/appraisals/save-draft", { appraisalId: "session_bazi_period", expectedDraftVersion: null, snapshot: { ...baziSnapshot, id: "session_bazi_period", fourPillarsInput: periodInput, fourPillarsCalculation: { publicationAllowed: true } } }, "bazi_period_ws");
+  assert.equal(periodSaved.status,201);
+  const periodRestored = (await api("/api/appraisals/session_bazi_period",null,"bazi_period_ws")).body.session.snapshot;
+  assert.equal(periodRestored.fourPillarsCalculation.calculation.pages.filter(page=>page.data).length,14);
+  assert.equal(periodRestored.fourPillarsCalculation.calculation.pages[5].data.intervals.length,10);
+  assert.equal(validateFourPillarsCalculationCheckpoint(periodRestored).ok,true);assert.deepEqual(periodRestored.drafts,baziSnapshot.drafts);
+  const retainedReport = await api("/api/reports/rep_immutable");
+  assert.equal(retainedReport.body.report.reportSnapshot.resultSummary, "旧Reportの本文");
+  console.log("Kigaku checkpoint: real Worker SQL/SQLite save and session restore PASS; synthetic identity/D1 transport; no production D1 or browser claim.");
   console.log("SQLite verified: concurrent CAS winner/409, stale version, Report/counter retention, blank fields, and write failure.");
 } finally { rmSync(directory, { recursive: true, force: true }); }

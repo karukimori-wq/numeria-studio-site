@@ -11,7 +11,7 @@ const finish=vm.runInNewContext('('+completion.slice('Gi='.length)+')',{
  tr:'user',G:null,j:'架空',M:'1990-01-02',F:null,P:'相談',lt:'',dt:'',Pe:'',pt:null,wr:null,l:'numerology',
  Fi:id=>({...snapshot,id}),Gt(){},window:{NumeriaAuthenticatedFetch:async(path,init)=>{
  if(path.includes('/status'))return {ok:true,json:async()=>({activeDraft:{id:'visible_session'}})};
- sent.push({path,body:JSON.parse(init.body)});return {ok:true,json:async()=>path.includes('/reports/export')?({status:'success',exportId:'rep_saved'}):({status:'success'})};
+ sent.push({path,body:JSON.parse(init.body)});return {ok:true,json:async()=>path.includes('/reports/export')?({status:'success',exportId:'rep_saved'}):({status:'success',appraisalId:JSON.parse(init.body).appraisalId})};
  }}
 });
 assert.deepEqual(JSON.parse(JSON.stringify(await finish('numerology','visible_session'))),{appraisalId:'visible_session',exportId:'rep_saved'});
@@ -32,3 +32,36 @@ assert.equal((await finish('numerology','report_candidate','origin_session')).ap
 assert.equal(sent[0].body.appraisalId,'origin_session');
 assert.equal(sent[1].body.appraisalId,'origin_session');
 console.log('Completion and Report export retain the visible/originating Session ID without consulting another active draft.');
+
+for (const stage of ['complete', 'export']) {
+ for (const failure of ['unauthorized', 'offline', 'invalid-json', 'missing-id', 'wrong-id', 'error-status']) {
+  const calls=[], messages=[];
+  let failing=true;
+  const current={...snapshot};
+  const run=vm.runInNewContext('('+completion.slice('Gi='.length)+')',{
+   G:null,j:'架空',M:'1990-01-02',F:null,P:'相談',lt:'',dt:'',Pe:'',pt:null,wr:null,l:'numerology',
+   Fi:id=>({...current,id}),Gt:message=>messages.push(message),window:{NumeriaAuthenticatedFetch:async(path,init)=>{
+    const body=JSON.parse(init.body);calls.push({path,body});
+    const isExport=path.includes('/reports/export');
+    if(failing && (stage==='export')===isExport){
+     if(failure==='offline')throw new Error('offline');
+     return {ok:failure!=='unauthorized',json:async()=>{
+      if(failure==='invalid-json')throw new Error('invalid JSON');
+      return failure==='error-status'?{status:'error',appraisalId:body.appraisalId,exportId:'rep_error'}:
+       failure==='wrong-id'?{status:'success',appraisalId:'other_session',exportId:null}:{status:'success'};
+     }};
+    }
+    return {ok:true,json:async()=>isExport?{status:'success',exportId:'rep_retry'}:{status:'success',appraisalId:body.appraisalId,alreadyCompleted:stage==='export'}};
+   }}
+  });
+  assert.equal(await run('numerology','visible_session'),false,stage+': '+failure+' must not expose PDF success');
+  assert.equal(calls.length,stage==='complete'?1:2,'Completion failure must stop before Report export');
+  assert.deepEqual(current,snapshot,'Failure must retain editor snapshot');
+  assert.ok(messages.length);
+  failing=false;calls.length=0;
+  assert.equal((await run('numerology','visible_session')).exportId,'rep_retry');
+  assert.ok(calls.every(call=>call.body.appraisalId==='visible_session'));
+  assert.deepEqual(calls[0].body.snapshot.intro,snapshot.intro);
+ }
+}
+console.log('PDF ACK fixtures: completion/export auth, transport, JSON and missing-ID failures stop success; retry retains text and Session ID (12 cases).');

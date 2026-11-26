@@ -1,0 +1,739 @@
+{
+  "calculatorVersion": "ns.kigaku.person-pair.v1",
+  "fixtureSHA256": "c121672d4e9d0d10881ff8753bbc6716c33627550781e1c09938a0692134bfe3",
+  "moduleSHA256": "fc763a70cb6846a3f33a90c3c27e490d2450378196dc6c9bbcb0f41125f8b818",
+  "source": "https://app.notion.com/p/3fee71121fed81fe947cf4582d62edf3",
+  "kind": "manual-derivation-from-approved-element-and-direction-rules",
+  "scope": "81 star-pair element classifications only; not natal star or page acceptance",
+  "rows": [
+    {
+      "input": {
+        "self": 1,
+        "partner": 1
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 1,
+        "partner": 2
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 1,
+        "partner": 3
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 1,
+        "partner": 4
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 1,
+        "partner": 5
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 1,
+        "partner": 6
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 1,
+        "partner": 7
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 1,
+        "partner": 8
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 1,
+        "partner": 9
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 2,
+        "partner": 1
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 2,
+        "partner": 2
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 2,
+        "partner": 3
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 2,
+        "partner": 4
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 2,
+        "partner": 5
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 2,
+        "partner": 6
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 2,
+        "partner": 7
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 2,
+        "partner": 8
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 2,
+        "partner": 9
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 3,
+        "partner": 1
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 3,
+        "partner": 2
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 3,
+        "partner": 3
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 3,
+        "partner": 4
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 3,
+        "partner": 5
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 3,
+        "partner": 6
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 3,
+        "partner": 7
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 3,
+        "partner": 8
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 3,
+        "partner": 9
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 4,
+        "partner": 1
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 4,
+        "partner": 2
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 4,
+        "partner": 3
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 4,
+        "partner": 4
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 4,
+        "partner": 5
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 4,
+        "partner": 6
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 4,
+        "partner": 7
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 4,
+        "partner": 8
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 4,
+        "partner": 9
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 5,
+        "partner": 1
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 5,
+        "partner": 2
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 5,
+        "partner": 3
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 5,
+        "partner": 4
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 5,
+        "partner": 5
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 5,
+        "partner": 6
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 5,
+        "partner": 7
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 5,
+        "partner": 8
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 5,
+        "partner": 9
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 6,
+        "partner": 1
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 6,
+        "partner": 2
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 6,
+        "partner": 3
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 6,
+        "partner": 4
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 6,
+        "partner": 5
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 6,
+        "partner": 6
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 6,
+        "partner": 7
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 6,
+        "partner": 8
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 6,
+        "partner": 9
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 7,
+        "partner": 1
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 7,
+        "partner": 2
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 7,
+        "partner": 3
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 7,
+        "partner": 4
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 7,
+        "partner": 5
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 7,
+        "partner": 6
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 7,
+        "partner": 7
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 7,
+        "partner": 8
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 7,
+        "partner": 9
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 8,
+        "partner": 1
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 8,
+        "partner": 2
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 8,
+        "partner": 3
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 8,
+        "partner": 4
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 8,
+        "partner": 5
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 8,
+        "partner": 6
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 8,
+        "partner": 7
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 8,
+        "partner": 8
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 8,
+        "partner": 9
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 9,
+        "partner": 1
+      },
+      "expected": "kokuga",
+      "actual": "kokuga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 9,
+        "partner": 2
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 9,
+        "partner": 3
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 9,
+        "partner": 4
+      },
+      "expected": "seiga",
+      "actual": "seiga",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 9,
+        "partner": 5
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 9,
+        "partner": 6
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 9,
+        "partner": 7
+      },
+      "expected": "gakoku",
+      "actual": "gakoku",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 9,
+        "partner": 8
+      },
+      "expected": "gasei",
+      "actual": "gasei",
+      "passed": true
+    },
+    {
+      "input": {
+        "self": 9,
+        "partner": 9
+      },
+      "expected": "biwa",
+      "actual": "biwa",
+      "passed": true
+    }
+  ]
+}

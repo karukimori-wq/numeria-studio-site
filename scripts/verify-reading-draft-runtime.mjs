@@ -21,21 +21,21 @@ for (const [start, end] of [["Ci=async()=>{", ",wi=()=>"], ["Ii=async()=>{", ",Y
   const offset = bundle.indexOf(start);
   assert.ok(offset >= 0);
   const handler = bundle.slice(offset + 3, bundle.indexOf(end, offset));
-  for (const outcome of ["success", "offline", "conflict", "server-error", "malformed-ack"]) {
+  for (const method of ["numerology", "four-pillars"]) for (const outcome of ["success", "offline", "conflict", "server-error", "malformed-ack"]) {
     const events = [];
     let requestBody;
     let finish;
-    let historyWrites = 0;
+    let historyWrites = 0, savedHistory;
     let body = "保存開始時の本文";
     const context = {
-      CustomEvent,
+      CustomEvent, structuredClone,
       G: { id: "client_fixture", name: "架空 花子", birthday: "1990-01-02" },
       j: "架空 花子", M: "1990-01-02", ae: "", P: "相談", Tr: [], Re: [], K: null,
-      wr: null, W: { name: "数秘", defaultMenuName: "数秘" }, kr: "", Pe: "本文", l: "numerology",
+      wr: null, W: { name: "数秘", defaultMenuName: "数秘" }, kr: "", Pe: "本文", l: method,
       be: "2026-10-24", Se: "", we: 0, Dn: "session_fixture", zt: "client_fixture", lt: "", dt: "",
       Pi: () => ({ template: "fixture" }),
-      Fi: id => ({ id, name: "架空 花子", birthday: "1990-01-02", theme: "相談", divination: "numerology", message: body, reportTypography: { bodySize: 12 }, drafts: { result: 7 } }),
-      f() { historyWrites++; }, B() {}, R() {}, k() {}, Bt() {}, V() {},
+      Fi: id => ({ id, name: "架空 花子", birthday: "1990-01-02", theme: "相談", divination: method, message: body, reportTypography: { bodySize: 12 }, drafts: { result: 7 } }),
+      f(update) { historyWrites++; savedHistory=update([{id:"client_fixture",history:[]}])[0]?.history?.[0]; }, B() {}, R() {}, k() {}, Bt() {}, V() {},
       window: {
         dispatchEvent(event) { events.push(event.detail); }, setTimeout() {},
         NumeriaDraftVersions: new Map([["session_fixture", "version_before"]]),
@@ -43,7 +43,7 @@ for (const [start, end] of [["Ci=async()=>{", ",wi=()=>"], ["Ii=async()=>{", ",Y
           requestBody = JSON.parse(init.body);
           await new Promise(resolve => { finish = resolve; });
           if (outcome === "offline") throw new Error("offline");
-          return { ok: ["success", "malformed-ack"].includes(outcome), json: async () => { if (outcome === "malformed-ack") throw new Error("Invalid JSON"); return ({ status: outcome === "success" ? "success" : "error", message: outcome, draftId: requestBody.appraisalId, activeDraft: { draftVersion: "version_after" } }); } };
+          return { ok: ["success", "malformed-ack"].includes(outcome), json: async () => { if (outcome === "malformed-ack") throw new Error("Invalid JSON"); return ({ status: outcome === "success" ? "success" : "error", message: outcome, draftId: requestBody.appraisalId, activeDraft: { draftVersion: "version_after", snapshot: {...requestBody.snapshot,fourPillarsCalculation:method==="four-pillars"?{schemaVersion:"numeria.bazi.calculation-checkpoint.v1",publicationAllowed:false}:null} } }); } };
         },
       },
     };
@@ -53,7 +53,7 @@ for (const [start, end] of [["Ci=async()=>{", ",wi=()=>"], ["Ii=async()=>{", ",Y
     assert.equal(historyWrites, 0, "Local history must not be marked saved before ACK.");
     assert.equal(requestBody.snapshot.message, body, "Both save entry points must send the complete snapshot.");
     assert.equal(requestBody.birthDate, "1990-01-02");
-    assert.equal(requestBody.divination, "numerology");
+    assert.equal(requestBody.divination, method);
     assert.equal(requestBody.snapshot.reportTypography.bodySize, 12);
     body = "保存中に追記した本文";
     finish();
@@ -64,11 +64,18 @@ for (const [start, end] of [["Ci=async()=>{", ",wi=()=>"], ["Ii=async()=>{", ",Y
     if (start.startsWith("Ii")) {
       assert.equal(requestBody.expectedDraftVersion, "version_before");
       assert.equal(context.window.NumeriaDraftVersions.get("session_fixture"), outcome === "success" ? "version_after" : "version_before");
-      if (outcome === "success") assert.equal(events.at(-1).sessionId, "session_fixture");
+      if (outcome === "success") {
+        assert.equal(events.at(-1).sessionId, "session_fixture");
+        if(method==="four-pillars"){
+          assert.equal(savedHistory.snapshot.fourPillarsCalculation.publicationAllowed,false);
+          assert.deepEqual(savedHistory.snapshot,events.at(-1).serverSnapshot,"Reopened history must carry the server calculation, not the pre-save snapshot.");
+          assert.equal(savedHistory.snapshot.message,"保存開始時の本文");
+        }
+      }
     }
   }
 }
-console.log("Production save handlers executed: both full snapshots, delayed ACK, offline, conflict, server error, and editor retention (10 fixture cases).");
+console.log("Production save handlers executed: both full snapshots, delayed ACK, offline, conflict, server error, and editor retention (20 fixture cases, including server-derived Four Pillars history restoration).");
 
 const nodes = new Map();
 let statusListener, restoredListener;
@@ -93,3 +100,16 @@ assert.equal(nodes.get("numeria-draft-save-status").dataset.state, "dirty", "An 
 statusListener({ detail: { state: "saved", sessionId: "fixture", snapshot: { message: "保存中に追記" } } });
 assert.equal(nodes.get("numeria-draft-save-status").dataset.state, "saved");
 console.log("Save feedback distinguishes an older ACK from the current editor snapshot.");
+
+statusListener({ detail: { state: "error", errorCode: "DRAFT_SAVE_CONFLICT" } });
+assert.match(nodes.get("numeria-draft-save-status").textContent, /別の保存/);
+statusListener({ detail: { state: "error", errorCode: "FREE_IN_PROGRESS_APPRAISAL_LIMIT" } });
+assert.match(nodes.get("numeria-draft-save-status").textContent, /未完了案件は1件/);
+statusListener({ detail: { state: "error", errorCode: "<script>untrusted</script>" } });
+assert.equal(nodes.get("numeria-draft-save-status").textContent, "保存できませんでした。内容を確認して再試行してください");
+console.log("Save feedback maps known errors to actionable text and never displays unknown server content.");
+
+for (const errorCode of ['constructor', 'toString', '__proto__']) {
+  statusListener({ detail: { state: 'error', errorCode } });
+  assert.equal(nodes.get('numeria-draft-save-status').textContent, '保存できませんでした。内容を確認して再試行してください');
+}

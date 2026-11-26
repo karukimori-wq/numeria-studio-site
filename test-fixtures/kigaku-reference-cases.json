@@ -1,0 +1,47 @@
+[
+  {
+    "id": "TERM-lichun",
+    "input": {
+      "year": 2026,
+      "event": "lichun",
+      "timeZone": "Asia/Tokyo"
+    },
+    "expected": {
+      "publicMinute": "2026-02-04T05:02:00+09:00",
+      "sourcePrecision": "minute",
+      "toleranceSeconds": 60
+    },
+    "oracle": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2026/rekiyou262.html",
+    "sourceNotion": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692"
+  },
+  {
+    "id": "TERM-summer",
+    "input": {
+      "year": 2026,
+      "event": "summer",
+      "timeZone": "Asia/Tokyo"
+    },
+    "expected": {
+      "publicMinute": "2026-06-21T17:25:00+09:00",
+      "sourcePrecision": "minute",
+      "toleranceSeconds": 60
+    },
+    "oracle": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2026/rekiyou262.html",
+    "sourceNotion": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692"
+  },
+  {
+    "id": "TERM-winter",
+    "input": {
+      "year": 2026,
+      "event": "winter",
+      "timeZone": "Asia/Tokyo"
+    },
+    "expected": {
+      "publicMinute": "2026-12-22T05:50:00+09:00",
+      "sourcePrecision": "minute",
+      "toleranceSeconds": 60
+    },
+    "oracle": "https://eco.mtk.nao.ac.jp/koyomi/yoko/2026/rekiyou262.html",
+    "sourceNotion": "https://app.notion.com/p/3fee71121fed8162802ac12c7097d692"
+  }
+]

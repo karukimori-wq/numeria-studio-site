@@ -1,3 +1,5 @@
+import { withFourPillarsCalculationCheckpoint } from "./four-pillars-calculation-checkpoint.js";
+import { withKigakuCalculationCheckpoint } from "./kigaku-calculation-checkpoint.js";
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
 import { withNumerologyRegisteredSelection } from "./numerology-registered-draft.js";
@@ -484,6 +486,9 @@ function withRestorableSnapshot(record = {}, session = {}) {
       menuName: "数秘術鑑定",
       price: 0,
       ...existing,
+      // The authenticated Session record owns identity. Old snapshots may omit
+      // it or contain a local draft ID; never reopen those as a new appraisal.
+      id: session.id,
       selectedCustomerId: existing.selectedCustomerId || clientRef,
       name: existing.name || session.clientName || client?.clientName || "",
       birthday: existing.birthday || session.birthDate || client?.birthDate || "",
@@ -2600,6 +2605,18 @@ async function handleApi(request, env = {}, ctx = null) {
       return json({ status: "error", errorCode: decision.reason, message: decision.message, upgradeBenefit: decision.upgradeBenefit, usage: snapshot }, { status: 402 });
     }
     const previousDraft = isSameDraft ? currentDraft : null;
+    const fixedKigakuReference = previousDraft?.snapshot?.kigakuInput?.referenceInstant
+      || previousDraft?.snapshot?.kigakuCalculation?.source?.referenceInstant || null;
+    if (fixedKigakuReference && body.snapshot && body.snapshot.kigakuInput?.referenceInstant !== fixedKigakuReference) {
+      return json({ status: "error", errorCode: "KIGAKU_REFERENCE_LOCKED", message: "保存済み基準日時は変更できません。新規鑑定を作成してください。" }, { status: 409 });
+    }
+
+    const fixedFourPillarsReference = previousDraft?.snapshot?.fourPillarsInput?.referenceDate
+      || previousDraft?.snapshot?.fourPillarsCalculation?.source?.referenceDate || null;
+    if (fixedFourPillarsReference && body.snapshot && body.snapshot.fourPillarsInput?.referenceDate !== fixedFourPillarsReference) {
+      return json({ status: "error", errorCode: "FOUR_PILLARS_REFERENCE_LOCKED", message: "保存済み基準日は変更できません。新規鑑定を作成してください。" }, { status: 409 });
+    }
+
     record.activeDraft = {
       id: appraisalId,
       draftVersion: crypto.randomUUID(),
@@ -2611,7 +2628,7 @@ async function handleApi(request, env = {}, ctx = null) {
       notes: String(body.notes ?? previousDraft?.notes ?? "").trim(),
       resultSummary: String(body.resultSummary ?? previousDraft?.resultSummary ?? "").trim(),
       snapshot: body.snapshot && typeof body.snapshot === "object"
-        ? await withNumerologyRegisteredSelection(body.snapshot, effectiveRecord.planId)
+        ? await withNumerologyRegisteredSelection(withFourPillarsCalculationCheckpoint(withKigakuCalculationCheckpoint(body.snapshot)), effectiveRecord.planId)
         : previousDraft?.snapshot || null,
       externalReferences: normalizeGrowthEngineExternalReferences(body) || previousDraft?.externalReferences || null,
       updatedAt: new Date().toISOString(),

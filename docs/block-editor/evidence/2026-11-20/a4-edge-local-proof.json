@@ -1,0 +1,4178 @@
+{
+  "synthetic": true,
+  "accountAcceptance": false,
+  "results": [
+    {
+      "scenario": "complete",
+      "id": "BAZ-01",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-02",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-03",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.3671875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 742.9375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-04",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-05",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 743.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-06",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 653.8984375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 678.9453125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-07",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 700.46875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-08",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 712.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-09",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 337.7734375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-10",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 758.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 783.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 707.1328125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-11",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 739.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-12",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 729.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 608.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-13",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 741.96875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-14",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 728.0625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-01",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 780.7265625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-02",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-03",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 650.75,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 580.953125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-04",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-05",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.1484375,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-06",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 653.8984375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 678.9453125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-07",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 700.46875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-08",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 611.3515625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-09",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 337.7734375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-10",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 758.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 783.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 707.1328125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-11",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 739.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-12",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.5390625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 505.15625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-13",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 741.96875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "complete",
+      "id": "BAZ-14",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 740.3203125,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-01",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 332.578125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-02",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-03",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.3671875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 742.9375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-04",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 772.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 499.7578125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-05",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 732.140625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-06",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-07",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-08",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 678.7421875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-09",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 653.5390625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 733.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-10",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 724.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 702.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 626.140625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-11",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 769.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 708.5390625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-12",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 695.7421875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 608.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-13",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-14",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-01",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 733.9375,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-02",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-03",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 650.75,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 580.953125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-04",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 772.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 499.7578125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-05",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.1484375,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-06",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-07",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-08",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 611.3515625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-09",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 653.5390625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 733.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-10",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 724.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 702.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 626.140625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-11",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 769.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 708.5390625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-12",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.5390625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 505.15625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-13",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "unknown-time",
+      "id": "BAZ-14",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 259.984375,
+          "columns": "2"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-01",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-02",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-03",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.3671875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 742.9375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-04",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-05",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 743.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-06",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 653.8984375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 678.9453125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-07",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 700.46875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-08",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-09",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 337.7734375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-10",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 758.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 783.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 707.1328125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-11",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 739.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-12",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-13",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 741.96875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-14",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 728.0625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-01",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 780.7265625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-02",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-03",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 650.75,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 580.953125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-04",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-05",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.1484375,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-06",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 653.8984375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 678.9453125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-07",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 700.46875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-08",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 259.984375,
+          "columns": "2"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-09",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 337.7734375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-10",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 758.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 783.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 707.1328125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-11",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 739.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-12",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 259.984375,
+          "columns": "2"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-13",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 741.96875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-partner",
+      "id": "BAZ-14",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 740.3203125,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-01",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-02",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-03",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.3671875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 742.9375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-04",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-05",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 743.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-06",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-07",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-08",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 712.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-09",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 337.7734375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-10",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 758.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 783.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 707.1328125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-11",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 739.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-12",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 729.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 608.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-13",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-14",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-01",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 780.7265625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-02",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-03",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 650.75,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 580.953125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-04",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 716.53125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-05",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.1484375,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-06",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-07",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-08",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 611.3515625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-09",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 337.7734375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-10",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.5,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 758.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 783.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 707.1328125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-11",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 739.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-12",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.5390625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 505.15625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-13",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "no-calculation-sex",
+      "id": "BAZ-14",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 259.984375,
+          "columns": "2"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-01",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.7265625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-02",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-03",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 784.3671875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 742.9375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-04",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 758.125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 580.75,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-05",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 743.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-06",
+      "layout": "standard",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-07",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 700.46875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-08",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 712.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-09",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-10",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 713.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.1328125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 603.7421875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-11",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 705.5390625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-12",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 729.9375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 608.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-13",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 741.96875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-14",
+      "layout": "standard",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 728.0625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-01",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 780.7265625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-02",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.09375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 647.546875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-03",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 650.75,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 580.953125,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-04",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 758.125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 580.75,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-05",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.1484375,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-06",
+      "layout": "magazine",
+      "state": "required-missing",
+      "blocked": true,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 281.5859375,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-07",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 700.46875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-08",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 611.3515625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 360.171875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-09",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 687.734375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 711.3359375,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-10",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 762.1015625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 713.9296875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 725.1328125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 603.7421875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-11",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 759.703125,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 705.5390625,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-12",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 776.5390625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 505.15625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-13",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 741.96875,
+          "columns": "1"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 215.1875,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    },
+    {
+      "scenario": "century-out-of-range",
+      "id": "BAZ-14",
+      "layout": "magazine",
+      "state": "available",
+      "blocked": false,
+      "missingSafe": true,
+      "ok": true,
+      "preserved": true,
+      "pages": [
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 757.9140625,
+          "columns": "2"
+        },
+        {
+          "width": 794,
+          "height": 1123,
+          "body": 786,
+          "content": 418.765625,
+          "columns": "1"
+        }
+      ],
+      "measureResidue": 0
+    }
+  ]
+}

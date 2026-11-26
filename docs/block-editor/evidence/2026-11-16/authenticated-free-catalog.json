@@ -1,0 +1,86 @@
+{
+  "deploymentSHA": "f7280e0729519cd6b2b236222a71b3d39e173331",
+  "date": "2026-11-16",
+  "scope": "Authenticated API returned free catalog (25 basic pages), while account UI is administrator Business preview. This is not separate real Free/Pro account acceptance.",
+  "methods": [
+    {
+      "label": "数秘術",
+      "prefix": "NUM",
+      "expectedCount": 4,
+      "ids": [
+        "NUM-01",
+        "NUM-02",
+        "NUM-03",
+        "NUM-06"
+      ],
+      "plan": "free",
+      "unavailable": 4
+    },
+    {
+      "label": "タロット",
+      "prefix": "TAR",
+      "expectedCount": 4,
+      "ids": [
+        "TAR-01",
+        "TAR-02",
+        "TAR-05",
+        "TAR-06"
+      ],
+      "plan": "free",
+      "unavailable": 4
+    },
+    {
+      "label": "九星気学",
+      "prefix": "KIG",
+      "expectedCount": 4,
+      "ids": [
+        "KIG-01",
+        "KIG-02",
+        "KIG-03",
+        "KIG-04"
+      ],
+      "plan": "free",
+      "unavailable": 4
+    },
+    {
+      "label": "四柱推命",
+      "prefix": "BAZ",
+      "expectedCount": 5,
+      "ids": [
+        "BAZ-01",
+        "BAZ-02",
+        "BAZ-03",
+        "BAZ-04",
+        "BAZ-06"
+      ],
+      "plan": "free",
+      "unavailable": 5
+    },
+    {
+      "label": "西洋占星術",
+      "prefix": "AST",
+      "expectedCount": 4,
+      "ids": [
+        "AST-01",
+        "AST-02",
+        "AST-03",
+        "AST-08"
+      ],
+      "plan": "free",
+      "unavailable": 4
+    },
+    {
+      "label": "紫微斗数",
+      "prefix": "ZIW",
+      "expectedCount": 4,
+      "ids": [
+        "ZIW-01",
+        "ZIW-02",
+        "ZIW-03",
+        "ZIW-07"
+      ],
+      "plan": "free",
+      "unavailable": 4
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {verifyFourPillarsCopySource,parseFourPillarsCopySource} from './lib/four-pillars-copy-review-source.mjs';
+const text='## 日干20部品\n| 甲 | 甲の基本。 | 甲の恋愛。 |\n## 各柱4部品\n| <code>baz.pillar.year</code> | 年柱の本文。 |\n';
+const records=[{copyId:'baz.day-stem.jia.basic',body:'甲の基本。'},{copyId:'baz.day-stem.jia.love',body:'甲の恋愛。'},{copyId:'baz.pillar.year',body:'年柱の本文。'}];
+assert(verifyFourPillarsCopySource(records,text));
+assert.throws(()=>verifyFourPillarsCopySource([{...records[0],body:records[1].body},{...records[1],body:records[0].body},records[2]],text),/association differs/);
+assert.throws(()=>verifyFourPillarsCopySource(records,text.replace('甲の恋愛。','改変。')),/association differs/);
+assert.throws(()=>verifyFourPillarsCopySource(records,text.replace('baz.pillar.year','baz.pillar.month')),/IDs differ/);
+assert.throws(()=>parseFourPillarsCopySource(text+'| baz.pillar.year | 重複。 |\n'),/Duplicate/);
+assert.throws(()=>verifyFourPillarsCopySource(records,text.replace('## 日干20部品','## 未知の節')),/count differs/);
+console.log('Copy review source: selector/column-to-ID associations, swapped text, source edits, wrong IDs, duplicate rows and unknown sections PASS.');

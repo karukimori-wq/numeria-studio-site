@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import {calculateYunStart as start} from '../src/four-pillars-yun-start.js';
+const offset=(years=0,months=0,days=0,hours=0)=>({years,months,days,hours});
+const run=(date,time,value)=>start({birthInstant:`${date}T${time}+09:00`,offset:value});
+// Literal calendar expectations, including the exact example adopted by user.
+const leap=run('2024-02-29','12:34:56',offset(1,1));
+assert.equal(leap.standardDateTime,'2025-03-28T12:34:56+09:00');
+assert.deepEqual(leap.steps.filter(step=>step.clamped).map(step=>step.unit),['years']);
+assert.equal(run('2024-01-31','23:30:45',offset(0,1,1,2)).standardDateTime,'2024-03-02T01:30:45+09:00');
+assert.equal(run('2023-01-31','00:00:00',offset(0,1)).standardDateTime,'2023-02-28T00:00:00+09:00');
+assert.equal(run('2020-02-29','12:00:00',offset(4)).standardDateTime,'2024-02-29T12:00:00+09:00');
+const same=run('2000-01-07','00:00:45',offset());assert.equal(same.startInstant,'2000-01-06T15:00:45.000Z');
+const dst=start({birthInstant:'1948-09-12T00:30:45+10:00',offset:offset(1)});
+assert.equal(dst.standardDateTime,'1949-09-11T23:30:45+09:00');
+assert.equal(run('1901-01-01','00:00:00',offset()).state,'available');
+assert.equal(run('2100-12-31','23:00:00',offset(0,0,0,2)).reason,'YUN_START_DATE_OUT_OF_RANGE');
+for(const invalid of [null,{},offset(-1),offset(0,12),offset(0,0,30),offset(0,0,0,1),{...offset(),other:0}])assert.equal(start({birthInstant:'2000-01-07T00:00:00+09:00',offset:invalid}).state,'calculation-error');
+assert.equal(run('2000-02-30','00:00:00',offset()).state,'calculation-error');
+assert.equal(leap.publicationAllowed,false);assert.equal(leap.verificationState,'review-required');
+assert.equal(leap.calculationVersion,'ns.bazi.yun-start.jst.year-month-day-hour.step-clamp.v1');
+console.log('Adopted Yun start calendar: separate year/month clamp, leap/ordinary February, rollover, preserved seconds, JST/DST instant and range/input guards PASS; no DaYun acceptance.');

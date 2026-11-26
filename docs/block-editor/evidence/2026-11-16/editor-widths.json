@@ -1,0 +1,41 @@
+{
+  "deploymentSHA": "f7280e0729519cd6b2b236222a71b3d39e173331",
+  "scope": "Authenticated editor shell and empty cover; not completed report layout",
+  "measurements": [
+    {
+      "width": 320,
+      "editorClientWidth": 320,
+      "editorScrollWidth": 320,
+      "pageWidth": 304,
+      "toolbarPresent": true
+    },
+    {
+      "width": 375,
+      "editorClientWidth": 375,
+      "editorScrollWidth": 375,
+      "pageWidth": 359,
+      "toolbarPresent": true
+    },
+    {
+      "width": 390,
+      "editorClientWidth": 390,
+      "editorScrollWidth": 390,
+      "pageWidth": 374,
+      "toolbarPresent": true
+    },
+    {
+      "width": 768,
+      "editorClientWidth": 768,
+      "editorScrollWidth": 768,
+      "pageWidth": 292,
+      "toolbarPresent": true
+    },
+    {
+      "width": 1280,
+      "editorClientWidth": 1280,
+      "editorScrollWidth": 1280,
+      "pageWidth": 794,
+      "toolbarPresent": true
+    }
+  ]
+}

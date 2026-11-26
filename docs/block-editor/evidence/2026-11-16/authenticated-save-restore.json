@@ -1,0 +1,20 @@
+{
+  "deploymentSHA": "f7280e0729519cd6b2b236222a71b3d39e173331",
+  "date": "2026-11-16",
+  "steps": [
+    "Create a dedicated free page",
+    "Edit its title",
+    "Save and observe server saved",
+    "Close editor",
+    "Full browser reload",
+    "Reopen editor",
+    "Select saved test page"
+  ],
+  "expectedTitle": "F1-F5受入検証 20261116",
+  "result": {
+    "header": "戻る鑑定書ビルダーサーバー保存済み元に戻すやり直す印刷保存",
+    "plan": "free",
+    "title": "F1-F5受入検証 20261116"
+  },
+  "scope": "Authenticated report-format save/restore with API free limits while account UI is administrator Business preview; no issued report or separate real Free/Pro acceptance."
+}

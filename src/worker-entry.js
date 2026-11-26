@@ -167,7 +167,7 @@ async function resolveAuthenticatedScope(request, env, ctx, requestedWorkspaceId
     scope: {
       workspaceId: usageBody.workspaceId || requestedWorkspaceId || "ws_personal",
       userId: usageBody.userId || "anonymous",
-      planId: usageBody.planId || "free",
+      planId: usageBody.usage?.planId === "pro" ? "pro" : "free",
     },
   };
 }
@@ -215,6 +215,7 @@ async function handleReportFormat(request, env = {}, ctx = null) {
   if (request.method === "POST") {
     const target = backups.find((backup) => backup?.backupId === String(body.backupId || ""));
     if (!target?.format || !validReportFormat(target.format)) return json({ status: "error", errorCode: "REPORT_FORMAT_BACKUP_NOT_FOUND", message: "復元対象のバックアップが見つかりません。" }, { status: 404 });
+    if (!validReportFormat(target.format, pageLimit)) return json({ status: "error", errorCode: "REPORT_FORMAT_PAGE_LIMIT_EXCEEDED", message: "現在のプランで利用できる自由ページ数を超えるため復元できません。バックアップは保持されています。", pageLimit }, { status: 400 });
     const expectedRevision = Number(body.expectedRevision || 0);
     if (expectedRevision !== Number(meta.revision || 0)) return json({ status: "error", errorCode: "REPORT_FORMAT_CONFLICT", message: "別の編集内容が保存されています。再読み込みしてから復元してください。", revision: Number(meta.revision || 0) }, { status: 409 });
     const current = settings.report_format_blocks_v3;

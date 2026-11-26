@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-25",
+  "build": "7c6011bca54ff01e5a7681f835e5d9582f69ab7f",
+  "deployRun": 45590857775,
+  "syntheticInputOnly": true,
+  "actualPlan": "free",
+  "savedRowUsesServerRestore": true,
+  "otherCustomerClearsPriorWriting": true,
+  "resaveSuccess": true,
+  "sameSessionId": true,
+  "bodyRetainedAfterFullReload": true,
+  "draftSessionCountBefore": 1,
+  "draftSessionCountAfter": 1,
+  "formalAcceptanceIncrement": 0,
+  "productionOrSchemaChanged": false
+}

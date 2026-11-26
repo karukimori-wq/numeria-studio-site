@@ -1,0 +1,89 @@
+{
+  "scope": "Sample gallery only; not application, authenticated plan or PDF acceptance",
+  "measurements": [
+    {
+      "layout": "スタンダード",
+      "width": 320,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 320
+    },
+    {
+      "layout": "スタンダード",
+      "width": 375,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 375
+    },
+    {
+      "layout": "スタンダード",
+      "width": 390,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 390
+    },
+    {
+      "layout": "スタンダード",
+      "width": 768,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 768
+    },
+    {
+      "layout": "スタンダード",
+      "width": 1280,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 1280
+    },
+    {
+      "layout": "スタンダード",
+      "width": 794,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 794
+    },
+    {
+      "layout": "マガジン",
+      "width": 320,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 320
+    },
+    {
+      "layout": "マガジン",
+      "width": 375,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 375
+    },
+    {
+      "layout": "マガジン",
+      "width": 390,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 390
+    },
+    {
+      "layout": "マガジン",
+      "width": 768,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 768
+    },
+    {
+      "layout": "マガジン",
+      "width": 1280,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 1280
+    },
+    {
+      "layout": "マガジン",
+      "width": 794,
+      "count": 12,
+      "overflow": [],
+      "scrollWidth": 794
+    }
+  ]
+}

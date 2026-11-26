@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {fourPillarsJieCalendar} from '../src/four-pillars-jie-calendar.js';
+import {fourPillarsFromBirthClock} from '../src/four-pillars-birth-clock.js';
+const calendar=fourPillarsJieCalendar(2026);assert.equal(calendar.terms.length,36);
+const spring=calendar.terms.find(term=>term.name==='立春'&&term.sourceCivil.startsWith('2026'));
+const raw=readFileSync(new URL('../test-fixtures/four-pillars-jie-reference.json',import.meta.url));
+const fixture=JSON.parse(raw);
+assert(Math.abs(Date.parse(spring.instant)-Date.parse(fixture.expected.instant))<=fixture.expected.toleranceSeconds*1000);
+console.log(JSON.stringify({id:fixture.id,expected:fixture.expected,actual:spring.instant,source:fixture.source,calendarVersion:calendar.calendarVersion,fixtureSha256:createHash('sha256').update(raw).digest('hex'),result:'PASS'}));
+const run=time=>fourPillarsFromBirthClock({birthClock:{date:'2026-02-04',time,countryCode:'JP',zoneId:'Asia/Tokyo',zoneConfirmed:true,offsetChoiceMinutes:null},referenceDate:'2026-11-18'});
+assert.equal(run('04:30:00').pillars.year,'乙巳');assert.equal(run('05:30:00').pillars.year,'丙午');
+assert.notEqual(run('04:30:00').pillars.month,run('05:30:00').pillars.month);assert.equal(run('04:30:00').pillars.day,run('05:30:00').pillars.day);
+assert.throws(()=>fourPillarsJieCalendar(2101));
+console.log('Integrated Jie calendar preserves current JST/CST natal boundaries; public-minute single-term fixture only, no full Yun reference claim.');
