@@ -1,0 +1,9 @@
+# main配信のDB変更判定
+
+PR #99をmainへ統合したccf1b597f54f3c37ce465e4f616cf1bf67a5170fのProduction run45909474210は、Apply D1 migrationsでCloudflare 7403により停止。配信用トークンのD1 query権限がなく、Worker配信前の失敗だった。migrationファイルと本番Wrangler設定は最後に成功した本番SHA5d002e2818e2385f896f3a7243024c98488ddda7から変更されていない。
+
+Production workflowは、読み取り専用actions権限で最後に成功したmain配信のSHAを取得し、そのSHAから対象HEADまでのmigration/本番Wrangler設定の差分を確認する。変更なしの場合だけD1操作を省略する。初回配信またはDBソース/設定変更時は従来のmigration処理を要求する。GitHub API、SHA検証、git履歴取得が失敗した場合は配信を停止し、失敗を安全なskipへ読み替えない。
+
+git diffは--no-renames --name-only -zで取得し、NUL区切りで解析する。日本語・引用符・改行のある名前とmigrationのディレクトリ外への移動も実gitのfixtureで検出する。DB変更判定、初回、不正metadata、実baseline比較、workflow YAML構文とshell構文を確認。全npm testと両軸レビューが成功した。アプリコード・DB schema・トークンの値/権限は変更しない。
+
+mainへの反映と配信後の利用者確認は、2026-11-27の明示指示に基づいて進める。正式原文・素材・PDFの承認やNotionの利用者チェックには影響しない。
