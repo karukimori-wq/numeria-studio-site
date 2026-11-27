@@ -1,8 +1,7 @@
-import { withFourPillarsCalculationCheckpoint } from "./four-pillars-calculation-checkpoint.js";
-import { withKigakuCalculationCheckpoint } from "./kigaku-calculation-checkpoint.js";
 import { createUsageSnapshot, evaluateUsageLimit, getBillingMonth, isUnlimited, normalizePlanId, PLAN_CONFIG, PLAN_IDS } from "./plan-config.js";
 import { growthEngineHandoffContract, normalizeGrowthEngineExternalReferences } from "./growth-handoff.js";
-import { withNumerologyRegisteredSelection } from "./numerology-registered-draft.js";
+import { calculateReadingSnapshot, readingReferenceConflict } from "./reading-calculation.js";
+import { freezeCompletedReadingReport, completedReadingExportBody } from "./completed-reading-report.js";
 
 const APP_VERSION = "0.3.12-report-delivery-status";
 const PLAN_CONTRACT_VERSION = "free-pro-business-preparing.v1";
@@ -1355,6 +1354,7 @@ function createReportSnapshot({ exportId, reportType, branding, body = {} }) {
     resultSummary: String(body.resultSummary || "").trim(),
     notes: reportType === "detailed" ? String(body.notes || "").trim() : "",
     reportFormatSnapshot,
+    readingSnapshot: body.readingSnapshot || null,
   };
 }
 
@@ -2592,6 +2592,7 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/appraisals/save-draft" && request.method === "POST") {
+    if (Object.hasOwn(body, "snapshot") && (!body.snapshot || typeof body.snapshot !== "object" || Array.isArray(body.snapshot))) return json({ status: "error", errorCode: "READING_SNAPSHOT_INVALID" }, { status: 400 });
     const snapshot = usageResponse(effectiveRecord);
     const appraisalId = body.appraisalId || body.id || body.draftId || `draft_${Date.now()}`;
     const currentDraft = record.activeDraft;
@@ -2622,13 +2623,13 @@ async function handleApi(request, env = {}, ctx = null) {
       draftVersion: crypto.randomUUID(),
       clientName: String(body.clientName ?? previousDraft?.clientName ?? "未設定").trim(),
       birthDate: String(body.birthDate ?? previousDraft?.birthDate ?? "").trim(),
-      divination: String(body.divination ?? previousDraft?.divination ?? "numerology").trim(),
+      divination: String(body.divination ?? body.snapshot?.divination ?? previousDraft?.divination ?? "numerology").trim(),
       lifePathNumber: body.lifePathNumber ?? previousDraft?.lifePathNumber ?? null,
       question: String(body.question ?? previousDraft?.question ?? "").trim(),
       notes: String(body.notes ?? previousDraft?.notes ?? "").trim(),
       resultSummary: String(body.resultSummary ?? previousDraft?.resultSummary ?? "").trim(),
       snapshot: body.snapshot && typeof body.snapshot === "object"
-        ? await withNumerologyRegisteredSelection(withFourPillarsCalculationCheckpoint(withKigakuCalculationCheckpoint(body.snapshot)), effectiveRecord.planId)
+        ? await calculateReadingSnapshot(body.snapshot, { id: appraisalId, methodKey: String(body.divination ?? body.snapshot?.divination ?? previousDraft?.divination ?? "numerology").trim(), planId: effectiveRecord.planId })
         : previousDraft?.snapshot || null,
       externalReferences: normalizeGrowthEngineExternalReferences(body) || previousDraft?.externalReferences || null,
       updatedAt: new Date().toISOString(),
@@ -2645,6 +2646,7 @@ async function handleApi(request, env = {}, ctx = null) {
   }
 
   if (url.pathname === "/api/appraisals/complete" && request.method === "POST") {
+    if (Object.hasOwn(body, "snapshot") && (!body.snapshot || typeof body.snapshot !== "object" || Array.isArray(body.snapshot))) return json({ status: "error", errorCode: "READING_SNAPSHOT_INVALID" }, { status: 400 });
     const adminMode = requireAdmin(request, env, body).adminMode;
     const requestedId = body.appraisalId || body.id;
     const existingCompletion = requestedId && (record.completedAppraisals || []).find(item => item.id === requestedId);
@@ -2671,18 +2673,20 @@ async function handleApi(request, env = {}, ctx = null) {
       completedIds: [...record.completedAppraisalIds], monthly: record.monthlyAppraisals };
     const completedAt = new Date().toISOString();
     const currentDraft = record.activeDraft;
+    const referenceConflict = readingReferenceConflict(currentDraft?.snapshot, body.snapshot);
+    if (referenceConflict) return json({ status: "error", errorCode: referenceConflict, message: "保存済みの基準日は変更できません。新規鑑定を作成してください。" }, { status: 409 });
+    const completedReading = await calculateReadingSnapshot(body.snapshot && typeof body.snapshot === "object" ? body.snapshot : currentDraft?.snapshot,
+      { id: appraisalId, methodKey: String(body.divination || body.snapshot?.divination || currentDraft?.divination || "numerology").trim(), planId: effectiveRecord.planId });
     const completedAppraisal = {
       id: appraisalId,
       clientName: String(body.clientName || currentDraft?.clientName || "未設定").trim(),
       birthDate: String(body.birthDate || currentDraft?.birthDate || "").trim(),
-      divination: String(body.divination || currentDraft?.divination || "numerology").trim(),
+      divination: String(body.divination || body.snapshot?.divination || currentDraft?.divination || "numerology").trim(),
       lifePathNumber: body.lifePathNumber || currentDraft?.lifePathNumber || null,
       question: String(body.question || currentDraft?.question || "").trim(),
       notes: String(body.notes || currentDraft?.notes || "").trim(),
       resultSummary: String(body.resultSummary || currentDraft?.resultSummary || "").trim(),
-      snapshot: body.snapshot && typeof body.snapshot === "object"
-        ? body.snapshot
-        : currentDraft?.snapshot || null,
+      snapshot: await freezeCompletedReadingReport(completedReading, effectiveRecord.planId),
       externalReferences: normalizeGrowthEngineExternalReferences(body) || currentDraft?.externalReferences || null,
       completedAt,
     };
@@ -2778,11 +2782,15 @@ async function handleApi(request, env = {}, ctx = null) {
     const generatedAt = new Date().toISOString();
     const branding = removeBranding ? "hidden" : "numeria-logo-included";
     const fileName = `numeria-${reportType}-report-${exportId}.pdf`;
+    const completedSession = body.appraisalId ? sessionById(record, body.appraisalId) : null;
+    if (body.appraisalId && !completedSession) return json({ status: "error", errorCode: "APPRAISAL_NOT_FOUND" }, { status: 404 });
+    if (completedSession?.sessionState === "completed" && snapshot.lockedCompletedAppraisalIds.includes(body.appraisalId)) return json({ status: "error", errorCode: "REPORT_EXPORT_LOCKED" }, { status: 403 });
+    const exportBody = completedSession ? completedReadingExportBody(completedSession.session, body) : body;
     const reportSnapshot = createReportSnapshot({
       exportId,
       reportType,
       branding,
-      body,
+      body: exportBody,
     });
     const pdfBase64 = createReportPdfBase64({
       exportId,
